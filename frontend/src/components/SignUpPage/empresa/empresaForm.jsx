@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import './empresaForm.css';
 import { useNavigate } from "react-router-dom";
 import { crearEmpresa } from "../../../api/empresaAPI";
 
@@ -59,7 +60,7 @@ const EmpresaForm = () => {
   };
 
   return (
-    <div className="form-reclutador-fields">
+    <div className="form-reclutador">
       <form className="form-signup" onSubmit={handleSubmit} ref={formRef}>
         <input
           type="text"

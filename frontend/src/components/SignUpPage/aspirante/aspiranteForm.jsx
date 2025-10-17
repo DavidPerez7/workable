@@ -1,3 +1,4 @@
+import './aspiranteForm.css';
 import React, { useRef } from 'react';
 import { crearAspirante } from '../../../api/aspirantesApi';
 import { useNavigate } from 'react-router-dom';
@@ -45,61 +46,63 @@ const AspiranteForm = () => {
   };
 
   return (
-    <div className='form-reclutador-fields'>
-      <form className='form-signup' onSubmit={handleSubmit} ref={formRef}>
+    <div className="aspirante-form-container">
+      <form className="form-signup" onSubmit={handleSubmit} ref={formRef}>
+        <h2 className="form-title">Registro de Aspirante</h2>
+        <label>Nombre</label>
         <input
           type='text'
           name='nom'
-          placeholder='Nombre'
           required
           className='input-signup'
           pattern="[A-Za-zÀ-ÿ\s]+"
           title="Solo se permiten letras y espacios"
         />
+        <label>Apellido</label>
         <input
           type='text'
           name='ape'
-          placeholder='Apellido'
           required
           className='input-signup'
           pattern="[A-Za-zÀ-ÿ\s]+"
           title="Solo se permiten letras y espacios"
         />
+        <label>Correo electrónico</label>
         <input
           type='email'
           name='corr'
-          placeholder='Correo electrónico'
           required
           className='input-signup'
         />
+        <label>Ubicación</label>
         <input
           type='text'
           name='ubi'
-          placeholder='Ubicación'
           required
           className='input-signup'
         />
+        <label>Número de Teléfono</label>
         <input
           type='tel'
           name='tel'
-          placeholder='Número de Teléfono'
           required
           className='input-signup'
         />
+        <label>Fecha de Nacimiento</label>
         <input
           type='date'
           name='feNa'
-          placeholder='Fecha de Nacimiento'
           required
           className='input-signup'
         />
+        <label>Contraseña</label>
         <input
           type='password'
           name='cla'
-          placeholder='Contraseña'
           required
           className='input-signup'
         />
+        <label>Género</label>
         <select
           name='genero_id'
           required
@@ -109,6 +112,7 @@ const AspiranteForm = () => {
           <option value='1'>Masculino</option>
           <option value='2'>Femenino</option>
         </select>
+        <label>Tipo de Documento</label>
         <select
           name='tipDoc_id'
           required
@@ -118,15 +122,16 @@ const AspiranteForm = () => {
           <option value='1'>CC</option>
           <option value='2'>TI</option>
         </select>
+        <label>Número de Documento</label>
         <input
           type="number"
           name="numDoc"
-          placeholder="Número de Documento"
           required
           className="input-signup"
           min="0"
           step="1"
         />
+        <label>Ciudad</label>
         <select
           name='munici_id'
           required
