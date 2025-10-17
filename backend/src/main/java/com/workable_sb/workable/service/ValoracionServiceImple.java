@@ -9,7 +9,7 @@ import com.workable_sb.workable.dto.ValoracionDto;
 import com.workable_sb.workable.dto.ValoracionReadDto;
 import com.workable_sb.workable.mapper.ValoracionMapper;
 import com.workable_sb.workable.models.Valoracion;
-import com.workable_sb.workable.repositories.ValoracionRepository;
+import com.workable_sb.workable.repository.ValoracionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

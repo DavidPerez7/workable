@@ -8,9 +8,9 @@ import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Modalidad;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.TipoContrato;
-import com.workable_sb.workable.repositories.EmpresaRepository;
-import com.workable_sb.workable.repositories.ModalidadRepository;
-import com.workable_sb.workable.repositories.TipoContratoRepository;
+import com.workable_sb.workable.repository.EmpresaRepository;
+import com.workable_sb.workable.repository.ModalidadRepository;
+import com.workable_sb.workable.repository.TipoContratoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

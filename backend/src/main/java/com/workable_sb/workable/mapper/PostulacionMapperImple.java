@@ -7,9 +7,9 @@ import com.workable_sb.workable.models.Estado;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.models.Aspirante;
-import com.workable_sb.workable.repositories.EstadoRepository;
-import com.workable_sb.workable.repositories.OfertaRepository;
-import com.workable_sb.workable.repositories.AspiranteRepository;
+import com.workable_sb.workable.repository.EstadoRepository;
+import com.workable_sb.workable.repository.OfertaRepository;
+import com.workable_sb.workable.repository.AspiranteRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

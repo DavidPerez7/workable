@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.workable_sb.workable.dto.InfoPersonalDto;
 import com.workable_sb.workable.mapper.InfoPersonalMapper;
 import com.workable_sb.workable.models.InfoPersonal;
-import com.workable_sb.workable.repositories.InfoPersonalRepository;
-
+import com.workable_sb.workable.repository.InfoPersonalRepository;
+import com.workable_sb.workable.repository.InfoPersonalRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service

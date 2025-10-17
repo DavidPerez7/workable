@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.workable_sb.workable.dto.DatoEstudioDto;
 import com.workable_sb.workable.mapper.DatoEstudioMapper;
 import com.workable_sb.workable.models.DatoEstudio;
-import com.workable_sb.workable.repositories.DatoEstudioRepository;
+import com.workable_sb.workable.repository.DatoEstudioRepository;
 
 @Service
 public class DatoEstudioServiceImple implements DatoEstudioService {

@@ -1,4 +1,4 @@
-package com.workable_sb.workable.repositories;
+package com.workable_sb.workable.repository;
 
 import java.util.Optional;
 

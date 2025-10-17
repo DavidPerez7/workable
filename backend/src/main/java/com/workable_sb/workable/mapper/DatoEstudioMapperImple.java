@@ -6,8 +6,8 @@ import com.workable_sb.workable.dto.DatoEstudioDto;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.DatoEstudio;
 import com.workable_sb.workable.models.NivelEducativo;
-import com.workable_sb.workable.repositories.AspiranteRepository;
-import com.workable_sb.workable.repositories.NivelEducativoRepository;
+import com.workable_sb.workable.repository.AspiranteRepository;
+import com.workable_sb.workable.repository.NivelEducativoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

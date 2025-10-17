@@ -7,8 +7,8 @@ import com.workable_sb.workable.dto.ValoracionReadDto;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Valoracion;
-import com.workable_sb.workable.repositories.EmpresaRepository;
-import com.workable_sb.workable.repositories.AspiranteRepository;
+import com.workable_sb.workable.repository.EmpresaRepository;
+import com.workable_sb.workable.repository.AspiranteRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

@@ -9,9 +9,9 @@ import com.workable_sb.workable.dto.ReclutadorDto;
 import com.workable_sb.workable.dto.ReclutadorReadDto;
 import com.workable_sb.workable.mapper.ReclutadorMapper;
 import com.workable_sb.workable.models.Reclutador;
-import com.workable_sb.workable.repositories.AspiranteRepository;
-import com.workable_sb.workable.repositories.EmpresaRepository;
-import com.workable_sb.workable.repositories.ReclutadorRepository;
+import com.workable_sb.workable.repository.AspiranteRepository;
+import com.workable_sb.workable.repository.EmpresaRepository;
+import com.workable_sb.workable.repository.ReclutadorRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

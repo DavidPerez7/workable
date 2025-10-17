@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.DatoExperienciaDto;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.DatoExperiencia;
-import com.workable_sb.workable.repositories.AspiranteRepository;
+import com.workable_sb.workable.repository.AspiranteRepository;
 
 
 import jakarta.persistence.EntityNotFoundException;

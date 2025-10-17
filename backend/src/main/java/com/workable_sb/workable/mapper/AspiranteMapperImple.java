@@ -8,9 +8,9 @@ import com.workable_sb.workable.models.Genero;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.TipDocumento;
 import com.workable_sb.workable.models.Aspirante;
-import com.workable_sb.workable.repositories.GeneroRepository;
-import com.workable_sb.workable.repositories.MunicipioRepository;
-import com.workable_sb.workable.repositories.TipDocumentoRepository;
+import com.workable_sb.workable.repository.GeneroRepository;
+import com.workable_sb.workable.repository.MunicipioRepository;
+import com.workable_sb.workable.repository.TipDocumentoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

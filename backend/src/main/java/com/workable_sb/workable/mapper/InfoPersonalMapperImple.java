@@ -1,4 +1,5 @@
 package com.workable_sb.workable.mapper;
+import com.workable_sb.workable.repository.AspiranteRepository;
 
 import org.springframework.stereotype.Component;
 
@@ -7,9 +8,8 @@ import com.workable_sb.workable.dto.InfoPersonalDto;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Genero;
 import com.workable_sb.workable.models.InfoPersonal;
-import com.workable_sb.workable.repositories.AspiranteRepository;
-import com.workable_sb.workable.repositories.GeneroRepository;
-import com.workable_sb.workable.repositories.InfoPersonalRepository;
+import com.workable_sb.workable.repository.InfoPersonalRepository;
+import com.workable_sb.workable.repository.GeneroRepository;
 
 
 @Component

@@ -2,7 +2,7 @@ package com.workable_sb.workable.service;
 
 import com.workable_sb.workable.dto.AdministradorDto;
 import com.workable_sb.workable.mapper.AdministradorMapper;
-import com.workable_sb.workable.models.Administrador;
+// ...existing code...
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;

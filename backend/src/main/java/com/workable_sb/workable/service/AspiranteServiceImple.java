@@ -11,7 +11,7 @@ import com.workable_sb.workable.dto.AspiranteReadDto;
 import com.workable_sb.workable.dto.LoginDto;
 import com.workable_sb.workable.mapper.AspiranteMapper;
 import com.workable_sb.workable.models.Aspirante;
-import com.workable_sb.workable.repositories.AspiranteRepository;
+import com.workable_sb.workable.repository.AspiranteRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 

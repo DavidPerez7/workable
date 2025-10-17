@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.workable_sb.workable.dto.PostulacionDto;
 import com.workable_sb.workable.mapper.PostulacionMapper;
 import com.workable_sb.workable.models.Postulacion;
-import com.workable_sb.workable.repositories.PostulacionRepository;
+import com.workable_sb.workable.repository.PostulacionRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

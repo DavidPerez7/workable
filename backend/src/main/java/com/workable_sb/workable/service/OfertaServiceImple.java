@@ -9,7 +9,7 @@ import com.workable_sb.workable.dto.OfertaDto;
 import com.workable_sb.workable.dto.OfertaReadDto;
 import com.workable_sb.workable.mapper.OfertaMapper;
 import com.workable_sb.workable.models.Oferta;
-import com.workable_sb.workable.repositories.OfertaRepository;
+import com.workable_sb.workable.repository.OfertaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

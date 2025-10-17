@@ -7,8 +7,8 @@ import com.workable_sb.workable.dto.EmpresaReadDto;
 import com.workable_sb.workable.models.Categoria;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
-import com.workable_sb.workable.repositories.CategoriaRepository;
-import com.workable_sb.workable.repositories.MunicipioRepository;
+import com.workable_sb.workable.repository.CategoriaRepository;
+import com.workable_sb.workable.repository.MunicipioRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 

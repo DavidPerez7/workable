@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.workable_sb.workable.dto.EmpresaDto;
 import com.workable_sb.workable.dto.EmpresaReadDto;
 import com.workable_sb.workable.models.Empresa;
-import com.workable_sb.workable.repositories.EmpresaRepository;
+import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.service.EmpresaService;
 
 import jakarta.validation.Valid;

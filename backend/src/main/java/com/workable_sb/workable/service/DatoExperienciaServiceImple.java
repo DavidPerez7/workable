@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.workable_sb.workable.dto.DatoExperienciaDto;
 import com.workable_sb.workable.mapper.DatoExperienciaMapper;
 import com.workable_sb.workable.models.DatoExperiencia;
-import com.workable_sb.workable.repositories.DatoExperienciaRepository;
+import com.workable_sb.workable.repository.DatoExperienciaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
