@@ -1,0 +1,379 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.Cabec {
+    display: flex;
+    align-items: left;
+    background-color: #20559b;
+    position: relative;
+    color: whitesmoke;
+    height: 60px;
+    padding: 0 20px;
+}
+
+.Titulo {
+    color: white;
+    font-size: 27px;
+    font-weight: bold;
+    margin-left: 20px;
+    font: 300;
+}
+
+.Titulo a {
+    text-decoration: none;
+    color: white;
+}
+
+.Botones {
+    position: absolute;
+    right: 20px;
+    gap: 1rem;
+    display: flex;
+    padding-top: 10px;
+}
+
+.Login {
+    color: rgb(255, 255, 255);
+    background-color: transparent;
+    white-space: nowrap;
+    border-radius: 30px;
+    padding-top: 10px;
+    border: rgb(255, 255, 255) 1px solid;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.Botones a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+}
+
+.IniciSesion {
+    color: rgb(255, 255, 255);
+    background-color: transparent;
+    white-space: nowrap;
+    border-radius: 30px;
+    padding-top: 10px;
+    border: rgb(255, 255, 255) 1px solid;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.SeccionTitu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    height: 60px;
+    padding-top: 20px;
+    font-size: 24px;
+    color: #20559b;
+}
+
+.Articulo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.ArticleContent {
+    flex: 1;
+    padding: 10px;
+}
+
+.Articulo h3::before {
+    content: "Destacado";
+    background-color: #f4a261;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 10px;
+}
+
+.Articulo p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #555;
+    text-align: left;
+    margin: 0;
+}
+
+.ImgSec {
+    flex: 0 0 400px;
+    padding: 0;
+}
+
+.EntrevistaImg {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+}
+
+.Articulo a {
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.Txt2 {
+    font-size: 33px;
+    color: #20559b;
+    text-align: center;
+    margin: 10px 0;
+    position: static;
+}
+
+.ArticuloTitle {
+    text-align: center;
+    margin: 10px 0;
+}
+
+.Articulo2 {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+    justify-content: center;
+    padding: 0 20px;
+    margin: 10px 0;
+}
+
+.Articulo2 .img1 {
+    width: 300px;
+    height: 400px;
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Articulo2 .img1:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.img1 h6 {
+    font-size: 18px;
+    color: #1a3c6e;
+    text-align: left;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+.img1 p {
+    font-size: 14px;
+    color: #555;
+    text-align: left;
+    padding: 0 10px;
+    flex-grow: 1;
+}
+
+.ImgEn1 {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.Articulo3 {
+    padding: 20px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.TituloSecc3 h5 {
+    font-size: 34px;
+    color: #20559b;
+    text-align: center;
+}
+
+.TituloSecc3 p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #555;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.CuadrSecc {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 400px;
+    height: 200px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.CuadrSecc:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.CuadrSecc h6 {
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+    margin: 10px 0 20px 0;
+}
+
+.CuadrSecc p {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #555;
+    text-align: center;
+    text-wrap: wrap;
+}
+
+.SeccionTxt {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.TxtSecc {
+    margin-top: 14px;
+    color: #333;
+    width: 880px;
+    height: 170px;
+    background-color: rgb(234, 241, 245);
+    border-radius: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.TxtSecc a {
+    text-decoration: none;
+    color: #20559b;
+}
+
+.TxtSecc p {
+    padding: 20px;
+    margin: 0;
+    font-size: 17px;
+    text-align: left;
+}
+
+.SeccionTxt button {
+    background-color: whitesmoke;
+    color: #044cab;
+    border: 1px solid #044cab;
+    padding: 8px 16px;
+    margin: 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 17px;
+    margin-left: 10px;
+}
+
+@media (max-width: 1024px) {
+    .Articulo {
+        flex-direction: column;
+        padding: 10px;
+    }
+    .ArticleContent {
+        margin-bottom: 10px;
+    }
+    .ImgSec {
+        flex: 0 0 100%;
+        padding: 0;
+    }
+    .EntrevistaImg {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .Articulo2 {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 10px;
+    }
+    .Articulo2 .img1 {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 10px;
+    }
+    .Articulo3 {
+        padding: 10px;
+        flex-direction: column;
+    }
+    .CuadrSecc {
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 10px;
+    }
+    .TxtSecc {
+        width: 100%;
+        max-width: 880px;
+        margin-top: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .Cabec {
+        padding: 0 10px;
+    }
+    .Botones {
+        right: 10px;
+    }
+    .SeccionTitu {
+        height: 40px;
+        padding-top: 10px;
+        font-size: 20px;
+    }
+    .Txt2 {
+        font-size: 24px;
+        margin: 5px 0;
+    }
+    .ArticuloTitle {
+        margin: 5px 0;
+    }
+    .TituloSecc3 h5 {
+        font-size: 24px;
+    }
+    .TituloSecc3 p {
+        font-size: 14px;
+    }
+    .CuadrSecc {
+        padding: 5px;
+    }
+    .CuadrSecc h6 {
+        font-size: 16px;
+    }
+    .CuadrSecc p {
+        font-size: 10px;
+    }
+    .TxtSecc {
+        height: auto;
+        padding: 10px;
+    }
+    .TxtSecc p {
+        font-size: 14px;
+    }
+    .SeccionTxt button {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+}

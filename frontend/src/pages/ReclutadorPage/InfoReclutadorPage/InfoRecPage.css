@@ -1,0 +1,464 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.main-info-rec-IRP {
+  background-color: #f7fafc;
+  min-height: calc(100vh - 60px);
+  margin: auto;
+}
+
+.header-section1-IRP {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+  width: 100%;
+  height: 55px;
+}
+
+.header-section1-IRP h1 {
+  font-size: 15px;
+  color: #2541a0;
+  margin-left: 3px;
+}
+
+.link-page-IRP {
+  text-decoration: none;
+  color: #2541a0;
+}
+
+.title-reclutadores-IRP {
+  font-size: 15px;
+  color: #2541a0;
+  margin-left: 3px;
+}
+
+.header-section2-IRP {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+  width: 100%;
+  height: 55px;
+  color: #333;
+  margin-top: 8px;
+}
+
+.title-workable-IRP {
+  font-size: 28px;
+  color: #333;
+}
+
+.header-section2-IRP .link-page-IRP {
+  padding-top: 8px;
+  font-size: 16px;
+  color: #2541a0;
+  margin-left: 13px;
+  text-decoration: none;
+}
+
+.button-publish-offer-IRP {
+  background-color: #ff6302;
+  color: whitesmoke;
+  padding: 7px;
+  border-radius: 55px;
+  cursor: pointer;
+  margin-left: auto;
+  border: none;
+  width: 140px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-publish-offer-IRP:hover {
+  background-color: #df4e00;
+}
+
+span a {
+  text-decoration: none;
+  color: whitesmoke;
+}
+
+.section-promo-IRP {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  margin-top: 30px;
+  background-color: #f7fafc;
+  padding: 20px;
+  text-align: center;
+  border: 2px solid #f7fafc;
+}
+
+.title-promo-IRP {
+  font-size: 40px;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.text-promo-IRP {
+  font-size: 20px;
+  color: #333333ed;
+  margin-bottom: 20px;
+  max-width: 800px;
+  line-height: 1.5;
+}
+
+.button-publish-main-IRP {
+  background-color: #ff6302;
+  color: whitesmoke;
+  padding: 10px;
+  border-radius: 55px;
+  cursor: pointer;
+  border: none;
+  width: 200px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-publish-main-IRP:hover {
+  background-color: #df4e00;
+}
+
+.section-process-IRP {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 60px auto;
+  max-width: 1400px;
+  padding: 0 20px;
+  flex-wrap: wrap;
+  border: 2px solid #f7fafc;
+}
+
+
+.column-images-IRP {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-right: 40px;
+}
+
+.image-process-IRP {
+  width: 120px;
+  height: 120px;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  object-fit: cover;
+}
+
+.image-bottom-IRP {
+  margin-left: 40px;
+}
+
+.column-steps-IRP {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.process-step-IRP {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.step-number-IRP {
+  background-color: #2541a0;
+  color: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.step-title-IRP {
+  margin: 0;
+  color: #1d3557;
+  font-size: 1.1em;
+}
+
+.step-text-IRP {
+  margin: 2px 0 0;
+  color: #555;
+  font-size: 0.9em;
+}
+
+.section-cta-middle-IRP {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 60px auto;
+  width: 100%;
+  height: 280px;
+  background-color: #e5f3ff;
+  padding: 20px;
+  text-align: center;
+  border: 2px solid #f7fafc;
+}
+
+
+.title-cta-middle-IRP {
+  font-size: 40px;
+  color: #333;
+  text-align: center;
+  margin: 0 0 10px 0;
+}
+
+.text-cta-middle-IRP {
+  font-size: 30px;
+  color: #333333ed;
+  text-align: center;
+  margin-bottom: 20px;
+  max-width: 800px;
+  line-height: 1.5;
+}
+
+.button-find-candidates-IRP {
+  background-color: #ff6302;
+  color: whitesmoke;
+  padding: 10px;
+  border-radius: 55px;
+  cursor: pointer;
+  border: none;
+  width: 200px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-find-candidates-IRP:hover {
+  background-color: #df4e00;
+}
+
+.section-features-IRP {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin: 60px auto;
+  padding: 0 20px;
+  max-width: 1400px;
+  border: 2px solid #f7fafc;
+}
+
+
+.feature-card-IRP {
+  text-align: center;
+  flex: 1;
+  min-width: 250px;
+  max-width: 320px;
+  padding: 20px;
+}
+
+.icon-circle-IRP {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+}
+
+.icon-circle-IRP.green-IRP {
+  background-color: #b0f2c2;
+  color: #064e3b;
+}
+
+.icon-circle-IRP.yellow-IRP {
+  background-color: #fef08a;
+  color: #92400e;
+}
+
+.icon-circle-IRP.red-IRP {
+  background-color: #fecaca;
+  color: #7f1d1d;
+}
+
+.icon-svg-IRP {
+  width: 40px;
+  height: 40px;
+}
+
+.feature-title-IRP {
+  font-size: 20px;
+  color: #1d3557;
+  margin-bottom: 10px;
+}
+
+.feature-text-IRP {
+  font-size: 16px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.container-cta-bottom-IRP {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 60px auto;
+  border: 2px solid #f7fafc;
+}
+
+
+.button-start-now-IRP {
+  background-color: #ff6302;
+  color: rgb(255, 255, 255);
+  border-radius: 55px;
+  cursor: pointer;
+  border: none;
+  width: 200px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-start-now-IRP:hover {
+  background-color: #df4e00;
+}
+
+
+.footer-container-IRP {
+  background-color: #2541a0;
+  padding: 40px 20px 20px 20px;
+  color: whitesmoke;
+}
+
+.footer-links-IRP {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.footer-column-IRP {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.footer-column-IRP h4 {
+  font-size: 16px;
+  font-weight: bold;
+  color: whitesmoke;
+  margin-bottom: 8px;
+}
+
+.footer-column-IRP a {
+  text-decoration: none;
+  color: whitesmoke;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-column-IRP a:hover {
+  color: #ff6302;
+}
+
+.footer-copy-IRP {
+  text-align: center;
+  margin-top: 20px;
+  color: whitesmoke;
+  font-size: 13px;
+}
+
+
+@media (max-width: 900px) {
+  .header-section2-IRP .button-publish-offer-IRP {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-process-IRP {
+    flex-direction: column;
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .column-images-IRP {
+    margin-right: 0;
+  }
+  .image-bottom-IRP {
+    margin-left: 0;
+  }
+  .section-features-IRP {
+    gap: 20px;
+    padding: 0 10px;
+  }
+  .feature-card-IRP {
+    max-width: 100%;
+  }
+  .grid-stats-IRP {
+    flex-direction: column;
+  }
+  .stat-item-IRP {
+    min-width: 100%;
+  }
+  .footer-links-IRP {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+  .footer-column-IRP {
+    align-items: center;
+  }
+  .text-main-stats-IRP {
+    font-size: 28px;
+  }
+  .stat-number-IRP {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 500px) {
+  .header-section1-IRP, .header-section2-IRP {
+    padding: 10px;
+    gap: 10px;
+    flex-wrap: wrap;
+    height: auto;
+  }
+  .header-section2-IRP .button-publish-offer-IRP {
+    width: 100%;
+    margin-left: 0;
+  }
+  .section-promo-IRP {
+    height: auto;
+    padding: 15px;
+  }
+  .title-promo-IRP {
+    font-size: 32px;
+  }
+  .text-promo-IRP {
+    font-size: 18px;
+  }
+  .section-cta-middle-IRP {
+    height: auto;
+    padding: 15px;
+  }
+  .title-cta-middle-IRP {
+    font-size: 32px;
+  }
+  .text-cta-middle-IRP {
+    font-size: 20px;
+  }
+}

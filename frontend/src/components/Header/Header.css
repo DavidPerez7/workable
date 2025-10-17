@@ -1,0 +1,106 @@
+.header-container {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	padding: 0 40px;
+	height: 4.4em;
+	background-color:  #2541a0;
+	position: relative;
+	z-index: 1;
+}
+
+.logo-container {
+	display: flex;
+	max-width: auto;
+	height: 100%;
+	align-items: center;
+	transition: transform 0.5s;
+}
+.img-wkb {
+	width: 10em;
+}
+
+.menu-toggle {
+	display: none;
+	background: none;
+	border: none;
+	color: white;
+	font-size: 2rem;
+	cursor: pointer;
+	z-index: 2;
+}
+
+.nav-list {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 50px;
+}
+
+.nav-list.show {
+	flex-direction: column;
+}
+
+.nav-list a {
+	color: white;
+	text-decoration: none;
+	font-weight: 500;
+	transition: opacity 0.3s;
+}
+
+.nav-list a:hover {
+	opacity: 0.8;
+}
+
+.user-menu {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.user-menu.show {
+	flex-direction: column;
+}
+
+.ls-link {
+	display: inline-block;
+	border-radius: 35px;
+	border: 2px solid white;
+	padding: 0.3em 1.4em;
+	background-color: transparent;
+	color: white;
+	font-weight: bold;
+	transition: background-color 0.5s, transform 0.5s;
+}
+
+.ls-link:hover {
+	background-color: white;
+	color: #1f258b;
+	transform: scale(1.125);
+}
+
+@media (max-width: 900px) {
+	.menu-toggle {
+		display: block;
+		grid-column: 3;
+		justify-self: end;
+	}
+
+	.nav-list,
+	.user-menu {
+		display: none;
+		position: absolute;
+		top: 4.4em;
+		left: 0;
+		right: 0;
+		background-color: #0f17a3;
+		padding: 1em 0;
+		gap: 1em;
+		text-align: center;
+	}
+
+	.nav-list.show,
+	.user-menu.show {
+		display: flex;
+	}
+}

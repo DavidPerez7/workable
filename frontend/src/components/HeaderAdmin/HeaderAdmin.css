@@ -1,0 +1,130 @@
+.header-admin-HAD {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 0 40px;
+  height: 4.4em;
+  background-color: #2541a0;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-container-HAD {
+  display: flex;
+  max-width: auto;
+  height: 100%;
+  align-items: center;
+  transition: transform 0.5s;
+}
+
+.img-wkb-HAD {
+  width: 10em;
+}
+
+.img-wkb-HAD:hover {
+  animation: subtle-shake-HAD 0.4s ease;
+}
+
+.user-menu-HAD {
+  color: white;
+}
+
+@keyframes subtle-shake-HAD {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
+.menu-toggle-HAD {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 2;
+  grid-column: 3;
+  justify-self: end;
+}
+
+.nav-list-HAD {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-item-HAD {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.nav-item-HAD:hover,
+.nav-item-HAD.active-HAD {
+  color: #ff6302;
+}
+
+.user-menu-HAD {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username-HAD {
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.avatar-placeholder-HAD {
+  width: 35px;
+  height: 35px;
+  background-color: #ff6302;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  font-size: 1.2em;
+}
+
+@media (max-width: 900px) {
+  .header-admin-HAD {
+    padding: 0 20px;
+  }
+
+  .menu-toggle-HAD {
+    display: block;
+  }
+
+  .nav-list-HAD,
+  .user-menu-HAD {
+    display: none;
+    position: absolute;
+    top: 4.4em;
+    left: 0;
+    right: 0;
+    background-color: #0f17a3;
+    padding: 1em 0;
+    gap: 1em;
+    text-align: center;
+    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-list-HAD.show-HAD,
+  .user-menu-HAD.show-HAD {
+    display: flex;
+  }
+
+  .user-menu-HAD.show-HAD {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1em;
+    margin-top: 1em;
+  }
+}

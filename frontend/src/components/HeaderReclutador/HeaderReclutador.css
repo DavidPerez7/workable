@@ -1,0 +1,117 @@
+.header-container-rc {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 0 40px;
+  height: 4.4em;
+  background-color: #2541a0;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-container-rc {
+  display: flex;
+  max-width: auto;
+  height: 100%;
+  align-items: center;
+  transition: transform 0.5s;
+}
+
+.img-logo-wkb-rc {
+  width: 10em;
+}
+
+.menu-toggle-rc {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.nav-list-rc {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+}
+
+.nav-list-rc.show-rc {
+  flex-direction: column;
+}
+
+.nav-list-rc a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.nav-list-rc a:hover {
+  opacity: 0.8;
+}
+
+.user-profile-menu-rc {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-profile-menu-rc.show-rc {
+  flex-direction: column;
+  gap: 1em;
+}
+
+.user-info-rc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.username-text-rc {
+  font-weight: 500;
+  font-size: 1em;
+}
+
+.avatar-placeholder-rc {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #f7fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #2541a0;
+}
+
+@media (max-width: 900px) {
+  .menu-toggle-rc {
+    display: block;
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .nav-list-rc,
+  .user-profile-menu-rc {
+    display: none;
+    position: absolute;
+    top: 4.4em;
+    left: 0;
+    right: 0;
+    background-color: #2541a0;
+    padding: 1em 0;
+    gap: 1em;
+    text-align: center;
+  }
+
+  .nav-list-rc.show-rc,
+  .user-profile-menu-rc.show-rc {
+    display: flex;
+  }
+}

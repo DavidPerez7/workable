@@ -1,0 +1,143 @@
+.container-main-PB {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: auto;
+  background-color: #f7fafc;
+  color: #333333;
+}
+
+.title-page-PB {
+  text-align: center;
+  color: #1f1e1e;
+  font-size: 42px;
+  margin: 10px;
+}
+
+.section-card-PB {
+  background-color: #ffffff;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title-section-PB {
+  color: #333333;
+  margin-bottom: 1rem;
+}
+
+
+label {
+  display: block;
+  margin: 0.75rem 0 0.25rem;
+  font-weight: 500;
+  color: #222;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.group-checkbox-PB,
+.group-radio-PB {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.warning-box-PB {
+  background-color: #f9f9f9;
+  border-left: 6px solid #ff6302;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.fieldset-PB {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.legend-PB {
+  font-weight: bold;
+  color: #2541a0;
+}
+
+.text-info-PB {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.button-add-question-PB {
+  background-color: #ff6302;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-add-question-PB:hover {
+  background-color: #db5400;
+}
+
+.text-questions-title-PB {
+  margin-top: 1rem;
+  color: #333333;
+}
+
+.button-submit-PB {
+  background-color: #ff6302;
+  color: #ffffff;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-submit-PB:hover {
+  background-color: #db5400;
+}
+
+
+@media (max-width: 768px) {
+  .container-main-PB {
+    padding: 1rem;
+  }
+
+  .section-card-PB {
+    padding: 1rem;
+  }
+
+  .group-checkbox-PB,
+  .group-radio-PB {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .title-page-PB {
+    font-size: 32px;
+  }
+}

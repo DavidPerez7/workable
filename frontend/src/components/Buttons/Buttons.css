@@ -1,0 +1,56 @@
+.container-buttons {
+    position: relative;
+    display: flex;
+    background-color: none;
+    flex-direction: row;
+    gap: 10px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.container-buttons::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ddd;
+}
+
+.job-apply {
+    background-color: #2421b4;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 40px;
+    width: 110px;
+    height: 40px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.job-apply:hover {
+    background-color: #252da0;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.button-icon {
+    border: none;
+    padding: 8px;
+    width: 50px;
+    background-color:aliceblue;
+    border-radius: 50px;
+    height: 44px;
+    color: rgb(105, 119, 133);
+}
+
+.buttons :hover {
+    background-color: rgb(225, 237, 248);
+}
+

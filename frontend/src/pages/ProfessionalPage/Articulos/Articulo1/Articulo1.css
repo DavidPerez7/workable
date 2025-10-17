@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.HeaderBu {
+    display: flex;
+    align-items: row;
+    margin: 65px;
+    padding-top: 40px;
+    gap: 10px;
+}
+
+.Buttons {
+    background-color: #f9f9f9;
+    border: 2px solid rgba(128, 128, 128, 0.116);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 50px;
+}
+
+
+
+.Buttons a {
+    color: #333;
+    text-decoration: none;
+}
+
+.Buttons:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.Texto1 {
+    text-align: center;
+    line-height: 50px;
+    margin-top: 36px;
+    color: #044cab;
+}
+
+
+.Articulo {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.Img1 {
+    border-radius: 20px;
+}
+
+.Text {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 800px; 
+    margin: 0 auto; 
+}
+
+.Text h2 {
+    color: #333;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.Text p {
+    text-align: left; 
+    margin-bottom: 15px;
+}
+
+.Text h6{
+    font-size: 15px;
+}
+
+
+.Articulo2 {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.Text2 {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 800px; 
+    margin: 0 auto; 
+}
+
+
+.Text .Text2 p{
+    margin-top: 10px;
+}
+
+
+.ButtonsFooter {
+    border: 2px solid rgba(128, 128, 128, 0.116);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 50px;
+    margin: 40px;
+    background-color: #ff7b00;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+.ButtonsFooter a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+.ButtonsFooter:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

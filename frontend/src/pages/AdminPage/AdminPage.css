@@ -1,0 +1,231 @@
+.main-admin-AD {
+  background-color: #f7fafc;
+  min-height: calc(100vh - 60px);
+  padding: 40px 20px;
+}
+
+.main-content-admin-AD {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (min-width: 900px) {
+  .main-content-admin-AD {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.column-left-admin-AD,
+.column-right-admin-AD {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section-overview-AD,
+.section-actions-AD,
+.section-list-companies-AD,
+.section-list-offers-AD,
+.section-list-users-AD {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title-section-AD {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.overview-stats-AD {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  text-align: center;
+}
+
+.stat-item-AD {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-number-AD {
+  font-size: 2em;
+  color: #2541a0;
+  margin: 0 0 0.5rem 0;
+}
+
+.stat-label-AD {
+  font-size: 0.9em;
+  color: #555;
+  margin: 0;
+}
+
+.action-buttons-AD {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.button-action-AD {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #ff6302;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.button-action-AD:hover {
+  background-color: #df4e00;
+  transform: translateY(-1px);
+}
+
+.header-list-AD {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.button-add-AD {
+  background-color: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.button-add-AD:hover {
+  background-color: #218838;
+}
+
+.table-container-AD {
+  overflow-x: auto;
+}
+
+.data-table-AD {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.data-table-AD th,
+.data-table-AD td {
+  border: 1px solid #e2e8f0;
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.data-table-AD th {
+  background-color: #f0f2f5;
+  font-weight: 600;
+  color: #444;
+}
+
+.button-action-small-AD {
+  background-color: #2541a0;
+  color: white;
+  padding: 0.4em 0.8em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  margin-right: 0.5em;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.button-action-small-AD:hover {
+  background-color: #1f0d7d;
+}
+
+.button-delete-small-AD {
+  background-color: #dc3545;
+  color: white;
+  padding: 0.4em 0.8em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.button-delete-small-AD:hover {
+  background-color: #c82333;
+}
+
+.button-ban-small-AD {
+  background-color: #6c757d;
+  color: white;
+  padding: 0.4em 0.8em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  margin-left: 0.5em;
+  transition: background-color 0.3s ease;
+}
+
+.button-ban-small-AD:hover {
+  background-color: #5a6268;
+}
+
+.list-items-AD {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.list-item-AD {
+  background-color: #f8f9fa;
+  padding: 0.8rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95em;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .main-admin-AD {
+    padding: 20px 10px;
+  }
+  .main-content-admin-AD {
+    gap: 1rem;
+  }
+  .section-overview-AD,
+  .section-actions-AD,
+  .section-list-companies-AD,
+  .section-list-offers-AD,
+  .section-list-users-AD {
+    padding: 1rem;
+  }
+  .overview-stats-AD {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,61 @@
+.main-empresas {
+  text-align: center;
+  padding: 20px 0;
+  margin: 50px 0 80px;
+}
+
+.main-empresas h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.empresas-forms {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  width: 1380px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.form-section {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: white;
+  min-width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.empresa-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.empresa-list li {
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 19px;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.empresa-list li span {
+  font-size: 30px;
+  color: #0074d9;
+}
+

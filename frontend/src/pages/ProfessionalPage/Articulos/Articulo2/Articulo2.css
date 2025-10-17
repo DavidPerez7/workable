@@ -1,0 +1,105 @@
+body{
+    background-color: #f8fafc;
+}
+
+.HeaderBu {
+    display: flex;
+    align-items: row;
+    margin: 65px;
+    padding-top: 40px;
+    gap: 10px;
+}
+
+.Buttons {
+    background-color: #f8fafc;
+    border: 2px solid rgba(128, 128, 128, 0.116);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 50px;
+}
+
+.casa {
+    margin-right: 10px;
+    padding-top: 3px;
+    color: #20559b;
+}
+
+.flecha {
+    margin-right: 10px;
+    padding-top: 3px;
+    color: #20559b;
+}
+
+.Buttons a {
+    color: #333;
+    text-decoration: none;
+}
+
+.Buttons:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.Texto1 {
+    text-align: center;
+    line-height: 50px;
+    color: #044cab;
+}
+
+.Texto1 h2{
+    font-size: 25px;
+}
+
+
+.Articulo {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.Img1 {
+    border-radius: 20px;
+}
+
+.Text {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 800px; 
+    margin: 0 auto; 
+}
+
+.TextoTam1 p {
+    padding-top: 20px;
+    color: rgb(102, 102, 102);
+    font-size: 17px;
+}
+
+.Subtext1 p {
+    margin-left: 30px;
+    color: rgb(102, 102, 102);
+    font-size: 15px;
+}
+
+
+.ButtFooter {
+    border: 3px solid rgba(128, 128, 128, 0.116);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 50px;
+    width: 280px;
+    background-color: #ff7b00;
+    padding: 10px;
+    margin: 16px;
+}
+
+
+.ButtFooter a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+.ButtFooter:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+

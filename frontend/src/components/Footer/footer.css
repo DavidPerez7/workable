@@ -1,0 +1,27 @@
+.footer-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 2em;
+	background-color: #2541a0;
+	color: white;
+	padding: 2em;
+	text-align: center;
+}
+
+.footer-section h3 {
+	font-size: 1.2rem;
+	margin-bottom: 0.5em;
+	color: #ffffff;
+}
+
+.footer-section p {
+	font-size: 1rem;
+	margin: 0.3em 0;
+	color: #d0dfff;
+}
+
+@media (max-width: 600px) {
+	.footer-container {
+		grid-template-columns: 1fr;
+	}
+}
