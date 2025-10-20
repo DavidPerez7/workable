@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.workable_sb.workable.dto.AspiranteDto;
 import com.workable_sb.workable.dto.LoginDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
-import com.workable_sb.workable.models.Aspirante;
-import com.workable_sb.workable.repository.AspiranteRepository;
+import com.workable_sb.workable.dto.UsuarioDto;
+import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.GeneroRepository;
 import com.workable_sb.workable.repository.MunicipioRepository;
 import com.workable_sb.workable.repository.TipDocumentoRepository;
+import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
 
 import jakarta.validation.Valid;
@@ -26,10 +27,9 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    
 
     @Autowired
-    private AspiranteRepository aspiranteRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,38 +47,29 @@ public class AuthController {
     private GeneroRepository generoRepository;
 
 @PostMapping("/register")
-public ResponseEntity<?> register(@Valid @RequestBody AspiranteDto aspiranteDto) {
-    if (aspiranteRepository.findByCorreo(aspiranteDto.getCorr()).isPresent()) {
+public ResponseEntity<?> register(@Valid @RequestBody UsuarioDto usuarioDto) {
+    if (usuarioRepository.findByCorreo(usuarioDto.getCorreo()).isPresent()) {
         return ResponseEntity.badRequest().body("❌ El correo ya está registrado");
     }
 
-    Aspirante aspirante = new Aspirante();
-    aspirante.setNombre(aspiranteDto.getNom());
-    aspirante.setApellido(aspiranteDto.getApe());
-    aspirante.setCorreo(aspiranteDto.getCorr());
-    aspirante.setUbicacion(aspiranteDto.getUbi());
-    aspirante.setTelefono(aspiranteDto.getTel());
-    aspirante.setFecha_Nacimiento(aspiranteDto.getFeNa());
-    aspirante.setClave(passwordEncoder.encode(aspiranteDto.getCla()));
+    Usuario usuario = new Usuario();
+    usuario.setNombre(usuarioDto.getNombre());
+    usuario.setCorreo(usuarioDto.getCorreo());
+    usuario.setClave(passwordEncoder.encode(usuarioDto.getClave()));
 
-    aspirante.setTipDocumento(
-        tipDocumentoRepository.findById(aspiranteDto.getTipDoc_id())
-            .orElseThrow(() -> new RuntimeException("TipoDocumento no encontrado"))
-    );
-
-    aspirante.setMunicipio(
-        municipioRepository.findById(aspiranteDto.getMunici_id())
+    usuario.setMunicipio(
+        municipioRepository.findById(usuarioDto.getMunicipio_id())
             .orElseThrow(() -> new RuntimeException("Municipio no encontrado"))
     );
 
-    aspirante.setGenero(
-        generoRepository.findById(aspiranteDto.getGenero_id())
+    usuario.setGenero(
+        generoRepository.findById(usuarioDto.getGenero_id())
             .orElseThrow(() -> new RuntimeException("Género no encontrado"))
     );
 
-    aspirante.setNumero_Doc(aspiranteDto.getNumDoc());
+    usuario.setNumero_Doc(usuarioDto.getNumDoc());
 
-    aspiranteRepository.save(aspirante);
+    usuarioRepository.save(usuario);
 
     return ResponseEntity.ok("✅ Aspirante registrado con éxito");
 }

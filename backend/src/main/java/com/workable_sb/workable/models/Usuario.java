@@ -27,6 +27,17 @@ public class Usuario {
     @Column(nullable = false, length = 50)
     private String rol;
 
-    @Column(nullable = false)
-    private String fotoPerfil;
+    @Lob
+    private byte[] fotoPerfil;
+
+    @ManyToOne
+    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
+    private Municipio municipio;
+
+    @ManyToOne
+    @JoinColumn(name = "tipDocumento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_tipDocumento"))
+
+    public boolean isPresent() {
+        throw new UnsupportedOperationException("Unimplemented method 'isPresent'");
+    }
 }

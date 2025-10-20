@@ -10,10 +10,11 @@ public class UsuarioMapperImple implements UsuarioMapper {
     public UsuarioDto toDto(Usuario usuario) {
         if (usuario == null) return null;
         UsuarioDto dto = new UsuarioDto();
-        dto.setUsuarioId(usuario.getId());
         dto.setNombre(usuario.getNombre());
         dto.setCorreo(usuario.getCorreo());
+        dto.setClave(usuario.getClave());
         dto.setRol(usuario.getRol());
+        dto.setFotoPerfil(usuario.getFotoPerfil());
         return dto;
     }
 
@@ -21,10 +22,11 @@ public class UsuarioMapperImple implements UsuarioMapper {
     public Usuario toEntity(UsuarioDto usuarioDto) {
         if (usuarioDto == null) return null;
         Usuario usuario = new Usuario();
-        usuario.setId(usuarioDto.getUsuarioId());
+        usuario.setId(usuarioDto.getId());
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setCorreo(usuarioDto.getCorreo());
         usuario.setRol(usuarioDto.getRol());
+        usuario.setFotoPerfil(usuarioDto.getFotoPerfil());
         return usuario;
     }
 }
