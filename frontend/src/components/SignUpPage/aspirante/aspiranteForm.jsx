@@ -38,7 +38,7 @@ const AspiranteForm = () => {
     try {
       const aspiranteCreado = await crearAspirante(data);
       alert("Aspirante registrado con éxito");
-      navigate('/Aspirante'); 
+      navigate('/Login'); 
     } catch (error) {
       console.error("Error al crear aspirante:", error.message);
       alert("Error al registrarse: " + error.message);

@@ -32,3 +32,32 @@ export const crearAspirante = async (data) => {
   }
   return res.json();
 };
+
+
+// Actualizar aspirante existente
+export const updateAspirante = async (id, data) => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Error al actualizar aspirante: ${errText}`);
+  }
+  return res.json();
+};
+
+
+// Eliminar aspirante existente
+export const eliminarAspirante = async (id) => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Error al eliminar aspirante: ${errText}`);
+  }
+  return true;
+};

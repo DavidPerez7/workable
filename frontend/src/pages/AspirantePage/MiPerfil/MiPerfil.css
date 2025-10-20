@@ -1,13 +1,385 @@
-.main-perfil {
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-content {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    padding: 32px 28px;
+    min-width: 320px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+.form-group label {
+    font-size: 15px;
+    color: #2541a0;
+}
+.form-group input {
+    padding: 7px 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    font-size: 15px;
+}
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+.main-computrabajo-layout.centrado-grande {
+    justify-content: center;
+    align-items: flex-start;
+    gap: 48px;
+    padding: 48px 0;
+}
+.perfil-computrabajo-card.grande,
+.aplicaciones-computrabajo-card.grande,
+.panel-recomendaciones-card.grande {
+    min-width: 400px;
+    max-width: 520px;
+    font-size: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+    padding: 36px 38px;
+}
+.perfil-computrabajo-card.grande .perfil-computrabajo-header .profile-pic-computrabajo {
+    width: 90px;
+    height: 90px;
+}
+.panel-recomendaciones-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 24px 28px;
+    min-width: 320px;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: fit-content;
+}
+.panel-recomendaciones-card h3 {
+    font-size: 19px;
+    color: #2541a0;
+    margin-bottom: 10px;
+}
+.panel-recomendaciones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.recomendacion-item {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 16px;
+    color: #2541a0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.recomendacion-item strong {
+    font-size: 17px;
+    color: #2541a0;
+}
+.recomendacion-item span {
+    font-size: 14px;
+    color: #4a5568;
+}
+@media (max-width: 1024px) {
+    .main-computrabajo-layout.centrado-grande {
+        flex-direction: column;
+        gap: 24px;
+        padding: 24px 0;
+        align-items: center;
+    }
+    .perfil-computrabajo-card.grande,
+    .aplicaciones-computrabajo-card.grande,
+    .panel-recomendaciones-card.grande {
+        max-width: 100%;
+        min-width: 0;
+        padding: 24px 12px;
+    }
+}
+.main-computrabajo-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    padding: 32px;
+    background: #f7fafc;
+    min-height: 70vh;
+    justify-content: flex-start;
+}
+
+.perfil-computrabajo-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 28px 32px;
+    min-width: 340px;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.perfil-computrabajo-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.profile-pic-computrabajo {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #f7fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #cbd5e1;
+}
+.perfil-computrabajo-info h2 {
+    font-size: 22px;
+    margin: 0 0 4px 0;
+    color: #2541a0;
+}
+.perfil-computrabajo-info p {
+    font-size: 15px;
+    color: #4a5568;
+    margin: 0;
+}
+.perfil-computrabajo-body {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.perfil-computrabajo-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.perfil-computrabajo-personal {
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 15px;
+    color: #2d3748;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.perfil-computrabajo-personal h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #2541a0;
+}
+.aplicaciones-computrabajo-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 24px 28px;
+    min-width: 260px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: fit-content;
+}
+.aplicaciones-computrabajo-card h3 {
+    font-size: 17px;
+    color: #2541a0;
+    margin-bottom: 10px;
+}
+.aplicaciones-computrabajo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.aplicacion-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 15px;
+    color: #2541a0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.btn-perfil {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+.btn-perfil:hover {
+    background-color: #1e40af;
+}
+.btn-eliminar {
+    background-color: #e53e3e;
+    color: white;
+}
+.btn-eliminar:hover {
+    background-color: #c53030;
+}
+
+@media (max-width: 1024px) {
+    .main-computrabajo-layout {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+        align-items: stretch;
+    }
+    .perfil-computrabajo-card, .aplicaciones-computrabajo-card {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+
+.main-perfil-grid.perfil-compacta {
     background-color: #f7fafc;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: row;
-    gap: 20px;
-    padding: 25px;
+    gap: 32px;
+    padding: 32px;
     border-radius: 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+}
+
+.perfil-section.perfil-junta {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.box-left-perfil {
+    min-width: 340px;
+    max-width: 400px;
+}
+.box-right-perfil.box-right-compacta {
+    min-width: 280px;
+    max-width: 340px;
+}
+
+@media (max-width: 1024px) {
+    .main-perfil-grid.perfil-compacta {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+        align-items: stretch;
+    }
+    .perfil-section.perfil-junta {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    .box-left-perfil, .box-right-perfil.box-right-compacta {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+.perfil-section, .hojas-de-vida-section, .info-section {
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    min-width: 280px;
+}
+
+.hojas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.grilla-hojas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.hoja-card {
+    background: #f1f5fa;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hoja-card-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.btn-perfil {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+.btn-perfil:hover {
+    background-color: #1e40af;
+}
+.btn-eliminar {
+    background-color: #e53e3e;
+    color: white;
+}
+.btn-eliminar:hover {
+    background-color: #c53030;
+}
+
+@media (max-width: 1024px) {
+    .main-perfil-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 16px;
+    }
+    .grilla-hojas {
+        grid-template-columns: 1fr;
+    }
 }
 
 .left-section {
@@ -295,4 +667,34 @@
         align-items: flex-start;
         gap: 4px;
     }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.form-group input {
+  background: #f7fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 15px;
+  margin-top: 2px;
+}
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2541a0;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.form-edit-perfil {
+  margin-top: 8px;
 }

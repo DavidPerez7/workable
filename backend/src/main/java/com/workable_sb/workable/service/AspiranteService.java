@@ -13,4 +13,6 @@ public interface AspiranteService {
   List<AspiranteReadDto> listarAll();
   void eliminar(Integer id);
   Optional<AspiranteReadDto> login(LoginDto LoginDto);
+
+  AspiranteReadDto update(Integer id, AspiranteDto aspiranteDto);
 }
