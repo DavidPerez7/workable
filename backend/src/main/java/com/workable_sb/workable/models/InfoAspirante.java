@@ -20,14 +20,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "info_personal")
-public class InfoPersonal {
+@Table(name = "info_aspirante")
+public class InfoAspirante {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer infoPersonal_id;
-
-  @Column(nullable = false, length = 100)
-  private String ubicacion;
+  private Integer id;
 
   @Column(nullable = false)
   private Integer telefono;
@@ -35,14 +32,15 @@ public class InfoPersonal {
   @Column(nullable = false)
   private Date fechaNacimiento;
 
-  @Column(nullable = false)
-  private String fotoPerfil;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "municipio_id", referencedColumnName = "municipio_id", foreignKey = @ForeignKey(name = "FK_infoAspirante_Municipio"))
+  private Municipio municipio;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "genero_id", referencedColumnName = "genero_id", foreignKey = @ForeignKey(name = "FK_infoPersonal_Genero"))
   private Genero genero;
 
   @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "aspirante_id", referencedColumnName = "aspiranteId", foreignKey = @ForeignKey(name = "FK_infoPersonal_Aspirante"))
-  private Aspirante aspirante;
+  @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "FK_infoAspirante_Usuario"))
+  private Usuario usuario;
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer usuarioId;
+    private Integer id;
 
     @Column(nullable = false, length = 255)
     private String nombre;
@@ -26,4 +26,7 @@ public class Usuario {
 
     @Column(nullable = false, length = 50)
     private String rol;
+
+    @Column(nullable = false)
+    private String fotoPerfil;
 }

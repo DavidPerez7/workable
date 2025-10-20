@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.DatoExperienciaDto;
+import com.workable_sb.workable.dto.ExperienciaDto;
 import com.workable_sb.workable.service.DatoExperienciaService;
 
 import jakarta.validation.Valid;
@@ -30,20 +30,20 @@ public class DatoExperienciaController {
 
 
     @PostMapping
-    public ResponseEntity<DatoExperienciaDto> crearyupdate(@Valid @RequestBody DatoExperienciaDto datoExperienciaDto) {
-        DatoExperienciaDto datoExperienciaDto2 = datoExperienciaService.crearyupdate(datoExperienciaDto);
+    public ResponseEntity<ExperienciaDto> crearyupdate(@Valid @RequestBody ExperienciaDto datoExperienciaDto) {
+        ExperienciaDto datoExperienciaDto2 = datoExperienciaService.crearyupdate(datoExperienciaDto);
         return ResponseEntity.ok(datoExperienciaDto2);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DatoExperienciaDto> buscarPorId(@PathVariable Integer experiencia_id) {
-        DatoExperienciaDto datoExperienciaDto = datoExperienciaService.buscarPorId(experiencia_id);
+    public ResponseEntity<ExperienciaDto> buscarPorId(@PathVariable Integer experiencia_id) {
+        ExperienciaDto datoExperienciaDto = datoExperienciaService.buscarPorId(experiencia_id);
         return ResponseEntity.ok(datoExperienciaDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<DatoExperienciaDto>> listarTodos() {
-        List<DatoExperienciaDto> lista = datoExperienciaService.listarTodos();
+    public ResponseEntity<List<ExperienciaDto>> listarTodos() {
+        List<ExperienciaDto> lista = datoExperienciaService.listarTodos();
         return ResponseEntity.ok(lista);
     }
 

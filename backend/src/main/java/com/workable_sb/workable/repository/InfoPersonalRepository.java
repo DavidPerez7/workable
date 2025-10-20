@@ -2,8 +2,8 @@ package com.workable_sb.workable.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.workable_sb.workable.models.InfoPersonal;
+import com.workable_sb.workable.models.InfoAspirante;
 
-public interface InfoPersonalRepository extends JpaRepository<InfoPersonal, Integer> {
+public interface InfoPersonalRepository extends JpaRepository<InfoAspirante, Integer> {
 
 }

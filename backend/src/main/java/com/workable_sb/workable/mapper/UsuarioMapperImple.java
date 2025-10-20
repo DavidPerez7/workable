@@ -10,7 +10,7 @@ public class UsuarioMapperImple implements UsuarioMapper {
     public UsuarioDto toDto(Usuario usuario) {
         if (usuario == null) return null;
         UsuarioDto dto = new UsuarioDto();
-        dto.setUsuarioId(usuario.getUsuarioId());
+        dto.setUsuarioId(usuario.getId());
         dto.setNombre(usuario.getNombre());
         dto.setCorreo(usuario.getCorreo());
         dto.setRol(usuario.getRol());
@@ -21,7 +21,7 @@ public class UsuarioMapperImple implements UsuarioMapper {
     public Usuario toEntity(UsuarioDto usuarioDto) {
         if (usuarioDto == null) return null;
         Usuario usuario = new Usuario();
-        usuario.setUsuarioId(usuarioDto.getUsuarioId());
+        usuario.setId(usuarioDto.getUsuarioId());
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setCorreo(usuarioDto.getCorreo());
         usuario.setRol(usuarioDto.getRol());

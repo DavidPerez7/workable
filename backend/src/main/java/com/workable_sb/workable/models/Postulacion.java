@@ -27,17 +27,14 @@ public class Postulacion {
   private Date fecha;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "estado_id", nullable = false,
-  foreignKey = @jakarta.persistence.ForeignKey(name = "FK_estado_postulacion"))
+  @JoinColumn(name = "estado_id", nullable = false, foreignKey = @ForeignKey(name = "FK_estado_postulacion"))
   private Estado estado;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "oferta_id", nullable = false,
-  foreignKey = @jakarta.persistence.ForeignKey(name = "FK_oferta_postulacion"))
+  @JoinColumn(name = "oferta_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_postulacion"))
   private Oferta oferta;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "aspiranteId", referencedColumnName = "aspiranteId", nullable = false,
-  foreignKey = @ForeignKey(name = "FK_aspirante_postulacion"))
-  private Aspirante aspirante;
+  @JoinColumn(name = "aspirante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_postulacion"))
+  private Usuario usuario;
 }

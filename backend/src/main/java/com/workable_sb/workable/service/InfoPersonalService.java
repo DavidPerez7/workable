@@ -2,14 +2,14 @@ package com.workable_sb.workable.service;
 
 import java.util.List;
 
-import com.workable_sb.workable.dto.InfoPersonalDto;
+import com.workable_sb.workable.dto.InfoAspiranteDto;
 
 public interface InfoPersonalService {
-    InfoPersonalDto crearyupdate(InfoPersonalDto infoPersonalDto);
+    InfoAspiranteDto crearyupdate(InfoAspiranteDto infoPersonalDto);
 
-    List<InfoPersonalDto> listPersonal();
+    List<InfoAspiranteDto> listPersonal();
 
     void eliminarPersonal(Integer infoPersonal_id);
 
-    InfoPersonalDto buscarporId(Integer infoPersonal_id);
+    InfoAspiranteDto buscarporId(Integer infoPersonal_id);
 }

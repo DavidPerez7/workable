@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.workable_sb.workable.dto.InfoPersonalDto;
+import com.workable_sb.workable.dto.InfoAspiranteDto;
 import com.workable_sb.workable.mapper.InfoPersonalMapper;
-import com.workable_sb.workable.models.InfoPersonal;
+import com.workable_sb.workable.models.InfoAspirante;
 import com.workable_sb.workable.repository.InfoPersonalRepository;
 import com.workable_sb.workable.repository.InfoPersonalRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,14 +24,14 @@ public class InfoPersonalServiceImple implements InfoPersonalService {
     }
 
     @Override
-    public InfoPersonalDto crearyupdate(InfoPersonalDto infoPersonalDto) {
-        InfoPersonal infoPersonal = infoPersonalMapper.consult(infoPersonalDto);
-        InfoPersonal guardar = infoPersonalRepository.save(infoPersonal);
+    public InfoAspiranteDto crearyupdate(InfoAspiranteDto infoPersonalDto) {
+        InfoAspirante infoPersonal = infoPersonalMapper.consult(infoPersonalDto);
+        InfoAspirante guardar = infoPersonalRepository.save(infoPersonal);
         return infoPersonalMapper.consultDto(guardar);
     }
 
     @Override
-    public InfoPersonalDto buscarporId(Integer infoPersonal_id) {
+    public InfoAspiranteDto buscarporId(Integer infoPersonal_id) {
         return infoPersonalRepository.findById(infoPersonal_id)
         .map(infoPersonalMapper::consultDto)
         .orElseThrow(() -> new EntityNotFoundException("Empleado no encontrado"));
@@ -43,7 +43,7 @@ public class InfoPersonalServiceImple implements InfoPersonalService {
     }
 
     @Override
-    public List<InfoPersonalDto> listPersonal() {
+    public List<InfoAspiranteDto> listPersonal() {
         return infoPersonalRepository.findAll()
         .stream()
         .map(infoPersonalMapper::consultDto)

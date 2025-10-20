@@ -3,7 +3,6 @@ package com.workable_sb.workable.mapper;
 import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.NotificacionDto;
 import com.workable_sb.workable.models.Notificacion;
-import com.workable_sb.workable.models.Usuario;
 
 @Component
 public class NotificacionMapperImple implements NotificacionMapper {
@@ -16,7 +15,7 @@ public class NotificacionMapperImple implements NotificacionMapper {
         dto.setFecha(notificacion.getFecha());
         dto.setLeida(notificacion.getLeida());
         if (notificacion.getUsuario() != null) {
-            dto.setUsuarioId(notificacion.getUsuario().getUsuarioId());
+            dto.setUsuarioId(notificacion.getUsuario().getId());
         }
         return dto;
     }
@@ -29,7 +28,6 @@ public class NotificacionMapperImple implements NotificacionMapper {
         notificacion.setMensaje(notificacionDto.getMensaje());
         notificacion.setFecha(notificacionDto.getFecha());
         notificacion.setLeida(notificacionDto.getLeida());
-        // La relación con Usuario debe ser gestionada en el servicio
         return notificacion;
     }
 }

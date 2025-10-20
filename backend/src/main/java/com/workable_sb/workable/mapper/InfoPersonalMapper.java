@@ -1,9 +1,10 @@
 package com.workable_sb.workable.mapper;
 
-import com.workable_sb.workable.dto.InfoPersonalDto;
-import com.workable_sb.workable.models.InfoPersonal;
+import com.workable_sb.workable.dto.InfoAspiranteDto;
+import com.workable_sb.workable.models.InfoAspirante;
 
 public interface InfoPersonalMapper {
-    InfoPersonal consult(InfoPersonalDto infoPersonalDto);
-    InfoPersonalDto consultDto(InfoPersonal entity); 
+    InfoAspirante toEntity(InfoAspiranteDto dto);
+    InfoAspiranteDto toDto(InfoAspirante entity);
 }
+    

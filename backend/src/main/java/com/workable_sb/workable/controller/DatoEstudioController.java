@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.DatoEstudioDto;
+import com.workable_sb.workable.dto.EstudioDto;
 import com.workable_sb.workable.service.DatoEstudioService;
 
 import jakarta.validation.Valid;
@@ -30,20 +30,20 @@ public class DatoEstudioController {
 
 
     @PostMapping("/{id}")
-    public ResponseEntity<DatoEstudioDto> crearyupdate(@Valid @RequestBody DatoEstudioDto datoEstudioDto) {
-        DatoEstudioDto guardar = datoEstudioService.crearyupdate(datoEstudioDto);
+    public ResponseEntity<EstudioDto> crearyupdate(@Valid @RequestBody EstudioDto datoEstudioDto) {
+        EstudioDto guardar = datoEstudioService.crearyupdate(datoEstudioDto);
         return ResponseEntity.ok(guardar);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DatoEstudioDto> buscarPorId(@PathVariable Integer Est_id) {
-        DatoEstudioDto datoEstudioDto = datoEstudioService.buscarPorId(Est_id);
+    public ResponseEntity<EstudioDto> buscarPorId(@PathVariable Integer Est_id) {
+        EstudioDto datoEstudioDto = datoEstudioService.buscarPorId(Est_id);
         return ResponseEntity.ok(datoEstudioDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<DatoEstudioDto>> listarTodos() {
-        List<DatoEstudioDto> lista = datoEstudioService.listarTodos();
+    public ResponseEntity<List<EstudioDto>> listarTodos() {
+        List<EstudioDto> lista = datoEstudioService.listarTodos();
         return ResponseEntity.ok(lista);
     }
 

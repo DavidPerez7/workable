@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.InfoPersonalDto;
+import com.workable_sb.workable.dto.InfoAspiranteDto;
 
 import com.workable_sb.workable.service.InfoPersonalService;
 
@@ -29,20 +29,20 @@ public class InfoPersonalController {
     }
 
     @PostMapping
-    public ResponseEntity<InfoPersonalDto> crearyupdate(@Valid @RequestBody InfoPersonalDto infoPersonalDto) {
-        InfoPersonalDto infoPersonalDto2 = infoPersonalService.crearyupdate(infoPersonalDto);
+    public ResponseEntity<InfoAspiranteDto> crearyupdate(@Valid @RequestBody InfoAspiranteDto infoPersonalDto) {
+        InfoAspiranteDto infoPersonalDto2 = infoPersonalService.crearyupdate(infoPersonalDto);
         return ResponseEntity.ok(infoPersonalDto2);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<InfoPersonalDto> buscarporId(@PathVariable Integer infoPersonal_id) {
-        InfoPersonalDto infoPersonalDto =  infoPersonalService.buscarporId(infoPersonal_id);
+    public ResponseEntity<InfoAspiranteDto> buscarporId(@PathVariable Integer infoPersonal_id) {
+        InfoAspiranteDto infoPersonalDto =  infoPersonalService.buscarporId(infoPersonal_id);
         return ResponseEntity.ok(infoPersonalDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<InfoPersonalDto>> listPersonal() {
-        List<InfoPersonalDto> infoPersonalDtos = infoPersonalService.listPersonal();
+    public ResponseEntity<List<InfoAspiranteDto>> listPersonal() {
+        List<InfoAspiranteDto> infoPersonalDtos = infoPersonalService.listPersonal();
         return ResponseEntity.ok(infoPersonalDtos);
     }
 

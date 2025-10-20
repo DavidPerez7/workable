@@ -6,10 +6,10 @@ import com.workable_sb.workable.dto.PostulacionDto;
 import com.workable_sb.workable.models.Estado;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Postulacion;
-import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.EstadoRepository;
 import com.workable_sb.workable.repository.OfertaRepository;
-import com.workable_sb.workable.repository.AspiranteRepository;
+import com.workable_sb.workable.repository.UsuarioRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -18,16 +18,16 @@ public class PostulacionMapperImple implements PostulacionMapper{
 
   private final EstadoRepository estadoRepository;
   private final OfertaRepository ofertaRepository;
-  private final AspiranteRepository aspiranteRepository;
+  private final UsuarioRepository usuarioRepository;
 
-  public PostulacionMapperImple(EstadoRepository estadoRepository, OfertaRepository ofertaRepository, AspiranteRepository aspiranteRepository){
+  public PostulacionMapperImple(EstadoRepository estadoRepository, OfertaRepository ofertaRepository, UsuarioRepository usuarioRepository){
     this.estadoRepository = estadoRepository;
     this.ofertaRepository = ofertaRepository;
-    this.aspiranteRepository = aspiranteRepository;
+    this.usuarioRepository = usuarioRepository;
   }
 
   @Override
-  public Postulacion consult(PostulacionDto postulacionDto){
+  public Postulacion toEntity(PostulacionDto postulacionDto){
 
     Postulacion postulacion = new Postulacion();
     postulacion.setPostuacion_id(postulacionDto.getId());
@@ -41,16 +41,16 @@ public class PostulacionMapperImple implements PostulacionMapper{
     .orElseThrow(() -> new EntityNotFoundException("Oferta no encontrada"));
     postulacion.setOferta(oferta);
 
-    Aspirante aspirante = aspiranteRepository.findById(postulacionDto.getAspirante_id())
-    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-    postulacion.setAspirante(aspirante);
+  Usuario usuario = usuarioRepository.findById(postulacionDto.getAspirante_id())
+  .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+  postulacion.setUsuario(usuario);
 
     return postulacion;
 
     }
 
   @Override
-  public PostulacionDto consultDto(Postulacion entity){
+  public PostulacionDto toDto(Postulacion entity){
     return new PostulacionDto(
     entity.getPostuacion_id(),
     entity.getFecha(),
@@ -58,8 +58,8 @@ public class PostulacionMapperImple implements PostulacionMapper{
     entity.getEstado().getNombre(),
     entity.getOferta().getOferta_id(),
     entity.getOferta().getTitulo(),
-    entity.getAspirante().getAspiranteId(),
-    entity.getAspirante().getNombre()
+  entity.getUsuario().getId(),
+  entity.getUsuario().getNombre()
     );
   }
 

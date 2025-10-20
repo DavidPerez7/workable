@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DatoEstudioDto {
-  private Integer Est_id;
+public class EstudioDto {
+  private Integer id;
 
   @NotNull
   private String nom;

@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.ForeignKey;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,10 +35,10 @@ public class Valoracion {
 	private LocalDate fecha_valoracion;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "empresa_id",nullable = false, foreignKey = @jakarta.persistence.ForeignKey(name = "FK_empresa_valoracion"))
+	@JoinColumn(name = "empresa_id",nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_valoracion"))
 	private Empresa empresa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aspiranteId", nullable = false, foreignKey = @jakarta.persistence.ForeignKey(name = "FK_aspirante_valoracion"))
-	private Aspirante aspirante;
+	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_valoracion"))
+	private Usuario usuario;
 }

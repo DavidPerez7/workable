@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DatoExperienciaDto {
-  private Integer exp_id;
+public class ExperienciaDto {
+  private Integer id;
 
   @NotNull
   private String carg;

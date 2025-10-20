@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.ValoracionDto;
 import com.workable_sb.workable.dto.ValoracionReadDto;
 import com.workable_sb.workable.models.Empresa;
-import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.models.Valoracion;
 import com.workable_sb.workable.repository.EmpresaRepository;
-import com.workable_sb.workable.repository.AspiranteRepository;
+import com.workable_sb.workable.repository.UsuarioRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -16,11 +16,11 @@ import jakarta.persistence.EntityNotFoundException;
 public class ValoracionMapperImple implements ValoracionMapper {
 
   private final EmpresaRepository empresaRepository;
-  private final AspiranteRepository aspiranteRepository;
+  private final UsuarioRepository usuarioRepository;
 
-  public ValoracionMapperImple(EmpresaRepository empresaRepository, AspiranteRepository aspiranteRepository){
+  public ValoracionMapperImple(EmpresaRepository empresaRepository, UsuarioRepository usuarioRepository){
     this.empresaRepository = empresaRepository;
-    this.aspiranteRepository = aspiranteRepository;
+    this.usuarioRepository = usuarioRepository;
   }
 
   @Override
@@ -35,9 +35,9 @@ public class ValoracionMapperImple implements ValoracionMapper {
     .orElseThrow(() -> new EntityNotFoundException("Empresa no encontrada"));
     entity.setEmpresa(empresa);
 
-    Aspirante aspirante = aspiranteRepository.findById(valoracionDto.getAspirante_id())
-    .orElseThrow(() -> new EntityNotFoundException("Aspirante no encontrado"));
-    entity.setAspirante(aspirante);
+  Usuario usuario = usuarioRepository.findById(valoracionDto.getAspirante_id())
+  .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+  entity.setUsuario(usuario);
 
     return entity;
   }
@@ -51,8 +51,8 @@ public class ValoracionMapperImple implements ValoracionMapper {
     entity.getFecha_valoracion(),
     entity.getEmpresa().getNitId(),
     entity.getEmpresa().getNombre(),
-    entity.getAspirante().getAspiranteId(),
-    entity.getAspirante().getNombre()
+  entity.getUsuario().getId(),
+  entity.getUsuario().getNombre()
     );
   }
 }

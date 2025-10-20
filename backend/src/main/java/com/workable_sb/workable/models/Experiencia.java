@@ -20,10 +20,10 @@ import jakarta.persistence.GenerationType;
 @Entity
 @Data
 @Table(name = "dato_experiencia")
-public class DatoExperiencia {
+public class Experiencia {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer experiencia_id;
+  private Integer id;
 
   @Column(nullable = false, length = 255)
   private String cargo;
@@ -40,7 +40,7 @@ public class DatoExperiencia {
   @Column(nullable = false, length = 255)
   private String ubicacion;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "aspirante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExpreiencia_Usuario"))
-  private Aspirante aspirante;
+  @ManyToOne
+  @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExperiencia_aspirante"))
+  private Usuario usuario;
 }

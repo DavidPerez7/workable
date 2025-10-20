@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @Table(name = "dato_estudio")
-public class DatoEstudio {
+public class Estudio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer estudio_id;
@@ -44,6 +44,6 @@ public class DatoEstudio {
     private NivelEducativo nivelEducativo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "aspirante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoEstudio_aspirante"))
-    private Aspirante aspirante;
+    @JoinColumn (name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoEstudio_usuario"))
+    private Usuario usuario;
 }

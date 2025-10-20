@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.workable_sb.workable.dto.DatoExperienciaDto;
-import com.workable_sb.workable.mapper.DatoExperienciaMapper;
-import com.workable_sb.workable.models.DatoExperiencia;
+import com.workable_sb.workable.dto.ExperienciaDto;
+import com.workable_sb.workable.mapper.ExperienciaMapper;
+import com.workable_sb.workable.models.Experiencia;
 import com.workable_sb.workable.repository.DatoExperienciaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -16,30 +16,30 @@ import jakarta.persistence.EntityNotFoundException;
 public class DatoExperienciaServiceImple implements DatoExperienciaService {
 
     private final DatoExperienciaRepository datoExperienciaRepository;
-    private final DatoExperienciaMapper datoExperienciaMapper;
+    private final ExperienciaMapper datoExperienciaMapper;
 
-    public DatoExperienciaServiceImple(DatoExperienciaRepository datoExperienciaRepository, DatoExperienciaMapper datoExperienciaMapper) {
+    public DatoExperienciaServiceImple(DatoExperienciaRepository datoExperienciaRepository, ExperienciaMapper datoExperienciaMapper) {
         this.datoExperienciaRepository = datoExperienciaRepository;
         this.datoExperienciaMapper = datoExperienciaMapper;
     }
 
     @Override
-    public DatoExperienciaDto crearyupdate (DatoExperienciaDto datoExperienciaDto) {
-        DatoExperiencia datoExperiencia = datoExperienciaMapper.consult(datoExperienciaDto);
-        DatoExperiencia datoExperienciaGuardado = datoExperienciaRepository.save(datoExperiencia);
+    public ExperienciaDto crearyupdate (ExperienciaDto datoExperienciaDto) {
+        Experiencia datoExperiencia = datoExperienciaMapper.consult(datoExperienciaDto);
+        Experiencia datoExperienciaGuardado = datoExperienciaRepository.save(datoExperiencia);
         return datoExperienciaMapper.consultDto(datoExperienciaGuardado);
 
     }
 
     @Override
-    public DatoExperienciaDto buscarPorId(Integer experiencia_id) {
+    public ExperienciaDto buscarPorId(Integer experiencia_id) {
         return datoExperienciaRepository.findById(experiencia_id)
                 .map(datoExperienciaMapper::consultDto)
                 .orElseThrow(() -> new EntityNotFoundException("Experiencia no encontrada"));
     }
 
     @Override
-    public List<DatoExperienciaDto> listarTodos() {
+    public List<ExperienciaDto> listarTodos() {
         return datoExperienciaRepository.findAll()
                 .stream()
                 .map(datoExperienciaMapper::consultDto)
