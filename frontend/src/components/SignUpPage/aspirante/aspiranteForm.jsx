@@ -46,105 +46,126 @@ const AspiranteForm = () => {
   };
 
   return (
-    <div className="aspirante-form-container">
-      <form className="form-signup" onSubmit={handleSubmit} ref={formRef}>
-        <h2 className="form-title">Registro de Aspirante</h2>
-        <label>Nombre</label>
-        <input
-          type='text'
-          name='nom'
-          required
-          className='input-signup'
-          pattern="[A-Za-zÀ-ÿ\s]+"
-          title="Solo se permiten letras y espacios"
-        />
-        <label>Apellido</label>
-        <input
-          type='text'
-          name='ape'
-          required
-          className='input-signup'
-          pattern="[A-Za-zÀ-ÿ\s]+"
-          title="Solo se permiten letras y espacios"
-        />
-        <label>Correo electrónico</label>
-        <input
-          type='email'
-          name='corr'
-          required
-          className='input-signup'
-        />
-        <label>Ubicación</label>
-        <input
-          type='text'
-          name='ubi'
-          required
-          className='input-signup'
-        />
-        <label>Número de Teléfono</label>
-        <input
-          type='tel'
-          name='tel'
-          required
-          className='input-signup'
-        />
-        <label>Fecha de Nacimiento</label>
-        <input
-          type='date'
-          name='feNa'
-          required
-          className='input-signup'
-        />
-        <label>Contraseña</label>
-        <input
-          type='password'
-          name='cla'
-          required
-          className='input-signup'
-        />
-        <label>Género</label>
-        <select
-          name='genero_id'
-          required
-          className='input-signup'
-        >
-          <option value=''>Selecciona tu género</option>
-          <option value='1'>Masculino</option>
-          <option value='2'>Femenino</option>
-        </select>
-        <label>Tipo de Documento</label>
-        <select
-          name='tipDoc_id'
-          required
-          className='input-signup'
-        >
-          <option value=''>Tipo de Documento</option>
-          <option value='1'>CC</option>
-          <option value='2'>TI</option>
-        </select>
-        <label>Número de Documento</label>
-        <input
-          type="number"
-          name="numDoc"
-          required
-          className="input-signup"
-          min="0"
-          step="1"
-        />
-        <label>Ciudad</label>
-        <select
-          name='munici_id'
-          required
-          className='input-signup'
-        >
-          <option value=''>Ciudad</option>
-          <option value='1'>Cali</option>
-          <option value='2'>Medellín</option>
-          <option value='3'>Bogotá</option>
-          <option value='4'>Barranquilla</option>
-          <option value='5'>Cartagena</option>
-        </select>
-        <button type='submit' className='button-submit'>
+    <div className="form-aspirante">
+      <form className="form" onSubmit={handleSubmit} ref={formRef}>
+        <div className='div_nombre'>
+          <label>Nombre</label>
+          <input
+            type='text'
+            name='nom'
+            required
+            className='input'
+            pattern="[A-Za-zÀ-ÿ\s]+"
+            title="Solo se permiten letras y espacios"
+          />
+        </div>
+        <div className='div_apellido'>
+          <label>Apellido</label>
+          <input
+            type='text'
+            name='ape'
+            required
+            className='input'
+            pattern="[A-Za-zÀ-ÿ\s]+"
+            title="Solo se permiten letras y espacios"
+          />
+        </div>
+        <div className='div_correo'>
+          <label>Correo electrónico</label>
+          <input
+            type='email'
+            name='corr'
+            required
+            className='input'
+          />
+        </div>
+        <div className='div_ubicacion'>
+          <label>Ubicación</label>
+            <input
+            type='text'
+            name='ubi'
+            required
+            className='input'
+          />
+        </div>
+        <div className='div_numero'>
+          <label>Número de Teléfono</label>
+          <input
+            type='tel'
+            name='tel'
+            required
+            className='input'
+          />
+        </div>
+        <div className='div_fecha'>
+          <label>Fecha de Nacimiento</label>
+          <input
+            type='date'
+            name='feNa'
+            required
+            className='input'
+          />
+        </div>
+        <div className='div_contraseña'>
+          <label>Contraseña</label>
+          <input
+            type='password'
+            name='cla'
+            required
+            className='input'
+          />
+        </div>
+        <div className='div_genero'>
+          <label>Género</label>
+          <select
+            name='genero_id'
+            required
+            className='input'
+          >
+            <option value=''>Selecciona tu género</option>
+            <option value='1'>Masculino</option>
+            <option value='2'>Femenino</option>
+          </select>
+        </div>
+        <div className='div_tipoDoc'>
+          <label>Tipo de Documento</label>
+          <select
+            name='tipDoc_id'
+            required
+            className='input'
+          >
+            <option value=''>Tipo de Documento</option>
+            <option value='1'>CC</option>
+            <option value='2'>TI</option>
+          </select>
+        </div> 
+        <div className='div_numeroDoc'>
+          <label>Número de Documento</label>
+          <input
+            type="number"
+            name="numDoc"
+            required
+            className="input"
+            min="0"
+            step="1"
+          />
+        </div>
+        <div className='div_ciudad'>
+          <label>Ciudad</label>
+          <select
+            name='munici_id'
+            required
+            className='input'
+          >
+            <option value=''>Ciudad</option>
+            <option value='1'>Cali</option>
+            <option value='2'>Medellín</option>
+            <option value='3'>Bogotá</option>
+            <option value='4'>Barranquilla</option>
+            <option value='5'>Cartagena</option>
+          </select>
+        </div>
+        <button type='submit' className='btn'>
           Crear Cuenta Aspirante
         </button>
       </form>
