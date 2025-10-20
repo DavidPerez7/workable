@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-WorkableApplication<workable>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.workable_sb.workable.WorkableApplication",
+            "projectName": "workable",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -15,8 +15,7 @@ import ProfileEditPage from './pages/ReclutadorPage/ProfileEditPage/ProfileEditP
 import PublicacionPage from './pages/ReclutadorPage/PublicacionPage/PublicacionPage';
 import AspirantePage from './pages/AspirantePage/AspirantePage';
 import InfoRecPage from './pages/ReclutadorPage/InfoReclutadorPage/InfoRecPage';
-import MiPerfil from './pages/AspirantePage/MiPerfil/MiPerfil';
-import GestigOfertsPage from './pages/ReclutadorPage/GestigOfertsPage/GestigOferts';		
+import MiPerfil from './pages/AspirantePage/MiPerfil/MiPerfil';	
 import AdminPage from './pages/AdminPage/AdminPage';
 import AdminAccountsPage from './pages/AdminPage/AdminAccountPage/AdminAccountPage';
 import CompaniesPage from './pages/AdminPage/CompaniesPage/CompaniesPage';
@@ -26,6 +25,8 @@ import ReportPage from './pages/AdminPage/ReportPage/ReportPage';
 import UsersManagePage from './pages/AdminPage/UsersManagePage/UsersManagePage';
 import Empresas from './pages/MainPage/Empresas/Empresas';
 import KFCPage from './pages/MainPage/Empresas/KFC/KFCPage';
+import EditarOfertaPage from './pages/ReclutadorPage/EditarOfertaPage/EditarOfertaPage';
+import GestionarOfertasPage from './pages/ReclutadorPage/GestionarOfertasPage/GestionarOfertasPage';
 
 function App() {
 	return (
@@ -46,9 +47,10 @@ function App() {
 				<Route path="/Reclutador/Configuracion" element={<ConfigPage />} />
 				<Route path="/Reclutador/EditarPerfil" element={<ProfileEditPage />} />
         <Route path='/Aspirante' element={<AspirantePage />} />
+				<Route path="/Reclutador/EditarOferta" element={<EditarOfertaPage />} />
 				<Route path='/Aspirante/MiPerfil' element={<MiPerfil />} />
 				<Route path="/Reclutador/Publicacion" element={<PublicacionPage />} />
-				<Route path="/Reclutador/GestigOferts" element={<GestigOfertsPage />} />
+				<Route path="/Reclutador/GestionarOfertas" element={<GestionarOfertasPage />} />
 
 				<Route path="/Administrador/CuentasInternas" element={<AdminAccountsPage />} />
 				<Route path="/Administrador/Empresas" element={<CompaniesPage />} />
