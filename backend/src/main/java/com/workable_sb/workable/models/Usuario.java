@@ -34,9 +34,6 @@ public class Usuario {
     @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 
-    @ManyToOne
-    @JoinColumn(name = "tipDocumento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_tipDocumento"))
-
     public boolean isPresent() {
         throw new UnsupportedOperationException("Unimplemented method 'isPresent'");
     }

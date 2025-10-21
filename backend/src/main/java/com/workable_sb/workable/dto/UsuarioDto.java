@@ -14,10 +14,11 @@ public class UsuarioDto {
     private String clave;
     @NotNull
     private String rol;
+
     private byte[] fotoPerfil;
 
     @NotNull(message = "El id de municipio es obligatorio")
     private Integer municipio_id;
-
+    private String municipio_nom;
     
 }

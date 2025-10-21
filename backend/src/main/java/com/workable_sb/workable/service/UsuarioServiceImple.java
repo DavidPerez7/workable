@@ -15,29 +15,33 @@ public class UsuarioServiceImple implements UsuarioService {
     @Autowired
     private com.workable_sb.workable.repository.UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @Override
-    public UsuarioDto crearUsuario(UsuarioDto usuarioDto) {
-        Usuario usuario = usuarioMapper.toEntity(usuarioDto);
-        Usuario guardado = usuarioRepository.save(usuario);
-        return usuarioMapper.toDto(guardado);
+    public UsuarioDto create(UsuarioDto usuarioDto) {
+    Usuario usuario = usuarioMapper.toEntity(usuarioDto);
+    usuario.setClave(passwordEncoder.encode(usuario.getClave()));
+    Usuario guardado = usuarioRepository.save(usuario);
+    return usuarioMapper.toDto(guardado);
     }
 
     @Override
-    public UsuarioDto obtenerUsuarioPorId(Integer id) {
+    public UsuarioDto findById(Integer id) {
         return usuarioRepository.findById(id)
             .map(usuarioMapper::toDto)
             .orElse(null);
     }
 
     @Override
-    public List<UsuarioDto> listarUsuarios() {
+    public List<UsuarioDto> findAll() {
         return usuarioRepository.findAll().stream()
             .map(usuarioMapper::toDto)
             .collect(Collectors.toList());
     }
 
     @Override
-    public UsuarioDto actualizarUsuario(Integer id, UsuarioDto usuarioDto) {
+    public UsuarioDto update(Integer id, UsuarioDto usuarioDto) {
         return usuarioRepository.findById(id)
             .map(usuario -> {
                 usuario.setNombre(usuarioDto.getNombre());
@@ -50,7 +54,7 @@ public class UsuarioServiceImple implements UsuarioService {
     }
 
     @Override
-    public void eliminarUsuario(Integer id) {
+    public void delete(Integer id) {
         usuarioRepository.deleteById(id);
     }
 }

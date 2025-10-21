@@ -25,15 +25,15 @@ public class PostulacionServiceImple implements PostulacionService{
 
   @Override
   public PostulacionDto crear(PostulacionDto postulacionDto){
-    Postulacion postulacion = postulacionMapper.consult(postulacionDto);
+    Postulacion postulacion = postulacionMapper.toEntity(postulacionDto);
     Postulacion creacion = postulacionRepository.save(postulacion);
-    return postulacionMapper.consultDto(creacion);
+    return postulacionMapper.toDto(creacion);
   }
 
   @Override
   public PostulacionDto listId(Integer id){
   return postulacionRepository.findById(id)
-  .map(postulacionMapper::consultDto)
+  .map(postulacionMapper::toDto)
   .orElseThrow(() -> new EntityNotFoundException("Postulacion no encontrada"));
   }
 
@@ -41,7 +41,7 @@ public class PostulacionServiceImple implements PostulacionService{
   public List<PostulacionDto> listarAll(){
     return postulacionRepository.findAll()
     .stream()
-    .map(postulacionMapper:: consultDto)
+    .map(postulacionMapper::toDto)
     .collect(Collectors.toList());
   }
 
