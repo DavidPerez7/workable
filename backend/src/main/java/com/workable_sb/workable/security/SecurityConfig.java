@@ -28,6 +28,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -36,6 +37,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/aspirante").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
+                // Permitir solo ASPIRANTE para postularse
+                .requestMatchers(HttpMethod.POST, "/api/postulacion").hasRole("ASPIRANTE")
                 // Ejemplo: solo ADMINISTRADOR puede acceder a /api/administradores
                 .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
                 // Ejemplo: solo ASPIRANTE puede acceder a /api/hojasdevida

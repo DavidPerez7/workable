@@ -1,3 +1,17 @@
+.perfil-computrabajo-ancho {
+    min-width: 480px !important;
+    max-width: 600px !important;
+    padding-left: 48px !important;
+    padding-right: 48px !important;
+}
+
+.panel-recomendaciones-aplicaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-width: 320px;
+    max-width: 520px;
+}
 .modal-overlay {
     position: fixed;
     top: 0;

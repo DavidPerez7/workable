@@ -1,16 +1,44 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { crearPostulacion } from '../../api/postulacionAPI';
 import './AspirantePage.css';
-import HeaderAspirant from '../../components/HeaderAspirant/HeaderAspirant'
-import Buttons  from '../../components/Buttons/Buttons';
+import HeaderAspirant from '../../components/HeaderAspirant/HeaderAspirant';
+import Buttons from '../../components/Buttons/Buttons';
 import Dropdown from '../../components/Dropdown/Dropdown';
-
-
 
 const AspirantePage = () => {
   const location = useLocation();
   const [selectedJob, setSelectedJob] = useState(null);
 
+  // Función para aplicar a una oferta
+  const handleAplicarOferta = async (oferta) => {
+    const idAspirante = localStorage.getItem('idAspirante');
+    console.log('Intentando postularse a la oferta:', oferta, 'con idAspirante:', idAspirante);
+    if (!idAspirante) {
+      alert('Debes iniciar sesión para postularte.');
+      return;
+    }
+    try {
+      const postulacion = {
+        fech: new Date().toISOString(),
+        estado_Id: 1, // Estado inicial: Aplicado
+        oferta_Id: oferta.id,
+        aspirante_id: Number(idAspirante)
+      };
+      console.log('Enviando postulacion:', postulacion);
+      const respuesta = await crearPostulacion(postulacion);
+      console.log('Respuesta del backend:', respuesta);
+      alert('¡Te has postulado exitosamente a la oferta!');
+    } catch (err) {
+      console.error('Error al postularse:', err);
+      if (err.response && err.response.data && err.response.data.message) {
+        alert('Error: ' + err.response.data.message);
+      } else {
+        alert('Error al postularte. Es posible que ya estés postulado o hubo un problema.');
+      }
+    }
+  };
+  // ...existing code...
   const allJobListings = [
     { id: 1, name: 'Desarrollador Frontend', location: 'Medellín, Antioquia', timePosted: 'Hace 11 minutos', timepostuled: 'Termina el 28-08-2025', modalidad: 'Presencial', contrato: 'Término Fijo', empresa: "Empresa: Nexabyte Solutions", description: "Estamos en la búsqueda de un desarrollador frontend con experiencia en React, CSS, JavaScript y HTML. La persona ideal debe ser capaz de construir interfaces modernas, dinámicas y responsivas, trabajar en equipo con diseñadores y backend, y aportar ideas que mejoren la experiencia del usuario. Valoramos la atención al detalle, la creatividad y la capacidad de transformar requerimientos en soluciones funcionales y atractivas.s", salary: "2.500.000", fulltime: "Tiempo Completo"},
     { id: 2, name: 'Analista de Datos', location: 'Bogotá, Cundinamarca', timePosted: 'Hace 1 hora', timepostuled: 'Termina el 18-09-2025', modalidad: 'Remota', contrato: 'Término Indefinido', empresa: "Empresa: Codexia Tech Labs", description: "Experto en SQL, Python y Power BI, manejo de grandes volúmenes de datos." },
@@ -96,15 +124,23 @@ const AspirantePage = () => {
             {selectedJob ? (
               <div className="div-job-detail-content">
                 <h2 className="h2-job-detail-title">{selectedJob.name}</h2>
-                <p className="p-job-detail-empresa"> <p>{selectedJob.empresa}</p></p>
-                <p className="p-job-detail-location">{selectedJob.location}</p>
+                <p className="p-job-detail-empresa"><b>Empresa:</b> {selectedJob.empresa}</p>
+                <p className="p-job-detail-location"><b>Ubicación:</b> {selectedJob.location}</p>
+                <p className="p-job-detail-salary"><b>Salario:</b> {selectedJob.salary ? selectedJob.salary + ' COP (Mensual)' : 'A convenir'}</p>
+                <p className="p-job-detail-contrato"><b>Tipo de contrato:</b> {selectedJob.contrato}</p>
+                <p className="p-job-detail-fulltime"><b>Jornada:</b> {selectedJob.fulltime || selectedJob.modalidad}</p>
+                <p className="p-job-detail-postuled"><b>Postúlate hasta:</b> {selectedJob.timepostuled}</p>
+                <p className="p-job-detail-publicado"><b>Publicado:</b> {selectedJob.timePosted}</p>
+                <hr style={{margin: '10px 0'}} />
+                <p className="p-job-detail-description"><b>Descripción del puesto:</b><br/>{selectedJob.description}</p>
+                <p className="p-job-detail-requisitos"><b>Requisitos:</b><br/>- Experiencia mínima de 1 año en el área.<br/>- Conocimientos en tecnologías relacionadas.<br/>- Capacidad de trabajo en equipo.<br/>- Proactividad y responsabilidad.</p>
+                <p className="p-job-detail-beneficios"><b>Beneficios:</b><br/>- Contrato estable.<br/>- Oportunidad de crecimiento.<br/>- Ambiente laboral agradable.<br/>- Prestaciones de ley.</p>
+                <p className="p-job-detail-responsabilidades"><b>Responsabilidades:</b><br/>- Cumplir con los objetivos del área.<br/>- Reportar avances al líder de proyecto.<br/>- Participar en reuniones de equipo.<br/>- Mantener buenas prácticas de desarrollo.</p>
+                <p className="p-job-detail-contacto"><b>Contacto:</b> talento@empresa.com</p>
+                <button className="btn-aplicar-oferta" onClick={() => handleAplicarOferta(selectedJob)}>
+                  Aplicar a esta oferta
+                </button>
                 <Buttons></Buttons>
-                <p className="p-job-detail-salary">{selectedJob.salary} (Mensual)</p>
-                <p className="p-job-detail-contrato">Contrato: {selectedJob.contrato}</p>
-                <p className="p-job-detail-fulltime">{selectedJob.fulltime}</p>
-                <p className="p-job-detail-description">
-                  {selectedJob.description}
-                </p>
               </div>
             ) : (
               <div className="div-no-selection-message">
