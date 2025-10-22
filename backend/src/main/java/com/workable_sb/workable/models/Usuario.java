@@ -24,7 +24,7 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String clave;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String rol;
 
     @Lob

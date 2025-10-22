@@ -9,13 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResponseDto {
     private String token;
-    private Integer id;
-    private String nombre;
-    private String apellido;
-    private String correo;
-    private String ubicacion;
-    private Long telefono;
-    private String nombreTipDoc;
-    private String nombreMunicipio;
-    private String nombreGenero;
+    private String rol;
 }

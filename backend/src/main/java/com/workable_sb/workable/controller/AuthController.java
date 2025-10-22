@@ -10,13 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.LoginDto;
+import com.workable_sb.workable.dto.LoginRequestDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
 import com.workable_sb.workable.dto.UsuarioDto;
 import com.workable_sb.workable.models.Usuario;
-import com.workable_sb.workable.repository.GeneroRepository;
-import com.workable_sb.workable.repository.MunicipioRepository;
-import com.workable_sb.workable.repository.TipDocumentoRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
 import com.workable_sb.workable.service.UsuarioService;
@@ -55,26 +52,16 @@ public ResponseEntity<?> register(@Valid @RequestBody UsuarioDto usuarioDto) {
 
 
 @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
     Usuario usuario = usuarioRepository.findByCorreo(loginDto.getCorreo()).orElse(null);
-
-    if (aspirante == null || !passwordEncoder.matches(loginDto.getClave(), aspirante.getClave())) {
+    if (usuario == null || !passwordEncoder.matches(loginDto.getClave(), usuario.getClave())) {
         return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
     }
-
-    String token = jwtUtil.generateToken(aspirante.getCorreo(), aspirante.getRol());
+    String token = jwtUtil.generateToken(usuario.getCorreo(), usuario.getRol());
 
     LoginResponseDto responseDto = new LoginResponseDto();
+    responseDto.setRol(usuario.getRol());
     responseDto.setToken(token);
-    responseDto.setId(aspirante.getAspiranteId());
-    responseDto.setNombre(aspirante.getNombre());
-    responseDto.setApellido(aspirante.getApellido());
-    responseDto.setCorreo(aspirante.getCorreo());
-    responseDto.setUbicacion(aspirante.getUbicacion());
-    responseDto.setTelefono(aspirante.getTelefono());
-    responseDto.setNombreTipDoc(aspirante.getTipDocumento().getNombre());
-    responseDto.setNombreMunicipio(aspirante.getMunicipio().getNombre());
-    responseDto.setNombreGenero(aspirante.getGenero().getNombre());
 
     return ResponseEntity.ok(responseDto);
 }
