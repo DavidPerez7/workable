@@ -1,3 +1,7 @@
+/* ==========================================
+   LOADING Y MENSAJES DE ERROR
+   ========================================== */
+
 .loading-container,
 .error-container {
   display: flex;
@@ -9,7 +13,7 @@
   text-align: center;
 }
 
-
+/* Spinner de carga */
 .spinner {
   width: 50px;
   height: 50px;
@@ -30,7 +34,7 @@
   color: #666;
 }
 
-
+/* Mensajes de error */
 .error-message {
   background-color: #fee;
   border-left: 4px solid #dc3545;
@@ -66,7 +70,7 @@
   transform: translateY(-2px);
 }
 
-
+/* Estado disabled de botones */
 .btn-cancelar-editar.disabled,
 .btn-guardar-editar:disabled {
   opacity: 0.6;
@@ -78,7 +82,7 @@
   background-color: #999;
 }
 
-
+/* Campos disabled */
 .form-group-editar input:disabled,
 .form-group-editar select:disabled,
 .form-group-editar textarea:disabled {

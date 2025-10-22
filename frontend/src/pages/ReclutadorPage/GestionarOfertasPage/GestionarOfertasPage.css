@@ -1,55 +1,328 @@
+/* ==========================================
+   GESTIONAR OFERTAS PAGE - ESTILOS
+   ========================================== */
+
+.container-main-gestion {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #f7fafc;
+  min-height: calc(100vh - 60px);
+}
+
+.title-page {
+  text-align: center;
+  color: #1f1e1e;
+  font-size: 36px;
+  margin-bottom: 30px;
+}
+
+/* ==========================================
+   SECCIÓN DE TARJETA
+   ========================================== */
+
+.section-card {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+/* ==========================================
+   NO HAY OFERTAS
+   ========================================== */
+
+.no-ofertas {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-ofertas p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.btn-publicar {
+  display: inline-block;
+  background-color: #ff6302;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.btn-publicar:hover {
+  background-color: #db5400;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 99, 2, 0.4);
+}
+
+.btn-publicar:focus {
+  outline: 4px solid #ff6200;
+  outline-offset: 4px;
+}
+
+/* ==========================================
+   TABLA DE GESTIÓN DE OFERTAS
+   ========================================== */
+
 .tabla-gestion-ofertas {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-top: 20px;
+  background-color: white;
 }
 
-.tabla-gestion-ofertas th,
-.tabla-gestion-ofertas td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
-  text-align: left;
+.tabla-gestion-ofertas thead {
+  background-color: #2541a0;
+  color: white;
 }
 
 .tabla-gestion-ofertas th {
-  background-color: #f1f1f1;
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 15px;
+  border-bottom: 2px solid #1c3280;
+}
+
+.tabla-gestion-ofertas th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.tabla-gestion-ofertas th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.tabla-gestion-ofertas tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.tabla-gestion-ofertas tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.tabla-gestion-ofertas td {
+  padding: 16px 12px;
+  font-size: 14px;
   color: #333;
 }
 
+/* ==========================================
+   BADGES DE ESTADO
+   ========================================== */
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-activa {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-inactiva {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.badge-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* ==========================================
+   LINK DE POSTULACIONES
+   ========================================== */
+
+.link-postulaciones {
+  color: #2541a0;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.link-postulaciones:hover,
+.link-postulaciones:focus {
+  color: #ff6302;
+  text-decoration: underline;
+}
+
+/* ==========================================
+   BOTONES DE ACCIÓN
+   ========================================== */
+
 .btn-editar,
 .btn-eliminar {
-  padding: 0.4rem 0.8rem;
-  margin-right: 0.5rem;
+  padding: 8px 16px;
+  margin-right: 8px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .btn-editar {
   background-color: #2541a0;
-  color: #fff;
+  color: white;
 }
 
 .btn-editar:hover {
   background-color: #1c3280;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(37, 65, 160, 0.3);
+}
+
+.btn-editar:focus {
+  outline: 4px solid #2541a0;
+  outline-offset: 2px;
 }
 
 .btn-eliminar {
-  background-color: #db0000;
-  color: #fff;
+  background-color: #dc3545;
+  color: white;
 }
 
 .btn-eliminar:hover {
-  background-color: #a80000;
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
-.link-goback-go {
-  padding: 10px;
-  background-color: #ff6200;
-  border-radius: 14px;
+.btn-eliminar:focus {
+  outline: 4px solid #dc3545;
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   LINK VOLVER
+   ========================================== */
+
+.link-goback {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #6c757d;
   color: white;
-  transition: all 0.5s ease;
+  border-radius: 8px;
+  text-decoration: none;
   font-weight: bold;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.link-goback:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.link-goback:focus {
+  outline: 4px solid #6c757d;
+  outline-offset: 4px;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 1024px) {
+  .tabla-gestion-ofertas {
+    font-size: 13px;
+  }
+
+  .tabla-gestion-ofertas th,
+  .tabla-gestion-ofertas td {
+    padding: 12px 8px;
+  }
+
+  .btn-editar,
+  .btn-eliminar {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-main-gestion {
+    padding: 20px 10px;
+  }
+
+  .title-page {
+    font-size: 28px;
+  }
+
+  .section-card {
+    padding: 20px;
+  }
+
+  /* Tabla responsive - scroll horizontal */
+  .tabla-gestion-ofertas {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .btn-editar,
+  .btn-eliminar {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-page {
+    font-size: 24px;
+  }
+
+  .btn-publicar {
+    width: 100%;
+    padding: 12px 20px;
+  }
+}
+
+/* ==========================================
+   ANIMACIÓN DE ENTRADA
+   ========================================== */
+
+.section-card {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   ACCESIBILIDAD - FOCO VISIBLE
+   ========================================== */
+
+*:focus-visible {
+  outline: 3px solid #ff6200;
+  outline-offset: 3px;
 }

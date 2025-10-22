@@ -1,3 +1,4 @@
+// frontend/src/pages/ReclutadorPage/EditarOfertaPage/EditarOfertaPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import HeaderReclutador from '../../../components/HeaderReclutador/HeaderReclutador';
@@ -5,7 +6,7 @@ import Footer from '../../../components/Footer/Footer';
 import './EditarOfertaPage.css';
 
 const EditarOfertaPage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Obtener oferta_id de la URL
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ const EditarOfertaPage = () => {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-
+  // Listas para los selects (puedes moverlos a un archivo de constantes)
   const modalidades = [
     { id: 1, nombre: 'Presencial' },
     { id: 2, nombre: 'Remoto' },
@@ -48,7 +49,7 @@ const EditarOfertaPage = () => {
     { id: 6, nombre: 'Rionegro' }
   ];
 
-
+  // Cargar datos de la oferta al montar el componente
   useEffect(() => {
     const fetchOferta = async () => {
       const token = localStorage.getItem('token');
@@ -87,6 +88,7 @@ const EditarOfertaPage = () => {
 
         const data = await response.json();
         
+        // Mapear datos de la API al formato del formulario
         setFormData({
           titulo: data.titulo || '',
           descripcion: data.descripcion || '',
@@ -128,7 +130,7 @@ const EditarOfertaPage = () => {
       return;
     }
 
-
+    // Preparar datos para enviar a la API
     const dataToSend = {
       titulo: formData.titulo.trim(),
       descripcion: formData.descripcion.trim(),
@@ -178,7 +180,7 @@ const EditarOfertaPage = () => {
     }
   };
 
-
+  // Mostrar loading
   if (loading) {
     return (
       <>
@@ -194,7 +196,7 @@ const EditarOfertaPage = () => {
     );
   }
 
-
+  // Mostrar error si hubo problema al cargar
   if (error && !loading) {
     return (
       <>
@@ -228,7 +230,7 @@ const EditarOfertaPage = () => {
         
         <form onSubmit={handleSubmit} className="form-editar-oferta">
           
-
+          {/* Sección: Datos Principales */}
           <section className="section-card-editar">
             <h2 className="section-title-editar">Datos Principales</h2>
 
@@ -391,7 +393,7 @@ const EditarOfertaPage = () => {
             </div>
           </section>
 
-
+          {/* Botones de Acción */}
           <div className="form-actions-editar">
             <Link 
               to="/reclutador/gestionar-ofertas" 
@@ -417,6 +419,8 @@ const EditarOfertaPage = () => {
           </div>
         </form>
       </main>
+
+      <Footer />
     </>
   );
 };
