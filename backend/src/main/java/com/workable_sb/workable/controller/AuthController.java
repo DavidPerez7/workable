@@ -49,15 +49,14 @@ public ResponseEntity<?> register(@Valid @RequestBody UsuarioDto usuarioDto) {
         usuarioService.create(usuarioDto);
         return ResponseEntity.ok("✅ Aspirante registrado con éxito");
     } catch (Exception e) {
-        return ResponseEntity.status(500).body("❌ Error en crear aspirante");
+        return ResponseEntity.status(500).body("❌ Error al crear aspirante");
     }
 }
 
 
-  @PostMapping("/login")
+@PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-    Aspirante aspirante = aspiranteRepository.findByCorreo(loginDto.getCorreo())
-            .orElse(null);
+    Usuario usuario = usuarioRepository.findByCorreo(loginDto.getCorreo()).orElse(null);
 
     if (aspirante == null || !passwordEncoder.matches(loginDto.getClave(), aspirante.getClave())) {
         return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
