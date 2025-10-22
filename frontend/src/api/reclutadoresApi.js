@@ -1,12 +1,11 @@
 // src/api/reclutadorAPI.js
+import { getAuthHeaders } from '../utils/auth';
 
 export const getAllReclutadores = async () => {
   try {
-    const response = await fetch("http://localhost:8080/api/reclutador/all", {
+    const response = await fetch("http://localhost:8080/api/reclutadores", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
     });
     if (!response.ok) {
       throw new Error("error al obtener reclutadores");
@@ -22,11 +21,9 @@ export const getAllReclutadores = async () => {
 };
 
 export const getReclutadorById = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
+  const response = await fetch(`http://localhost:8080/api/reclutadores/${id}`, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
   });
   if (!response.ok) {
     throw new Error("reclutador no encontrado");
@@ -36,11 +33,9 @@ export const getReclutadorById = async (id) => {
 };
 
 export const getAllReclutadoresDto = async () => {
-  const response = await fetch("http://localhost:8080/api/reclutador", {
+  const response = await fetch("http://localhost:8080/api/reclutadores", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
   });
   if (!response.ok) {
     throw new Error("error al obtener reclutadores");
@@ -50,11 +45,9 @@ export const getAllReclutadoresDto = async () => {
 };
 
 export const crearReclutador = async (objeto) => {
-  const response = await fetch("http://localhost:8080/api/reclutador", {
+  const response = await fetch("http://localhost:8080/api/reclutadores", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(objeto)
   });
 
@@ -66,11 +59,9 @@ export const crearReclutador = async (objeto) => {
 };
 
 export const eliminarReclutador = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
+  const response = await fetch(`http://localhost:8080/api/reclutadores/${id}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
   });
   if (!response.ok) {
     throw new Error("error al eliminar reclutador");

@@ -1,24 +1,37 @@
-import axios from 'axios';
-
 const API_URL = 'http://localhost:8080/api/postulacion';
 
-export const crearPostulacion = async (postulacion) => {
+const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
-  const response = await axios.post(API_URL, postulacion, {
-    headers: {
-      'Authorization': token ? `Bearer ${token}` : '',
-      'Content-Type': 'application/json'
-    }
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
+
+export const crearPostulacion = async (postulacion) => {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(postulacion),
   });
-  return response.data;
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Error al crear postulacion');
+  }
+  return res.json();
 };
 
 export const obtenerPostulaciones = async () => {
-  const response = await axios.get(API_URL);
-  return response.data;
+  const res = await fetch(API_URL, { headers: getAuthHeaders() });
+  if (!res.ok) throw new Error('Error al obtener postulaciones');
+  return res.json();
 };
 
 export const eliminarPostulacion = async (id) => {
-  const response = await axios.delete(`${API_URL}/${id}`);
-  return response.data;
+  const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Error al eliminar postulacion');
+  }
+  return true;
 };

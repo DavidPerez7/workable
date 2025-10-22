@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { login, redirectByRole } from '../../utils/auth';
 import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
+import Footer from '../Footer/footer';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -15,28 +16,9 @@ const LoginPage = () => {
     setErrorMessage('');
 
     try {
-      const res = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correo, clave: cla }),
-      });
-
-      if (!res.ok) throw new Error('Credenciales inválidas');
-
-      const data = await res.json();
-      console.log('Login response:', data); 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('idAspirante', data.id);
-      localStorage.setItem('nombre', data.nombre);
-      localStorage.setItem('apellido', data.apellido);
-      localStorage.setItem('correo', data.correo);
-      localStorage.setItem('telefono', data.telefono);
-      localStorage.setItem('ubicacion', data.ubicacion);
-      localStorage.setItem('fechaNacimiento', data.fechaNacimiento);
-      localStorage.setItem('tipoDocumento', data.tipoDocumento);
-      localStorage.setItem('numeroDocumento', data.numeroDocumento); 
-
-      navigate('/Aspirante');
+      const data = await login(correo, cla);
+      console.log('Login exitoso:', data);
+      redirectByRole(navigate, data.role);
     } catch (error) {
       setErrorMessage(error.message);
     }

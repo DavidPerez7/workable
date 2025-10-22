@@ -38,7 +38,7 @@ public class AspiranteDto {
   @Lob
   private byte[] foto;
 
-  @NotNull
+  // La contraseña no es obligatoria en actualizaciones; hacerla opcional
   private String cla;
 
   @NotNull

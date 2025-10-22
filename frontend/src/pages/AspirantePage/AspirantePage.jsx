@@ -9,6 +9,7 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 const AspirantePage = () => {
   const location = useLocation();
   const [selectedJob, setSelectedJob] = useState(null);
+  const [applying, setApplying] = useState(false);
 
   // Función para aplicar a una oferta
   const handleAplicarOferta = async (oferta) => {
@@ -19,6 +20,8 @@ const AspirantePage = () => {
       return;
     }
     try {
+      if (applying) return;
+      setApplying(true);
       const postulacion = {
         fech: new Date().toISOString(),
         estado_Id: 1, // Estado inicial: Aplicado
@@ -31,11 +34,9 @@ const AspirantePage = () => {
       alert('¡Te has postulado exitosamente a la oferta!');
     } catch (err) {
       console.error('Error al postularse:', err);
-      if (err.response && err.response.data && err.response.data.message) {
-        alert('Error: ' + err.response.data.message);
-      } else {
-        alert('Error al postularte. Es posible que ya estés postulado o hubo un problema.');
-      }
+      alert(err.message || 'Error al postularte. Es posible que ya estés postulado o hubo un problema.');
+    } finally {
+      setApplying(false);
     }
   };
   // ...existing code...
@@ -137,8 +138,8 @@ const AspirantePage = () => {
                 <p className="p-job-detail-beneficios"><b>Beneficios:</b><br/>- Contrato estable.<br/>- Oportunidad de crecimiento.<br/>- Ambiente laboral agradable.<br/>- Prestaciones de ley.</p>
                 <p className="p-job-detail-responsabilidades"><b>Responsabilidades:</b><br/>- Cumplir con los objetivos del área.<br/>- Reportar avances al líder de proyecto.<br/>- Participar en reuniones de equipo.<br/>- Mantener buenas prácticas de desarrollo.</p>
                 <p className="p-job-detail-contacto"><b>Contacto:</b> talento@empresa.com</p>
-                <button className="btn-aplicar-oferta" onClick={() => handleAplicarOferta(selectedJob)}>
-                  Aplicar a esta oferta
+                <button className="btn-aplicar-oferta" onClick={() => handleAplicarOferta(selectedJob)} disabled={applying}>
+                  {applying ? 'Enviando...' : 'Aplicar a esta oferta'}
                 </button>
                 <Buttons></Buttons>
               </div>

@@ -1,13 +1,6 @@
+import { getAuthHeaders } from '../utils/auth';
+
 const API_URL = "http://localhost:8080/api/aspirante";
-
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  return {
-    "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
-};
 
 export const buscarAspirantePorId = async (id) => {
 const res = await fetch(`http://localhost:8080/api/aspirante/${id}`, {

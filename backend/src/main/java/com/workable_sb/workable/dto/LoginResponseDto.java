@@ -18,4 +18,6 @@ public class LoginResponseDto {
     private String nombreTipDoc;
     private String nombreMunicipio;
     private String nombreGenero;
+    private String role;
+    private Integer empresaId;
 }

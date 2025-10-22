@@ -11,7 +11,21 @@ import './MiPerfil.css';
 const MiPerfil = () => {
   // Hooks y lógica para datos persistentes
   const [aspirante, setAspirante] = useState(null);
-  const [editForm, setEditForm] = useState({ nom: '', ape: '', correo: '', tel: '', ubi: '', nombreMunicipio: '' });
+  // Estado del formulario - incluir todos los campos que espera el DTO
+  const [editForm, setEditForm] = useState({
+    nom: '',
+    ape: '',
+    corr: '',
+    ubi: '',
+    tel: '',
+    feNa: '',
+    foto: null,
+    cla: '',
+    numDoc: '',
+    tipDoc_id: '',
+    munici_id: '',
+    genero_id: ''
+  });
   const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -25,15 +39,23 @@ const MiPerfil = () => {
       try {
         const data = await buscarAspirantePorId(idAspirante);
         setAspirante(data);
+        // Mapear respuesta (AspiranteReadDto) al formulario
         setEditForm({
           nom: data.nom || '',
           ape: data.ape || '',
-          corr: data.corr || '',
-          tel: data.tel || '',
+          corr: data.corr || data.corr || '',
           ubi: data.ubi || '',
-          nombreMunicipio: data.nombreMunicipio || ''
+          tel: data.tel || '',
+          feNa: data.feNa ? new Date(data.feNa).toISOString().slice(0, 10) : '',
+          foto: null,
+          cla: '',
+          numDoc: data.numerDoc || data.numDoc || '',
+          tipDoc_id: data.tipDoc_id || '',
+          munici_id: data.munici_id || '',
+          genero_id: data.genero_id || ''
         });
       } catch (err) {
+        console.error('Error cargar perfil:', err);
         alert('Error al cargar el perfil');
       } finally {
         setLoading(false);
@@ -46,27 +68,49 @@ const MiPerfil = () => {
   const handleEditSubmit = async e => {
     e.preventDefault();
     try {
-      // Construir el objeto DTO esperado por el backend
+      // Construir el objeto DTO esperado por el backend usando los valores del formulario
       const body = {
         nom: editForm.nom,
         ape: editForm.ape,
-        corr: aspirante.corr, // correo original, no editable
+        corr: editForm.corr,
         ubi: editForm.ubi,
-        tel: Number(editForm.tel),
-        feNa: aspirante.feNa,
-        foto: aspirante.foto || null,
-        cla: '', // No se actualiza clave aquí
-        numDoc: aspirante.numerDoc,
-        tipDoc_id: aspirante.tipDoc_id,
-        munici_id: aspirante.munici_id,
-        genero_id: aspirante.genero_id
+        tel: editForm.tel ? Number(editForm.tel) : null,
+        feNa: editForm.feNa || null,
+        foto: null,
+        cla: editForm.cla || '',
+        numDoc: editForm.numDoc ? Number(editForm.numDoc) : null,
+        tipDoc_id: editForm.tipDoc_id ? Number(editForm.tipDoc_id) : null,
+        munici_id: editForm.munici_id ? Number(editForm.munici_id) : null,
+        genero_id: editForm.genero_id ? Number(editForm.genero_id) : null
       };
-      await updateAspirante(idAspirante, body);
-      setAspirante(prev => ({ ...prev, ...editForm }));
+
+      // Llamada al API
+      const actualizado = await updateAspirante(idAspirante, body);
+
+      // La API devuelve un AspiranteReadDto; actualizar el estado local con la respuesta
+      setAspirante(prev => ({ ...prev, ...actualizado }));
+
+      // Sincronizar el formulario con la última info desde el servidor
+      setEditForm(prev => ({
+        ...prev,
+        nom: actualizado.nom || prev.nom,
+        ape: actualizado.ape || prev.ape,
+        corr: actualizado.corr || prev.corr,
+        ubi: actualizado.ubi || prev.ubi,
+        tel: actualizado.tel || prev.tel,
+        feNa: actualizado.feNa ? new Date(actualizado.feNa).toISOString().slice(0, 10) : prev.feNa,
+        numDoc: actualizado.numerDoc || prev.numDoc,
+        tipDoc_id: actualizado.tipDoc_id || prev.tipDoc_id,
+        munici_id: actualizado.munici_id || prev.munici_id,
+        genero_id: actualizado.genero_id || prev.genero_id
+      }));
+
       setShowEditModal(false);
       alert('Perfil actualizado correctamente');
     } catch (err) {
-      alert('Error al actualizar el perfil');
+      // Mostrar mensaje detallado del error devuelto por la API si existe
+      console.error(err);
+      alert(err.message || 'Error al actualizar el perfil');
     }
   };
 
@@ -80,10 +124,21 @@ const MiPerfil = () => {
         alert('Cuenta eliminada correctamente');
         window.location.href = '/';
       } catch (err) {
+        console.error('Error eliminar cuenta:', err);
         alert('Error al eliminar la cuenta');
       }
     }
   };
+
+  if (loading) {
+    return (
+      <>
+        <HeaderAspirant />
+        <Menu />
+        <div className='loading-indicator'>Cargando perfil...</div>
+      </>
+    );
+  }
 
   return (
     <>
