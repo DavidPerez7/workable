@@ -128,8 +128,17 @@ public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
             responseDto.setRole("RECLUTADOR");
             if (reclutador.getEmpresa() != null) {
                 Long nitId = reclutador.getEmpresa().getNitId();
-                if (nitId != null) responseDto.setEmpresaId(nitId.intValue());
+                System.out.println("🏢 Login Reclutador - Empresa NIT: " + nitId);
+                if (nitId != null) {
+                    responseDto.setEmpresaId(nitId.intValue());
+                    System.out.println("✅ EmpresaId establecido en response: " + nitId.intValue());
+                } else {
+                    System.out.println("⚠️ NIT es null");
+                }
+            } else {
+                System.out.println("⚠️ Reclutador no tiene empresa asociada");
             }
+            System.out.println("📤 Enviando response con empresaId: " + responseDto.getEmpresaId());
             return ResponseEntity.ok(responseDto);
         }
     }

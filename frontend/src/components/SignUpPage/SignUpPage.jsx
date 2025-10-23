@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import './SignUpPage.css';
-import EmpresaForm from './empresa/empresaForm';
+import EmpresaReclutadorForm from './empresaReclutador/empresaReclutadorForm';
 import AspiranteForm from './aspirante/aspiranteForm';
 
 const SignUpPage = () => {
@@ -26,10 +26,10 @@ const SignUpPage = () => {
               className={`Btn-signup${userType === 'empresa' ? ' active' : ''}`}
               onClick={() => setUserType('empresa')}
             >
-              Soy Empresa
+              Soy Empresa/Reclutador
             </button>
           </div>
-          {userType === 'aspirante' ? <AspiranteForm /> : <EmpresaForm />}
+          {userType === 'aspirante' ? <AspiranteForm /> : <EmpresaReclutadorForm />}
           <div className="text-link">
             ¿Ya tienes una cuenta? <Link to='/Login'>Iniciar Sesión</Link>
           </div>

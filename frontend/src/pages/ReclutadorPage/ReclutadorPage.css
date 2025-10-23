@@ -1036,3 +1036,77 @@
   }
 }
 
+/* ==========================================
+   INFORMACIÓN DE LA EMPRESA
+   ========================================== */
+
+.empresa-info-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e9ecef;
+}
+
+.empresa-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #2541a0;
+  transition: all 0.3s ease;
+}
+
+.info-field:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.info-field-full {
+  grid-column: 1 / -1;
+}
+
+.info-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #212529;
+}
+
+.info-value-description {
+  font-size: 15px;
+  color: #495057;
+  line-height: 1.6;
+  margin: 0;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #ff6302;
+}
+
+@media (max-width: 768px) {
+  .empresa-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .empresa-info-card {
+    padding: 20px;
+  }
+}
+
+

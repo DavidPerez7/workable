@@ -5,6 +5,8 @@
  * @param {Object} loginData - Datos recibidos del backend tras login
  */
 export const saveAuthSession = (loginData) => {
+  console.log('💾 Guardando sesión con datos:', loginData);
+  
   // Datos comunes para todos los usuarios
   localStorage.setItem('token', loginData.token);
   localStorage.setItem('role', loginData.role || 'ASPIRANTE');
@@ -27,18 +29,35 @@ export const saveAuthSession = (loginData) => {
 
   // Datos específicos para RECLUTADOR
   if (loginData.role === 'RECLUTADOR') {
+    console.log('📝 Guardando datos de RECLUTADOR. empresaId:', loginData.empresaId);
     localStorage.setItem('idReclutador', loginData.id);
     if (loginData.empresaId) {
       localStorage.setItem('empresaId', loginData.empresaId);
       // Guardar también como string para compatibilidad
       localStorage.setItem('empresa_id', loginData.empresaId);
+      console.log('✅ empresaId guardado:', loginData.empresaId);
+    } else {
+      console.warn('⚠️ No se recibió empresaId en los datos de login');
     }
+  }
+
+  // Datos específicos para EMPRESA
+  if (loginData.role === 'EMPRESA') {
+    localStorage.setItem('idEmpresa', loginData.id);
+    localStorage.setItem('empresaId', loginData.empresaId || loginData.id);
+    localStorage.setItem('empresa_id', loginData.empresaId || loginData.id);
   }
 
   // Datos específicos para ADMINISTRADOR
   if (loginData.role === 'ADMIN' || loginData.role === 'ADMINISTRADOR') {
     localStorage.setItem('idAdmin', loginData.id);
   }
+  
+  console.log('✅ Sesión guardada. localStorage actual:', {
+    role: localStorage.getItem('role'),
+    empresaId: localStorage.getItem('empresaId'),
+    empresa_id: localStorage.getItem('empresa_id')
+  });
 };
 
 /**
@@ -50,6 +69,7 @@ export const clearAuthSession = () => {
   localStorage.removeItem('userId');
   localStorage.removeItem('idAspirante');
   localStorage.removeItem('idReclutador');
+  localStorage.removeItem('idEmpresa');
   localStorage.removeItem('idAdmin');
   localStorage.removeItem('empresaId');
   localStorage.removeItem('empresa_id');
@@ -152,6 +172,9 @@ export const redirectByRole = (navigate, role = null) => {
   switch (userRole) {
     case 'RECLUTADOR':
       navigate('/Reclutador');
+      break;
+    case 'EMPRESA':
+      navigate('/Reclutador'); // Las empresas van al panel de reclutador
       break;
     case 'ADMIN':
     case 'ADMINISTRADOR':

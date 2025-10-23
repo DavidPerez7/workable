@@ -10,19 +10,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmpresaDto {
-  @NotBlank
+  @NotNull(message = "el NIT es obligatorio")
+  private Long nit_id;
+  
+  @NotBlank(message = "el nombre es obligatorio")
   private String nom;
 
-  @NotNull
+  @NotBlank(message = "la ubicacion es obligatoria")
   private String ubi;
 
-  @NotBlank
+  @NotBlank(message = "la descripcion es obligatoria")
   private String desc;
 
-  @NotNull
+  @NotNull(message = "el numero de trabajadores es obligatorio")
   private Integer numTrab;
 
-  @NotBlank
+  @NotBlank(message = "el correo corporativo es obligatorio")
   private String correoCorp;
 
   @NotNull(message = "la categoria es obligatoria")

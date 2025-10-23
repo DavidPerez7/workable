@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { login, redirectByRole } from '../../utils/auth';
 import Header from '../Header/Header';
 import Footer from '../Footer/footer';
@@ -7,9 +7,23 @@ import './LoginPage.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [correo, setCorreo] = useState('');
   const [cla, setCla] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Manejar datos desde la redirección del registro
+  useEffect(() => {
+    if (location.state?.email) {
+      setCorreo(location.state.email);
+    }
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // Limpiar el mensaje después de 5 segundos
+      setTimeout(() => setSuccessMessage(''), 5000);
+    }
+  }, [location.state]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -31,6 +45,11 @@ const LoginPage = () => {
         <div className="div-login">
           <form className="div-lg-form" onSubmit={handleLogin}>
             <h2>Iniciar Sesión</h2>
+            {successMessage && (
+              <div className="success-message">
+                ✅ {successMessage}
+              </div>
+            )}
             <input
               type="email"
               className="input-lg-form"

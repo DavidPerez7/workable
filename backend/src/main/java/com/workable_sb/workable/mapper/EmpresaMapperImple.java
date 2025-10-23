@@ -26,6 +26,7 @@ public class EmpresaMapperImple implements EmpresaMapper{
   public Empresa consultEntity(EmpresaDto empresaDto) {
     Empresa empresa = new Empresa();
 
+    empresa.setNitId(empresaDto.getNit_id());
     empresa.setNombre(empresaDto.getNom());
     empresa.setUbicacion(empresaDto.getUbi());
     empresa.setDescripcion(empresaDto.getDesc());
