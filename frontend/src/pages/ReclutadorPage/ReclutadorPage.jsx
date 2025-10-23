@@ -1,136 +1,434 @@
+// frontend/src/pages/ReclutadorPage/ReclutadorPage.jsx
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador";
-import OfertaCard from "../../components/OfertaCard/ofertaCard";
+import Footer from "../../components/Footer/Footer";
+import NavBar from "../../components/NavBar/NavBar";
 import "./ReclutadorPage.css";
-import { getAllOfertas } from "../../api/ofertasAPI";
 
 function ReclutadorPage() {
   const [ofertas, setOfertas] = useState([]);
+  const [postulacionesRecientes, setPostulacionesRecientes] = useState([]);
+  const [estadisticas, setEstadisticas] = useState({
+    totalOfertas: 12,
+    totalPostulaciones: 45,
+    contratados: 8,
+    calificacionPromedio: 4.5
+  });
+  const [loading, setLoading] = useState(false); // Cambiado a false para mostrar datos mock
+  const [empresaInfo, setEmpresaInfo] = useState({
+    nombre: 'TechCorp S.A.'
+  });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOfertas = async () => {
-      try {
-        const data = await getAllOfertas();
-        setOfertas(data);
-      } catch (error) {
-        console.error("Error al obtener ofertas:", error);
+    const fetchDashboardData = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        // navigate('/login'); // Comentado para desarrollo
+        console.warn('No hay token, pero continuamos con datos mock');
       }
+
+      // ========== DATOS MOCK (TEMPORALES) ==========
+      // Comentar estas líneas y descomentar las APIs cuando el backend esté listo
+      
+      // Datos simulados de ofertas
+      const mockOfertas = [
+        {
+          id: 1,
+          titulo: 'Desarrollador Frontend',
+          fecha_publicacion: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          municipio: 'Bogotá D.C',
+          num_postulaciones: 12
+        },
+        {
+          id: 2,
+          titulo: 'Diseñador UX/UI',
+          fecha_publicacion: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          municipio: 'Medellín',
+          num_postulaciones: 8
+        },
+        {
+          id: 3,
+          titulo: 'Contador Senior',
+          fecha_publicacion: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          municipio: 'Bogotá D.C',
+          num_postulaciones: 5
+        }
+      ];
+
+      // Datos simulados de postulaciones
+      const mockPostulaciones = [
+        {
+          id: 1,
+          nombre: 'Juan',
+          apellido: 'Pérez',
+          correo: 'juan.perez@email.com',
+          telefono: '3001234567',
+          oferta_titulo: 'Desarrollador Frontend',
+          fecha_postulacion: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: 2,
+          nombre: 'María',
+          apellido: 'García',
+          correo: 'maria.garcia@email.com',
+          telefono: '3009876543',
+          oferta_titulo: 'Diseñador UX/UI',
+          fecha_postulacion: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: 3,
+          nombre: 'Carlos',
+          apellido: 'Rodríguez',
+          correo: 'carlos.rodriguez@email.com',
+          telefono: '3012345678',
+          oferta_titulo: 'Contador Senior',
+          fecha_postulacion: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+          id: 4,
+          nombre: 'Ana',
+          apellido: 'Martínez',
+          correo: 'ana.martinez@email.com',
+          telefono: '3123456789',
+          oferta_titulo: 'Desarrollador Frontend',
+          fecha_postulacion: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+        }
+      ];
+
+      setOfertas(mockOfertas);
+      setPostulacionesRecientes(mockPostulaciones);
+      setLoading(false);
+
+      /* ========== DESCOMENTAR CUANDO EL BACKEND ESTÉ LISTO ==========
+      
+      try {
+        // Obtener información de la empresa
+        const resEmpresa = await fetch('http://localhost:5000/api/empresa/perfil', {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (resEmpresa.ok) {
+          const dataEmpresa = await resEmpresa.json();
+          setEmpresaInfo(dataEmpresa);
+        }
+
+        // Obtener ofertas activas con número de postulaciones
+        const resOfertas = await fetch('http://localhost:5000/api/ofertas/mis-ofertas-activas', {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (resOfertas.ok) {
+          const dataOfertas = await resOfertas.json();
+          setOfertas(dataOfertas);
+        }
+
+        // Obtener postulaciones recientes (últimas 10)
+        const resPostulaciones = await fetch('http://localhost:5000/api/postulaciones/recientes', {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (resPostulaciones.ok) {
+          const dataPostulaciones = await resPostulaciones.json();
+          setPostulacionesRecientes(dataPostulaciones);
+        }
+
+        // Obtener estadísticas generales
+        const resEstadisticas = await fetch('http://localhost:5000/api/empresa/estadisticas', {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (resEstadisticas.ok) {
+          const dataEstadisticas = await resEstadisticas.json();
+          setEstadisticas(dataEstadisticas);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error al cargar dashboard:', error);
+        setLoading(false);
+        // En caso de error, mantener datos mock
+      }
+      
+      ========== FIN DE CÓDIGO COMENTADO ========== */
     };
-    fetchOfertas();
-  }, []);
+
+    fetchDashboardData();
+  }, [navigate]);
+
+  const handleCerrarOferta = async (ofertaId) => {
+    if (!window.confirm('¿Cerrar esta oferta? Los aspirantes no podrán postularse más.')) {
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    
+    /* ========== API COMENTADA (DESCOMENTAR CUANDO BACKEND ESTÉ LISTO) ==========
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/ofertas/${ofertaId}/cerrar`, {
+        method: 'PUT',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        alert('✅ Oferta cerrada exitosamente');
+        setOfertas(ofertas.filter(o => o.id !== ofertaId));
+      } else {
+        alert('❌ Error al cerrar la oferta');
+      }
+    } catch (error) {
+      console.error('Error al cerrar oferta:', error);
+      alert('❌ Error al cerrar la oferta');
+    }
+    
+    ========== FIN API COMENTADA ========== */
+
+    // Simulación temporal (borrar cuando se active la API)
+    alert('✅ Oferta cerrada exitosamente (simulado)');
+    setOfertas(ofertas.filter(o => o.id !== ofertaId));
+  };
+
+  const formatearFecha = (fecha) => {
+    const ahora = new Date();
+    const fechaPost = new Date(fecha);
+    const diferencia = Math.floor((ahora - fechaPost) / 1000); // segundos
+
+    if (diferencia < 60) return 'Hace unos segundos';
+    if (diferencia < 3600) return `Hace ${Math.floor(diferencia / 60)} minutos`;
+    if (diferencia < 86400) return `Hace ${Math.floor(diferencia / 3600)} horas`;
+    if (diferencia < 604800) return `Hace ${Math.floor(diferencia / 86400)} días`;
+    return fechaPost.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  if (loading) {
+    return (
+      <>
+        <HeaderReclutador />
+        <main className="dashboard-container">
+          <div className="loading-dashboard">
+            <div className="spinner"></div>
+            <p>Cargando tu panel de control...</p>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
       <HeaderReclutador />
-      <main className="main-reclutador-rc">
-        <div className="nav-panel-rc">
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador">Inicio</Link>
-            </span>
+      <NavBar />
+      <main className="dashboard-container">
+        
+        {/* Header del Dashboard */}
+        <div className="dashboard-header">
+          <div className="welcome-section">
+            <h1>👋 Bienvenido, <span className="empresa-nombre">{empresaInfo?.nombre || 'Empresa'}</span></h1>
+            <p className="subtitle">Panel de Control - Gestiona tus ofertas y postulaciones</p>
+          </div>
+          <Link to="/reclutador/publicacion" className="btn-nueva-oferta">
+            Nueva Oferta
+          </Link>
+        </div>
+
+        {/* Tarjetas de Estadísticas */}
+        <div className="stats-grid">
+          <div className="stat-card stat-primary">
+            <div className="stat-icon">📝</div>
+            <div className="stat-content">
+              <h3 className="stat-number">{estadisticas.totalOfertas}</h3>
+              <p className="stat-label">Ofertas Activas</p>
+            </div>
           </div>
 
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 75 75 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0m-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233q.27.015.537.036c2.568.189 5.093.744 7.463 1.993zm-9 6.215v-4.13a95 95 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A61 61 0 0 1 4 10.065m-.657.975 1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68 68 0 0 0-1.722-.082z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador/reclutamiento">Reclutamiento</Link>
-            </span>
+          <div className="stat-card stat-success">
+            <div className="stat-icon">👥</div>
+            <div className="stat-content">
+              <h3 className="stat-number">{estadisticas.totalPostulaciones}</h3>
+              <p className="stat-label">Postulaciones</p>
+            </div>
           </div>
 
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor">
-              <path fillRule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
-              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador/GestigOferts">Gestionar ofertas</Link>
-            </span>
+          <div className="stat-card stat-warning">
+            <div className="stat-icon">✅</div>
+            <div className="stat-content">
+              <h3 className="stat-number">{estadisticas.contratados}</h3>
+              <p className="stat-label">Contratados</p>
+            </div>
           </div>
 
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
-              <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador/Configuracion">Configuracion</Link>
-            </span>
+          <div className="stat-card stat-info">
+            <div className="stat-icon">⭐</div>
+            <div className="stat-content">
+              <h3 className="stat-number">{estadisticas.calificacionPromedio.toFixed(1)}</h3>
+              <p className="stat-label">Calificación</p>
+            </div>
           </div>
         </div>
 
-        <div className="main-content-rc">
-          <div className="column-left-rc">
-            <div className="info-company-rc">
-              <div className="logo-company-rc">
-                <img src="https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png" alt="logo" className="img-logo-rc"/>
-              </div>
-              <div>
-                <h2 className="name-company-rc">Empresa genérica</h2>
-                <p className="user-admin-rc">Usuario administrador</p>
-              </div>
+        {/* Sección: Mis Ofertas Activas */}
+        <section className="dashboard-section">
+          <div className="section-header">
+            <h2>🔍 Mis Ofertas Activas</h2>
+            <Link to="/reclutador/gestionar-ofertas" className="link-ver-todas">
+              Ver todas →
+            </Link>
+          </div>
+
+          {ofertas.length === 0 ? (
+            <div className="empty-state">
+              <p>No tienes ofertas activas. ¡Publica tu primera oferta!</p>
+              <Link to="/reclutador/publicacion" className="btn-primary">
+                Publicar Oferta
+              </Link>
             </div>
+          ) : (
+            <div className="ofertas-list">
+              {ofertas.map((oferta) => (
+                <div key={oferta.id} className="oferta-card">
+                  <div className="oferta-header">
+                    <h3 className="oferta-titulo">📌 {oferta.titulo}</h3>
+                    <span className="badge badge-activa">Activa</span>
+                  </div>
+                  
+                  <div className="oferta-info">
+                    <span className="info-item">
+                      📅 Publicada: {formatearFecha(oferta.fecha_publicacion)}
+                    </span>
+                    <span className="info-item">
+                      👥 <strong>{oferta.num_postulaciones || 0}</strong> postulaciones
+                    </span>
+                    <span className="info-item">
+                      📍 {oferta.municipio}
+                    </span>
+                  </div>
 
-            <div className="section-recruitment-rc">
-              <div className="header-section-rc">
-                <h3 className="title-section-rc">Reclutamiento</h3>
-                <span className="link-manage-rc">Gestionar avisos</span>
-              </div>
-              <div className="cards-recruitment-rc">
-                {ofertas.length > 0 ? (
-                  ofertas.map((oferta) => (
-                  <OfertaCard
-                  key={oferta.id}
-                  titulo={oferta.titulo || oferta.nom || "Sin título"}
-                  descripcion={oferta.descripcion || oferta.desc || "Sin descripción"}
-                  salario={oferta.salario || oferta.sueldo || 0}
-                  ubicacion={oferta.ubicacion || oferta.ubi || "No especificada"}
-                  />))
-  ) : (
-    <p>No hay ofertas disponibles</p>
-  )}
-</div>
-
-
-              <div className="container-button-publish-rc">
-                <Link to="/Reclutador/Publicacion">
-                  <button className="button-publish-rc">Publicar oferta</button>
-                </Link>
-              </div>
+                  <div className="oferta-actions">
+                    <Link 
+                      to={`/reclutador/postulaciones/${oferta.id}`}
+                      className="btn-action btn-primary-action"
+                      aria-label={`Ver postulaciones de ${oferta.titulo}`}
+                    >
+                      👁️ Ver Postulaciones
+                    </Link>
+                    <Link 
+                      to={`/reclutador/editar-oferta/${oferta.id}`}
+                      className="btn-action btn-secondary-action"
+                      aria-label={`Editar oferta ${oferta.titulo}`}
+                    >
+                      ✏️ Editar
+                    </Link>
+                    <button 
+                      onClick={() => handleCerrarOferta(oferta.id)}
+                      className="btn-action btn-danger-action"
+                      aria-label={`Cerrar oferta ${oferta.titulo}`}
+                    >
+                      🚫 Cerrar
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </section>
 
-            <div className="section-statistics-rc">
-              <div className="header-statistics-rc">
-                <h3 className="title-section-rc">Estadística</h3>
-                <span className="link-more-rc">Ver más estadísticas</span>
-              </div>
-              <div className="graphs-statistics-rc">
-                <div className="card-graph-rc"></div>
-                <div className="card-graph-rc"></div>
-              </div>
+        {/* Sección: Postulaciones Recientes */}
+        <section className="dashboard-section">
+          <div className="section-header">
+            <h2>👥 Postulaciones Recientes</h2>
+            <Link to="/reclutador/gestionar-ofertas" className="link-ver-todas">
+              Ver todas →
+            </Link>
+          </div>
+
+          {postulacionesRecientes.length === 0 ? (
+            <div className="empty-state">
+              <p>No hay postulaciones recientes</p>
+            </div>
+          ) : (
+            <div className="postulaciones-list">
+              {postulacionesRecientes.map((postulacion) => (
+                <div key={postulacion.id} className="postulacion-card">
+                  <div className="aspirante-avatar">
+                    {postulacion.nombre.charAt(0)}{postulacion.apellido.charAt(0)}
+                  </div>
+                  
+                  <div className="postulacion-content">
+                    <h4 className="aspirante-nombre">
+                      {postulacion.nombre} {postulacion.apellido}
+                    </h4>
+                    <p className="postulacion-oferta">
+                      Se postuló a: <strong>{postulacion.oferta_titulo}</strong>
+                    </p>
+                    <div className="postulacion-detalles">
+                      <span>📧 {postulacion.correo}</span>
+                      <span>📞 {postulacion.telefono}</span>
+                      <span>🕒 {formatearFecha(postulacion.fecha_postulacion)}</span>
+                    </div>
+                  </div>
+
+                  <div className="postulacion-actions">
+                    <button 
+                      className="btn-action-small btn-primary-small"
+                      onClick={() => alert(`Ver perfil de ${postulacion.nombre} (funcionalidad pendiente)`)}
+                      aria-label={`Ver perfil completo de ${postulacion.nombre}`}
+                    >
+                      Ver Perfil
+                    </button>
+                    <a 
+                      href={`mailto:${postulacion.correo}`}
+                      className="btn-action-small btn-success-small"
+                      aria-label={`Contactar a ${postulacion.nombre} por correo`}
+                    >
+                      Contactar
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Gráficos y Estadísticas Adicionales */}
+        <div className="stats-bottom-grid">
+          <div className="chart-card">
+            <h3>📊 Postulaciones por Oferta</h3>
+            <div className="chart-placeholder">
+              <p>Gráfico de barras (implementar con Chart.js)</p>
+              <small>Muestra: Desarrollador Frontend (12), Diseñador UX/UI (8), Contador (5)</small>
             </div>
           </div>
 
-          <div className="column-right-rc">
-            <div className="image-placeholder-rc"></div>
-            <div className="section-reviews-rc">
-              <div className="header-reviews-rc">
-                <h3 className="title-section-rc">Reviews</h3>
-                <span className="link-reviews-rc">Ver reviews</span>
-              </div>
-              <div className="container-reviews-rc">
-                {/* contenido de reviews */}
-              </div>
+          <div className="chart-card">
+            <h3>📈 Tendencia Mensual</h3>
+            <div className="chart-placeholder">
+              <p>Gráfico de líneas (implementar con Chart.js)</p>
+              <small>Evolución de postulaciones mes a mes</small>
             </div>
           </div>
         </div>
+
       </main>
+      <Footer />
     </>
   );
 }
