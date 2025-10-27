@@ -77,137 +77,142 @@ const PublicacionPage = () => {
           <section className="section-card-PB">
             <h2 className="title-section-PB">Datos de la oferta</h2>
 
-            <label htmlFor="tituloAviso">
-              Título del aviso:
-              <input
-                type="text"
-                id="tituloAviso"
-                name="tituloAviso"
-                value={formData.tituloAviso}
-                onChange={handleChange}
-                required
-              />
-            </label>
+            <div className="form-grid-PB">
+              <div className="form-group-PB full-width-PB">
+                <label htmlFor="tituloAviso">Título del aviso:</label>
+                <input
+                  type="text"
+                  id="tituloAviso"
+                  name="tituloAviso"
+                  value={formData.tituloAviso}
+                  onChange={handleChange}
+                  placeholder="Ej: Desarrollador Full Stack"
+                  required
+                />
+              </div>
 
-            <label htmlFor="descripcionTrabajo">
-              Descripción:
-              <textarea
-                id="descripcionTrabajo"
-                name="descripcionTrabajo"
-                value={formData.descripcionTrabajo}
-                onChange={handleChange}
-                rows="4"
-                required
-              />
-            </label>
+              <div className="form-group-PB full-width-PB">
+                <label htmlFor="descripcionTrabajo">Descripción:</label>
+                <textarea
+                  id="descripcionTrabajo"
+                  name="descripcionTrabajo"
+                  value={formData.descripcionTrabajo}
+                  onChange={handleChange}
+                  placeholder="Describe las responsabilidades, requisitos y beneficios..."
+                  rows="4"
+                  required
+                />
+              </div>
 
-            <label htmlFor="direccion">
-              Dirección:
-              <input
-                type="text"
-                id="direccion"
-                name="direccion"
-                value={formData.direccion}
-                onChange={handleChange}
-                required
-              />
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="direccion">Dirección:</label>
+                <input
+                  type="text"
+                  id="direccion"
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleChange}
+                  placeholder="Ej: Calle 123 #45-67"
+                  required
+                />
+              </div>
 
-            <label htmlFor="fechaPublicacion">
-              Fecha de publicación:
-              <input
-                type="date"
-                id="fechaPublicacion"
-                name="fechaPublicacion"
-                value={formData.fechaPublicacion}
-                onChange={handleChange}
-                required
-              />
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="municipio">Municipio:</label>
+                <select
+                  id="municipio"
+                  name="municipio"
+                  value={formData.municipio}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecciona un municipio</option>
+                  {municipios.map((mun) => (
+                    <option key={mun.id} value={mun.id}>
+                      {mun.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <label htmlFor="fechaLimite">
-              Fecha límite:
-              <input
-                type="date"
-                id="fechaLimite"
-                name="fechaLimite"
-                value={formData.fechaLimite}
-                onChange={handleChange}
-                required
-              />
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="fechaPublicacion">Fecha de publicación:</label>
+                <input
+                  type="date"
+                  id="fechaPublicacion"
+                  name="fechaPublicacion"
+                  value={formData.fechaPublicacion}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <label htmlFor="modalidadTrabajo">
-              Modalidad:
-              <select
-                id="modalidadTrabajo"
-                name="modalidadTrabajo"
-                value={formData.modalidadTrabajo}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecciona una modalidad</option>
-                {modalidades.map((mod) => (
-                  <option key={mod.id} value={mod.id}>
-                    {mod.nombre}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="fechaLimite">Fecha límite:</label>
+                <input
+                  type="date"
+                  id="fechaLimite"
+                  name="fechaLimite"
+                  value={formData.fechaLimite}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <label htmlFor="tipoContrato">
-              Tipo de contrato:
-              <select
-                id="tipoContrato"
-                name="tipoContrato"
-                value={formData.tipoContrato}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecciona un tipo de contrato</option>
-                {tiposContrato.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id}>
-                    {tipo.nombre}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="modalidadTrabajo">Modalidad:</label>
+                <select
+                  id="modalidadTrabajo"
+                  name="modalidadTrabajo"
+                  value={formData.modalidadTrabajo}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecciona una modalidad</option>
+                  {modalidades.map((mod) => (
+                    <option key={mod.id} value={mod.id}>
+                      {mod.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <label htmlFor="empresa">
-              Empresa:
-              <select
-                id="empresa"
-                name="empresa"
-                value={formData.empresa}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecciona una empresa</option>
-                {empresas.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.nombre}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="tipoContrato">Tipo de contrato:</label>
+                <select
+                  id="tipoContrato"
+                  name="tipoContrato"
+                  value={formData.tipoContrato}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecciona un tipo de contrato</option>
+                  {tiposContrato.map((tipo) => (
+                    <option key={tipo.id} value={tipo.id}>
+                      {tipo.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <label htmlFor="municipio">
-              Municipio:
-              <select
-                id="municipio"
-                name="municipio"
-                value={formData.municipio}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecciona un municipio</option>
-                {municipios.map((mun) => (
-                  <option key={mun.id} value={mun.id}>
-                    {mun.nombre}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="form-group-PB">
+                <label htmlFor="empresa">Empresa:</label>
+                <select
+                  id="empresa"
+                  name="empresa"
+                  value={formData.empresa}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecciona una empresa</option>
+                  {empresas.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      {emp.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
             <button className="button-submit-PB" type="submit">
               Publicar

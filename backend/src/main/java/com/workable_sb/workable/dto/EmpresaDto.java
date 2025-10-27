@@ -33,4 +33,8 @@ public class EmpresaDto {
 
   @NotNull(message = "el municipio es obligatorio")
   private Integer munici_id;
+  
+  // Campos adicionales para lectura (nombres de relaciones)
+  private String nombreCategoria;
+  private String nombreMunicipio;
 }

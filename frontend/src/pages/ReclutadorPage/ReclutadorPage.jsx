@@ -101,14 +101,16 @@ function ReclutadorPage() {
           if (response.ok) {
             const empresaData = await response.json();
             console.log('✅ Datos de empresa cargados:', empresaData);
+            
+            // Mapear los nombres de campos del backend al frontend
             setEmpresaInfo({
-              nombre: empresaData.nombre || 'Empresa',
-              correoCorporativo: empresaData.correoCorporativo || '',
-              ubicacion: empresaData.ubicacion || '',
-              descripcion: empresaData.descripcion || '',
-              numTrabajadores: empresaData.numTrabajadores || 0,
-              nombreCategoria: empresaData.nombreCategoria || '',
-              nombreMunicipio: empresaData.nombreMunicipio || ''
+              nombre: empresaData.nom || empresaData.nombre || 'Empresa',
+              correoCorporativo: empresaData.correoCorp || empresaData.correoCorporativo || '',
+              ubicacion: empresaData.ubi || empresaData.ubicacion || '',
+              descripcion: empresaData.desc || empresaData.descripcion || '',
+              numTrabajadores: empresaData.numTrab || empresaData.numTrabajadores || 0,
+              nombreCategoria: empresaData.nomCat || empresaData.nombreCategoria || '',
+              nombreMunicipio: empresaData.nomMunici || empresaData.nombreMunicipio || ''
             });
           } else {
             const errorText = await response.text();

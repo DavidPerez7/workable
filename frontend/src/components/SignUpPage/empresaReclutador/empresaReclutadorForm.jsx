@@ -186,118 +186,168 @@ const EmpresaReclutadorForm = () => {
         
         {/* SECCIÓN EMPRESA */}
         <div className="seccion-formulario">
-          <h3>📋 Información de la Empresa</h3>
+          <h3>Información de la Empresa</h3>
           
-          <input
-            type="text"
-            name="nit_id"
-            placeholder="NIT de la empresa"
-            required
-            className="input-signup"
-          />
-          
-          <input
-            type="text"
-            name="nombreEmpresa"
-            placeholder="Nombre de la empresa"
-            required
-            className="input-signup"
-          />
-          
-          <input
-            type="text"
-            name="ubicacion"
-            placeholder="Ubicación (dirección completa)"
-            required
-            className="input-signup"
-          />
-          
-          <textarea
-            name="descripcion"
-            placeholder="Descripción de la empresa"
-            required
-            className="input-signup"
-            rows="3"
-          />
-          
-          <input
-            type="number"
-            name="numeroTrabajadores"
-            placeholder="Número de trabajadores"
-            required
-            className="input-signup"
-            min="1"
-          />
-          
-          <select name="categoria_id" required className="input-signup">
-            <option value="">Selecciona categoría</option>
-            {categorias.map(categoria => (
-              <option key={categoria.id} value={categoria.id}>
-                {categoria.nombre}
-              </option>
-            ))}
-          </select>
-          
-          <select name="municipio_id" required className="input-signup">
-            <option value="">Selecciona municipio</option>
-            {municipios.map(municipio => (
-              <option key={municipio.id} value={municipio.id}>
-                {municipio.nombre}
-              </option>
-            ))}
-          </select>
-          
-          <input
-            type="email"
-            name="correoCorporativo"
-            placeholder="Correo corporativo de la empresa"
-            required
-            className="input-signup"
-          />
+          <div className="form-grid-ER">
+            <div className="form-group-ER">
+              <label htmlFor="nit_id">NIT de la empresa:</label>
+              <input
+                type="text"
+                id="nit_id"
+                name="nit_id"
+                placeholder="Ej: 900123456-7"
+                required
+                className="input-signup"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="nombreEmpresa">Nombre de la empresa:</label>
+              <input
+                type="text"
+                id="nombreEmpresa"
+                name="nombreEmpresa"
+                placeholder="Ej: Tech Solutions S.A.S"
+                required
+                className="input-signup"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="ubicacion">Ubicación:</label>
+              <input
+                type="text"
+                id="ubicacion"
+                name="ubicacion"
+                placeholder="Dirección completa"
+                required
+                className="input-signup"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="numeroTrabajadores">Número de trabajadores:</label>
+              <input
+                type="number"
+                id="numeroTrabajadores"
+                name="numeroTrabajadores"
+                placeholder="Ej: 50"
+                required
+                className="input-signup"
+                min="1"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="categoria_id">Categoría:</label>
+              <select id="categoria_id" name="categoria_id" required className="input-signup">
+                <option value="">Selecciona categoría</option>
+                {categorias.map(categoria => (
+                  <option key={categoria.id} value={categoria.id}>
+                    {categoria.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="municipio_id">Municipio:</label>
+              <select id="municipio_id" name="municipio_id" required className="input-signup">
+                <option value="">Selecciona municipio</option>
+                {municipios.map(municipio => (
+                  <option key={municipio.id} value={municipio.id}>
+                    {municipio.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="form-group-ER full-width-ER">
+              <label htmlFor="descripcion">Descripción de la empresa:</label>
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                placeholder="Describe tu empresa, sector, actividad principal..."
+                required
+                className="input-signup"
+                rows="3"
+              />
+            </div>
+            
+            <div className="form-group-ER full-width-ER">
+              <label htmlFor="correoCorporativo">Correo corporativo:</label>
+              <input
+                type="email"
+                id="correoCorporativo"
+                name="correoCorporativo"
+                placeholder="contacto@empresa.com"
+                required
+                className="input-signup"
+              />
+            </div>
+          </div>
         </div>
 
         {/* SECCIÓN RECLUTADOR */}
         <div className="seccion-formulario">
-          <h3>👤 Información del Reclutador (Para iniciar sesión)</h3>
+          <h3>Información del Reclutador (Para iniciar sesión)</h3>
           
-          <input
-            type="text"
-            name="nombreReclutador"
-            placeholder="Nombre completo del reclutador"
-            required
-            className="input-signup"
-          />
-          
-          <input
-            type="email"
-            name="correoReclutador"
-            placeholder="Correo del reclutador"
-            required
-            className="input-signup"
-          />
-          
-          <input
-            type="password"
-            name="contrasenaReclutador"
-            placeholder="Contraseña del reclutador"
-            required
-            className="input-signup"
-            minLength="6"
-          />
-          
-          <input
-            type="tel"
-            name="telefonoReclutador"
-            placeholder="Teléfono del reclutador"
-            required
-            className="input-signup"
-            inputMode="numeric"
-            pattern="[0-9]*"
-          />
+          <div className="form-grid-ER">
+            <div className="form-group-ER">
+              <label htmlFor="nombreReclutador">Nombre completo:</label>
+              <input
+                type="text"
+                id="nombreReclutador"
+                name="nombreReclutador"
+                placeholder="Ej: Juan Pérez"
+                required
+                className="input-signup"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="telefonoReclutador">Teléfono:</label>
+              <input
+                type="tel"
+                id="telefonoReclutador"
+                name="telefonoReclutador"
+                placeholder="3001234567"
+                required
+                className="input-signup"
+                inputMode="numeric"
+                pattern="[0-9]*"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="correoReclutador">Correo electrónico:</label>
+              <input
+                type="email"
+                id="correoReclutador"
+                name="correoReclutador"
+                placeholder="juan.perez@empresa.com"
+                required
+                className="input-signup"
+              />
+            </div>
+            
+            <div className="form-group-ER">
+              <label htmlFor="contrasenaReclutador">Contraseña:</label>
+              <input
+                type="password"
+                id="contrasenaReclutador"
+                name="contrasenaReclutador"
+                placeholder="Mínimo 6 caracteres"
+                required
+                className="input-signup"
+                minLength="6"
+              />
+            </div>
+          </div>
         </div>
 
         <button type="submit" className="button-submit-unificado">
-          🚀 Registrar Empresa y Reclutador
+          Registrar Empresa y Reclutador
         </button>
       </form>
     </div>
