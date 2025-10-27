@@ -17,17 +17,111 @@ function ReclutadorPage() {
   });
   const [loading, setLoading] = useState(false); // Cambiado a false para mostrar datos mock
   const [empresaInfo, setEmpresaInfo] = useState({
-    nombre: 'TechCorp S.A.'
+    nombre: 'Cargando...',
+    correoCorporativo: '',
+    ubicacion: '',
+    descripcion: '',
+    numTrabajadores: 0
   });
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       const token = localStorage.getItem('token');
+      let empresaId = localStorage.getItem('empresaId') || localStorage.getItem('empresa_id');
+      const userId = localStorage.getItem('userId');
+      const role = localStorage.getItem('role');
+      
+      console.log('🔍 Token:', token ? 'Existe' : 'No existe');
+      console.log('🔍 empresaId inicial:', empresaId);
+      console.log('🔍 userId:', userId);
+      console.log('🔍 role:', role);
+      console.log('🔍 Todos los datos en localStorage:', {
+        token: localStorage.getItem('token') ? 'Existe' : 'No',
+        role: localStorage.getItem('role'),
+        userId: localStorage.getItem('userId'),
+        empresaId: localStorage.getItem('empresaId'),
+        empresa_id: localStorage.getItem('empresa_id'),
+        nombre: localStorage.getItem('nombre'),
+        correo: localStorage.getItem('correo')
+      });
       
       if (!token) {
-        // navigate('/login'); // Comentado para desarrollo
-        console.warn('No hay token, pero continuamos con datos mock');
+        console.warn('⚠️ No hay token, pero continuamos con datos mock');
+      }
+
+      // Si no tenemos empresaId y somos reclutador, intentar obtenerlo del perfil del reclutador
+      if (!empresaId && userId && role === 'RECLUTADOR') {
+        try {
+          console.log('🔄 Intentando obtener empresaId desde el perfil del reclutador...');
+          const reclutadorResponse = await fetch(`http://localhost:8080/api/reclutadores/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (reclutadorResponse.ok) {
+            const reclutadorData = await reclutadorResponse.json();
+            console.log('📋 Datos del reclutador:', reclutadorData);
+            
+            // Intentar extraer empresaId de diferentes posibles campos
+            const extractedEmpresaId = reclutadorData.empresaId || 
+                                       reclutadorData.empresa_id || 
+                                       (reclutadorData.empresa && reclutadorData.empresa.nitId) ||
+                                       (reclutadorData.empresa && reclutadorData.empresa.nit_id);
+            
+            if (extractedEmpresaId) {
+              empresaId = extractedEmpresaId;
+              localStorage.setItem('empresaId', empresaId);
+              localStorage.setItem('empresa_id', empresaId);
+              console.log('✅ empresaId obtenido del perfil:', empresaId);
+            } else {
+              console.warn('⚠️ No se pudo extraer empresaId del perfil del reclutador');
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error al obtener perfil del reclutador:', error);
+        }
+      }
+
+      // Cargar información de la empresa
+      if (empresaId) {
+        try {
+          console.log('🏢 Cargando datos de empresa con ID:', empresaId);
+          const response = await fetch(`http://localhost:8080/api/empresa/${empresaId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          console.log('📡 Response status:', response.status);
+          
+          if (response.ok) {
+            const empresaData = await response.json();
+            console.log('✅ Datos de empresa cargados:', empresaData);
+            setEmpresaInfo({
+              nombre: empresaData.nombre || 'Empresa',
+              correoCorporativo: empresaData.correoCorporativo || '',
+              ubicacion: empresaData.ubicacion || '',
+              descripcion: empresaData.descripcion || '',
+              numTrabajadores: empresaData.numTrabajadores || 0,
+              nombreCategoria: empresaData.nombreCategoria || '',
+              nombreMunicipio: empresaData.nombreMunicipio || ''
+            });
+          } else {
+            const errorText = await response.text();
+            console.error('❌ Error al cargar empresa:', response.status, errorText);
+            setEmpresaInfo({ nombre: 'Empresa', correoCorporativo: '', ubicacion: '', descripcion: '', numTrabajadores: 0 });
+          }
+        } catch (error) {
+          console.error('❌ Error al obtener datos de empresa:', error);
+          setEmpresaInfo({ nombre: 'Empresa', correoCorporativo: '', ubicacion: '', descripcion: '', numTrabajadores: 0 });
+        }
+      } else {
+        console.error('❌ No se encontró empresaId en localStorage ni en el perfil del reclutador');
+        setEmpresaInfo({ nombre: 'Empresa', correoCorporativo: '', ubicacion: '', descripcion: '', numTrabajadores: 0 });
       }
 
       // ========== DATOS MOCK (TEMPORALES) ==========
@@ -284,6 +378,47 @@ function ReclutadorPage() {
             </div>
           </div>
         </div>
+
+        {/* Información de la Empresa */}
+        <section className="dashboard-section">
+          <div className="section-header">
+            <h2>🏢 Información de la Empresa</h2>
+          </div>
+          <div className="empresa-info-card">
+            <div className="empresa-info-grid">
+              <div className="info-field">
+                <span className="info-label">📝 Nombre:</span>
+                <span className="info-value">{empresaInfo?.nombre || 'No especificado'}</span>
+              </div>
+              <div className="info-field">
+                <span className="info-label">📧 Correo Corporativo:</span>
+                <span className="info-value">{empresaInfo?.correoCorporativo || 'No especificado'}</span>
+              </div>
+              <div className="info-field">
+                <span className="info-label">📍 Ubicación:</span>
+                <span className="info-value">{empresaInfo?.ubicacion || 'No especificado'}</span>
+              </div>
+              <div className="info-field">
+                <span className="info-label">🏙️ Municipio:</span>
+                <span className="info-value">{empresaInfo?.nombreMunicipio || 'No especificado'}</span>
+              </div>
+              <div className="info-field">
+                <span className="info-label">🏷️ Categoría:</span>
+                <span className="info-value">{empresaInfo?.nombreCategoria || 'No especificado'}</span>
+              </div>
+              <div className="info-field">
+                <span className="info-label">👥 Número de Trabajadores:</span>
+                <span className="info-value">{empresaInfo?.numTrabajadores || 0}</span>
+              </div>
+              {empresaInfo?.descripcion && (
+                <div className="info-field info-field-full">
+                  <span className="info-label">📄 Descripción:</span>
+                  <p className="info-value-description">{empresaInfo.descripcion}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* Sección: Mis Ofertas Activas */}
         <section className="dashboard-section">

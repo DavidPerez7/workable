@@ -33,7 +33,7 @@ public class ReclutadorController {
         return ResponseEntity.ok(crear);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{reclutador_id}")
     public ResponseEntity<ReclutadorReadDto> obtenerPorId(@PathVariable Integer reclutador_id) {
         ReclutadorReadDto obtener = reclutadorService.buscarPorId(reclutador_id);
         return ResponseEntity.ok(obtener);
@@ -45,7 +45,7 @@ public class ReclutadorController {
         return ResponseEntity.ok(reclutador);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{reclutador_id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer reclutador_id) {
         reclutadorService.eliminar(reclutador_id);
         return ResponseEntity.noContent().build();}

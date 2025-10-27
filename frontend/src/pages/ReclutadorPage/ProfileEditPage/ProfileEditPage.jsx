@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import HeaderReclutador from '../../../components/HeaderReclutador/HeaderReclutador';
 import './ProfileEditPage.css';
 
 function ProfileEditPage() {
+  const [correo, setCorreo] = useState('');
+
+  useEffect(() => {
+    // Cargar correo del localStorage
+    const storedCorreo = localStorage.getItem('correo');
+    if (storedCorreo) {
+      setCorreo(storedCorreo);
+    }
+  }, []);
 
   const handleEmailSubmit = (event) => {
     event.preventDefault();
+    // TODO: Implementar lógica de actualización de email
+    alert('Funcionalidad de actualización de email pendiente de implementar');
   };
 
   const handlePasswordSubmit = (event) => {
     event.preventDefault();
+    // TODO: Implementar lógica de actualización de contraseña
+    alert('Funcionalidad de actualización de contraseña pendiente de implementar');
   };
 
   return (
@@ -31,7 +44,7 @@ function ProfileEditPage() {
             <form onSubmit={handleEmailSubmit}>
               <div className='current-email-display-PEP'>
                 <p className='label-email-PEP'>Email actual</p>
-                <p className='value-email-PEP'>ejemplo@gmail.com</p>
+                <p className='value-email-PEP'>{correo || 'ejemplo@gmail.com'}</p>
               </div>
               <div className='input-group-edit-PEP'>
                 <label htmlFor="newEmail" className='input-label-edit-PEP'>Nuevo e-mail</label>

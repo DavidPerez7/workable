@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './HeaderReclutador.css';
 
 function HeaderReclutador() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [nombre, setNombre] = useState('Reclutador');
+
+  useEffect(() => {
+    // Cargar nombre del localStorage
+    const storedNombre = localStorage.getItem('nombre');
+    if (storedNombre) {
+      setNombre(storedNombre);
+    }
+  }, []);
 
   return (
     <header className="header-container-rc">
@@ -25,7 +34,7 @@ function HeaderReclutador() {
 
       <div className={menuOpen ? 'user-profile-menu-rc show-rc' : 'user-profile-menu-rc'}>
         <div className="user-info-rc">
-          <span className="username-text-rc">NombreReclutador</span>
+          <span className="username-text-rc">{nombre}</span>
           <Link to='/Reclutador/EditarPerfil' className="avatar-placeholder-rc"></Link>
         </div>
       </div>

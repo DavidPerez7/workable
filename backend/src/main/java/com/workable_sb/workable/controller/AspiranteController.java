@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/aspirante")
@@ -51,5 +53,11 @@ public class AspiranteController {
     public ResponseEntity<Void> eliminar(@PathVariable Integer id){
       aspiranteService.eliminar(id);
       return ResponseEntity.noContent().build();
+    }
+
+  @PutMapping("/{id}")
+    public ResponseEntity<AspiranteReadDto> actualizar(@PathVariable Integer id, @Valid @RequestBody AspiranteDto aspiranteDto) {
+        AspiranteReadDto actualizado = aspiranteService.update(id, aspiranteDto);
+        return ResponseEntity.ok(actualizado);
     }
 }

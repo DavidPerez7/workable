@@ -1,42 +1,38 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { login, redirectByRole } from '../../utils/auth';
 import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
+import Footer from '../Footer/footer';
 import './LoginPage.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [correo, setCorreo] = useState('');
   const [cla, setCla] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Manejar datos desde la redirección del registro
+  useEffect(() => {
+    if (location.state?.email) {
+      setCorreo(location.state.email);
+    }
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // Limpiar el mensaje después de 5 segundos
+      setTimeout(() => setSuccessMessage(''), 5000);
+    }
+  }, [location.state]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
     try {
-      const res = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ correo, clave: cla }),
-      });
-
-      if (!res.ok) throw new Error('Credenciales inválidas');
-
-      const data = await res.json();
-      console.log('Login response:', data); 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('idAspirante', data.id);
-      localStorage.setItem('nombre', data.nombre);
-      localStorage.setItem('apellido', data.apellido);
-      localStorage.setItem('correo', data.correo);
-      localStorage.setItem('telefono', data.telefono);
-      localStorage.setItem('ubicacion', data.ubicacion);
-      localStorage.setItem('fechaNacimiento', data.fechaNacimiento);
-      localStorage.setItem('tipoDocumento', data.tipoDocumento);
-      localStorage.setItem('numeroDocumento', data.numeroDocumento); 
-
-      navigate('/Aspirante');
+      const data = await login(correo, cla);
+      console.log('Login exitoso:', data);
+      redirectByRole(navigate, data.role);
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -49,6 +45,11 @@ const LoginPage = () => {
         <div className="div-login">
           <form className="div-lg-form" onSubmit={handleLogin}>
             <h2>Iniciar Sesión</h2>
+            {successMessage && (
+              <div className="success-message">
+                ✅ {successMessage}
+              </div>
+            )}
             <input
               type="email"
               className="input-lg-form"

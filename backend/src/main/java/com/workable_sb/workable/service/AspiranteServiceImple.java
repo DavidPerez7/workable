@@ -37,6 +37,39 @@ public class AspiranteServiceImple implements AspiranteService{
     Aspirante guardado = aspiranteRepository.save(aspirante);
     return aspiranteMapper.consultReadDto(guardado);
   }
+  
+      @Override
+      public AspiranteReadDto update(Integer id, AspiranteDto aspiranteDto) {
+        Aspirante aspirante = aspiranteRepository.findById(id)
+          .orElseThrow(() -> new EntityNotFoundException("Aspirante no encontrado"));
+
+        // Actualizar campos
+        aspirante.setNombre(aspiranteDto.getNom());
+        aspirante.setApellido(aspiranteDto.getApe());
+        aspirante.setCorreo(aspiranteDto.getCorr());
+        aspirante.setUbicacion(aspiranteDto.getUbi());
+        aspirante.setTelefono(aspiranteDto.getTel());
+        aspirante.setFecha_Nacimiento(aspiranteDto.getFeNa());
+        aspirante.setNumero_Doc(aspiranteDto.getNumDoc());
+        aspirante.setFoto(aspiranteDto.getFoto());
+        if (aspiranteDto.getCla() != null && !aspiranteDto.getCla().isEmpty()) {
+          aspirante.setClave(passwordEncoder.encode(aspiranteDto.getCla()));
+        }
+
+        // Actualizar relaciones
+        aspirante.setMunicipio(
+          aspiranteMapper.consult(aspiranteDto).getMunicipio()
+        );
+        aspirante.setTipDocumento(
+          aspiranteMapper.consult(aspiranteDto).getTipDocumento()
+        );
+        aspirante.setGenero(
+          aspiranteMapper.consult(aspiranteDto).getGenero()
+        );
+
+        Aspirante actualizado = aspiranteRepository.save(aspirante);
+        return aspiranteMapper.consultReadDto(actualizado);
+      }
 
   @Override
   public AspiranteReadDto listId(Integer id){

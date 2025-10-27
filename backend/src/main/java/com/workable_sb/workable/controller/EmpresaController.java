@@ -41,9 +41,18 @@ public class EmpresaController {
   
 
   @PostMapping
-  public ResponseEntity<EmpresaReadDto> guardar(@Valid @RequestBody EmpresaDto dto) {
-      EmpresaReadDto guardado = empresaServ.guardar(dto);
-      return ResponseEntity.ok(guardado);
+  public ResponseEntity<?> guardar(@Valid @RequestBody EmpresaDto dto) {
+      try {
+          EmpresaReadDto guardado = empresaServ.guardar(dto);
+          return ResponseEntity.ok(guardado);
+      } catch (jakarta.persistence.EntityNotFoundException e) {
+          return ResponseEntity.badRequest().body(java.util.Map.of("error", e.getMessage()));
+      } catch (org.springframework.dao.DataIntegrityViolationException e) {
+          return ResponseEntity.badRequest().body(java.util.Map.of("error", "El NIT ya está registrado o hay un problema con los datos"));
+      } catch (Exception e) {
+          e.printStackTrace();
+          return ResponseEntity.badRequest().body(java.util.Map.of("error", "Error al crear empresa: " + e.getMessage()));
+      }
   }
 
   @GetMapping("/{id}")

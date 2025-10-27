@@ -11,11 +11,6 @@ INSERT INTO categoria (categoria_id, nombre, imagen, descripcion) VALUES
 (4, 'FINANZAS', '', 'Entidades bancarias y de servicios financieros'),
 (5, 'COMERCIO', '', 'Comercios al por mayor y por menor'),
 (6, 'ALIMENTICIOS', '', 'Empresas dedicadas a la producción y distribución de alimentos y bebidas');
-INSERT INTO empresa (nombre, ubicacion, descripcion, categoria_id, municipio_id)
-VALUES 
-('SoftCorp', 'Bogotá, Colombia', 'Consultoría en software y ciberseguridad', 1, 2),
-('AgroTech', 'Cali, Colombia', 'Soluciones tecnológicas para el agro', 2, 1),
-('EduFuture', 'Barranquilla, Colombia', 'Plataformas educativas innovadoras', 3, 5);
 INSERT INTO modalidad (modalidad_id, nombre) VALUES (1, 'Presencial'), (2, 'Remoto'),(3, 'Híbrido');
 INSERT INTO tipo_contrato (tipo_contrato_id, nombre) VALUES
 (1, 'Tiempo completo'),(2, 'Medio tiempo'),(3, 'Contrato temporal'), (4, 'Freelance'), (5, 'Prácticas profesionales');

@@ -30,6 +30,8 @@ export const getAllEmpresasDto = async () => {
 };
 
 export const crearEmpresa = async (empresaData) => {
+  console.log("📤 Enviando datos de empresa:", empresaData);
+  
   const response = await fetch("http://localhost:8080/api/empresa", {
     method: "POST",
     headers: {
@@ -38,12 +40,21 @@ export const crearEmpresa = async (empresaData) => {
     body: JSON.stringify(empresaData),
   });
 
+  console.log("📥 Respuesta del servidor:", response.status, response.statusText);
+
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al crear empresa");
+    const errorData = await response.json().catch(() => ({ error: "Error desconocido" }));
+    console.error("❌ Error del servidor:", errorData);
+    
+    // Crear un error con más detalles
+    const error = new Error(errorData.error || errorData.message || "Error al crear empresa");
+    error.response = { data: errorData };
+    throw error;
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log("✅ Empresa creada exitosamente:", result);
+  return result;
 };
 
 export const eliminarEmpresa = async (id) => {
