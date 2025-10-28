@@ -4,9 +4,6 @@ INSERT INTO departamento VALUES
 INSERT INTO municipio VALUES
 (1,'BOGOTA D.C', 1),(2,'MEDELLIN', 2),(3, 'BELLO', 2),(4, 'ITAGUI', 2),(5, 'ENVIGADO', 2),(6, 'RIONEGRO', 2);
 
-INSERT INTO TipoDocumento VALUES
-(1, 'C.C'), (2, 'T.I'), (3, 'C.E');
-
 INSERT INTO NivelEducativo VALUES
 (1, 'Bachillerato'), (2, 'Tecnico'), (3, 'Tecnologo'), (4, 'Pregrado'), (5, 'Postgrado'), (6, 'universitario'), (7, 'especializacion'), (8, 'Maestria'), (9, 'Doctorado');
 

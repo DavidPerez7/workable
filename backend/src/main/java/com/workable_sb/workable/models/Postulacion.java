@@ -24,7 +24,7 @@ public class Postulacion {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
-  private LocalDate fecha_postulacion;
+  private LocalDate fechaPostulacion;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "estado_id", nullable = false, foreignKey = @ForeignKey(name = "FK_estado_postulacion"))
@@ -39,9 +39,9 @@ public class Postulacion {
   private Usuario usuario;
 
   @PrePersist
-  public void setFecha_postulacion() {
-    if (this.fecha_postulacion == null) {
-      this.fecha_postulacion = LocalDate.now();
+  public void setFechaPostulacion() {
+    if (this.fechaPostulacion == null) {
+      this.fechaPostulacion = LocalDate.now();
     }
   }
 }

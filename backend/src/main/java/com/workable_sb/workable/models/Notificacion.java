@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "notificacion")
+
 public class Notificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer notificacionId;
+    private Integer id;
 
     @Column(nullable = false, length = 255)
     private String mensaje;
@@ -28,4 +28,11 @@ public class Notificacion {
     @ManyToOne(optional = false)
     @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_notificacion_usuario"))
     private Usuario usuario;
+
+    @PrePersist
+    public void setFecha() {
+        if (this.fecha == null) {
+            this.fecha = LocalDateTime.now();
+        }
+    }
 }

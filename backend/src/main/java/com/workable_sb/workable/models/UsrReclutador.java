@@ -15,8 +15,7 @@ import jakarta.persistence.ForeignKey;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsrReclutador extends Usuario{
-    
     @ManyToOne
-    @JoinColumn(name = "empresa_nitId", nullable = false, foreignKey = @ForeignKey(name = "FK_dataReclutador_empresa"))
+    @JoinColumn(name = "empresa_nitId", nullable = false, foreignKey = @ForeignKey(name = "FK_usrReclutador_empresa"))
     private Empresa empresa;
 }

@@ -34,7 +34,7 @@ public class DataEstudio {
     private String institucion;
 
     @Column(nullable = false)
-    private String certificado;
+    private String certificadoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "nivelEducativo_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datosEstudios_nivelEducativo"))
