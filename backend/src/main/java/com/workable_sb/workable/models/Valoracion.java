@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,7 @@ import jakarta.persistence.ForeignKey;
 public class Valoracion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer valoracion_id;
+	private Integer id;
 
 	@Column(nullable = false, length = 255)
 	private String descripcion;
@@ -41,4 +42,12 @@ public class Valoracion {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_valoracion"))
 	private Usuario usuario;
+
+	@PrePersist
+	private void setFecha_valoracion() {
+		if (this.fecha_valoracion == null) {
+			this.fecha_valoracion = LocalDate.now();
+		}
+	}
+	
 }

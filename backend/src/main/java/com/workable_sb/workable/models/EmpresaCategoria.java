@@ -4,10 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
 
-@Getter
 @Entity
-public class Beneficio {
+@Getter
+public class EmpresaCategoria {
   @Id
-  private Short beneficio_id;
+  private Integer id;
   private String nombre;
+  private String imagen;
+  private String descripcion;
 }

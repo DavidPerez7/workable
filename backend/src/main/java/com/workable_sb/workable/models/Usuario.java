@@ -26,11 +26,15 @@ public class Usuario {
 
     @Column(nullable = false)
     private String rol;
-
-    @Lob
-    private byte[] fotoPerfil;
+    private String fotoPerfilUrl;
 
     @ManyToOne
     @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
+
+    // data de los diferentes roles
+    @ManyToMany
+    @JoinColumn(name = "dataAspirante_id", foreignKey = @ForeignKey(name = "FK_usuario_dataAspirante"))
+    private DataAspirante dataAspirante;
+
 }

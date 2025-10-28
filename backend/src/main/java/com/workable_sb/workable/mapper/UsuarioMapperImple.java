@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.UsuarioDto;
 import com.workable_sb.workable.models.Municipio;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.repository.MunicipioRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -16,9 +16,9 @@ public class UsuarioMapperImple implements UsuarioMapper {
     private MunicipioRepository municipioRepository;
 
     @Override
-    public Usuario toEntity(UsuarioDto usuarioDto) {
+    public User toEntity(UsuarioDto usuarioDto) {
         if (usuarioDto == null) return null;
-        Usuario usuario = new Usuario();
+        User usuario = new User();
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setCorreo(usuarioDto.getCorreo());
         usuario.setClave(usuarioDto.getClave());
@@ -33,7 +33,7 @@ public class UsuarioMapperImple implements UsuarioMapper {
     }
 
     @Override
-    public UsuarioDto toDto(Usuario usuario) {
+    public UsuarioDto toDto(User usuario) {
         if (usuario == null) return null;
         UsuarioDto dto = new UsuarioDto();
         dto.setId(usuario.getId());

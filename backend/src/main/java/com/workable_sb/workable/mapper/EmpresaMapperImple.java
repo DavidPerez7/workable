@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.workable_sb.workable.dto.EmpresaDto;
 import com.workable_sb.workable.dto.EmpresaReadDto;
-import com.workable_sb.workable.models.Categoria;
+import com.workable_sb.workable.models.EmpresaCategoria;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.CategoriaRepository;
@@ -35,7 +35,7 @@ public class EmpresaMapperImple implements EmpresaMapper{
     Municipio municipio = municipioRepository.findById(empresaDto.getMunici_id()).orElseThrow(() -> new EntityNotFoundException("Municipio no encontrado"));
     empresa.setMunicipio(municipio);
 
-    Categoria categoria = categoriaRepository.findById(empresaDto.getCat_id()).orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
+    EmpresaCategoria categoria = categoriaRepository.findById(empresaDto.getCat_id()).orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     empresa.setCategoria(categoria);
 
     return empresa;

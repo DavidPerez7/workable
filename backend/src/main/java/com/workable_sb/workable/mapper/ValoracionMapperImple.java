@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.ValoracionDto;
 import com.workable_sb.workable.dto.ValoracionReadDto;
 import com.workable_sb.workable.models.Empresa;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.models.Valoracion;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
@@ -35,7 +35,7 @@ public class ValoracionMapperImple implements ValoracionMapper {
     .orElseThrow(() -> new EntityNotFoundException("Empresa no encontrada"));
     entity.setEmpresa(empresa);
 
-  Usuario usuario = usuarioRepository.findById(valoracionDto.getAspirante_id())
+  User usuario = usuarioRepository.findById(valoracionDto.getAspirante_id())
   .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
   entity.setUsuario(usuario);
 

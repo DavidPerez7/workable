@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.EstudioDto;
 import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.models.NivelEducativo;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.repository.NivelEducativoRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
 
@@ -36,7 +36,7 @@ public class EstudioMapperImple implements EstudioMapper {
             .orElseThrow(() -> new EntityNotFoundException("Nivel educativo no encontrado"));
         estudio.setNivelEducativo(nivelEducativo);
 
-        Usuario usuario = usuarioRepository.findById(datoEstudioDto.getAsp_id())
+        User usuario = usuarioRepository.findById(datoEstudioDto.getAsp_id())
             .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         estudio.setUsuario(usuario);
 

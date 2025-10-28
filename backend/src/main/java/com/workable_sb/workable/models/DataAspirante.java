@@ -10,8 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,8 +20,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "info_aspirante")
-public class InfoAspirante {
+public class DataAspirante {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -32,11 +31,7 @@ public class InfoAspirante {
   @Column(nullable = false)
   private Date fechaNacimiento;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "municipio_id", referencedColumnName = "municipio_id", foreignKey = @ForeignKey(name = "FK_infoAspirante_Municipio"))
-  private Municipio municipio;
-
-  @OneToOne(cascade = CascadeType.ALL)
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "genero_id", referencedColumnName = "genero_id", foreignKey = @ForeignKey(name = "FK_infoPersonal_Genero"))
   private Genero genero;
 

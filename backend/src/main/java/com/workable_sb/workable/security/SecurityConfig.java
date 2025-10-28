@@ -21,37 +21,30 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
+    // definir filtros de acceso
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                // Endpoints públicos
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/aspirante").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
-                // Ejemplo: solo ADMINISTRADOR puede acceder a /api/administradores
-                .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
-                // Ejemplo: solo ASPIRANTE puede acceder a /api/hojasdevida
-                .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
-                // Ejemplo: solo RECLUTADOR puede acceder a /api/oferta
-                .requestMatchers("/api/oferta/**").hasRole("RECLUTADOR")
-                // Todo lo demás requiere autenticación
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/aspirante").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
+            .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
+            .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
+            .requestMatchers("/api/oferta/**").hasRole("RECLUTADOR")
+            .anyRequest().authenticated()
+            ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
+    // definir configuracion CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

@@ -5,9 +5,9 @@ import org.springframework.stereotype.Component;
 
 
 import com.workable_sb.workable.dto.InfoAspiranteDto;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.models.Genero;
-import com.workable_sb.workable.models.InfoAspirante;
+import com.workable_sb.workable.models.DataAspirante;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.MunicipioRepository;
 import com.workable_sb.workable.repository.GeneroRepository;
@@ -28,8 +28,8 @@ public class InfoPersonalMapperImple implements InfoPersonalMapper {
     }
 
     @Override
-    public InfoAspirante toEntity(InfoAspiranteDto infoPersonalDto) {
-        InfoAspirante infoPersonal = new InfoAspirante();
+    public DataAspirante toEntity(InfoAspiranteDto infoPersonalDto) {
+        DataAspirante infoPersonal = new DataAspirante();
         infoPersonal.setId(infoPersonalDto.getId());
         infoPersonal.setTelefono(infoPersonalDto.getTelef());
         infoPersonal.setFechaNacimiento(infoPersonalDto.getFechNac());
@@ -40,14 +40,14 @@ public class InfoPersonalMapperImple implements InfoPersonalMapper {
         Genero genero = generoRepository.findById(infoPersonalDto.getGenero_id()).orElseThrow(() -> new RuntimeException("Genero no encontrado"));
         infoPersonal.setGenero(genero);
 
-        Usuario usuario = usuarioRepository.findById(infoPersonalDto.getUsuario_id()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        User usuario = usuarioRepository.findById(infoPersonalDto.getUsuario_id()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         infoPersonal.setUsuario(usuario);
 
         return infoPersonal;
     }
 
     @Override
-    public InfoAspiranteDto toDto(InfoAspirante entity) {
+    public InfoAspiranteDto toDto(DataAspirante entity) {
         return new InfoAspiranteDto(
             entity.getId(),
             entity.getTelefono(),

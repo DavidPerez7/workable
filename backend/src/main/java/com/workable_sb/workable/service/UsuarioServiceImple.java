@@ -2,7 +2,7 @@ package com.workable_sb.workable.service;
 
 import com.workable_sb.workable.dto.UsuarioDto;
 import com.workable_sb.workable.mapper.UsuarioMapper;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -20,9 +20,9 @@ public class UsuarioServiceImple implements UsuarioService {
 
     @Override
     public UsuarioDto create(UsuarioDto usuarioDto) {
-    Usuario usuario = usuarioMapper.toEntity(usuarioDto);
+    User usuario = usuarioMapper.toEntity(usuarioDto);
     usuario.setClave(passwordEncoder.encode(usuario.getClave()));
-    Usuario guardado = usuarioRepository.save(usuario);
+    User guardado = usuarioRepository.save(usuario);
     return usuarioMapper.toDto(guardado);
     }
 
@@ -47,7 +47,7 @@ public class UsuarioServiceImple implements UsuarioService {
                 usuario.setNombre(usuarioDto.getNombre());
                 usuario.setCorreo(usuarioDto.getCorreo());
                 usuario.setRol(usuarioDto.getRol());
-                Usuario actualizado = usuarioRepository.save(usuario);
+                User actualizado = usuarioRepository.save(usuario);
                 return usuarioMapper.toDto(actualizado);
             })
             .orElse(null);

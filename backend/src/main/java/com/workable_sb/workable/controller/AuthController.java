@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.workable_sb.workable.dto.LoginRequestDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
 import com.workable_sb.workable.dto.UsuarioDto;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
 import com.workable_sb.workable.service.UsuarioService;
@@ -53,7 +53,7 @@ public ResponseEntity<?> register(@Valid @RequestBody UsuarioDto usuarioDto) {
 
 @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
-    Usuario usuario = usuarioRepository.findByCorreo(loginDto.getCorreo()).orElse(null);
+    User usuario = usuarioRepository.findByCorreo(loginDto.getCorreo()).orElse(null);
     if (usuario == null || !passwordEncoder.matches(loginDto.getClave(), usuario.getClave())) {
         return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
     }

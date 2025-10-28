@@ -3,10 +3,10 @@ package com.workable_sb.workable.mapper;
 import org.springframework.stereotype.Component;
 
 import com.workable_sb.workable.dto.PostulacionDto;
-import com.workable_sb.workable.models.Estado;
+import com.workable_sb.workable.models.PostulacionEstado;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Postulacion;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.repository.EstadoRepository;
 import com.workable_sb.workable.repository.OfertaRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
@@ -33,7 +33,7 @@ public class PostulacionMapperImple implements PostulacionMapper{
     postulacion.setPostuacion_id(postulacionDto.getId());
     postulacion.setFecha(postulacionDto.getFech());
 
-    Estado estado = estadoRepository.findById(postulacionDto.getEstado_Id())
+    PostulacionEstado estado = estadoRepository.findById(postulacionDto.getEstado_Id())
     .orElseThrow(() -> new EntityNotFoundException("Estado no encontrado"));
     postulacion.setEstado(estado);
 
@@ -41,7 +41,7 @@ public class PostulacionMapperImple implements PostulacionMapper{
     .orElseThrow(() -> new EntityNotFoundException("Oferta no encontrada"));
     postulacion.setOferta(oferta);
 
-  Usuario usuario = usuarioRepository.findById(postulacionDto.getAspirante_id())
+  User usuario = usuarioRepository.findById(postulacionDto.getAspirante_id())
   .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
   postulacion.setUsuario(usuario);
 
