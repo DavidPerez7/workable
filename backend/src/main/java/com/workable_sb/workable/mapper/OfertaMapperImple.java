@@ -35,6 +35,12 @@ public class OfertaMapperImple implements OfertaMapper{
       oferta.setTitulo(ofertaDto.getTitu());
       oferta.setDescripcion(ofertaDto.getDesc());
       oferta.setUbicacion(ofertaDto.getUbi());
+      oferta.setRequisitos(ofertaDto.getRequisitos());
+      oferta.setSalario(ofertaDto.getSalario());
+      oferta.setJornada(ofertaDto.getJornada());
+      oferta.setBeneficios(ofertaDto.getBeneficios());
+      oferta.setResponsabilidades(ofertaDto.getResponsabilidades());
+      oferta.setContacto(ofertaDto.getContacto());
       oferta.setFechaPublicacion(ofertaDto.getFechaPu());
       oferta.setFechaLimite(ofertaDto.getFechaLi());
 
@@ -60,6 +66,12 @@ public class OfertaMapperImple implements OfertaMapper{
           entity.getTitulo(),
           entity.getDescripcion(),
           entity.getUbicacion(),
+          entity.getRequisitos(),
+          entity.getSalario(),
+          entity.getJornada(),
+          entity.getBeneficios(),
+          entity.getResponsabilidades(),
+          entity.getContacto(),
           entity.getFechaPublicacion(),
           entity.getFechaLimite(),
           entity.getModalidad().getModalidad_id(),

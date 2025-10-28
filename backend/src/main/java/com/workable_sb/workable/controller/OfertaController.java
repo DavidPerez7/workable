@@ -42,6 +42,12 @@ public class OfertaController {
       return ResponseEntity.ok(ofertas);
     }
 
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<List<OfertaReadDto>> listarPorEmpresa(@PathVariable Long empresaId){
+      List<OfertaReadDto> ofertas = ofertaService.listarPorEmpresa(empresaId);
+      return ResponseEntity.ok(ofertas);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id){
       ofertaService.eliminar(id);

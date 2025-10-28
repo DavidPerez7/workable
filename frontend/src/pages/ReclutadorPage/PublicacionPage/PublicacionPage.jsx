@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { crearOferta } from '../../../api/ofertasAPI';
 import HeaderReclutador from '../../../components/HeaderReclutador/HeaderReclutador';
 import './PublicacionPage.css';
 
 const PublicacionPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [formData, setFormData] = useState({
     tituloAviso: '',
     descripcionTrabajo: '',
     direccion: '',
+    requisitos: '',
+    salario: '',
+    jornada: '',
+    beneficios: '',
+    responsabilidades: '',
+    contacto: '',
     fechaPublicacion: '',
     fechaLimite: '',
     modalidadTrabajo: '',
-    tipoContrato: '',
-    empresa: '',
-    municipio: ''
+    tipoContrato: ''
   });
 
 
@@ -31,16 +38,11 @@ const PublicacionPage = () => {
     { id: 3, nombre: 'Prácticas' }
   ];
 
-  const empresas = [
-    { id: 1, nombre: 'Empresa A' },
-    { id: 2, nombre: 'Empresa B' },
-    { id: 3, nombre: 'Empresa C' }
-  ];
-
-  const municipios = [
-    { id: 1, nombre: 'Bogotá' },
-    { id: 2, nombre: 'Medellín' },
-    { id: 3, nombre: 'Cali' }
+  const tiposJornada = [
+    'Tiempo completo',
+    'Medio tiempo',
+    'Por horas',
+    'Remoto'
   ];
 
   const handleChange = (e) => {
@@ -48,23 +50,58 @@ const PublicacionPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    try {
+      setLoading(true);
+      setError(null);
 
-    const datosListos = {
-      NOMBRE: formData.tituloAviso,
-      DESCRIPCION: formData.descripcionTrabajo,
-      DIRECCION: formData.direccion,
-      FECHA_PUBLI: formData.fechaPublicacion,
-      FECHA_LIMIT: formData.fechaLimite,
-      MODAL_ID: parseInt(formData.modalidadTrabajo),
-      TIP_CONT_ID: parseInt(formData.tipoContrato),
-      EMPRE_ID: parseInt(formData.empresa),
-      MUNIC_ID: parseInt(formData.municipio)
-    };
+      // Obtener el empresaId desde localStorage
+      const empresaId = localStorage.getItem('empresaId');
+      
+      if (!empresaId) {
+        alert('Error: No se encontró el ID de la empresa. Por favor, inicia sesión nuevamente.');
+        return;
+      }
 
-    console.log("Datos listos para guardar en la base de datos:", datosListos);
-    alert("Formulario completado. Verifica la consola del navegador.");
+      // Preparar los datos según el formato del backend (OfertaDto)
+      const ofertaData = {
+        titu: formData.tituloAviso,
+        desc: formData.descripcionTrabajo,
+        ubi: formData.direccion,
+        requisitos: formData.requisitos || null,
+        salario: formData.salario || null,
+        jornada: formData.jornada || null,
+        beneficios: formData.beneficios || null,
+        responsabilidades: formData.responsabilidades || null,
+        contacto: formData.contacto || null,
+        fechaPu: formData.fechaPublicacion,
+        fechaLi: formData.fechaLimite,
+        modalidad_id: parseInt(formData.modalidadTrabajo),
+        tipoContrato_id: parseInt(formData.tipoContrato),
+        empresa_id: parseInt(empresaId) // Usar el empresaId del localStorage
+      };
+
+      console.log('📤 Enviando datos de oferta al backend:', ofertaData);
+
+      // Llamar a la API para crear la oferta
+      const respuesta = await crearOferta(ofertaData);
+      
+      console.log('✅ Oferta creada exitosamente:', respuesta);
+      
+      alert('¡Oferta publicada exitosamente!');
+      
+      // Redirigir a la página de gestión de ofertas o lista de ofertas
+      navigate('/reclutador/ofertas');
+      
+    } catch (err) {
+      console.error('❌ Error al crear oferta:', err);
+      setError(err.message || 'Error al crear la oferta');
+      alert('Error al publicar la oferta: ' + (err.message || 'Por favor, intenta de nuevo.'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -98,41 +135,100 @@ const PublicacionPage = () => {
                   name="descripcionTrabajo"
                   value={formData.descripcionTrabajo}
                   onChange={handleChange}
-                  placeholder="Describe las responsabilidades, requisitos y beneficios..."
-                  rows="4"
+                  placeholder="Descripción breve del puesto..."
+                  rows="3"
                   required
                 />
               </div>
 
+              <div className="form-group-PB full-width-PB">
+                <label htmlFor="requisitos">Requisitos:</label>
+                <textarea
+                  id="requisitos"
+                  name="requisitos"
+                  value={formData.requisitos}
+                  onChange={handleChange}
+                  placeholder="- Experiencia mínima de X años&#10;- Conocimientos en tecnologías&#10;- Capacidad de trabajo en equipo&#10;- Proactividad y responsabilidad"
+                  rows="6"
+                />
+              </div>
+
+              <div className="form-group-PB full-width-PB">
+                <label htmlFor="responsabilidades">Responsabilidades:</label>
+                <textarea
+                  id="responsabilidades"
+                  name="responsabilidades"
+                  value={formData.responsabilidades}
+                  onChange={handleChange}
+                  placeholder="- Cumplir con los objetivos del área&#10;- Reportar avances al líder de proyecto&#10;- Participar en reuniones de equipo&#10;- Mantener buenas prácticas de desarrollo"
+                  rows="6"
+                />
+              </div>
+
+              <div className="form-group-PB full-width-PB">
+                <label htmlFor="beneficios">Beneficios:</label>
+                <textarea
+                  id="beneficios"
+                  name="beneficios"
+                  value={formData.beneficios}
+                  onChange={handleChange}
+                  placeholder="- Contrato estable&#10;- Oportunidad de crecimiento&#10;- Ambiente laboral agradable&#10;- Prestaciones de ley"
+                  rows="5"
+                />
+              </div>
+
               <div className="form-group-PB">
-                <label htmlFor="direccion">Dirección:</label>
+                <label htmlFor="direccion">Ubicación:</label>
                 <input
                   type="text"
                   id="direccion"
                   name="direccion"
                   value={formData.direccion}
                   onChange={handleChange}
-                  placeholder="Ej: Calle 123 #45-67"
+                  placeholder="Ej: Calle 123 #45-67, Bogotá"
                   required
                 />
               </div>
 
               <div className="form-group-PB">
-                <label htmlFor="municipio">Municipio:</label>
-                <select
-                  id="municipio"
-                  name="municipio"
-                  value={formData.municipio}
+                <label htmlFor="salario">Salario:</label>
+                <input
+                  type="text"
+                  id="salario"
+                  name="salario"
+                  value={formData.salario}
                   onChange={handleChange}
-                  required
+                  placeholder="Ej: A convenir, $2.000.000 - $3.000.000"
+                />
+              </div>
+
+              <div className="form-group-PB">
+                <label htmlFor="jornada">Jornada:</label>
+                <select
+                  id="jornada"
+                  name="jornada"
+                  value={formData.jornada}
+                  onChange={handleChange}
                 >
-                  <option value="">Selecciona un municipio</option>
-                  {municipios.map((mun) => (
-                    <option key={mun.id} value={mun.id}>
-                      {mun.nombre}
+                  <option value="">Selecciona una jornada</option>
+                  {tiposJornada.map((tipo, index) => (
+                    <option key={index} value={tipo}>
+                      {tipo}
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="form-group-PB">
+                <label htmlFor="contacto">Contacto (Email):</label>
+                <input
+                  type="email"
+                  id="contacto"
+                  name="contacto"
+                  value={formData.contacto}
+                  onChange={handleChange}
+                  placeholder="talento@empresa.com"
+                />
               </div>
 
               <div className="form-group-PB">
@@ -148,7 +244,7 @@ const PublicacionPage = () => {
               </div>
 
               <div className="form-group-PB">
-                <label htmlFor="fechaLimite">Fecha límite:</label>
+                <label htmlFor="fechaLimite">Postúlate hasta:</label>
                 <input
                   type="date"
                   id="fechaLimite"
@@ -194,28 +290,24 @@ const PublicacionPage = () => {
                   ))}
                 </select>
               </div>
-
-              <div className="form-group-PB">
-                <label htmlFor="empresa">Empresa:</label>
-                <select
-                  id="empresa"
-                  name="empresa"
-                  value={formData.empresa}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Selecciona una empresa</option>
-                  {empresas.map((emp) => (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
-            <button className="button-submit-PB" type="submit">
-              Publicar
+            {error && (
+              <div className="error-message-PB" style={{
+                padding: '15px',
+                backgroundColor: '#fee',
+                border: '1px solid #fcc',
+                borderRadius: '8px',
+                color: '#c33',
+                marginTop: '15px',
+                textAlign: 'center'
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button className="button-submit-PB" type="submit" disabled={loading}>
+              {loading ? '⏳ Publicando...' : 'Publicar'}
             </button>
           </section>
         </form>

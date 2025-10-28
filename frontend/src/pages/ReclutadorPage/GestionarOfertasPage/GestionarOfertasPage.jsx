@@ -1,28 +1,36 @@
 // frontend/src/pages/ReclutadorPage/GestionarOfertasPage/GestionarOfertasPage.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getOfertasPorEmpresa, eliminarOferta } from '../../../api/ofertasAPI';
 import HeaderReclutador from '../../../components/HeaderReclutador/HeaderReclutador';
 import './GestionarOfertasPage.css';
 
 const GestionarOfertasPage = () => {
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Cargar ofertas del reclutador autenticado
   useEffect(() => {
     const fetchOfertas = async () => {
       try {
-        const response = await fetch('/api/ofertas/mis-ofertas', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        const data = await response.json();
+        const empresaId = localStorage.getItem('empresaId');
+        
+        if (!empresaId) {
+          setError('No se encontró el ID de la empresa. Por favor, inicia sesión nuevamente.');
+          setLoading(false);
+          return;
+        }
+
+        console.log('🔄 Cargando ofertas de la empresa:', empresaId);
+        const data = await getOfertasPorEmpresa(empresaId);
+        console.log('✅ Ofertas cargadas:', data);
         setOfertas(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error al cargar ofertas:', error);
+        console.error('❌ Error al cargar ofertas:', error);
+        setError(error.message || 'Error al cargar ofertas');
         setLoading(false);
       }
     };
@@ -34,32 +42,57 @@ const GestionarOfertasPage = () => {
   };
 
   const handleEliminar = async (id) => {
-    const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar esta oferta? Esta acción cambiará su estado a "Inactiva".');
+    const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar esta oferta? Esta acción no se puede deshacer.');
     
     if (confirmacion) {
       try {
-        const response = await fetch(`/api/ofertas/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-
-        if (response.ok) {
-          alert('Oferta eliminada exitosamente');
-          // Recargar ofertas
-          setOfertas(ofertas.filter(oferta => oferta.id !== id));
-        } else {
-          alert('Error al eliminar oferta');
-        }
+        await eliminarOferta(id);
+        alert('Oferta eliminada exitosamente');
+        // Recargar ofertas
+        setOfertas(ofertas.filter(oferta => oferta.id !== id));
       } catch (error) {
-        console.error('Error:', error);
-        alert('Error al eliminar oferta');
+        console.error('Error al eliminar:', error);
+        alert('Error al eliminar oferta: ' + error.message);
       }
     }
   };
 
-  if (loading) return <div>Cargando ofertas...</div>;
+  const formatearFecha = (fecha) => {
+    if (!fecha) return 'No especificado';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  };
+
+  if (loading) {
+    return (
+      <>
+        <HeaderReclutador />
+        <main className="container-main-gestion">
+          <div className="loading-message">
+            <p>⏳ Cargando ofertas...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <HeaderReclutador />
+        <main className="container-main-gestion">
+          <div className="error-message">
+            <p>❌ {error}</p>
+            <button onClick={() => window.location.reload()}>Reintentar</button>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
@@ -81,45 +114,35 @@ const GestionarOfertasPage = () => {
               <thead>
                 <tr>
                   <th scope="col">Título</th>
+                  <th scope="col">Ubicación</th>
+                  <th scope="col">Modalidad</th>
                   <th scope="col">Fecha publicación</th>
-                  <th scope="col">Estado</th>
-                  <th scope="col">Postulaciones</th>
+                  <th scope="col">Fecha límite</th>
                   <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {ofertas.map((oferta) => (
                   <tr key={oferta.id}>
-                    <td>{oferta.titulo}</td>
-                    <td>{new Date(oferta.fecha_publicacion).toLocaleDateString()}</td>
-                    <td>
-                      <span className={`badge badge-${oferta.estado.toLowerCase()}`}>
-                        {oferta.estado}
-                      </span>
-                    </td>
-                    <td>
-                      <Link 
-                        to={`/reclutador/postulaciones/${oferta.id}`}
-                        className="link-postulaciones"
-                        aria-label={`Ver postulaciones de ${oferta.titulo}`}
-                      >
-                        {oferta.num_postulaciones || 0} postulaciones
-                      </Link>
-                    </td>
+                    <td>{oferta.titu}</td>
+                    <td>{oferta.ubi}</td>
+                    <td>{oferta.modalNomb}</td>
+                    <td>{formatearFecha(oferta.fechaPub)}</td>
+                    <td>{formatearFecha(oferta.fechLim)}</td>
                     <td>
                       <button 
                         className="btn-editar" 
                         onClick={() => handleEditar(oferta.id)}
-                        aria-label={`Editar oferta ${oferta.titulo}`}
+                        aria-label={`Editar oferta ${oferta.titu}`}
                       >
-                        Editar
+                        ✏️ Editar
                       </button>
                       <button 
                         className="btn-eliminar" 
                         onClick={() => handleEliminar(oferta.id)}
-                        aria-label={`Eliminar oferta ${oferta.titulo}`}
+                        aria-label={`Eliminar oferta ${oferta.titu}`}
                       >
-                        Eliminar
+                        🗑️ Eliminar
                       </button>
                     </td>
                   </tr>

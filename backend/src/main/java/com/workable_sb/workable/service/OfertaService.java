@@ -9,5 +9,6 @@ public interface OfertaService {
     OfertaReadDto guardar(OfertaDto ofertaDto);
     OfertaReadDto ListId(Integer id);
     List<OfertaReadDto> listarAll();
+    List<OfertaReadDto> listarPorEmpresa(Long empresaId);
     void eliminar(Integer id);
 }

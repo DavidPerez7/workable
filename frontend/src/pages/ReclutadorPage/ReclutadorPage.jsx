@@ -1,6 +1,7 @@
 // frontend/src/pages/ReclutadorPage/ReclutadorPage.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getOfertasPorEmpresa } from "../../api/ofertasAPI";
 import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
@@ -126,35 +127,33 @@ function ReclutadorPage() {
         setEmpresaInfo({ nombre: 'Empresa', correoCorporativo: '', ubicacion: '', descripcion: '', numTrabajadores: 0 });
       }
 
-      // ========== DATOS MOCK (TEMPORALES) ==========
-      // Comentar estas líneas y descomentar las APIs cuando el backend esté listo
-      
-      // Datos simulados de ofertas
-      const mockOfertas = [
-        {
-          id: 1,
-          titulo: 'Desarrollador Frontend',
-          fecha_publicacion: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          municipio: 'Bogotá D.C',
-          num_postulaciones: 12
-        },
-        {
-          id: 2,
-          titulo: 'Diseñador UX/UI',
-          fecha_publicacion: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          municipio: 'Medellín',
-          num_postulaciones: 8
-        },
-        {
-          id: 3,
-          titulo: 'Contador Senior',
-          fecha_publicacion: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-          municipio: 'Bogotá D.C',
-          num_postulaciones: 5
+      // Cargar ofertas de la empresa
+      if (empresaId) {
+        try {
+          console.log('🔄 Cargando ofertas de la empresa:', empresaId);
+          const ofertasData = await getOfertasPorEmpresa(empresaId);
+          console.log('✅ Ofertas cargadas:', ofertasData);
+          
+          // Mapear ofertas del backend al formato esperado
+          const ofertasFormateadas = ofertasData.map(oferta => ({
+            id: oferta.id,
+            titulo: oferta.titu,
+            fecha_publicacion: oferta.fechaPub,
+            municipio: oferta.ubi,
+            num_postulaciones: 0, // TODO: Implementar conteo de postulaciones
+            modalidad: oferta.modalNomb,
+            tipoContrato: oferta.tipoConNomb
+          }));
+          
+          setOfertas(ofertasFormateadas);
+        } catch (error) {
+          console.error('❌ Error al cargar ofertas:', error);
+          setOfertas([]);
         }
-      ];
+      }
 
-      // Datos simulados de postulaciones
+      // ========== DATOS MOCK DE POSTULACIONES (TEMPORALES) ==========
+      // TODO: Implementar endpoint en backend para postulaciones recientes
       const mockPostulaciones = [
         {
           id: 1,
@@ -173,28 +172,9 @@ function ReclutadorPage() {
           telefono: '3009876543',
           oferta_titulo: 'Diseñador UX/UI',
           fecha_postulacion: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 3,
-          nombre: 'Carlos',
-          apellido: 'Rodríguez',
-          correo: 'carlos.rodriguez@email.com',
-          telefono: '3012345678',
-          oferta_titulo: 'Contador Senior',
-          fecha_postulacion: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 4,
-          nombre: 'Ana',
-          apellido: 'Martínez',
-          correo: 'ana.martinez@email.com',
-          telefono: '3123456789',
-          oferta_titulo: 'Desarrollador Frontend',
-          fecha_postulacion: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
         }
       ];
 
-      setOfertas(mockOfertas);
       setPostulacionesRecientes(mockPostulaciones);
       setLoading(false);
 
@@ -270,32 +250,6 @@ function ReclutadorPage() {
     if (!window.confirm('¿Cerrar esta oferta? Los aspirantes no podrán postularse más.')) {
       return;
     }
-
-    const token = localStorage.getItem('token');
-    
-    /* ========== API COMENTADA (DESCOMENTAR CUANDO BACKEND ESTÉ LISTO) ==========
-    
-    try {
-      const response = await fetch(`http://localhost:5000/api/ofertas/${ofertaId}/cerrar`, {
-        method: 'PUT',
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        alert('✅ Oferta cerrada exitosamente');
-        setOfertas(ofertas.filter(o => o.id !== ofertaId));
-      } else {
-        alert('❌ Error al cerrar la oferta');
-      }
-    } catch (error) {
-      console.error('Error al cerrar oferta:', error);
-      alert('❌ Error al cerrar la oferta');
-    }
-    
-    ========== FIN API COMENTADA ========== */
 
     // Simulación temporal (borrar cuando se active la API)
     alert('✅ Oferta cerrada exitosamente (simulado)');

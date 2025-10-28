@@ -36,12 +36,20 @@ const AspiranteForm = () => {
     }
 
     try {
-      const aspiranteCreado = await crearAspirante(data);
-      alert("Aspirante registrado con éxito");
+      await crearAspirante(data);
+      alert("✅ Aspirante registrado con éxito");
       navigate('/Login'); 
     } catch (error) {
       console.error("Error al crear aspirante:", error.message);
-      alert("Error al registrarse: " + error.message);
+      
+      // Verificar si es un error de correo duplicado
+      if (error.message.includes("Duplicate entry") || error.message.includes("correo")) {
+        alert("❌ Error: Este correo electrónico ya está registrado. Por favor usa otro correo.");
+      } else if (error.message.includes("numDoc") || error.message.includes("documento")) {
+        alert("❌ Error: Este número de documento ya está registrado.");
+      } else {
+        alert("❌ Error al registrarse: " + error.message);
+      }
     }
   };
 

@@ -47,6 +47,15 @@ public class OfertaServiceImple implements OfertaService{
     }
 
     @Override
+    public List<OfertaReadDto> listarPorEmpresa(Long empresaId){
+        return ofertaRepository.findAll()
+        .stream()
+        .filter(oferta -> oferta.getEmpresa().getNitId().equals(empresaId))
+        .map(ofertaMapper:: consulReadDto)
+        .collect(Collectors.toList());
+    }
+
+    @Override
     public void eliminar(Integer id){
         ofertaRepository.deleteById(id);
     }
