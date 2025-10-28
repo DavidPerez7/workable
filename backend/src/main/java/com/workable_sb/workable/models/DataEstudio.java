@@ -18,17 +18,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Data
-public class Estudio {
+public class DataEstudio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer estudio_id;
+    private Integer id;
 
     @Column(nullable = false, length = 255)
     private String nombre;
 
     @Column(nullable = false)
     private Date fechaInicio;
-
     private Date fechaFin;
 
     @Column(nullable = false)

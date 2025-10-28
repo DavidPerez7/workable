@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,11 +34,11 @@ public class Empresa {
 
     @Column(nullable = false)
     private Integer numeroTrabajadores;
-    private float puntuacion;
+    private float puntuacion = 0.0f;
     private LocalDate fechaCreacion;
 
     @ManyToOne(optional  = false)
-    @JoinColumn (name = "Empresacategoria_id", nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_empresaCategoria"))
+    @JoinColumn (name = "empresa_categoria_id", nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_empresa_categoria"))
     private EmpresaCategoria empresaCategoria;
 
     @ManyToOne(optional = false)
@@ -45,7 +46,7 @@ public class Empresa {
     private Municipio municipio;
 
     @OneToMany(mappedBy = "empresa")
-    private java.util.List<Oferta> ofertas;
+    private List<Oferta> ofertas;
 
     @PrePersist
     protected void setFechaCreacion() {

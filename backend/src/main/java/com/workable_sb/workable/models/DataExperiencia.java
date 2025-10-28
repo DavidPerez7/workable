@@ -20,7 +20,7 @@ import jakarta.persistence.GenerationType;
 @Entity
 @Data
 @Table(name = "dato_experiencia")
-public class Experiencia {
+public class DataExperiencia {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;

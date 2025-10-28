@@ -3,7 +3,7 @@ package com.workable_sb.workable.mapper;
 import org.springframework.stereotype.Component;
 
 import com.workable_sb.workable.dto.EstudioDto;
-import com.workable_sb.workable.models.Estudio;
+import com.workable_sb.workable.models.DataEstudio;
 import com.workable_sb.workable.models.NivelEducativo;
 import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.repository.NivelEducativoRepository;
@@ -23,8 +23,8 @@ public class EstudioMapperImple implements EstudioMapper {
     }
 
     @Override
-    public Estudio toEntity(EstudioDto datoEstudioDto) {
-        Estudio estudio = new Estudio();
+    public DataEstudio toEntity(EstudioDto datoEstudioDto) {
+        DataEstudio estudio = new DataEstudio();
         estudio.setEstudio_id(datoEstudioDto.getId());
         estudio.setNombre(datoEstudioDto.getNom());
         estudio.setFechaInicio(datoEstudioDto.getFechaIn());
@@ -44,7 +44,7 @@ public class EstudioMapperImple implements EstudioMapper {
     }
 
     @Override
-    public EstudioDto toDto(Estudio entity) {
+    public EstudioDto toDto(DataEstudio entity) {
         return new EstudioDto(
             entity.getEstudio_id(),
             entity.getNombre(),

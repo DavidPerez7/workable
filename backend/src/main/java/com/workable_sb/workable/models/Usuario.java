@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "usuario")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +19,7 @@ public class Usuario {
 
     @Column(nullable = false, length = 255)
     private String correo;
+    private Long telefono;
 
     @Column(nullable = false, length = 255)
     private String clave;
@@ -31,10 +31,4 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
-
-    // data de los diferentes roles
-    @ManyToMany
-    @JoinColumn(name = "dataAspirante_id", foreignKey = @ForeignKey(name = "FK_usuario_dataAspirante"))
-    private DataAspirante dataAspirante;
-
 }

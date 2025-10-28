@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.InfoAspiranteDto;
 import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.models.Genero;
-import com.workable_sb.workable.models.DataAspirante;
+import com.workable_sb.workable.models.UsrAspirante;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.MunicipioRepository;
 import com.workable_sb.workable.repository.GeneroRepository;
@@ -28,8 +28,8 @@ public class InfoPersonalMapperImple implements InfoPersonalMapper {
     }
 
     @Override
-    public DataAspirante toEntity(InfoAspiranteDto infoPersonalDto) {
-        DataAspirante infoPersonal = new DataAspirante();
+    public UsrAspirante toEntity(InfoAspiranteDto infoPersonalDto) {
+        UsrAspirante infoPersonal = new UsrAspirante();
         infoPersonal.setId(infoPersonalDto.getId());
         infoPersonal.setTelefono(infoPersonalDto.getTelef());
         infoPersonal.setFechaNacimiento(infoPersonalDto.getFechNac());
@@ -47,7 +47,7 @@ public class InfoPersonalMapperImple implements InfoPersonalMapper {
     }
 
     @Override
-    public InfoAspiranteDto toDto(DataAspirante entity) {
+    public InfoAspiranteDto toDto(UsrAspirante entity) {
         return new InfoAspiranteDto(
             entity.getId(),
             entity.getTelefono(),

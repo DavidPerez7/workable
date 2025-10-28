@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.workable_sb.workable.dto.EstudioDto;
 import com.workable_sb.workable.mapper.DatoEstudioMapper;
-import com.workable_sb.workable.models.Estudio;
+import com.workable_sb.workable.models.DataEstudio;
 import com.workable_sb.workable.repository.DatoEstudioRepository;
 
 @Service
@@ -22,8 +22,8 @@ public class DatoEstudioServiceImple implements DatoEstudioService {
 
     @Override
     public EstudioDto crearyupdate(EstudioDto datoEstudioDto) {
-        Estudio datoEstudio = datoEstudioMapper.consult(datoEstudioDto);
-        Estudio guardar = datoEstudioRepository.save(datoEstudio);
+        DataEstudio datoEstudio = datoEstudioMapper.consult(datoEstudioDto);
+        DataEstudio guardar = datoEstudioRepository.save(datoEstudio);
         return datoEstudioMapper.consultDto(guardar);
     }
 

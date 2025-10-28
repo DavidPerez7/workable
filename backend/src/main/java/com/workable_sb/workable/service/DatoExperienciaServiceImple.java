@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.workable_sb.workable.dto.ExperienciaDto;
 import com.workable_sb.workable.mapper.ExperienciaMapper;
-import com.workable_sb.workable.models.Experiencia;
+import com.workable_sb.workable.models.DataExperiencia;
 import com.workable_sb.workable.repository.DatoExperienciaRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -25,8 +25,8 @@ public class DatoExperienciaServiceImple implements DatoExperienciaService {
 
     @Override
     public ExperienciaDto crearyupdate (ExperienciaDto datoExperienciaDto) {
-        Experiencia datoExperiencia = datoExperienciaMapper.consult(datoExperienciaDto);
-        Experiencia datoExperienciaGuardado = datoExperienciaRepository.save(datoExperiencia);
+        DataExperiencia datoExperiencia = datoExperienciaMapper.consult(datoExperienciaDto);
+        DataExperiencia datoExperienciaGuardado = datoExperienciaRepository.save(datoExperiencia);
         return datoExperienciaMapper.consultDto(datoExperienciaGuardado);
 
     }

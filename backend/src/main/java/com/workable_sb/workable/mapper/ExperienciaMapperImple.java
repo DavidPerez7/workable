@@ -3,7 +3,7 @@ package com.workable_sb.workable.mapper;
 import org.springframework.stereotype.Component;
 
 import com.workable_sb.workable.dto.ExperienciaDto;
-import com.workable_sb.workable.models.Experiencia;
+import com.workable_sb.workable.models.DataExperiencia;
 import com.workable_sb.workable.models.User;
 import com.workable_sb.workable.repository.UsuarioRepository;
 
@@ -19,8 +19,8 @@ public class ExperienciaMapperImple implements ExperienciaMapper {
     }
 
     @Override
-    public Experiencia toEntity(ExperienciaDto dto) {
-        Experiencia experiencia = new Experiencia();
+    public DataExperiencia toEntity(ExperienciaDto dto) {
+        DataExperiencia experiencia = new DataExperiencia();
         experiencia.setId(dto.getId());
         experiencia.setCargo(dto.getCarg());
         experiencia.setEmpresa(dto.getEmpr());
@@ -40,7 +40,7 @@ public class ExperienciaMapperImple implements ExperienciaMapper {
     }
 
     @Override
-    public ExperienciaDto toDto(Experiencia entity) {
+    public ExperienciaDto toDto(DataExperiencia entity) {
         User usuario = entity.getUsuario();
         return new ExperienciaDto(
             entity.getId(),
