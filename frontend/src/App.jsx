@@ -17,9 +17,8 @@ import AspirantePage from './pages/AspirantePage/AspirantePage';
 import InfoRecPage from './pages/ReclutadorPage/InfoReclutadorPage/InfoRecPage';
 import MiPerfil from './pages/AspirantePage/MiPerfil/MiPerfil';	
 import AdminPage from './pages/AdminPage/AdminPage';
-import AdminAccountsPage from './pages/AdminPage/AdminAccountPage/AdminAccountPage';
+import AdminAccountPage from './pages/AdminPage/AdminAccountPage/AdminAccountPage';
 import CompaniesPage from './pages/AdminPage/CompaniesPage/CompaniesPage';
-import FeedBackPage from './pages/AdminPage/FeedBackPage/FeedBackPage';
 import OffersPage from './pages/AdminPage/OffersPage/OffersPage';
 import ReportPage from './pages/AdminPage/ReportPage/ReportPage';
 import UsersManagePage from './pages/AdminPage/UsersManagePage/UsersManagePage';
@@ -54,10 +53,9 @@ function App() {
 				<Route path="/Reclutador/GestionarOfertas" element={<GestionarOfertasPage />} />
 				<Route path="/Reclutador/GestionarAspirantes" element={<GestionarAspirantesPage />} />
 
-				<Route path="/Administrador/CuentasInternas" element={<AdminAccountsPage />} />
+				<Route path="/Administrador/CuentasInternas" element={<AdminAccountPage />} />
 				<Route path="/Administrador/Empresas" element={<CompaniesPage />} />
 				<Route path="/Administrador/Reportes" element={<ReportPage />} />
-				<Route path="/Administrador/Retroalimentacion" element={<FeedBackPage />} />
 				<Route path="/Administrador/Ofertas" element={<OffersPage />} />
 				<Route path="/Administrador/Usuarios" element={<UsersManagePage />} />
 				<Route path="/Empresas" element={<Empresas />} />
