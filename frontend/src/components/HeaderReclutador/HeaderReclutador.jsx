@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './HeaderReclutador.css';
 
 function HeaderReclutador() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [nombre, setNombre] = useState('Reclutador');
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
 
   useEffect(() => {
     // Cargar nombre del localStorage
@@ -36,6 +42,9 @@ function HeaderReclutador() {
         <div className="user-info-rc">
           <span className="username-text-rc">{nombre}</span>
           <Link to='/Reclutador/EditarPerfil' className="avatar-placeholder-rc"></Link>
+          <button onClick={handleLogout} className="logout-button-rc" title="Cerrar sesión">
+            🚪
+          </button>
         </div>
       </div>
     </header>

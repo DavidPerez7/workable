@@ -162,7 +162,7 @@ const MiPerfil = () => {
                   <label htmlFor='corr'>Correo electrónico</label>
                   <input id='corr' type='email' value={editForm.corr} onChange={e => setEditForm({ ...editForm, corr: e.target.value })} required placeholder='Correo electrónico' />
                 </div>
-                <div className='form-group'>
+                <div className='form-group'>  
                   <label htmlFor='tel'>Número de teléfono</label>
                   <input id='tel' type='tel' value={editForm.tel} onChange={e => setEditForm({ ...editForm, tel: e.target.value })} required placeholder='Teléfono' />
                 </div>

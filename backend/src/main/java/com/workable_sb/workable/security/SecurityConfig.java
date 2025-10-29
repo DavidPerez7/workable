@@ -36,17 +36,22 @@ public class SecurityConfig {
                 // Endpoints públicos
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/aspirante").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/empresa").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/reclutadores").permitAll()
+                // Permitir GET de ofertas para que aspirantes puedan verlas
+                .requestMatchers(HttpMethod.GET, "/api/oferta/**").permitAll()
+                // Solo RECLUTADOR puede crear, editar y eliminar ofertas
+                .requestMatchers(HttpMethod.POST, "/api/oferta/**").hasRole("RECLUTADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasRole("RECLUTADOR")
+                .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasRole("RECLUTADOR")
+                // RECLUTADOR y ADMINISTRADOR pueden ver aspirantes
+                .requestMatchers(HttpMethod.GET, "/api/aspirante/**").hasAnyRole("RECLUTADOR", "ADMINISTRADOR", "ASPIRANTE")
                 // Permitir solo ASPIRANTE para postularse
                 .requestMatchers(HttpMethod.POST, "/api/postulacion").hasRole("ASPIRANTE")
                 // Ejemplo: solo ADMINISTRADOR puede acceder a /api/administradores
                 .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
                 // Ejemplo: solo ASPIRANTE puede acceder a /api/hojasdevida
                 .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
-                // Ejemplo: solo RECLUTADOR puede acceder a /api/oferta
-                .requestMatchers("/api/oferta/**").hasRole("RECLUTADOR")
                 // En producción: exigir autenticación para el resto de endpoints.
                 .anyRequest().authenticated()
             )
@@ -60,7 +65,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8080"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

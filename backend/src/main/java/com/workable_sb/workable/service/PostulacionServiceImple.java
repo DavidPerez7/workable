@@ -25,6 +25,16 @@ public class PostulacionServiceImple implements PostulacionService{
 
   @Override
   public PostulacionDto crear(PostulacionDto postulacionDto){
+    // Validar si ya existe una postulación
+    boolean yaPostulado = postulacionRepository.existsByAspiranteAndOferta(
+        postulacionDto.getAspirante_id(), 
+        postulacionDto.getOferta_Id()
+    );
+    
+    if (yaPostulado) {
+      throw new IllegalStateException("Ya existe una postulación de este aspirante para esta oferta");
+    }
+    
     Postulacion postulacion = postulacionMapper.consult(postulacionDto);
     Postulacion creacion = postulacionRepository.save(postulacion);
     return postulacionMapper.consultDto(creacion);

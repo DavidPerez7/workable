@@ -15,7 +15,9 @@ const res = await fetch(`http://localhost:8080/api/aspirante/${id}`, {
 export const crearAspirante = async (data) => {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: getAuthHeaders(),
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(data),
   });
 

@@ -21,6 +21,19 @@ public class OfertaDto {
 
     @NotBlank
     private String ubi;
+    
+    private String requisitos;
+    
+    private String salario;
+    
+    private String jornada;
+    
+    private String beneficios;
+    
+    private String responsabilidades;
+    
+    private String contacto;
+    
     private LocalDate fechaPu;
 
     @NotNull

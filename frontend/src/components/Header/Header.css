@@ -5,8 +5,10 @@
 	padding: 0 40px;
 	height: 4.4em;
 	background-color:  #2541a0;
-	position: relative;
-	z-index: 1;
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .logo-container {
@@ -27,7 +29,7 @@
 	color: white;
 	font-size: 2rem;
 	cursor: pointer;
-	z-index: 2;
+	z-index: 1001;
 }
 
 .nav-list {

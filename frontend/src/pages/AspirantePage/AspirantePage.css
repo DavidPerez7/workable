@@ -1,125 +1,26 @@
-.header-conta {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  align-items: center;
-  padding: 0 40px;
-  height: 4.4em;
-  background-color: #2541a0;
-  position: relative;
-  z-index: 1;
-}
+/* Estilos eliminados - se usan del HeaderAspirant.css */
 
-.header-left {
-  justify-self: start;
-}
-
-.header-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.header-right-container .perfil-section {
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 50px;
-  padding: 1px 16px;
-  background: #fff;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-  max-width: 300px;
-  width: 70%;
-}
-
-.header-center .job-search-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 50px;
-  padding: 1px 16px;
-  background: #fff;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
-  max-width: 450px;
-  width: 100%;
-}
-
-.search-section {
-  display: flex;
-  align-items: center;
-}
-
-.search-section input {
-  height: 1px;
-  border: none;
-  outline: none;
-  font-size: 14px;
-  background: transparent;
-  margin-top: 15px;
-}
-
-.search-icon {
-  color: #007bff;
-}
-
-.search-button {
-  background: #002f6c;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 6px;
-  cursor: pointer;
-  margin-left: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s;
-}
-
-.search-button:hover {
-  background: #004080;
-}
-
-.header-conta .divider {
-  width: 1px;
-  height: 24px;
-  background: #ccc;
-  margin: 0 12px;
-}
-
-.name {
-  color: #2541a0;
-}
-
-.search-seccion {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-}
-
-.button-perfil {
-  background-color: transparent;
-  color: #0d1e53;
-  border: 1px solid #ffffff;
-  padding: 10px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.button-perfil:hover {
-  background-color: #2541a0;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+.main-aspirant-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 0;
+  margin: 0;
 }
 
 .dropdown-buttons {
-  margin: 10px;
+  margin: 1rem auto;
+  max-width: 1400px;
+  padding: 1rem;
   display: flex;
   flex-direction: row;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 50;
 }
 
 .section-job-panels {
@@ -427,5 +328,57 @@
   .p-job-button {
     width: 100%;
     font-size: 14px;
+  }
+}
+
+/* Estilos para mensajes de loading y error */
+.loading-message,
+.error-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  width: 100%;
+  min-height: 200px;
+}
+
+.loading-message p {
+  font-size: 18px;
+  color: #666;
+  font-weight: 500;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.error-message p {
+  font-size: 16px;
+  color: #d32f2f;
+  margin-bottom: 20px;
+}
+
+.error-message button {
+  padding: 10px 20px;
+  background-color: #2541a0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.error-message button:hover {
+  background-color: #1a2f70;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
   }
 }

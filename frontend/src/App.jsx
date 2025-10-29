@@ -27,6 +27,7 @@ import Empresas from './pages/MainPage/Empresas/Empresas';
 import KFCPage from './pages/MainPage/Empresas/KFC/KFCPage';
 import EditarOfertaPage from './pages/ReclutadorPage/EditarOfertaPage/EditarOfertaPage';
 import GestionarOfertasPage from './pages/ReclutadorPage/GestionarOfertasPage/GestionarOfertasPage';
+import GestionarAspirantesPage from './pages/ReclutadorPage/GestionarAspirantesPage/GestionarAspirantesPage';
 
 function App() {
 	return (
@@ -51,6 +52,7 @@ function App() {
 				<Route path='/Aspirante/MiPerfil' element={<MiPerfil />} />
 				<Route path="/Reclutador/Publicacion" element={<PublicacionPage />} />
 				<Route path="/Reclutador/GestionarOfertas" element={<GestionarOfertasPage />} />
+				<Route path="/Reclutador/GestionarAspirantes" element={<GestionarAspirantesPage />} />
 
 				<Route path="/Administrador/CuentasInternas" element={<AdminAccountsPage />} />
 				<Route path="/Administrador/Empresas" element={<CompaniesPage />} />

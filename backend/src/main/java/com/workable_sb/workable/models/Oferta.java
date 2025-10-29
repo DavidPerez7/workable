@@ -34,6 +34,25 @@ public class Oferta {
 
   @Column(nullable = false, length = 100)
   private String ubicacion;
+  
+  @Column(columnDefinition = "TEXT")
+  private String requisitos;
+  
+  @Column(length = 100)
+  private String salario;
+  
+  @Column(length = 50)
+  private String jornada;
+  
+  @Column(columnDefinition = "TEXT")
+  private String beneficios;
+  
+  @Column(columnDefinition = "TEXT")
+  private String responsabilidades;
+  
+  @Column(length = 100)
+  private String contacto;
+  
   private LocalDate fechaPublicacion;
 
   @Column(nullable = false)
