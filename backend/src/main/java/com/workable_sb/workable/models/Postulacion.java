@@ -35,8 +35,8 @@ public class Postulacion {
   private Oferta oferta;
 
   @ManyToOne(optional = false)
-  @JoinColumn(name = "aspirante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_postulacion"))
-  private Usuario usuario;
+  @JoinColumn(name = "aspirante_id", nullable = false, foreignKey = @ForeignKey(name = "FK_aspirante_postulacion"))
+  private UsrAspirante aspirante;  // Cambiado de Usuario a UsrAspirante para claridad
 
   @PrePersist
   public void setFechaPostulacion() {

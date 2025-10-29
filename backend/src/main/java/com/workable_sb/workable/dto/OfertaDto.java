@@ -21,10 +21,17 @@ public class OfertaDto {
 
     @NotBlank
     private String ubi;
+    
     private LocalDate fechaPu;
 
     @NotNull
     private LocalDate fechaLi;
+    
+    private Long salario;
+    
+    private String estado;  // "ABIERTA", "CERRADA", "PAUSADA"
+    
+    private Integer municipio_id;
 
     @NotNull(message = "La modalidad debe ser obligatoria")
     private Integer modalidad_id;
@@ -34,4 +41,6 @@ public class OfertaDto {
 
     @NotNull(message = "La empresa debe ser obligatoria")
     private Long empresa_id;
+    
+    private Integer reclutador_id;  // Opcional
 }

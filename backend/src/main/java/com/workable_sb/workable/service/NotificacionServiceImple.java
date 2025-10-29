@@ -2,7 +2,6 @@ package com.workable_sb.workable.service;
 
 import com.workable_sb.workable.dto.NotificacionDto;
 import com.workable_sb.workable.mapper.NotificacionMapper;
-import com.workable_sb.workable.models.Notificacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -31,7 +30,7 @@ public class NotificacionServiceImple implements NotificacionService {
 
     @Override
     public List<NotificacionDto> listarNotificacionesPorUsuario(Integer usuarioId) {
-        return notificacionRepository.findByUsuarioUsuarioId(usuarioId).stream()
+        return notificacionRepository.findByUsuarioId(usuarioId).stream()
             .map(notificacionMapper::toDto)
             .collect(Collectors.toList());
     }

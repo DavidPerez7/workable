@@ -16,8 +16,17 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false, length = 100)
+    private String tipo;  // "POSTULACION", "ENTREVISTA", "CAMBIO_ESTADO", "MENSAJE"
+
     @Column(nullable = false, length = 255)
+    private String titulo;
+
+    @Column(nullable = false, length = 500)
     private String mensaje;
+
+    @Column(length = 500)
+    private String enlace;  // URL para redirigir (ej: /postulacion/123)
 
     @Column(nullable = false)
     private LocalDateTime fecha;

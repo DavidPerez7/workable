@@ -26,19 +26,19 @@ public class EmpresaServiceImple implements EmpresaService{
 
   @Override
   public EmpresaReadDto guardar(EmpresaDto empresaDto) {
-    Empresa empresa = empresaMapper.consultEntity(empresaDto);
+    Empresa empresa = empresaMapper.toEntity(empresaDto);
     Empresa guardado = empresaRepository.save(empresa);
-    return empresaMapper.consultReadDto(guardado);
+    return empresaMapper.toDto(guardado);
   }
 
   @Override
   public EmpresaReadDto listId(Long id) {
-    return empresaRepository.findById(id).map(empresaMapper::consultReadDto).orElseThrow(() -> new EntityNotFoundException("empresa no encontrada"));
+    return empresaRepository.findById(id).map(empresaMapper::toDto).orElseThrow(() -> new EntityNotFoundException("empresa no encontrada"));
   }
 
   @Override
   public List<EmpresaReadDto> listAll() {
-    return empresaRepository.findAll().stream().map(empresaMapper::consultReadDto).collect(Collectors.toList());
+    return empresaRepository.findAll().stream().map(empresaMapper::toDto).collect(Collectors.toList());
   }
 
   @Override

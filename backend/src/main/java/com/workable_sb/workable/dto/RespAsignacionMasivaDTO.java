@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RespAsignacionMasivaDTO {
+public class RespAsignacionMasivaDto {
     private int totalSolicitudes;                      // Total de registros recibidos
     private int totalAsignadas;                        // Cantidad de asignaciones exitosas
     private int totalDuplicadas;                       // Cantidad de duplicados
     private int totalErrores;                          // Cantidad de errores
-    private List<ResultadoAsignacionDTO> resultados;   // Lista con detalle por asignación
+    private List<ResultadoAsignacionDto> resultados;   // Lista con detalle por asignación
 }

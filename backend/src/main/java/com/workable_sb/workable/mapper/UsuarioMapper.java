@@ -1,9 +1,11 @@
 package com.workable_sb.workable.mapper;
 
 import com.workable_sb.workable.dto.UsuarioDto;
-import com.workable_sb.workable.models.User;
+import com.workable_sb.workable.dto.UsuarioReadDto;
+import com.workable_sb.workable.models.Usuario;
 
 public interface UsuarioMapper {
-    User toEntity(UsuarioDto usuarioDto);
-    UsuarioDto toDto(User usuario);
+    Usuario toEntity(UsuarioDto usuarioDto);
+    UsuarioDto toDto(Usuario usuario);
+    UsuarioReadDto toReadDto(Usuario usuario);  // Sin clave
 }

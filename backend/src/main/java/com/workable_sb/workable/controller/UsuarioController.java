@@ -1,6 +1,7 @@
 package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.dto.UsuarioDto;
+import com.workable_sb.workable.dto.UsuarioReadDto;
 import com.workable_sb.workable.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +24,18 @@ public class UsuarioController {
         }
     }
 
-@GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Integer id) {
-        UsuarioDto usuario = usuarioService.findById(id);
+        UsuarioReadDto usuario = usuarioService.findById(id);  // Sin clave
         if (usuario == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(usuario);
     }
 
-@GetMapping
-    public ResponseEntity<List<UsuarioDto>> listarUsuarios() {
-        List<UsuarioDto> usuarios = usuarioService.findAll();
+    @GetMapping
+    public ResponseEntity<List<UsuarioReadDto>> listarUsuarios() {
+        List<UsuarioReadDto> usuarios = usuarioService.findAll();  // Sin clave
         return ResponseEntity.ok(usuarios);
     }
 

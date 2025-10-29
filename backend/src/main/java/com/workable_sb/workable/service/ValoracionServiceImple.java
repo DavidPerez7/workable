@@ -26,15 +26,15 @@ public class ValoracionServiceImple implements ValoracionService{
 
   @Override
   public ValoracionReadDto crear(ValoracionDto valoracionDto){
-    Valoracion valoracion = valoracionMapper.consult(valoracionDto);
+    Valoracion valoracion = valoracionMapper.toEntity(valoracionDto);
     Valoracion creado = valoracionRepository.save(valoracion);
-    return valoracionMapper.consultReadDto(creado);
+    return valoracionMapper.toDto(creado);
   }
 
   @Override
   public ValoracionReadDto listarId(Integer id){
     return valoracionRepository.findById(id)
-    .map(valoracionMapper:: consultReadDto)
+    .map(valoracionMapper::toDto)
     .orElseThrow(() -> new EntityNotFoundException("Valoracion no encontrada"));
   }
 
@@ -42,7 +42,7 @@ public class ValoracionServiceImple implements ValoracionService{
   public List<ValoracionReadDto> listarAll(){
     return valoracionRepository.findAll()
     .stream()
-    .map(valoracionMapper:: consultReadDto)
+    .map(valoracionMapper::toDto)
     .collect(Collectors.toList());
   }
 

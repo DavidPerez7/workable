@@ -31,6 +31,9 @@ public class DataEstudio {
     private Date fechaFin;
 
     @Column(nullable = false)
+    private Boolean enCurso = false;
+
+    @Column(nullable = false)
     private String institucion;
 
     @Column(nullable = false)

@@ -16,6 +16,8 @@ public class OfertaReadDto {
   private String ubi;
   private LocalDate fechaPub;
   private LocalDate fechLim;
+  private Long salario;
+  private String estado;
 
   private Integer modal_id;
   private String modalNomb;
@@ -25,4 +27,7 @@ public class OfertaReadDto {
 
   private Long emp_id;
   private String empNomb;
+  
+  private Integer reclut_id;
+  private String reclutNomb;
 }

@@ -2,14 +2,14 @@ package com.workable_sb.workable.service;
 
 import java.util.List;
 
-import com.workable_sb.workable.dto.EstudioDto;
+import com.workable_sb.workable.dto.DataEstudioDto;
 
 public interface DatoEstudioService {
-    EstudioDto crearyupdate(EstudioDto datoEstudioDto);
+    DataEstudioDto crearyupdate(DataEstudioDto datoDataEstudioDto);
 
-    EstudioDto buscarPorId(Integer Est_id);
+    DataEstudioDto buscarPorId(Integer Est_id);
 
-    List<EstudioDto> listarTodos();
+    List<DataEstudioDto> listarTodos();
 
     void eliminar(Integer Est_id);
 

@@ -5,6 +5,6 @@ import com.workable_sb.workable.dto.EmpresaReadDto;
 import com.workable_sb.workable.models.Empresa;
 
 public interface EmpresaMapper {
-  Empresa consultEntity(EmpresaDto empresaDto);
-  EmpresaReadDto consultReadDto(Empresa empresa);
+  Empresa toEntity(EmpresaDto empresaDto);
+  EmpresaReadDto toDto(Empresa empresa);
 }

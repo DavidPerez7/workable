@@ -29,11 +29,16 @@ public class DataExperiencia {
   @Column(nullable = false, length = 255)
   private String empresa;
 
+  @Column(length = 1000)
+  private String descripcion;  // Descripción de funciones/logros
+
   @Column(nullable = false)
   private Date fechaInicio;
 
+  private Date fechaFin;  // null si es trabajo actual
+
   @Column(nullable = false)
-  private Date fechaFin;
+  private Boolean trabajoActual = false;
 
   @Column(nullable = false, length = 255)
   private String ubicacion;

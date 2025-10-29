@@ -4,41 +4,41 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.workable_sb.workable.dto.EstudioDto;
-import com.workable_sb.workable.mapper.DatoEstudioMapper;
+import com.workable_sb.workable.dto.DataEstudioDto;
+import com.workable_sb.workable.mapper.DataEstudioMapper;
 import com.workable_sb.workable.models.DataEstudio;
-import com.workable_sb.workable.repository.DatoEstudioRepository;
+import com.workable_sb.workable.repository.DataEstudioRepository;
 
 @Service
 public class DatoEstudioServiceImple implements DatoEstudioService {
 
-    private final DatoEstudioRepository datoEstudioRepository;
-    private final DatoEstudioMapper datoEstudioMapper;
+    private final DataEstudioRepository datoEstudioRepository;
+    private final DataEstudioMapper datoEstudioMapper;
 
-    public DatoEstudioServiceImple(DatoEstudioRepository datoEstudioRepository, DatoEstudioMapper datoEstudioMapper) {
+    public DatoEstudioServiceImple(DataEstudioRepository datoEstudioRepository, DataEstudioMapper datoEstudioMapper) {
         this.datoEstudioRepository = datoEstudioRepository;
         this.datoEstudioMapper = datoEstudioMapper;
     }
 
     @Override
-    public EstudioDto crearyupdate(EstudioDto datoEstudioDto) {
-        DataEstudio datoEstudio = datoEstudioMapper.consult(datoEstudioDto);
+    public DataEstudioDto crearyupdate(DataEstudioDto datoDataEstudioDto) {
+        DataEstudio datoEstudio = datoEstudioMapper.toEntity(datoDataEstudioDto);
         DataEstudio guardar = datoEstudioRepository.save(datoEstudio);
-        return datoEstudioMapper.consultDto(guardar);
+        return datoEstudioMapper.toDto(guardar);
     }
 
     @Override
-    public EstudioDto buscarPorId(Integer Est_id) {
+    public DataEstudioDto buscarPorId(Integer Est_id) {
         return datoEstudioRepository.findById(Est_id)
-                .map(datoEstudioMapper::consultDto)
+                .map(datoEstudioMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Dato de estudio no encontrado con id: " + Est_id));
     }
 
     @Override
-    public List<EstudioDto> listarTodos() {
+    public List<DataEstudioDto> listarTodos() {
         return datoEstudioRepository.findAll()
                 .stream()
-                .map(datoEstudioMapper::consultDto)
+                .map(datoEstudioMapper::toDto)
                 .toList();
     }
 

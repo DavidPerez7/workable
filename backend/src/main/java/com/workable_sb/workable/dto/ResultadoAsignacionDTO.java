@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResultadoAsignacionDTO {
+public class ResultadoAsignacionDto {
     private Integer aspiranteId;      // ID del aspirante
     private Short discapacidadId;     // ID de la discapacidad
     private String estado;            // "ASIGNADO", "DUPLICADO" o "ERROR"

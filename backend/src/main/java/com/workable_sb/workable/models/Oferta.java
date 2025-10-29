@@ -50,6 +50,9 @@ public class Oferta {
 	@Column(nullable = false)
 	private Long salario;
 
+	@Column(nullable = false, length = 20)
+	private String estado = "ABIERTA";  // "ABIERTA", "CERRADA", "PAUSADA"
+
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(
 		name = "oferta_requisitos",
@@ -73,6 +76,10 @@ public class Oferta {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_empresa"))
 	private Empresa empresa;
+
+	@ManyToOne
+	@JoinColumn(name = "reclutador_id", foreignKey = @ForeignKey(name = "FK_oferta_reclutador"))
+	private UsrReclutador reclutador;  // Quién creó la oferta (opcional para auditoría)
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "oferta_beneficio", 

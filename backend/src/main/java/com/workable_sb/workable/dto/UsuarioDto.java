@@ -10,13 +10,14 @@ public class UsuarioDto {
     private String nombre;
     @NotNull
     private String correo;
+    private Long telefono;
     @NotNull
     private String clave;
     @NotNull
     private String rol;
     private String token;
 
-    private byte[] fotoPerfil;
+    private String fotoPerfilUrl;
 
     @NotNull(message = "El id de municipio es obligatorio")
     private Integer municipio_id;

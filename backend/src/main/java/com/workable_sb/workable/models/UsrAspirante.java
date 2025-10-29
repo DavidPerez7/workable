@@ -23,6 +23,9 @@ public class UsrAspirante extends Usuario {
     @Column(nullable = false, length = 100)
     private String apellido;
 
+    @Column(length = 1000)
+    private String resumenProfesional;  // Descripción personal para el perfil
+
     @Column(nullable = false)
     private Date fechaNacimiento;
 
