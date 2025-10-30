@@ -3,7 +3,6 @@ package com.workable_sb.workable.mapper;
 import org.springframework.stereotype.Component;
 
 import com.workable_sb.workable.dto.OfertaDto;
-import com.workable_sb.workable.dto.OfertaReadDto;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Modalidad;
 import com.workable_sb.workable.models.Municipio;
@@ -43,6 +42,11 @@ public class OfertaMapperImpl implements OfertaMapper {
     @Override
     public Oferta toEntity(OfertaDto ofertaDto) {
         Oferta oferta = new Oferta();
+        
+        // Si tiene ID, es actualización
+        if (ofertaDto.getId() != null) {
+            oferta.setId(ofertaDto.getId());
+        }
 
         oferta.setTitulo(ofertaDto.getTitulo());
         oferta.setDescripcion(ofertaDto.getDescripcion());
@@ -89,8 +93,8 @@ public class OfertaMapperImpl implements OfertaMapper {
     }
 
     @Override
-    public OfertaReadDto toDto(Oferta entity) {
-        OfertaReadDto dto = new OfertaReadDto();
+    public OfertaDto toDto(Oferta entity) {
+        OfertaDto dto = new OfertaDto();
         dto.setId(entity.getId());
         dto.setTitulo(entity.getTitulo());
         dto.setDescripcion(entity.getDescripcion());
@@ -118,6 +122,10 @@ public class OfertaMapperImpl implements OfertaMapper {
         if (entity.getReclutador() != null) {
             dto.setReclutadorId(entity.getReclutador().getId());
             dto.setReclutadorNombre(entity.getReclutador().getNombre());
+        }
+        
+        if (entity.getMunicipio() != null) {
+            dto.setMunicipioId(entity.getMunicipio().getId());
         }
 
         return dto;

@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OfertaDto {
+    // ID nullable: null al crear, presente al leer/actualizar
+    private Integer id;
+    
     @NotBlank(message = "El título es obligatorio")
     private String titulo;
 
@@ -21,7 +24,7 @@ public class OfertaDto {
     @NotBlank(message = "La ubicación es obligatoria")
     private String ubicacion;
     
-    private LocalDate fechaPublicacion;
+
 
     @NotNull(message = "La fecha límite es obligatoria")
     private LocalDate fechaLimite;
@@ -42,4 +45,11 @@ public class OfertaDto {
     private Long empresaId;
     
     private Integer reclutadorId;  // Opcional
+    
+    // Campos de solo lectura (null al crear, llenados por backend al leer)
+    private String modalidadNombre;
+    private String tipoContratoNombre;
+    private String empresaNombre;
+    private String reclutadorNombre;
+    private LocalDate fechaPublicacion;
 }

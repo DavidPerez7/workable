@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.OfertaDto;
-import com.workable_sb.workable.dto.OfertaReadDto;
 import com.workable_sb.workable.service.OfertaService;
 
 import jakarta.validation.Valid;
@@ -27,18 +26,18 @@ public class OfertaController {
     }
 
     @PostMapping
-    public ResponseEntity<OfertaReadDto> guardar(@Valid @RequestBody OfertaDto ofertaDto){
-        OfertaReadDto guardado = ofertaService.guardar(ofertaDto);
+    public ResponseEntity<OfertaDto> guardar(@Valid @RequestBody OfertaDto ofertaDto){
+        OfertaDto guardado = ofertaService.guardar(ofertaDto);
         return ResponseEntity.ok(guardado);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<OfertaReadDto> ListId(@PathVariable Integer id) {
-    OfertaReadDto ofertaDto = ofertaService.ListId(id);
+    public ResponseEntity<OfertaDto> ListId(@PathVariable Integer id) {
+    OfertaDto ofertaDto = ofertaService.ListId(id);
         return ResponseEntity.ok(ofertaDto);
     }
     @GetMapping
-    public ResponseEntity<List<OfertaReadDto>>listarAll(){
-      List<OfertaReadDto> ofertas = ofertaService.listarAll();
+    public ResponseEntity<List<OfertaDto>>listarAll(){
+      List<OfertaDto> ofertas = ofertaService.listarAll();
       return ResponseEntity.ok(ofertas);
     }
 

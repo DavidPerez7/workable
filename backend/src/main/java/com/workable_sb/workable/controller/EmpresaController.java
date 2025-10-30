@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.EmpresaDto;
-import com.workable_sb.workable.dto.EmpresaReadDto;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.service.EmpresaService;
@@ -41,20 +40,20 @@ public class EmpresaController {
   
 
   @PostMapping
-  public ResponseEntity<EmpresaReadDto> guardar(@Valid @RequestBody EmpresaDto dto) {
-      EmpresaReadDto guardado = empresaServ.guardar(dto);
+  public ResponseEntity<EmpresaDto> guardar(@Valid @RequestBody EmpresaDto dto) {
+      EmpresaDto guardado = empresaServ.guardar(dto);
       return ResponseEntity.ok(guardado);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<EmpresaReadDto> listId(@PathVariable Long id) {
-      EmpresaReadDto dto = empresaServ.listId(id);
+  public ResponseEntity<EmpresaDto> listId(@PathVariable Long id) {
+      EmpresaDto dto = empresaServ.listId(id);
       return ResponseEntity.ok(dto);
   }
 
   @GetMapping
-  public ResponseEntity<List<EmpresaReadDto>> listAllDto() {
-      List<EmpresaReadDto> empresas = empresaServ.listAll();
+  public ResponseEntity<List<EmpresaDto>> listAllDto() {
+      List<EmpresaDto> empresas = empresaServ.listAll();
       return ResponseEntity.ok(empresas);
     }
   

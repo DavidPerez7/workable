@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ValoracionDto {
+  // ID nullable: null al crear, obligatorio al actualizar
+  private Integer id;
+  
   @NotBlank(message = "La descripción es obligatoria")
   private String descripcion;
 

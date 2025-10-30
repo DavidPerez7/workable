@@ -1,6 +1,7 @@
 package com.workable_sb.workable.dto;
 
-import jakarta.validation.constraints.Email;
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmpresaDto {
+  // ID nullable: null al crear, presente al leer/actualizar
+  private Long id;
+  
   @NotBlank(message = "El nombre es obligatorio")
   private String nombre;
-
-  @NotBlank(message = "La ubicación es obligatoria")
-  private String ubicacion;
 
   @NotBlank(message = "La descripción es obligatoria")
   private String descripcion;
@@ -23,13 +24,15 @@ public class EmpresaDto {
   @NotNull(message = "El número de trabajadores es obligatorio")
   private Integer numeroTrabajadores;
 
-  @NotBlank(message = "El correo corporativo es obligatorio")
-  @Email(message = "El correo corporativo debe ser válido")
-  private String correoCorporativo;
-
   @NotNull(message = "La categoría es obligatoria")
   private Integer categoriaId;
-
+  
   @NotNull(message = "El municipio es obligatorio")
   private Integer municipioId;
+  
+  // Campos de solo lectura (null al crear, llenados por backend al leer)
+  private String categoriaNombre;
+  private String municipioNombre;
+  private Float puntuacion;
+  private LocalDate fechaCreacion;
 }

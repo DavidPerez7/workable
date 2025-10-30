@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class NivelEducativoDto {
-    private Integer nivelEducativo_id;
+    private Integer id;
 
-    @NotNull
-    private String nom;
+    @NotNull(message = "El nombre es obligatorio")
+    private String nombre;
 }

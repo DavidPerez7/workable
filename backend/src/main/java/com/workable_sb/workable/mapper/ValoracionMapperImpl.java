@@ -26,6 +26,11 @@ public class ValoracionMapperImpl implements ValoracionMapper {
   @Override
   public Valoracion toEntity(ValoracionDto valoracionDto){
     Valoracion entity = new Valoracion();
+    
+    // Si tiene ID, es actualización
+    if (valoracionDto.getId() != null) {
+      entity.setId(valoracionDto.getId());
+    }
 
     entity.setDescripcion(valoracionDto.getDescripcion());
     entity.setPuntuacion(valoracionDto.getPuntuacion());

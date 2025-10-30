@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.workable_sb.workable.dto.OfertaDto;
-import com.workable_sb.workable.dto.OfertaReadDto;
 import com.workable_sb.workable.mapper.OfertaMapper;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.repository.OfertaRepository;
@@ -25,21 +24,21 @@ public class OfertaServiceImple implements OfertaService{
     }
 
     @Override
-    public OfertaReadDto guardar(OfertaDto ofertaDto){
+    public OfertaDto guardar(OfertaDto ofertaDto){
         Oferta oferta = ofertaMapper.toEntity(ofertaDto);
         Oferta guardado = ofertaRepository.save(oferta);
         return ofertaMapper.toDto(guardado);
     }
 
     @Override
-    public OfertaReadDto ListId(Integer id){
+    public OfertaDto ListId(Integer id){
         return ofertaRepository.findById(id)
         .map(ofertaMapper::toDto)
         .orElseThrow(() -> new EntityNotFoundException("Oferta no encontrada"));
     }
 
     @Override
-    public List<OfertaReadDto> listarAll(){
+    public List<OfertaDto> listarAll(){
         return ofertaRepository.findAll()
         .stream()
         .map(ofertaMapper::toDto)

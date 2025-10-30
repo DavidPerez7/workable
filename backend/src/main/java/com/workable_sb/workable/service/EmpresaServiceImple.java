@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.workable_sb.workable.dto.EmpresaDto;
-import com.workable_sb.workable.dto.EmpresaReadDto;
 import com.workable_sb.workable.mapper.EmpresaMapper;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.repository.EmpresaRepository;
@@ -25,19 +24,19 @@ public class EmpresaServiceImple implements EmpresaService{
   }
 
   @Override
-  public EmpresaReadDto guardar(EmpresaDto empresaDto) {
+  public EmpresaDto guardar(EmpresaDto empresaDto) {
     Empresa empresa = empresaMapper.toEntity(empresaDto);
     Empresa guardado = empresaRepository.save(empresa);
     return empresaMapper.toDto(guardado);
   }
 
   @Override
-  public EmpresaReadDto listId(Long id) {
+  public EmpresaDto listId(Long id) {
     return empresaRepository.findById(id).map(empresaMapper::toDto).orElseThrow(() -> new EntityNotFoundException("empresa no encontrada"));
   }
 
   @Override
-  public List<EmpresaReadDto> listAll() {
+  public List<EmpresaDto> listAll() {
     return empresaRepository.findAll().stream().map(empresaMapper::toDto).collect(Collectors.toList());
   }
 
