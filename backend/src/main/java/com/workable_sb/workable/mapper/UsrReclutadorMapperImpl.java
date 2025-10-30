@@ -97,13 +97,13 @@ public class UsrReclutadorMapperImpl implements UsrReclutadorMapper {
         // NO incluir clave por seguridad
         
         if (entity.getMunicipio() != null) {
-            dto.setMunicipio_id(entity.getMunicipio().getId());
-            dto.setMunicipio_nom(entity.getMunicipio().getNombre());
+            dto.setMunicipioId(entity.getMunicipio().getId());
+            dto.setMunicipioNombre(entity.getMunicipio().getNombre());
         }
         
         if (entity.getEmpresa() != null) {
-            dto.setEmpresa_nit_id(entity.getEmpresa().getNitId());
-            dto.setEmpresa_nom(entity.getEmpresa().getNombre());
+            dto.setEmpresaId(entity.getEmpresa().getNitId());
+            dto.setEmpresaNombre(entity.getEmpresa().getNombre());
         }
         
         return dto;

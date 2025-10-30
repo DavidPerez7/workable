@@ -1,5 +1,6 @@
 package com.workable_sb.workable.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,24 +11,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmpresaDto {
-  @NotBlank
-  private String nom;
+  @NotBlank(message = "El nombre es obligatorio")
+  private String nombre;
 
-  @NotNull
-  private String ubi;
+  @NotBlank(message = "La ubicación es obligatoria")
+  private String ubicacion;
 
-  @NotBlank
-  private String desc;
+  @NotBlank(message = "La descripción es obligatoria")
+  private String descripcion;
 
-  @NotNull
-  private Integer numTrab;
+  @NotNull(message = "El número de trabajadores es obligatorio")
+  private Integer numeroTrabajadores;
 
-  @NotBlank
-  private String correoCorp;
+  @NotBlank(message = "El correo corporativo es obligatorio")
+  @Email(message = "El correo corporativo debe ser válido")
+  private String correoCorporativo;
 
-  @NotNull(message = "la categoria es obligatoria")
-  private Integer cat_id;
+  @NotNull(message = "La categoría es obligatoria")
+  private Integer categoriaId;
 
-  @NotNull(message = "el municipio es obligatorio")
-  private Integer munici_id;
+  @NotNull(message = "El municipio es obligatorio")
+  private Integer municipioId;
 }

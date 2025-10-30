@@ -18,10 +18,10 @@ public class UsrReclutadorReadDto {
     // NO incluye clave por seguridad
     
     // Municipio
-    private Integer municipio_id;
-    private String municipio_nom;
+    private Integer municipioId;
+    private String municipioNombre;
     
     // Empresa
-    private Long empresa_nit_id;
-    private String empresa_nom;
+    private Long empresaId;
+    private String empresaNombre;
 }

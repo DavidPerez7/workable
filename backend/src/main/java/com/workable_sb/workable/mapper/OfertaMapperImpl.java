@@ -44,43 +44,43 @@ public class OfertaMapperImpl implements OfertaMapper {
     public Oferta toEntity(OfertaDto ofertaDto) {
         Oferta oferta = new Oferta();
 
-        oferta.setTitulo(ofertaDto.getTitu());
-        oferta.setDescripcion(ofertaDto.getDesc());
-        oferta.setUbicacion(ofertaDto.getUbi());
-        oferta.setFechaPublicacion(ofertaDto.getFechaPu());
-        oferta.setFechaLimite(ofertaDto.getFechaLi());
+        oferta.setTitulo(ofertaDto.getTitulo());
+        oferta.setDescripcion(ofertaDto.getDescripcion());
+        oferta.setUbicacion(ofertaDto.getUbicacion());
+        oferta.setFechaPublicacion(ofertaDto.getFechaPublicacion());
+        oferta.setFechaLimite(ofertaDto.getFechaLimite());
         oferta.setSalario(ofertaDto.getSalario());
         
         if (ofertaDto.getEstado() != null) {
             oferta.setEstado(ofertaDto.getEstado());
         }
         
-        if (ofertaDto.getMunicipio_id() != null) {
-            Municipio municipio = municipioRepository.findById(ofertaDto.getMunicipio_id())
+        if (ofertaDto.getMunicipioId() != null) {
+            Municipio municipio = municipioRepository.findById(ofertaDto.getMunicipioId())
                 .orElseThrow(() -> new EntityNotFoundException("Municipio no encontrado"));
             oferta.setMunicipio(municipio);
         }
 
-        if (ofertaDto.getModalidad_id() != null) {
-            Modalidad modalidad = modalidadRepository.findById(ofertaDto.getModalidad_id())
+        if (ofertaDto.getModalidadId() != null) {
+            Modalidad modalidad = modalidadRepository.findById(ofertaDto.getModalidadId())
                 .orElseThrow(() -> new EntityNotFoundException("Modalidad no encontrada"));
             oferta.setModalidad(modalidad);
         }
 
-        if (ofertaDto.getTipoContrato_id() != null) {
-            TipoContrato tipoContrato = tipoContratoRepository.findById(ofertaDto.getTipoContrato_id())
+        if (ofertaDto.getTipoContratoId() != null) {
+            TipoContrato tipoContrato = tipoContratoRepository.findById(ofertaDto.getTipoContratoId())
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de contrato no encontrado"));
             oferta.setTipoContrato(tipoContrato);
         }
 
-        if (ofertaDto.getEmpresa_id() != null) {
-            Empresa empresa = empresaRepository.findById(ofertaDto.getEmpresa_id())
+        if (ofertaDto.getEmpresaId() != null) {
+            Empresa empresa = empresaRepository.findById(ofertaDto.getEmpresaId())
                 .orElseThrow(() -> new EntityNotFoundException("Empresa no encontrada"));
             oferta.setEmpresa(empresa);
         }
         
-        if (ofertaDto.getReclutador_id() != null) {
-            UsrReclutador reclutador = reclutadorRepository.findById(ofertaDto.getReclutador_id())
+        if (ofertaDto.getReclutadorId() != null) {
+            UsrReclutador reclutador = reclutadorRepository.findById(ofertaDto.getReclutadorId())
                 .orElseThrow(() -> new EntityNotFoundException("Reclutador no encontrado"));
             oferta.setReclutador(reclutador);
         }
@@ -92,32 +92,32 @@ public class OfertaMapperImpl implements OfertaMapper {
     public OfertaReadDto toDto(Oferta entity) {
         OfertaReadDto dto = new OfertaReadDto();
         dto.setId(entity.getId());
-        dto.setTitu(entity.getTitulo());
-        dto.setDesc(entity.getDescripcion());
-        dto.setUbi(entity.getUbicacion());
-        dto.setFechaPub(entity.getFechaPublicacion());
-        dto.setFechLim(entity.getFechaLimite());
+        dto.setTitulo(entity.getTitulo());
+        dto.setDescripcion(entity.getDescripcion());
+        dto.setUbicacion(entity.getUbicacion());
+        dto.setFechaPublicacion(entity.getFechaPublicacion());
+        dto.setFechaLimite(entity.getFechaLimite());
         dto.setSalario(entity.getSalario());
         dto.setEstado(entity.getEstado());
 
         if (entity.getModalidad() != null) {
-            dto.setModal_id(entity.getModalidad().getId());
-            dto.setModalNomb(entity.getModalidad().getNombre());
+            dto.setModalidadId(entity.getModalidad().getId());
+            dto.setModalidadNombre(entity.getModalidad().getNombre());
         }
 
         if (entity.getTipoContrato() != null) {
-            dto.setTipoCon_id(entity.getTipoContrato().getId());
-            dto.setTipoConNomb(entity.getTipoContrato().getNombre());
+            dto.setTipoContratoId(entity.getTipoContrato().getId());
+            dto.setTipoContratoNombre(entity.getTipoContrato().getNombre());
         }
 
         if (entity.getEmpresa() != null) {
-            dto.setEmp_id(entity.getEmpresa().getNitId());
-            dto.setEmpNomb(entity.getEmpresa().getNombre());
+            dto.setEmpresaId(entity.getEmpresa().getNitId());
+            dto.setEmpresaNombre(entity.getEmpresa().getNombre());
         }
         
         if (entity.getReclutador() != null) {
-            dto.setReclut_id(entity.getReclutador().getId());
-            dto.setReclutNomb(entity.getReclutador().getNombre());
+            dto.setReclutadorId(entity.getReclutador().getId());
+            dto.setReclutadorNombre(entity.getReclutador().getNombre());
         }
 
         return dto;

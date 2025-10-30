@@ -25,7 +25,7 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
     public UsrAspirante toEntity(UsrAspiranteDto dto) {
         UsrAspirante aspirante = new UsrAspirante();
         
-        // Mapear campos de Usuario (padre)
+        // Mapear campos de Usuario
         aspirante.setId(dto.getId());
         aspirante.setNombre(dto.getNombre());
         aspirante.setCorreo(dto.getCorreo());
@@ -57,8 +57,8 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
     @Override
     public UsrAspiranteDto toDto(UsrAspirante entity) {
         UsrAspiranteDto dto = new UsrAspiranteDto();
-        
-        // Mapear campos de Usuario (padre)
+
+        // Mapear campos de Usuario
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
         dto.setCorreo(entity.getCorreo());
@@ -95,18 +95,18 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
         dto.setCorreo(entity.getCorreo());
         dto.setResumenProfesional(entity.getResumenProfesional());
         dto.setTelefono(entity.getTelefono());
-        dto.setFechNac(entity.getFechaNacimiento());
+        dto.setFechaNacimiento(entity.getFechaNacimiento());
         dto.setFotoPerfilUrl(entity.getFotoPerfilUrl());
         // NO incluye clave por seguridad
         
         if (entity.getMunicipio() != null) {
-            dto.setMunicipio_id(entity.getMunicipio().getId());
-            dto.setMunicipio_nom(entity.getMunicipio().getNombre());
+            dto.setMunicipioId(entity.getMunicipio().getId());
+            dto.setMunicipioNombre(entity.getMunicipio().getNombre());
         }
         
         if (entity.getGenero() != null) {
-            dto.setGenero_id(entity.getGenero().getGenero_id());
-            dto.setGenero_nom(entity.getGenero().getNombre());
+            dto.setGeneroId(entity.getGenero().getGenero_id());
+            dto.setGeneroNombre(entity.getGenero().getNombre());
         }
         
         return dto;

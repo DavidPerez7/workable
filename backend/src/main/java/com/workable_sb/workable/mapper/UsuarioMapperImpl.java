@@ -73,8 +73,8 @@ public class UsuarioMapperImpl implements UsuarioMapper {
         dto.setFotoPerfilUrl(usuario.getFotoPerfilUrl());
         
         if (usuario.getMunicipio() != null) {
-            dto.setMunicipio_id(usuario.getMunicipio().getId());
-            dto.setMunicipio_nom(usuario.getMunicipio().getNombre());
+            dto.setMunicipioId(usuario.getMunicipio().getId());
+            dto.setMunicipioNombre(usuario.getMunicipio().getNombre());
         }
         
         return dto;

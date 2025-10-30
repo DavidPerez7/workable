@@ -9,17 +9,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-
 public class ValoracionDto {
-  @NotBlank
-  private String desc;
+  @NotBlank(message = "La descripción es obligatoria")
+  private String descripcion;
 
-  @NotNull
-  private Float puntu;
+  @NotNull(message = "La puntuación es obligatoria")
+  private Float puntuacion;
 
   @NotNull(message = "El id de empresa es obligatorio")
-  private Long empresa_id;
+  private Long empresaId;
 
   @NotNull(message = "El id de usuario es obligatorio")
-  private Integer aspirante_id;
+  private Integer usuarioId;
 }

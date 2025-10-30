@@ -22,17 +22,17 @@ public class DataExperienciaMapperImpl implements DataExperienciaMapper {
     public DataExperiencia toEntity(DataExperienciaDto dto) {
         DataExperiencia experiencia = new DataExperiencia();
         experiencia.setId(dto.getId());
-        experiencia.setCargo(dto.getCarg());
-        experiencia.setEmpresa(dto.getEmpr());
+        experiencia.setCargo(dto.getCargo());
+        experiencia.setEmpresa(dto.getEmpresa());
         experiencia.setDescripcion(dto.getDescripcion());
-        experiencia.setFechaInicio(dto.getFechaIn());
-        experiencia.setFechaFin(dto.getFechaFi());
+        experiencia.setFechaInicio(dto.getFechaInicio());
+        experiencia.setFechaFin(dto.getFechaFin());
         experiencia.setTrabajoActual(dto.getTrabajoActual());
         experiencia.setUbicacion(dto.getUbicacion());
 
-        if (dto.getAspirante_id() != null) {
-            Usuario usuario = usuarioRepository.findById(dto.getAspirante_id())
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + dto.getAspirante_id()));
+        if (dto.getAspiranteId() != null) {
+            Usuario usuario = usuarioRepository.findById(dto.getAspiranteId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + dto.getAspiranteId()));
             experiencia.setUsuario(usuario);
         }
 
@@ -44,15 +44,15 @@ public class DataExperienciaMapperImpl implements DataExperienciaMapper {
         Usuario usuario = entity.getUsuario();
         DataExperienciaDto dto = new DataExperienciaDto();
         dto.setId(entity.getId());
-        dto.setCarg(entity.getCargo());
-        dto.setEmpr(entity.getEmpresa());
+        dto.setCargo(entity.getCargo());
+        dto.setEmpresa(entity.getEmpresa());
         dto.setDescripcion(entity.getDescripcion());
-        dto.setFechaIn(entity.getFechaInicio());
-        dto.setFechaFi(entity.getFechaFin());
+        dto.setFechaInicio(entity.getFechaInicio());
+        dto.setFechaFin(entity.getFechaFin());
         dto.setTrabajoActual(entity.getTrabajoActual());
         dto.setUbicacion(entity.getUbicacion());
-        dto.setAspirante_id(usuario != null ? usuario.getId() : null);
-        dto.setNombreAspirante(usuario != null ? usuario.getNombre() : null);
+        dto.setAspiranteId(usuario != null ? usuario.getId() : null);
+        dto.setAspiranteNombre(usuario != null ? usuario.getNombre() : null);
         
         return dto;
     }

@@ -15,6 +15,6 @@ public class UsuarioReadDto {
     private String rol;
     private String fotoPerfilUrl;
     
-    private Integer municipio_id;
-    private String municipio_nom;
+    private Integer municipioId;
+    private String municipioNombre;
 }

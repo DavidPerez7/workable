@@ -11,23 +11,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OfertaReadDto {
   private Integer id;
-  private String titu;
-  private String desc;
-  private String ubi;
-  private LocalDate fechaPub;
-  private LocalDate fechLim;
+  private String titulo;
+  private String descripcion;
+  private String ubicacion;
+  private LocalDate fechaPublicacion;
+  private LocalDate fechaLimite;
   private Long salario;
   private String estado;
 
-  private Integer modal_id;
-  private String modalNomb;
+  private Integer modalidadId;
+  private String modalidadNombre;
 
-  private Integer tipoCon_id;
-  private String tipoConNomb;
+  private Integer tipoContratoId;
+  private String tipoContratoNombre;
 
-  private Long emp_id;
-  private String empNomb;
+  private Long empresaId;
+  private String empresaNombre;
   
-  private Integer reclut_id;
-  private String reclutNomb;
+  private Integer reclutadorId;
+  private String reclutadorNombre;
 }

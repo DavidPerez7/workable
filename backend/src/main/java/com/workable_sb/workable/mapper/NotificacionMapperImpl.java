@@ -10,7 +10,7 @@ public class NotificacionMapperImpl implements NotificacionMapper {
     public NotificacionDto toDto(Notificacion notificacion) {
         if (notificacion == null) return null;
         NotificacionDto dto = new NotificacionDto();
-        dto.setNotificacionId(notificacion.getId());
+        dto.setId(notificacion.getId());
         dto.setTipo(notificacion.getTipo());
         dto.setTitulo(notificacion.getTitulo());
         dto.setMensaje(notificacion.getMensaje());
@@ -27,7 +27,7 @@ public class NotificacionMapperImpl implements NotificacionMapper {
     public Notificacion toEntity(NotificacionDto notificacionDto) {
         if (notificacionDto == null) return null;
         Notificacion notificacion = new Notificacion();
-        notificacion.setId(notificacionDto.getNotificacionId());
+        notificacion.setId(notificacionDto.getId());
         notificacion.setTipo(notificacionDto.getTipo());
         notificacion.setTitulo(notificacionDto.getTitulo());
         notificacion.setMensaje(notificacionDto.getMensaje());

@@ -10,22 +10,21 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class PostulacionDto {
   private Integer id;
 
-  @NotNull
-  private Date fech;
+  @NotNull(message = "La fecha es obligatoria")
+  private Date fecha;
 
   @NotNull(message = "El id de estado es obligatorio")
-  private Short estado_Id;
-  private String nombreEstado;
+  private Short estadoId;
+  private String estadoNombre;
 
   @NotNull(message = "La id de oferta es obligatoria")
-  private Integer oferta_Id;
-  private String nombreOferta;
+  private Integer ofertaId;
+  private String ofertaTitulo;
 
-  @NotNull(message = "El id de usuario es obligatorio")
-  private Integer aspirante_id;
-  private String nombreAspirante;
+  @NotNull(message = "El id de aspirante es obligatorio")
+  private Integer aspiranteId;
+  private String aspiranteNombre;
 }

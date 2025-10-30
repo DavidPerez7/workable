@@ -11,36 +11,35 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class OfertaDto {
-    @NotBlank
-    private String titu;
+    @NotBlank(message = "El título es obligatorio")
+    private String titulo;
 
-    @NotBlank
-    private String desc;
+    @NotBlank(message = "La descripción es obligatoria")
+    private String descripcion;
 
-    @NotBlank
-    private String ubi;
+    @NotBlank(message = "La ubicación es obligatoria")
+    private String ubicacion;
     
-    private LocalDate fechaPu;
+    private LocalDate fechaPublicacion;
 
-    @NotNull
-    private LocalDate fechaLi;
+    @NotNull(message = "La fecha límite es obligatoria")
+    private LocalDate fechaLimite;
     
     private Long salario;
     
     private String estado;  // "ABIERTA", "CERRADA", "PAUSADA"
     
-    private Integer municipio_id;
+    private Integer municipioId;
 
-    @NotNull(message = "La modalidad debe ser obligatoria")
-    private Integer modalidad_id;
+    @NotNull(message = "La modalidad es obligatoria")
+    private Integer modalidadId;
 
-    @NotNull(message = "El tipo de contrato debe ser obligatorio")
-    private Integer tipoContrato_id;
+    @NotNull(message = "El tipo de contrato es obligatorio")
+    private Integer tipoContratoId;
 
-    @NotNull(message = "La empresa debe ser obligatoria")
-    private Long empresa_id;
+    @NotNull(message = "La empresa es obligatoria")
+    private Long empresaId;
     
-    private Integer reclutador_id;  // Opcional
+    private Integer reclutadorId;  // Opcional
 }

@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ValoracionReadDto {
     private Integer id;
-    private String dec;
-    private Float puntu;
-    private LocalDate fechaVal;
+    private String descripcion;
+    private Float puntuacion;
+    private LocalDate fechaValoracion;
 
-    private Long empr_id;
-    private String emprNomb;
+    private Long empresaId;
+    private String empresaNombre;
 
-    private Integer asp_id;
-    private String aspNomb;
+    private Integer usuarioId;
+    private String usuarioNombre;
 }

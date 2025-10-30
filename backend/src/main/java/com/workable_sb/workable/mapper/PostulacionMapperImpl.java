@@ -34,21 +34,21 @@ public class PostulacionMapperImpl implements PostulacionMapper {
     Postulacion postulacion = new Postulacion();
     postulacion.setId(postulacionDto.getId());
     
-    if (postulacionDto.getFech() != null) {
-      LocalDate fechaLocal = postulacionDto.getFech().toInstant()
+    if (postulacionDto.getFecha() != null) {
+      LocalDate fechaLocal = postulacionDto.getFecha().toInstant()
         .atZone(ZoneId.systemDefault()).toLocalDate();
       postulacion.setFechaPostulacion(fechaLocal);
     }
 
-    PostulacionEstado estado = estadoRepository.findById(postulacionDto.getEstado_Id())
+    PostulacionEstado estado = estadoRepository.findById(postulacionDto.getEstadoId())
     .orElseThrow(() -> new EntityNotFoundException("Estado no encontrado"));
     postulacion.setPostulacionEstado(estado);
 
-    Oferta oferta = ofertaRepository.findById(postulacionDto.getOferta_Id())
+    Oferta oferta = ofertaRepository.findById(postulacionDto.getOfertaId())
     .orElseThrow(() -> new EntityNotFoundException("Oferta no encontrada"));
     postulacion.setOferta(oferta);
 
-    UsrAspirante aspirante = aspiranteRepository.findById(postulacionDto.getAspirante_id())
+    UsrAspirante aspirante = aspiranteRepository.findById(postulacionDto.getAspiranteId())
     .orElseThrow(() -> new EntityNotFoundException("Aspirante no encontrado"));
     postulacion.setAspirante(aspirante);
 
@@ -62,22 +62,22 @@ public class PostulacionMapperImpl implements PostulacionMapper {
     dto.setId(entity.getId());
     
     if (entity.getFechaPostulacion() != null) {
-      dto.setFech(java.sql.Date.valueOf(entity.getFechaPostulacion()));
+      dto.setFecha(java.sql.Date.valueOf(entity.getFechaPostulacion()));
     }
     
     if (entity.getPostulacionEstado() != null) {
-      dto.setEstado_Id(entity.getPostulacionEstado().getId());
-      dto.setNombreEstado(entity.getPostulacionEstado().getNombre());
+      dto.setEstadoId(entity.getPostulacionEstado().getId());
+      dto.setEstadoNombre(entity.getPostulacionEstado().getNombre());
     }
     
     if (entity.getOferta() != null) {
-      dto.setOferta_Id(entity.getOferta().getId());
-      dto.setNombreOferta(entity.getOferta().getTitulo());
+      dto.setOfertaId(entity.getOferta().getId());
+      dto.setOfertaTitulo(entity.getOferta().getTitulo());
     }
     
     if (entity.getAspirante() != null) {
-      dto.setAspirante_id(entity.getAspirante().getId());
-      dto.setNombreAspirante(entity.getAspirante().getNombre());
+      dto.setAspiranteId(entity.getAspirante().getId());
+      dto.setAspiranteNombre(entity.getAspirante().getNombre());
     }
     
     return dto;

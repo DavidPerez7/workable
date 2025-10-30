@@ -2,6 +2,7 @@ package com.workable_sb.workable.dto;
 
 import java.sql.Date;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,26 +14,26 @@ import lombok.NoArgsConstructor;
 public class DataEstudioDto {
   private Integer id;
 
-  @NotNull
-  private String nom;
+  @NotBlank(message = "El nombre del estudio es obligatorio")
+  private String nombre;
 
-  @NotNull
-  private Date fechaIn;
+  @NotNull(message = "La fecha de inicio es obligatoria")
+  private Date fechaInicio;
 
-  private Date fechaFi;
+  private Date fechaFin;
   
   private Boolean enCurso;
 
-  @NotNull
-  private String cert;
+  @NotBlank(message = "El certificado es obligatorio")
+  private String certificado;
 
-  @NotNull
-  private String inst;
+  @NotBlank(message = "La institución es obligatoria")
+  private String institucion;
 
-  @NotNull(message = "el id de nuvel educativo es obligatorio")
-  private Integer nivEdu_id;
-  private String nivEdu_nom;
+  @NotNull(message = "El id de nivel educativo es obligatorio")
+  private Integer nivelEducativoId;
+  private String nivelEducativoNombre;
 
-  @NotNull(message = "el id de usuario es obligatorio")
-  private Integer asp_id;
+  @NotNull(message = "El id de aspirante es obligatorio")
+  private Integer aspiranteId;
 }

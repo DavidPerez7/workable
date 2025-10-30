@@ -26,14 +26,14 @@ public class EmpresaMapperImpl implements EmpresaMapper {
   public Empresa toEntity(EmpresaDto empresaDto) {
     Empresa empresa = new Empresa();
 
-    empresa.setNombre(empresaDto.getNom());
-    empresa.setDescripcion(empresaDto.getDesc());
-    empresa.setNumeroTrabajadores(empresaDto.getNumTrab());
+    empresa.setNombre(empresaDto.getNombre());
+    empresa.setDescripcion(empresaDto.getDescripcion());
+    empresa.setNumeroTrabajadores(empresaDto.getNumeroTrabajadores());
     
-    Municipio municipio = municipioRepository.findById(empresaDto.getMunici_id()).orElseThrow(() -> new EntityNotFoundException("Municipio no encontrado"));
+    Municipio municipio = municipioRepository.findById(empresaDto.getMunicipioId()).orElseThrow(() -> new EntityNotFoundException("Municipio no encontrado"));
     empresa.setMunicipio(municipio);
 
-    EmpresaCategoria categoria = categoriaRepository.findById(empresaDto.getCat_id()).orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
+    EmpresaCategoria categoria = categoriaRepository.findById(empresaDto.getCategoriaId()).orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     empresa.setEmpresaCategoria(categoria);
 
     return empresa;
@@ -44,10 +44,10 @@ public class EmpresaMapperImpl implements EmpresaMapper {
     return new EmpresaReadDto(
       empresa.getNitId(),
       empresa.getNombre(),
-      null, // ubi - no existe en el modelo
+      null, // ubicacion - no existe en el modelo
       empresa.getDescripcion(),
       empresa.getNumeroTrabajadores(),
-      null, // correoCorp - no existe en el modelo
+      null, // correoCorporativo - no existe en el modelo
       empresa.getPuntuacion(),
       empresa.getFechaCreacion(),
       empresa.getEmpresaCategoria().getId(),

@@ -27,15 +27,15 @@ public class ValoracionMapperImpl implements ValoracionMapper {
   public Valoracion toEntity(ValoracionDto valoracionDto){
     Valoracion entity = new Valoracion();
 
-    entity.setDescripcion(valoracionDto.getDesc());
-    entity.setPuntuacion(valoracionDto.getPuntu());
+    entity.setDescripcion(valoracionDto.getDescripcion());
+    entity.setPuntuacion(valoracionDto.getPuntuacion());
 
 
-    Empresa empresa = empresaRepository.findById(valoracionDto.getEmpresa_id())
+    Empresa empresa = empresaRepository.findById(valoracionDto.getEmpresaId())
     .orElseThrow(() -> new EntityNotFoundException("Empresa no encontrada"));
     entity.setEmpresa(empresa);
 
-    Usuario usuario = usuarioRepository.findById(valoracionDto.getAspirante_id())
+    Usuario usuario = usuarioRepository.findById(valoracionDto.getUsuarioId())
     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     entity.setUsuario(usuario);
 
@@ -46,18 +46,18 @@ public class ValoracionMapperImpl implements ValoracionMapper {
   public ValoracionReadDto toDto(Valoracion entity){
     ValoracionReadDto dto = new ValoracionReadDto();
     dto.setId(entity.getId());
-    dto.setDec(entity.getDescripcion());
-    dto.setPuntu(entity.getPuntuacion());
-    dto.setFechaVal(entity.getFecha_valoracion());
+    dto.setDescripcion(entity.getDescripcion());
+    dto.setPuntuacion(entity.getPuntuacion());
+    dto.setFechaValoracion(entity.getFecha_valoracion());
     
     if (entity.getEmpresa() != null) {
-      dto.setEmpr_id(entity.getEmpresa().getNitId());
-      dto.setEmprNomb(entity.getEmpresa().getNombre());
+      dto.setEmpresaId(entity.getEmpresa().getNitId());
+      dto.setEmpresaNombre(entity.getEmpresa().getNombre());
     }
     
     if (entity.getUsuario() != null) {
-      dto.setAsp_id(entity.getUsuario().getId());
-      dto.setAspNomb(entity.getUsuario().getNombre());
+      dto.setUsuarioId(entity.getUsuario().getId());
+      dto.setUsuarioNombre(entity.getUsuario().getNombre());
     }
     
     return dto;

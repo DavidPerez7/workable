@@ -21,13 +21,13 @@ public class UsrAspiranteReadDto {
     // Campos específicos de UsrAspirante
     private String apellido;
     private String resumenProfesional;
-    private Date fechNac;
+    private Date fechaNacimiento;
     
     // Municipio
-    private Integer municipio_id;
-    private String municipio_nom;
+    private Integer municipioId;
+    private String municipioNombre;
     
     // Género
-    private Short genero_id;
-    private String genero_nom;
+    private Short generoId;
+    private String generoNombre;
 }

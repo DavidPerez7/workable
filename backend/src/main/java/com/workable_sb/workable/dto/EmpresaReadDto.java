@@ -11,16 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmpresaReadDto {
   private Long id;
-  private String nom;
-  private String ubi;
-  private String desc;
-  private Integer numTrab;
-  private String correoCorp;
-  private float punt;
-  private LocalDate fechaCrea;
+  private String nombre;
+  private String ubicacion;
+  private String descripcion;
+  private Integer numeroTrabajadores;
+  private String correoCorporativo;
+  private Float puntuacion;
+  private LocalDate fechaCreacion;
 
-  private Integer cat_id;
-  private String nomCat;
-  private Integer munici_id;
-  private String nomMunici;
+  private Integer categoriaId;
+  private String categoriaNombre;
+  
+  private Integer municipioId;
+  private String municipioNombre;
 }

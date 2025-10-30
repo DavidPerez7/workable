@@ -1,6 +1,7 @@
 package com.workable_sb.workable.dto;
 
 import java.sql.Date;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,25 +13,25 @@ import lombok.NoArgsConstructor;
 public class DataExperienciaDto {
   private Integer id;
 
-  @NotNull
-  private String carg;
+  @NotBlank(message = "El cargo es obligatorio")
+  private String cargo;
 
-  @NotNull
-  private String empr;
+  @NotBlank(message = "La empresa es obligatoria")
+  private String empresa;
   
   private String descripcion;
 
-  @NotNull
-  private Date fechaIn;
+  @NotNull(message = "La fecha de inicio es obligatoria")
+  private Date fechaInicio;
 
-  private Date fechaFi;
+  private Date fechaFin;
   
   private Boolean trabajoActual;
 
-  @NotNull
+  @NotBlank(message = "La ubicación es obligatoria")
   private String ubicacion;
 
-  @NotNull(message = "el ID de usuario es obligatorio")
-  private Integer aspirante_id;
-  private String nombreAspirante;
+  @NotNull(message = "El ID de aspirante es obligatorio")
+  private Integer aspiranteId;
+  private String aspiranteNombre;
 }

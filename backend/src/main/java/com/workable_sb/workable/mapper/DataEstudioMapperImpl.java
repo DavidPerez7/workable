@@ -26,21 +26,21 @@ public class DataEstudioMapperImpl implements DataEstudioMapper {
     public DataEstudio toEntity(DataEstudioDto dto) {
         DataEstudio estudio = new DataEstudio();
         estudio.setId(dto.getId());
-        estudio.setNombre(dto.getNom());
-        estudio.setFechaInicio(dto.getFechaIn());
-        estudio.setFechaFin(dto.getFechaFi());
+        estudio.setNombre(dto.getNombre());
+        estudio.setFechaInicio(dto.getFechaInicio());
+        estudio.setFechaFin(dto.getFechaFin());
         estudio.setEnCurso(dto.getEnCurso());
-        estudio.setCertificadoUrl(dto.getCert());
-        estudio.setInstitucion(dto.getInst());
+        estudio.setCertificadoUrl(dto.getCertificado());
+        estudio.setInstitucion(dto.getInstitucion());
 
-        if (dto.getNivEdu_id() != null) {
-            NivelEducativo nivelEducativo = nivelEducativoRepository.findById(dto.getNivEdu_id())
+        if (dto.getNivelEducativoId() != null) {
+            NivelEducativo nivelEducativo = nivelEducativoRepository.findById(dto.getNivelEducativoId())
                 .orElseThrow(() -> new EntityNotFoundException("Nivel educativo no encontrado"));
             estudio.setNivelEducativo(nivelEducativo);
         }
 
-        if (dto.getAsp_id() != null) {
-            Usuario usuario = usuarioRepository.findById(dto.getAsp_id())
+        if (dto.getAspiranteId() != null) {
+            Usuario usuario = usuarioRepository.findById(dto.getAspiranteId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
             estudio.setUsuario(usuario);
         }
@@ -52,20 +52,20 @@ public class DataEstudioMapperImpl implements DataEstudioMapper {
     public DataEstudioDto toDto(DataEstudio entity) {
         DataEstudioDto dto = new DataEstudioDto();
         dto.setId(entity.getId());
-        dto.setNom(entity.getNombre());
-        dto.setFechaIn(entity.getFechaInicio());
-        dto.setFechaFi(entity.getFechaFin());
+        dto.setNombre(entity.getNombre());
+        dto.setFechaInicio(entity.getFechaInicio());
+        dto.setFechaFin(entity.getFechaFin());
         dto.setEnCurso(entity.getEnCurso());
-        dto.setCert(entity.getCertificadoUrl());
-        dto.setInst(entity.getInstitucion());
+        dto.setCertificado(entity.getCertificadoUrl());
+        dto.setInstitucion(entity.getInstitucion());
         
         if (entity.getNivelEducativo() != null) {
-            dto.setNivEdu_id(entity.getNivelEducativo().getId());
-            dto.setNivEdu_nom(entity.getNivelEducativo().getNombre());
+            dto.setNivelEducativoId(entity.getNivelEducativo().getId());
+            dto.setNivelEducativoNombre(entity.getNivelEducativo().getNombre());
         }
         
         if (entity.getUsuario() != null) {
-            dto.setAsp_id(entity.getUsuario().getId());
+            dto.setAspiranteId(entity.getUsuario().getId());
         }
         
         return dto;
