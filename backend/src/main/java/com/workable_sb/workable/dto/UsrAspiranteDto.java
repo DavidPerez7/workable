@@ -30,9 +30,7 @@ public class UsrAspiranteDto {
     private String apellido;
     
     private String resumenProfesional;
-
-    @NotNull(message = "La fecha de nacimiento es obligatoria")
-    private Date fechNac;
+    private Date fechaNacimiento;
 
     @NotNull(message = "El id del municipio es obligatorio")
     private Integer municipio_id;

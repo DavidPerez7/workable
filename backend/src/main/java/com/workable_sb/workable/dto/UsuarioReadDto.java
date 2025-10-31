@@ -1,5 +1,7 @@
 package com.workable_sb.workable.dto;
 
+import com.workable_sb.workable.models.Usuario.RolUsr;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ public class UsuarioReadDto {
     private String nombre;
     private String correo;
     private Long telefono;
-    private String rol;
+    private RolUsr rol;
     private String fotoPerfilUrl;
     
     private Integer municipioId;

@@ -7,6 +7,7 @@ import com.workable_sb.workable.dto.UsrReclutadorReadDto;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.UsrReclutador;
+import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepository;
 
@@ -38,7 +39,7 @@ public class UsrReclutadorMapperImpl implements UsrReclutadorMapper {
         reclutador.setClave(dto.getClave());
         reclutador.setTelefono(dto.getTelefono());
         reclutador.setFotoPerfilUrl(dto.getFotoPerfilUrl());
-        reclutador.setRol("RECLUTADOR");  // Rol por defecto
+        reclutador.setRol(Usuario.RolUsr.RECLUTADOR);  // Rol por defecto
         
         if (dto.getMunicipio_id() != null) {
             Municipio municipio = municipioRepository.findById(dto.getMunicipio_id())

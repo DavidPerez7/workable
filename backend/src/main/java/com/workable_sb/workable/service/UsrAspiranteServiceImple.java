@@ -69,7 +69,7 @@ public class UsrAspiranteServiceImple implements UsrAspiranteService {
                 // Actualizar campos específicos de UsrAspirante
                 if (dto.getApellido() != null) aspirante.setApellido(dto.getApellido());
                 if (dto.getResumenProfesional() != null) aspirante.setResumenProfesional(dto.getResumenProfesional());
-                if (dto.getFechNac() != null) aspirante.setFechaNacimiento(dto.getFechNac());
+                if (dto.getFechaNacimiento() != null) aspirante.setFechaNacimiento(dto.getFechaNacimiento());
                 
                 UsrAspirante actualizado = aspiranteRepository.save(aspirante);
                 return aspiranteMapper.toDto(actualizado);

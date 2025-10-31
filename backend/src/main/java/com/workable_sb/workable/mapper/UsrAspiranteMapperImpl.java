@@ -6,6 +6,7 @@ import com.workable_sb.workable.dto.UsrAspiranteDto;
 import com.workable_sb.workable.dto.UsrAspiranteReadDto;
 import com.workable_sb.workable.models.Genero;
 import com.workable_sb.workable.models.Municipio;
+import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.models.UsrAspirante;
 import com.workable_sb.workable.repository.GeneroRepository;
 import com.workable_sb.workable.repository.MunicipioRepository;
@@ -32,12 +33,12 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
         aspirante.setClave(dto.getClave());
         aspirante.setTelefono(dto.getTelefono());
         aspirante.setFotoPerfilUrl(dto.getFotoPerfilUrl());
-        aspirante.setRol("ASPIRANTE");  // Rol por defecto
+        aspirante.setRol(Usuario.RolUsr.ASPIRANTE);  // Rol por defecto
         
         // Mapear campos específicos de UsrAspirante
         aspirante.setApellido(dto.getApellido());
         aspirante.setResumenProfesional(dto.getResumenProfesional());
-        aspirante.setFechaNacimiento(dto.getFechNac());
+        aspirante.setFechaNacimiento(dto.getFechaNacimiento());
 
         if (dto.getMunicipio_id() != null) {
             Municipio municipio = municipioRepository.findById(dto.getMunicipio_id())
@@ -69,7 +70,7 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
         // Mapear campos específicos de UsrAspirante
         dto.setApellido(entity.getApellido());
         dto.setResumenProfesional(entity.getResumenProfesional());
-        dto.setFechNac(entity.getFechaNacimiento());
+        dto.setFechaNacimiento(entity.getFechaNacimiento());
         
         if (entity.getMunicipio() != null) {
             dto.setMunicipio_id(entity.getMunicipio().getId());

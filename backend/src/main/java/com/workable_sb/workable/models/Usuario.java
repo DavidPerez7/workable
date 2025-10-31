@@ -20,15 +20,22 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String correo;
     private Long telefono;
+    private String fotoPerfilUrl;
 
     @Column(nullable = false, length = 255)
     private String clave;
 
+    public enum RolUsr {
+        ASPIRANTE,
+        RECLUTADOR,
+        ADMIN
+    }
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String rol;
-    private String fotoPerfilUrl;
+    private RolUsr rol;
 
     @ManyToOne
-    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
+    @JoinColumn(name = "municipio_id", foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 }

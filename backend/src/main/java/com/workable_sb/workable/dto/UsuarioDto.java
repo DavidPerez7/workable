@@ -1,10 +1,13 @@
 package com.workable_sb.workable.dto;
 
+import com.workable_sb.workable.models.Usuario.RolUsr;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class UsuarioDto {
+    //null al crear, obligatorio al actualizar
     private Integer id;
     @NotNull
     private String nombre;
@@ -14,7 +17,7 @@ public class UsuarioDto {
     @NotNull
     private String clave;
     @NotNull
-    private String rol;
+    private RolUsr rol;
     private String token;
 
     private String fotoPerfilUrl;

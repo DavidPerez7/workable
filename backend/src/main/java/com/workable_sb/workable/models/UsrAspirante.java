@@ -25,8 +25,6 @@ public class UsrAspirante extends Usuario {
 
     @Column(length = 1000)
     private String resumenProfesional;  // Descripción personal para el perfil
-
-    @Column(nullable = false)
     private Date fechaNacimiento;
 
     @ManyToOne(cascade = CascadeType.ALL)

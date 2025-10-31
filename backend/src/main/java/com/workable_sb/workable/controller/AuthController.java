@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.LoginRequestDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
-import com.workable_sb.workable.dto.UsuarioDto;
+import com.workable_sb.workable.dto.UsrAspiranteDto;
+import com.workable_sb.workable.dto.UsrReclutadorDto;
 import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.repository.UsrAspiranteRepository;
+import com.workable_sb.workable.repository.UsrReclutadorRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
-import com.workable_sb.workable.service.UsuarioService;
+import com.workable_sb.workable.service.UsrAspiranteService;
+import com.workable_sb.workable.service.UsrReclutadorService;
 
 import jakarta.validation.Valid;
 
@@ -26,10 +30,19 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsrAspiranteService usrAspiranteService;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsrReclutadorService usrReclutadorService;
+
+    @Autowired
+    private UsrAspiranteRepository usrAspiranteRepo;
+
+    @Autowired
+    private UsrReclutadorRepository usrReclutadorRepo;
+
+    @Autowired
+    private UsuarioRepository usrRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,30 +50,72 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-@PostMapping("/register")
-public ResponseEntity<?> register(@Valid @RequestBody UsuarioDto usuarioDto) {
-    if (usuarioRepository.findByCorreo(usuarioDto.getCorreo()).isPresent()) {
-        return ResponseEntity.badRequest().body("❌ El correo ya está registrado");
+@PostMapping("/registro-aspirante")
+public ResponseEntity<?> registrarAspirante(@Valid @RequestBody UsrAspiranteDto aspiranteDto) {
+    if (usrAspiranteRepo.findByCorreo(aspiranteDto.getCorreo()).isPresent()) {
+        return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
     }
     try {
-        usuarioService.create(usuarioDto);
-        return ResponseEntity.ok("✅ Aspirante registrado con éxito");
+        UsrAspiranteDto aspiranteCreado = usrAspiranteService.crear(aspiranteDto);
+        
+        // Generar JWT después del registro
+        String token = jwtUtil.generateToken(aspiranteCreado.getCorreo(), "ASPIRANTE");
+        
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Aspirante registrado con éxito",
+            "token", token,
+            "rol", "ASPIRANTE",
+            "usuario", Map.of(
+                "id", aspiranteCreado.getId(),
+                "nombre", aspiranteCreado.getNombre(),
+                "correo", aspiranteCreado.getCorreo()
+            )
+        ));
     } catch (Exception e) {
-        return ResponseEntity.status(500).body("❌ Error al crear aspirante");
+        return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+    }
+}
+
+@PostMapping("/registro-reclutador")
+public ResponseEntity<?> registrarReclutador(@Valid @RequestBody UsrReclutadorDto reclutadorDto) {
+    if (usrReclutadorRepo.findByCorreo(reclutadorDto.getCorreo()).isPresent()) {
+        return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+    }
+    try {
+        UsrReclutadorDto reclutadorCreado = usrReclutadorService.crear(reclutadorDto);
+        
+        // Generar JWT después del registro
+        String token = jwtUtil.generateToken(reclutadorCreado.getCorreo(), "RECLUTADOR");
+        
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Reclutador registrado con éxito",
+            "token", token,
+            "rol", "RECLUTADOR",
+            "usuario", Map.of(
+                "id", reclutadorCreado.getId(),
+                "nombre", reclutadorCreado.getNombre(),
+                "correo", reclutadorCreado.getCorreo()
+            )
+        ));
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
     }
 }
 
 
 @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
-    Usuario usuario = usuarioRepository.findByCorreo(loginDto.getCorreo()).orElse(null);
+    Usuario usuario = usrRepo.findByCorreo(loginDto.getCorreo()).orElse(null);
     if (usuario == null || !passwordEncoder.matches(loginDto.getClave(), usuario.getClave())) {
         return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
     }
-    String token = jwtUtil.generateToken(usuario.getCorreo(), usuario.getRol());
+    
+    // Convertir enum a String para JWT y respuesta
+    String rolString = usuario.getRol().toString();
+    String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
 
     LoginResponseDto responseDto = new LoginResponseDto();
-    responseDto.setRol(usuario.getRol());
+    responseDto.setRol(rolString);
     responseDto.setToken(token);
 
     return ResponseEntity.ok(responseDto);

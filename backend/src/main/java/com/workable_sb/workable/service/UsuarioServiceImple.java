@@ -21,10 +21,10 @@ public class UsuarioServiceImple implements UsuarioService {
 
     @Override
     public UsuarioDto create(UsuarioDto usuarioDto) {
-    Usuario usuario = usuarioMapper.toEntity(usuarioDto);
-    usuario.setClave(passwordEncoder.encode(usuario.getClave()));
-    Usuario guardado = usuarioRepository.save(usuario);
-    return usuarioMapper.toDto(guardado);
+        Usuario usuario = usuarioMapper.toEntity(usuarioDto);
+        usuario.setClave(passwordEncoder.encode(usuario.getClave()));
+        Usuario guardado = usuarioRepository.save(usuario);
+        return usuarioMapper.toDto(guardado);
     }
 
     @Override
