@@ -27,9 +27,12 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
+        
+        System.out.println("🔍 JwtFilter - Path: " + path); // DEBUG
 
         // Ignorar rutas públicas, sin token
         if (path.startsWith("/api/auth")) {
+            System.out.println("✅ Ruta pública permitida: " + path); // DEBUG
             filterChain.doFilter(request, response);
             return;
         }

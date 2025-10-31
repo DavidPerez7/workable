@@ -58,12 +58,8 @@ public ResponseEntity<?> registrarAspirante(@Valid @RequestBody UsrAspiranteDto 
     try {
         UsrAspiranteDto aspiranteCreado = usrAspiranteService.crear(aspiranteDto);
         
-        // Generar JWT después del registro
-        String token = jwtUtil.generateToken(aspiranteCreado.getCorreo(), "ASPIRANTE");
-        
         return ResponseEntity.ok(Map.of(
-            "mensaje", "Aspirante registrado con éxito",
-            "token", token,
+            "mensaje", "Aspirante registrado con éxito. Por favor, inicia sesión.",
             "rol", "ASPIRANTE",
             "usuario", Map.of(
                 "id", aspiranteCreado.getId(),
@@ -84,12 +80,8 @@ public ResponseEntity<?> registrarReclutador(@Valid @RequestBody UsrReclutadorDt
     try {
         UsrReclutadorDto reclutadorCreado = usrReclutadorService.crear(reclutadorDto);
         
-        // Generar JWT después del registro
-        String token = jwtUtil.generateToken(reclutadorCreado.getCorreo(), "RECLUTADOR");
-        
         return ResponseEntity.ok(Map.of(
-            "mensaje", "Reclutador registrado con éxito",
-            "token", token,
+            "mensaje", "Reclutador registrado con éxito. Por favor, inicia sesión.",
             "rol", "RECLUTADOR",
             "usuario", Map.of(
                 "id", reclutadorCreado.getId(),

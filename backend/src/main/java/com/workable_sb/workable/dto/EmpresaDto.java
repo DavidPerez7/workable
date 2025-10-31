@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmpresaDto {
-  // ID nullable: null al crear, presente al leer/actualizar
-  private Long id;
+  // NIT de la empresa (obligatorio al crear)
+  @NotNull(message = "El NIT es obligatorio")
+  private Long nitId;
   
   @NotBlank(message = "El nombre es obligatorio")
   private String nombre;

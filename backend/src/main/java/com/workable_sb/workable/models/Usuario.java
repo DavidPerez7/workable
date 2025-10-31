@@ -36,6 +36,6 @@ public class Usuario {
     private RolUsr rol;
 
     @ManyToOne
-    @JoinColumn(name = "municipio_id", foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
+    @JoinColumn(name = "municipio_id", nullable=false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 }

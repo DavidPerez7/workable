@@ -20,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UsrAspirante extends Usuario {
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 50)
     private String apellido;
 
     @Column(length = 1000)

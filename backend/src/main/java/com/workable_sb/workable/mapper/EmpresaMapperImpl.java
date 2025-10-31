@@ -25,10 +25,8 @@ public class EmpresaMapperImpl implements EmpresaMapper {
   public Empresa toEntity(EmpresaDto empresaDto) {
     Empresa empresa = new Empresa();
     
-    // Si tiene ID, es actualización (se debe buscar la entidad existente)
-    if (empresaDto.getId() != null) {
-      empresa.setNitId(empresaDto.getId());
-    }
+    // Asignar el NIT proporcionado por el usuario
+    empresa.setNitId(empresaDto.getNitId());
 
     empresa.setNombre(empresaDto.getNombre());
     empresa.setDescripcion(empresaDto.getDescripcion());
@@ -48,7 +46,7 @@ public class EmpresaMapperImpl implements EmpresaMapper {
   @Override
   public EmpresaDto toDto(Empresa empresa) {
     EmpresaDto dto = new EmpresaDto();
-    dto.setId(empresa.getNitId());
+    dto.setNitId(empresa.getNitId());
     dto.setNombre(empresa.getNombre());
     dto.setDescripcion(empresa.getDescripcion());
     dto.setNumeroTrabajadores(empresa.getNumeroTrabajadores());

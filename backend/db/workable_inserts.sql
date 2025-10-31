@@ -79,7 +79,6 @@ INSERT INTO estado (id, nombre) VALUES
 INSERT INTO genero (genero_id, nombre) VALUES
 (1, 'Masculino'),
 (2, 'Femenino'),
-(3, 'Otro'),
 (4, 'Prefiero no decir');
 
 -- Beneficios

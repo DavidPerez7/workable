@@ -32,11 +32,23 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll()
+            
+            // Empresa endpoints
+            .requestMatchers(HttpMethod.GET, "/api/empresa/**").permitAll()  // GETs públicos
+            .requestMatchers(HttpMethod.POST, "/api/empresa").hasRole("RECLUTADOR")  // POST solo reclutador
+            .requestMatchers(HttpMethod.PUT, "/api/empresa/**").hasRole("RECLUTADOR")  // PUT solo reclutador
+            .requestMatchers(HttpMethod.DELETE, "/api/empresa/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
+            
+            // Oferta endpoints
+            .requestMatchers(HttpMethod.GET, "/api/oferta/**").permitAll()  // GETs públicos
+            .requestMatchers(HttpMethod.POST, "/api/oferta").hasRole("RECLUTADOR")  // POST solo reclutador
+            .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasRole("RECLUTADOR")  // PUT solo reclutador
+            .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
+            
             .requestMatchers(HttpMethod.POST, "/api/aspirante").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
             .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
             .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
-            .requestMatchers("/api/oferta/**").hasRole("RECLUTADOR")
             .anyRequest().authenticated()
             ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

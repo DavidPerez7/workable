@@ -9,62 +9,235 @@
 
 ## 1. AUTENTICACIÓN
 
-### 1.1 Registro de Usuario
-**POST** `/auth/register`
+### 1.1 Registro de Aspirante
+**POST** `/auth/registro-aspirante`
 
-Registra un nuevo usuario en el sistema.
-
-**Body (JSON)**:
+**Body**:
 ```json
 {
-  "nombre": "Juan Pérez",
+  "nombre": "Juan",
+  "apellido": "Pérez",
   "correo": "juan.perez@email.com",
   "clave": "Password123!",
   "telefono": 3001234567,
-  "fotoPerfilUrl": "https://example.com/foto.jpg",
   "municipio_id": 1,
-  "rol": "ASPIRANTE"
-}
-```
-
-**Roles disponibles**: `ASPIRANTE`, `RECLUTADOR`, `ADMIN`
-
-**Response 201 (Created)**:
-```json
-{
-  "mensaje": "Usuario registrado exitosamente"
+  "genero_id": 1
 }
 ```
 
 ---
 
-### 1.2 Login
+### 1.2 Registro de Reclutador
+**POST** `/auth/registro-reclutador`
+
+**Body**:
+```json
+{
+  "nombre": "Carlos",
+  "apellido": "Ramírez",
+  "correo": "carlos.ramirez@example.com",
+  "clave": "password123",
+  "telefono": 3001234567,
+  "municipio_id": 1
+}
+```
+
+---
+
+### 1.3 Login
 **POST** `/auth/login`
 
-Inicia sesión y obtiene un token JWT.
-
-**Body (JSON)**:
+**Body**:
 ```json
 {
-  "correo": "juan.perez@email.com",
-  "clave": "Password123!"
+  "correo": "carlos.ramirez@example.com",
+  "contrasena": "password123"
 }
 ```
 
-**Response 200 (OK)**:
+**Nota**: Guarda el token para usarlo en endpoints protegidos. Inclúyelo en el header `Authorization: Bearer {token}`
+
+---
+
+## 2. GESTIÓN DE EMPRESAS
+
+### 2.1 Crear Empresa
+**POST** `/empresa`
+
+**Autenticación**: ✅ Requerida (Token de RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Body**:
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "rol": "ASPIRANTE",
-  "usuarioId": 1
+  "nitId": 900123456,
+  "nombre": "Tech Solutions SAS",
+  "descripcion": "Empresa líder en soluciones de software empresarial",
+  "numeroTrabajadores": 150,
+  "categoriaId": 1,
+  "municipioId": 1
 }
 ```
 
 ---
 
-## 2. GESTIÓN DE USUARIOS (CRUD Completo)
+### 2.2 Obtener Todas las Empresas
+**GET** `/empresa`
 
-### 2.1 Obtener Todos los Usuarios
+**Autenticación**: ❌ No requerida
+
+---
+
+### 2.3 Obtener Empresa por NIT
+**GET** `/empresa/{nitId}`
+
+**Autenticación**: ❌ No requerida
+
+**Ejemplo**: `GET /empresa/900123456`
+
+---
+
+### 2.4 Actualizar Empresa
+**PUT** `/empresa/{nitId}`
+
+**Autenticación**: ✅ Requerida (Token de RECLUTADOR propietario)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Ejemplo**: `PUT /empresa/900123456`
+
+**Body**:
+```json
+{
+  "nitId": 900123456,
+  "nombre": "Tech Solutions SAS - Actualizada",
+  "descripcion": "Empresa líder en soluciones de software empresarial y consultoría",
+  "numeroTrabajadores": 200,
+  "categoriaId": 1,
+  "municipioId": 1
+}
+```
+
+---
+
+### 2.5 Eliminar Empresa
+**DELETE** `/empresa/{nitId}`
+
+**Autenticación**: ✅ Requerida (Token de RECLUTADOR propietario)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+```
+
+**Ejemplo**: `DELETE /empresa/900123456`
+
+---
+
+## 3. GESTIÓN DE OFERTAS
+
+### 3.1 Crear Oferta
+**POST** `/oferta`
+
+**Autenticación**: ✅ Requerida (Token de RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Body**:
+```json
+{
+  "titulo": "Desarrollador Full Stack",
+  "descripcion": "Buscamos desarrollador con experiencia en Java y React",
+  "ubicacion": "Bogotá D.C.",
+  "fechaLimite": "2025-12-31",
+  "salario": 4500000,
+  "estado": "ABIERTA",
+  "municipioId": 1,
+  "modalidadId": 1,
+  "tipoContratoId": 1
+}
+```
+
+**Nota**: Los campos `empresaId` y `reclutadorId` se asignan automáticamente según el reclutador autenticado.
+
+---
+
+### 3.2 Obtener Todas las Ofertas
+**GET** `/oferta`
+
+**Autenticación**: ❌ No requerida
+
+---
+
+### 3.3 Obtener Oferta por ID
+**GET** `/oferta/{id}`
+
+**Autenticación**: ❌ No requerida
+
+**Ejemplo**: `GET /oferta/1`
+
+---
+
+### 3.4 Actualizar Oferta
+**PUT** `/oferta/{id}`
+
+**Autenticación**: ✅ Requerida (Token de RECLUTADOR creador)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Ejemplo**: `PUT /oferta/1`
+
+**Body**:
+```json
+{
+  "titulo": "Desarrollador Full Stack Senior",
+  "descripcion": "Buscamos desarrollador senior con experiencia en Java y React",
+  "ubicacion": "Bogotá D.C.",
+  "fechaLimite": "2026-01-31",
+  "salario": 5500000,
+  "estado": "ABIERTA",
+  "municipioId": 1,
+  "modalidadId": 1,
+  "tipoContratoId": 1
+}
+```
+
+---
+
+### 3.5 Eliminar Oferta
+**DELETE** `/oferta/{id}`
+
+**Autenticación**: ✅ Requerida (Token de RECLUTADOR creador)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+```
+
+**Ejemplo**: `DELETE /oferta/1`
+
+---
+
+## 4. GESTIÓN DE USUARIOS (CRUD Completo)
+
+### 4.1 Obtener Todos los Usuarios
 **GET** `/usuarios`
 
 Lista todos los usuarios registrados (sin contraseña).
@@ -87,7 +260,7 @@ Lista todos los usuarios registrados (sin contraseña).
 
 ---
 
-### 2.2 Obtener Usuario por ID
+### 4.2 Obtener Usuario por ID
 **GET** `/usuarios/{id}`
 
 Obtiene los datos de un usuario específico (sin contraseña).
@@ -110,7 +283,7 @@ Obtiene los datos de un usuario específico (sin contraseña).
 
 ---
 
-### 2.3 Crear Usuario
+### 4.3 Crear Usuario
 **POST** `/usuarios`
 
 Crea un nuevo usuario (incluye contraseña).
@@ -144,7 +317,7 @@ Crea un nuevo usuario (incluye contraseña).
 
 ---
 
-### 2.4 Actualizar Usuario
+### 4.4 Actualizar Usuario
 **PUT** `/usuarios/{id}`
 
 Actualiza los datos de un usuario existente.
@@ -181,7 +354,7 @@ Actualiza los datos de un usuario existente.
 
 ---
 
-### 2.5 Eliminar Usuario
+### 4.5 Eliminar Usuario
 **DELETE** `/usuarios/{id}`
 
 Elimina un usuario del sistema.
@@ -193,9 +366,9 @@ Elimina un usuario del sistema.
 
 ---
 
-## 3. USUARIOS ASPIRANTES (UsrAspirante)
+## 5. USUARIOS ASPIRANTES (UsrAspirante)
 
-### 3.1 Obtener Todos los Aspirantes
+### 5.1 Obtener Todos los Aspirantes
 **GET** `/aspirantes`
 
 Lista todos los usuarios tipo aspirante (sin contraseña).
@@ -219,7 +392,7 @@ Lista todos los usuarios tipo aspirante (sin contraseña).
 
 ---
 
-### 3.2 Obtener Aspirante por ID
+### 5.2 Obtener Aspirante por ID
 **GET** `/aspirantes/{id}`
 
 Obtiene los datos de un aspirante específico (sin contraseña).
@@ -243,7 +416,7 @@ Obtiene los datos de un aspirante específico (sin contraseña).
 
 ---
 
-### 3.3 Crear Aspirante
+### 5.3 Crear Aspirante
 **POST** `/aspirantes`
 
 Crea un nuevo usuario aspirante.
@@ -278,7 +451,7 @@ Crea un nuevo usuario aspirante.
 
 ---
 
-### 3.4 Actualizar Aspirante
+### 5.4 Actualizar Aspirante
 **PUT** `/aspirantes/{id}`
 
 Actualiza los datos de un aspirante.
@@ -313,7 +486,7 @@ Actualiza los datos de un aspirante.
 
 ---
 
-### 3.5 Eliminar Aspirante
+### 5.5 Eliminar Aspirante
 **DELETE** `/aspirantes/{id}`
 
 **Ejemplo**: `DELETE /aspirantes/1`
@@ -322,9 +495,9 @@ Actualiza los datos de un aspirante.
 
 ---
 
-## 4. USUARIOS RECLUTADORES (UsrReclutador)
+## 6. USUARIOS RECLUTADORES (UsrReclutador)
 
-### 4.1 Obtener Todos los Reclutadores
+### 6.1 Obtener Todos los Reclutadores
 **GET** `/reclutadores`
 
 Lista todos los reclutadores (sin contraseña).
@@ -348,7 +521,7 @@ Lista todos los reclutadores (sin contraseña).
 
 ---
 
-### 4.2 Obtener Reclutador por ID
+### 6.2 Obtener Reclutador por ID
 **GET** `/reclutadores/{id}`
 
 **Ejemplo**: `GET /reclutadores/2`
@@ -370,7 +543,7 @@ Lista todos los reclutadores (sin contraseña).
 
 ---
 
-### 4.3 Crear Reclutador
+### 6.3 Crear Reclutador
 **POST** `/reclutadores`
 
 Crea un nuevo reclutador asociado a una empresa.
@@ -405,7 +578,7 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-### 4.4 Actualizar Reclutador
+### 6.4 Actualizar Reclutador
 **PUT** `/reclutadores/{id}`
 
 **Ejemplo**: `PUT /reclutadores/2`
@@ -438,7 +611,7 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-### 4.5 Eliminar Reclutador
+### 6.5 Eliminar Reclutador
 **DELETE** `/reclutadores/{id}`
 
 **Ejemplo**: `DELETE /reclutadores/2`
@@ -447,7 +620,7 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-## 5. CÓDIGOS DE RESPUESTA HTTP
+## 7. CÓDIGOS DE RESPUESTA HTTP
 
 | Código | Significado |
 |--------|-------------|
@@ -455,62 +628,134 @@ Crea un nuevo reclutador asociado a una empresa.
 | 201 | Created - Recurso creado exitosamente |
 | 204 | No Content - Operación exitosa sin contenido de retorno |
 | 400 | Bad Request - Error en los datos enviados |
-| 401 | Unauthorized - No autenticado |
+| 401 | Unauthorized - No autenticado o token inválido |
+| 403 | Forbidden - No tienes permisos para realizar esta acción |
 | 404 | Not Found - Recurso no encontrado |
 | 500 | Internal Server Error - Error del servidor |
 
 ---
 
-## 6. NOTAS IMPORTANTES
+## 8. NOTAS IMPORTANTES
 
-1. **Contraseñas**: 
-   - Los endpoints GET (listar y obtener) NO devuelven la contraseña
-   - Solo POST y PUT pueden recibir el campo `clave`
+1. **Autenticación JWT**: 
+   - Algunos endpoints requieren autenticación mediante token JWT
+   - Incluye el token en el header: `Authorization: Bearer {token}`
+   - El token se obtiene al hacer login
+   - Los endpoints públicos no requieren token
+
+2. **Roles y Permisos**:
+   - **ASPIRANTE**: Usuarios que buscan trabajo
+   - **RECLUTADOR**: Usuarios que publican ofertas y gestionan empresas
+   - **ADMIN**: Administradores del sistema
+   - Cada endpoint tiene restricciones específicas de rol
+
+3. **Empresas**:
+   - Un reclutador solo puede tener UNA empresa asociada
+   - Solo el reclutador propietario puede actualizar/eliminar su empresa
+   - Los endpoints GET de empresas son públicos
+   - La empresa se vincula automáticamente al crear con token de reclutador
+
+4. **Ofertas**:
+   - Se vinculan automáticamente a la empresa del reclutador autenticado
+   - Solo el reclutador creador puede actualizar/eliminar su oferta
+   - Los endpoints GET de ofertas son públicos
+   - Estados posibles: "ABIERTA", "CERRADA", "PAUSADA"
+
+5. **Contraseñas**: 
    - Las contraseñas se encriptan automáticamente con BCrypt
+   - El campo se llama `contrasena` (sin tilde) en los endpoints de autenticación
+   - Nunca se devuelve la contraseña en las respuestas
 
-2. **IDs de Referencia**:
-   - `municipio_id`: Debe existir en la tabla `municipio`
-   - `genero_id`: Debe existir en la tabla `genero` (solo para aspirantes)
-   - `empresa_nit_id`: Debe existir en la tabla `empresa` (solo para reclutadores)
-
-3. **Roles**:
-   - Usuario base: Cualquier rol (`ASPIRANTE`, `RECLUTADOR`, `ADMIN`)
-   - UsrAspirante: Solo rol `ASPIRANTE`
-   - UsrReclutador: Solo rol `RECLUTADOR`
-
-4. **Formato de datos**:
-   - Teléfonos: números de 10 dígitos (ej: 3001234567)
+6. **Formato de datos**:
+   - NIT: Número único de identificación tributaria de la empresa (ej: 900123456)
+   - Teléfonos: formato string (ej: "3001234567")
    - Correos: formato válido de email
-   - URLs: formato válido de URL
+   - URLs: formato válido de URL con protocolo (https://)
 
 ---
 
-## 7. EJEMPLOS COMPLETOS PARA POSTMAN
+## 9. EJEMPLOS COMPLETOS PARA POSTMAN
 
-### Ejemplo 1: Registrar y Autenticar un Aspirante
+### Ejemplo 1: Flujo Completo de Reclutador con Empresa
 ```
-1. POST /api/auth/register
-   Body: { "nombre": "Test User", "correo": "test@email.com", "clave": "Test123!", "municipio_id": 1, "rol": "ASPIRANTE" }
+1. POST /api/auth/registro-reclutador
+   Body: { "nombre": "Carlos", "apellido": "Ramírez", "correo": "carlos@empresa.com", "contrasena": "Pass123!", "telefono": "3001234567" }
 
 2. POST /api/auth/login
-   Body: { "correo": "test@email.com", "clave": "Test123!" }
+   Body: { "correo": "carlos@empresa.com", "contrasena": "Pass123!" }
    Guardar el token recibido
+
+3. POST /api/empresa (Con token en header)
+   Header: Authorization: Bearer {token}
+   Body: { "nitId": 900123456, "nombreEmpresa": "Mi Empresa SAS", ... }
+
+4. PUT /api/empresa/900123456 (Con token en header)
+   Header: Authorization: Bearer {token}
+   Body: { datos actualizados de la empresa }
+
+5. DELETE /api/empresa/900123456 (Con token en header)
+   Header: Authorization: Bearer {token}
 ```
 
-### Ejemplo 2: CRUD Completo de Aspirante
+### Ejemplo 2: Consultar Empresas (Sin autenticación)
 ```
-1. POST /api/aspirantes - Crear
-2. GET /api/aspirantes - Listar todos
-3. GET /api/aspirantes/1 - Obtener uno
-4. PUT /api/aspirantes/1 - Actualizar
-5. DELETE /api/aspirantes/1 - Eliminar
+1. GET /api/empresa - Ver todas las empresas
+2. GET /api/empresa/900123456 - Ver empresa específica
 ```
 
-### Ejemplo 3: CRUD Completo de Reclutador
+### Ejemplo 3: Flujo de Aspirante
 ```
-1. POST /api/reclutadores - Crear (requiere empresa_nit_id válido)
-2. GET /api/reclutadores - Listar todos
-3. GET /api/reclutadores/2 - Obtener uno
-4. PUT /api/reclutadores/2 - Actualizar
-5. DELETE /api/reclutadores/2 - Eliminar
+1. POST /api/auth/registro-aspirante
+   Body: { "nombre": "Juan", "apellido": "Pérez", "correo": "juan@email.com", "contrasena": "Pass123!", "telefono": "3101234567" }
+
+2. POST /api/auth/login
+   Body: { "correo": "juan@email.com", "contrasena": "Pass123!" }
+   Guardar el token recibido
+
+3. Usar el token para endpoints protegidos de aspirante
 ```
+
+---
+
+## 10. TESTING EN POSTMAN
+
+### Configuración de Variables de Entorno
+Crea las siguientes variables en Postman para facilitar las pruebas:
+
+- `baseUrl`: `http://localhost:8080/api`
+- `token`: (Se guarda automáticamente después del login)
+- `empresaNit`: (NIT de la empresa creada)
+
+### Script para Guardar Token Automáticamente
+En el endpoint de Login, añade este script en la pestaña "Tests":
+
+```javascript
+if (pm.response.code === 200) {
+    var jsonData = pm.response.json();
+    pm.environment.set("token", jsonData.token);
+}
+```
+
+### Uso del Token en Headers
+En los endpoints protegidos, usa:
+```
+Authorization: Bearer {{token}}
+```
+
+---
+
+## 11. CÓDIGOS DE ERROR ESPECÍFICOS
+
+### Empresa
+- `"Este reclutador ya tiene una empresa asociada"` - El reclutador ya tiene una empresa
+- `"Reclutador no encontrado"` - El correo del token no corresponde a un reclutador
+- `"No tienes permisos para actualizar esta empresa"` - Intentas actualizar una empresa que no te pertenece
+- `"No tienes permisos para eliminar esta empresa"` - Intentas eliminar una empresa que no te pertenece
+- `"Empresa no encontrada"` - El NIT no existe en la base de datos
+
+### Oferta
+- `"Debes tener una empresa registrada para crear ofertas"` - El reclutador no tiene empresa
+- `"Reclutador no encontrado"` - El correo del token no corresponde a un reclutador
+- `"No tienes permisos para actualizar esta oferta"` - Intentas actualizar una oferta que no creaste
+- `"No tienes permisos para eliminar esta oferta"` - Intentas eliminar una oferta que no creaste
+- `"Oferta no encontrada"` - El ID no existe en la base de datos
