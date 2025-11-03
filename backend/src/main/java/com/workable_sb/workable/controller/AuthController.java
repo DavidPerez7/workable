@@ -14,6 +14,7 @@ import com.workable_sb.workable.dto.LoginRequestDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
 import com.workable_sb.workable.dto.UsrAspiranteDto;
 import com.workable_sb.workable.dto.UsrReclutadorDto;
+import com.workable_sb.workable.dto.UsuarioDto;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.UsrAspiranteRepository;
 import com.workable_sb.workable.repository.UsrReclutadorRepository;
@@ -21,6 +22,7 @@ import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
 import com.workable_sb.workable.service.UsrAspiranteService;
 import com.workable_sb.workable.service.UsrReclutadorService;
+import com.workable_sb.workable.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
@@ -43,6 +45,9 @@ public class AuthController {
 
     @Autowired
     private UsuarioRepository usrRepo;
+
+    @Autowired
+    private UsuarioService usrServ;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -94,6 +99,26 @@ public ResponseEntity<?> registrarReclutador(@Valid @RequestBody UsrReclutadorDt
     }
 }
 
+@PostMapping("/registro-admin")
+public ResponseEntity<?> registrarAdmin(@Valid @RequestBody UsuarioDto adminDto) {
+    if (usrRepo.findByCorreo(adminDto.getCorreo()).isPresent()) {
+        return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+    }
+    try {
+        UsuarioDto adminCreado = usrServ.create(adminDto);
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Administrador registrado con éxito. Por favor, inicia sesión.",
+            "rol", "ADMIN",
+            "usuario", Map.of(
+                "id", adminCreado.getId(),
+                "nombre", adminCreado.getNombre(),
+                "correo", adminCreado.getCorreo()
+            )
+        ));
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+    }
+}
 
 @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {

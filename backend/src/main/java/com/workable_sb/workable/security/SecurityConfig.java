@@ -45,10 +45,14 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasRole("RECLUTADOR")  // PUT solo reclutador
             .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
             
+            // Aspirante endpoints
             .requestMatchers(HttpMethod.POST, "/api/aspirante").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
             .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
             .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
+
+            // Usuario endpoints
+            .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
             .anyRequest().authenticated()
             ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
