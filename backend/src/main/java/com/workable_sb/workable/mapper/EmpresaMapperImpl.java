@@ -51,7 +51,7 @@ public class EmpresaMapperImpl implements EmpresaMapper {
     dto.setDescripcion(empresa.getDescripcion());
     dto.setNumeroTrabajadores(empresa.getNumeroTrabajadores());
     dto.setPuntuacion(empresa.getPuntuacion());
-    dto.setFechaCreacion(empresa.getFechaCreacion());
+  dto.setFechaUnion(empresa.getFechaUnion());
     dto.setCategoriaId(empresa.getEmpresaCategoria().getId());
     dto.setCategoriaNombre(empresa.getEmpresaCategoria().getNombre());
     dto.setMunicipioId(empresa.getMunicipio().getId());

@@ -4,6 +4,7 @@ import com.workable_sb.workable.dto.UsrReclutadorDto;
 import com.workable_sb.workable.dto.UsrReclutadorReadDto;
 import com.workable_sb.workable.mapper.UsrReclutadorMapper;
 import com.workable_sb.workable.models.UsrReclutador;
+import com.workable_sb.workable.models.Usuario.EstadoUsr;
 import com.workable_sb.workable.repository.UsrReclutadorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,7 @@ public class UsrReclutadorServiceImple implements UsrReclutadorService {
     private PasswordEncoder passwordEncoder;
 
     public UsrReclutadorServiceImple(UsrReclutadorRepository reclutadorRepository,
-                                     UsrReclutadorMapper reclutadorMapper) {
+                                    UsrReclutadorMapper reclutadorMapper) {
         this.reclutadorRepository = reclutadorRepository;
         this.reclutadorMapper = reclutadorMapper;
     }
@@ -40,13 +41,25 @@ public class UsrReclutadorServiceImple implements UsrReclutadorService {
     @Override
     public UsrReclutadorReadDto buscarPorId(Integer id) {
         return reclutadorRepository.findById(id)
+            .filter(r -> r.getEstado() == EstadoUsr.ACTIVO)
             .map(reclutadorMapper::toReadDto)  // Sin clave
             .orElseThrow(() -> new EntityNotFoundException("Reclutador no encontrado con id: " + id));
     }
 
+    //metodo sin validacion para administrador
     @Override
     public List<UsrReclutadorReadDto> listarTodos() {
         return reclutadorRepository.findAll().stream()
+            .filter(r -> r.getEstado() == EstadoUsr.ACTIVO)
+            .map(reclutadorMapper::toReadDto)  // Sin clave
+            .collect(Collectors.toList());
+    }
+
+    //metodo para consultar los de la misma empresa
+    @Override
+    public List<UsrReclutadorReadDto> listarPorEmpresa(Long empresaId) {
+        return reclutadorRepository.findByEmpresaNitId(empresaId).stream()
+            .filter(r -> r.getEstado() == EstadoUsr.ACTIVO)
             .map(reclutadorMapper::toReadDto)  // Sin clave
             .collect(Collectors.toList());
     }
@@ -54,6 +67,7 @@ public class UsrReclutadorServiceImple implements UsrReclutadorService {
     @Override
     public UsrReclutadorDto actualizar(Integer id, UsrReclutadorDto dto) {
         return reclutadorRepository.findById(id)
+            .filter(r -> r.getEstado() == EstadoUsr.ACTIVO)
             .map(reclutador -> {
                 // Actualizar campos de Usuario
                 if (dto.getNombre() != null) reclutador.setNombre(dto.getNombre());

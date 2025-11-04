@@ -10,4 +10,5 @@ public interface UsuarioService {
     List<UsuarioReadDto> findAll();  // Retorna ReadDto sin clave
     UsuarioDto update(Integer id, UsuarioDto usuarioDto);
     void delete(Integer id);
+    boolean cambiarEstado(Integer id, com.workable_sb.workable.models.Usuario.EstadoUsr estado);
 }

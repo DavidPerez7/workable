@@ -22,7 +22,8 @@ public class UsrReclutadorController {
     public ResponseEntity<?> crearReclutador(@Valid @RequestBody UsrReclutadorDto dto) {
         try {
             UsrReclutadorDto creado = reclutadorService.crear(dto);
-            return ResponseEntity.ok(creado);
+            UsrReclutadorReadDto guardado = reclutadorService.buscarPorId(creado.getId());
+            return ResponseEntity.ok(guardado);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear reclutador: " + e.getMessage());
         }
@@ -38,9 +39,17 @@ public class UsrReclutadorController {
         }
     }
 
+    //para admin
     @GetMapping
     public ResponseEntity<List<UsrReclutadorReadDto>> listarReclutadores() {
         List<UsrReclutadorReadDto> reclutadores = reclutadorService.listarTodos();
+        return ResponseEntity.ok(reclutadores);
+    }
+
+    //para reclutador ver sus compañeros
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<List<UsrReclutadorReadDto>> listarReclutadoresPorEmpresa(@PathVariable Long empresaId) {
+        List<UsrReclutadorReadDto> reclutadores = reclutadorService.listarPorEmpresa(empresaId);
         return ResponseEntity.ok(reclutadores);
     }
 

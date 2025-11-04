@@ -8,6 +8,7 @@ public interface UsrReclutadorService {
     UsrReclutadorDto crear(UsrReclutadorDto dto);
     UsrReclutadorReadDto buscarPorId(Integer id);  // Sin clave
     List<UsrReclutadorReadDto> listarTodos();  // Sin clave
+    List<UsrReclutadorReadDto> listarPorEmpresa(Long empresaId); // Sin clave
     UsrReclutadorDto actualizar(Integer id, UsrReclutadorDto dto);
     void eliminar(Integer id);
 }

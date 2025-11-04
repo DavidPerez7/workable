@@ -38,4 +38,13 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "municipio_id", nullable=false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
+
+    public enum EstadoUsr {
+        ACTIVO,
+        INACTIVO
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoUsr estado = EstadoUsr.ACTIVO;
 }

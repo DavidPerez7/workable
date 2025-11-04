@@ -10,4 +10,7 @@ public class Modalidad {
   @Id
   private Integer id;
   private String nombre;
+    public void setNombre(String nombre) {
+      this.nombre = nombre;
+    }
 }

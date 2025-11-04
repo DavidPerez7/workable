@@ -42,13 +42,13 @@ INSERT INTO empresa_categoria (id, nombre, imagen, descripcion) VALUES
 (8, 'TRANSPORTE', '', 'Empresas de logística y transporte');
 
 -- Empresas (referencia: empresa_categoria_id, municipio_id)
--- Nota: nit_id es AUTO_INCREMENT, numero_trabajadores es requerido
-INSERT INTO empresa (nombre, descripcion, numero_trabajadores, puntuacion, fecha_creacion, empresa_categoria_id, municipio_id) VALUES
-('TechColombia SAS', 'Consultoría en software y ciberseguridad', 150, 4.5, '2020-01-15', 1, 1),
-('AgroTech Soluciones', 'Soluciones tecnológicas para el sector agrícola', 80, 4.2, '2019-06-20', 1, 7),
-('EduFuture', 'Plataformas educativas innovadoras', 50, 4.8, '2021-03-10', 3, 8),
-('HealthCare Plus', 'Centro médico especializado', 200, 4.6, '2018-09-01', 2, 2),
-('FinanzCorp', 'Servicios financieros integrales', 120, 4.3, '2017-11-25', 4, 1);
+-- Nota: nit_id es el NIT público de la empresa, clave primaria ingresada por el usuario
+INSERT INTO empresa (nit_id, nombre, descripcion, numero_trabajadores, puntuacion, empresa_categoria_id, municipio_id) VALUES
+(9001, 'TechColombia SAS', 'Consultoría en software y ciberseguridad', 150, 4.5, 1, 1),
+(9002, 'AgroTech Soluciones', 'Soluciones tecnológicas para el sector agrícola', 80, 4.2, 1, 7),
+(9003, 'EduFuture', 'Plataformas educativas innovadoras', 50, 4.8, 3, 8),
+(9004, 'HealthCare Plus', 'Centro médico especializado', 200, 4.6, 2, 2),
+(9005, 'FinanzCorp', 'Servicios financieros integrales', 120, 4.3, 4, 1);
 
 -- Modalidades de trabajo
 INSERT INTO modalidad (id, nombre) VALUES
@@ -79,7 +79,7 @@ INSERT INTO estado (id, nombre) VALUES
 INSERT INTO genero (genero_id, nombre) VALUES
 (1, 'Masculino'),
 (2, 'Femenino'),
-(4, 'Prefiero no decir');
+(3, 'Prefiero no decir');
 
 -- Beneficios
 INSERT INTO beneficio (beneficio_id, nombre) VALUES

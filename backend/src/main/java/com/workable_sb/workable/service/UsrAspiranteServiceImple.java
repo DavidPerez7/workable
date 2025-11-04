@@ -4,6 +4,7 @@ import com.workable_sb.workable.dto.UsrAspiranteDto;
 import com.workable_sb.workable.dto.UsrAspiranteReadDto;
 import com.workable_sb.workable.mapper.UsrAspiranteMapper;
 import com.workable_sb.workable.models.UsrAspirante;
+import com.workable_sb.workable.models.Usuario.EstadoUsr;
 import com.workable_sb.workable.repository.UsrAspiranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +41,7 @@ public class UsrAspiranteServiceImple implements UsrAspiranteService {
     @Override
     public UsrAspiranteReadDto buscarPorId(Integer id) {
         return aspiranteRepository.findById(id)
+            .filter(a -> a.getEstado() == EstadoUsr.ACTIVO)
             .map(aspiranteMapper::toReadDto)  // Sin clave
             .orElseThrow(() -> new EntityNotFoundException("Aspirante no encontrado con id: " + id));
     }
@@ -47,6 +49,7 @@ public class UsrAspiranteServiceImple implements UsrAspiranteService {
     @Override
     public List<UsrAspiranteReadDto> listarTodos() {
         return aspiranteRepository.findAll().stream()
+            .filter(a -> a.getEstado() == EstadoUsr.ACTIVO)
             .map(aspiranteMapper::toReadDto)  // Sin clave
             .collect(Collectors.toList());
     }
@@ -54,6 +57,7 @@ public class UsrAspiranteServiceImple implements UsrAspiranteService {
     @Override
     public UsrAspiranteDto actualizar(Integer id, UsrAspiranteDto dto) {
         return aspiranteRepository.findById(id)
+            .filter(a -> a.getEstado() == EstadoUsr.ACTIVO)
             .map(aspirante -> {
                 // Actualizar campos de Usuario
                 if (dto.getNombre() != null) aspirante.setNombre(dto.getNombre());

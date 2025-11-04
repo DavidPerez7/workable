@@ -32,7 +32,7 @@ public class Empresa {
     @Column(nullable = false)
     private Integer numeroTrabajadores;
     private float puntuacion = 0.0f;
-    private LocalDate fechaCreacion;
+    private LocalDate fechaUnion;
 
     @ManyToOne(optional  = false)
     @JoinColumn (name = "empresa_categoria_id", nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_empresa_categoria"))
@@ -46,9 +46,9 @@ public class Empresa {
     private List<Oferta> ofertas;
 
     @PrePersist
-    protected void setFechaCreacion() {
-        if (this.fechaCreacion == null) {
-            this.fechaCreacion = LocalDate.now();
+    protected void setFechaUnion() {
+        if (this.fechaUnion == null) {
+            this.fechaUnion = LocalDate.now();
         }
     }
 }

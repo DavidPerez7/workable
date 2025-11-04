@@ -46,13 +46,22 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
             
             // endpoints de Aspirante
-            .requestMatchers(HttpMethod.POST, "/api/aspirante").hasRole("ADMINISTRADOR") //solo puede crear el administrador
+            .requestMatchers(HttpMethod.POST, "/api/aspirante").hasRole("ADMIN") //solo puede crear el administrador
             .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
             .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
             .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
 
+            //endpoints reclutador
+            .requestMatchers(HttpMethod.POST, "/api/reclutador").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.GET, "/api/reclutador").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/api/reclutador/empresa/**").hasAnyRole("ADMIN", "RECLUTADOR")
+
             // Usuario endpoints
-            .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/api/usuario").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/usuario").hasRole("ADMIN")
+            
+            //admin endpoints
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
             ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

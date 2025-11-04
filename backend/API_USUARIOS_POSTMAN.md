@@ -620,7 +620,68 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-## 7. CÓDIGOS DE RESPUESTA HTTP
+
+## 7. CRUD DE MODALIDAD
+
+### 7.1 Listar Modalidades
+**GET** `/modalidad`
+
+### 7.2 Obtener Modalidad por ID
+**GET** `/modalidad/{id}`
+
+### 7.3 Crear Modalidad
+**POST** `/modalidad`
+**Body:**
+```json
+{
+  "nombre": "Remoto"
+}
+```
+
+### 7.4 Actualizar Modalidad
+**PUT** `/modalidad/{id}`
+**Body:**
+```json
+{
+  "nombre": "Híbrido"
+}
+```
+
+### 7.5 Eliminar Modalidad
+**DELETE** `/modalidad/{id}`
+
+---
+
+## 8. CRUD DE BENEFICIO
+
+### 8.1 Listar Beneficios
+**GET** `/beneficio`
+
+### 8.2 Obtener Beneficio por ID
+**GET** `/beneficio/{id}`
+
+### 8.3 Crear Beneficio
+**POST** `/beneficio`
+**Body:**
+```json
+{
+  "nombre": "Seguro médico"
+}
+```
+
+### 8.4 Actualizar Beneficio
+**PUT** `/beneficio/{id}`
+**Body:**
+```json
+{
+  "nombre": "Bonificación"
+}
+```
+
+### 8.5 Eliminar Beneficio
+**DELETE** `/beneficio/{id}`
+
+---
 
 | Código | Significado |
 |--------|-------------|
@@ -635,7 +696,7 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-## 8. NOTAS IMPORTANTES
+## 9. NOTAS IMPORTANTES
 
 1. **Autenticación JWT**: 
    - Algunos endpoints requieren autenticación mediante token JWT
@@ -674,7 +735,7 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-## 9. EJEMPLOS COMPLETOS PARA POSTMAN
+## 10. EJEMPLOS COMPLETOS PARA POSTMAN
 
 ### Ejemplo 1: Flujo Completo de Reclutador con Empresa
 ```
@@ -717,7 +778,7 @@ Crea un nuevo reclutador asociado a una empresa.
 
 ---
 
-## 10. TESTING EN POSTMAN
+## 11. TESTING EN POSTMAN
 
 ### Configuración de Variables de Entorno
 Crea las siguientes variables en Postman para facilitar las pruebas:
@@ -744,7 +805,7 @@ Authorization: Bearer {{token}}
 
 ---
 
-## 11. CÓDIGOS DE ERROR ESPECÍFICOS
+## 12. CÓDIGOS DE ERROR ESPECÍFICOS
 
 ### Empresa
 - `"Este reclutador ya tiene una empresa asociada"` - El reclutador ya tiene una empresa

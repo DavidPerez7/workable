@@ -25,4 +25,6 @@ public class UsuarioDto {
     @NotNull(message = "El id de municipio es obligatorio")
     private Integer municipio_id;
     private String municipio_nom;
+
+    private com.workable_sb.workable.models.Usuario.EstadoUsr estado; // ACTIVO o INACTIVO
 }

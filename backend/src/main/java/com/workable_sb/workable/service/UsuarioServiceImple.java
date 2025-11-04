@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.workable_sb.workable.models.Usuario.EstadoUsr;
 
 @Service
 public class UsuarioServiceImple implements UsuarioService {
@@ -30,6 +31,7 @@ public class UsuarioServiceImple implements UsuarioService {
     @Override
     public UsuarioReadDto findById(Integer id) {
         return usuarioRepository.findById(id)
+            .filter(u -> u.getEstado() == EstadoUsr.ACTIVO)
             .map(usuarioMapper::toReadDto)  // Sin clave
             .orElse(null);
     }
@@ -37,6 +39,7 @@ public class UsuarioServiceImple implements UsuarioService {
     @Override
     public List<UsuarioReadDto> findAll() {
         return usuarioRepository.findAll().stream()
+            .filter(u -> u.getEstado() == EstadoUsr.ACTIVO)
             .map(usuarioMapper::toReadDto)  // Sin clave
             .collect(Collectors.toList());
     }
@@ -44,6 +47,7 @@ public class UsuarioServiceImple implements UsuarioService {
     @Override
     public UsuarioDto update(Integer id, UsuarioDto usuarioDto) {
         return usuarioRepository.findById(id)
+            .filter(u -> u.getEstado() == EstadoUsr.ACTIVO)
             .map(usuario -> {
                 usuario.setNombre(usuarioDto.getNombre());
                 usuario.setCorreo(usuarioDto.getCorreo());
@@ -57,5 +61,15 @@ public class UsuarioServiceImple implements UsuarioService {
     @Override
     public void delete(Integer id) {
         usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean cambiarEstado(Integer id, EstadoUsr estado) {
+        return usuarioRepository.findById(id)
+            .map(usuario -> {
+                usuario.setEstado(estado);
+                usuarioRepository.save(usuario);
+                return true;
+            }).orElse(false);
     }
 }

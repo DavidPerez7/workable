@@ -35,5 +35,5 @@ public class EmpresaDto {
   private String categoriaNombre;
   private String municipioNombre;
   private Float puntuacion;
-  private LocalDate fechaCreacion;
+  private LocalDate fechaUnion;
 }
