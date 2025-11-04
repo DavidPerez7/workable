@@ -1,0 +1,90 @@
+# Ignorar Generales del Sistema
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+# IGNORAR ARCHIVOS DE BUILD Y LOGS
+
+# Logs (general y de Node)
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+
+# BACKEND (SPRING BOOT / JAVA)
+
+# Build y Salida
+HELP.md
+target/
+build/
+*.class
+
+# Maven y Gradle
+.mvn/wrapper/maven-wrapper.jar
+.gradle/
+
+# Exclusiones específicas de target/ y build/ dentro de src/ (Reglas de Negación)
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+
+# FRONTEND (NODE / JS)
+
+# Dependencias
+node_modules/
+
+# Salidas de Build
+dist/
+dist-ssr/
+*.local
+
+
+# IGNORAR ARCHIVOS DE IDEs
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# STS
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+
+# VS CODE (Configuración del Espacio de Trabajo)
+
+# Excluir toda la carpeta .vscode por defecto
+.vscode/
+
+# PERMITIR SUBIR SOLO ARCHIVOS ESENCIALES PARA EL EQUIPO
+
+# Permitir subir el archivo de extensiones recomendadas
+!.vscode/extensions.json
+
+# Asegurar que las configuraciones de depuración y tareas queden fuera
+.vscode/launch.json
+.vscode/tasks.json

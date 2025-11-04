@@ -55,7 +55,7 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-@PostMapping("/registro-aspirante")
+@PostMapping("/register-aspirante")
 public ResponseEntity<?> registrarAspirante(@Valid @RequestBody UsrAspiranteDto aspiranteDto) {
     if (usrAspiranteRepo.findByCorreo(aspiranteDto.getCorreo()).isPresent()) {
         return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
@@ -77,7 +77,7 @@ public ResponseEntity<?> registrarAspirante(@Valid @RequestBody UsrAspiranteDto 
     }
 }
 
-@PostMapping("/registro-reclutador")
+@PostMapping("/register-reclutador")
 public ResponseEntity<?> registrarReclutador(@Valid @RequestBody UsrReclutadorDto reclutadorDto) {
     if (usrReclutadorRepo.findByCorreo(reclutadorDto.getCorreo()).isPresent()) {
         return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
@@ -99,7 +99,7 @@ public ResponseEntity<?> registrarReclutador(@Valid @RequestBody UsrReclutadorDt
     }
 }
 
-@PostMapping("/registro-admin")
+@PostMapping("/register-admin")
 public ResponseEntity<?> registrarAdmin(@Valid @RequestBody UsuarioDto adminDto) {
     if (usrRepo.findByCorreo(adminDto.getCorreo()).isPresent()) {
         return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
