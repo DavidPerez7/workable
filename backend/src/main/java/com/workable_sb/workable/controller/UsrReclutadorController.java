@@ -9,12 +9,12 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reclutadores")
-public class ReclutadorController {
+@RequestMapping("/api/reclutador")
+public class UsrReclutadorController {
     
     private final UsrReclutadorService reclutadorService;
 
-    public ReclutadorController(UsrReclutadorService reclutadorService) {
+    public UsrReclutadorController(UsrReclutadorService reclutadorService) {
         this.reclutadorService = reclutadorService;
     }
 

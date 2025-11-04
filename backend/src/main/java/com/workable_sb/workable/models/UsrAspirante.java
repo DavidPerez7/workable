@@ -1,6 +1,6 @@
 package com.workable_sb.workable.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,7 +25,7 @@ public class UsrAspirante extends Usuario {
 
     @Column(length = 1000)
     private String resumenProfesional;  // Descripción personal para el perfil
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "genero_id", referencedColumnName = "genero_id", foreignKey = @ForeignKey(name = "FK_usrAspirante_Genero"))

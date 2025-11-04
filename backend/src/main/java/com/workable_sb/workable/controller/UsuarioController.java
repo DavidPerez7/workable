@@ -3,21 +3,24 @@ package com.workable_sb.workable.controller;
 import com.workable_sb.workable.dto.UsuarioDto;
 import com.workable_sb.workable.dto.UsuarioReadDto;
 import com.workable_sb.workable.service.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/usuario")
 public class UsuarioController {
-    @Autowired
-    private UsuarioService usuarioService;
+
+    private final UsuarioService usuarioServ;
+
+    public UsuarioController(UsuarioService usuarioServ) {
+        this.usuarioServ = usuarioServ;
+    }
 
     @PostMapping
-    public ResponseEntity<?> crearUsuario(@RequestBody UsuarioDto usuarioDto) {
+    public ResponseEntity<?> createUsuario(@RequestBody UsuarioDto usuarioDto) {
         try {
-            UsuarioDto creado = usuarioService.create(usuarioDto);
+            UsuarioDto creado = usuarioServ.create(usuarioDto);
             return ResponseEntity.ok(creado);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al crear usuario: " + e.getMessage());
@@ -26,7 +29,7 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Integer id) {
-        UsuarioReadDto usuario = usuarioService.findById(id);  // Sin clave
+        UsuarioReadDto usuario = usuarioServ.findById(id);  // Sin clave
         if (usuario == null) {
             return ResponseEntity.notFound().build();
         }
@@ -35,14 +38,14 @@ public class UsuarioController {
 
     @GetMapping
     public ResponseEntity<List<UsuarioReadDto>> listarUsuarios() {
-        List<UsuarioReadDto> usuarios = usuarioService.findAll();  // Sin clave
+        List<UsuarioReadDto> usuarios = usuarioServ.findAll();  // Sin clave
         return ResponseEntity.ok(usuarios);
     }
 
 @PutMapping("/{id}")
     public ResponseEntity<?> actualizarUsuario(@PathVariable Integer id, @RequestBody UsuarioDto usuarioDto) {
         try {
-            UsuarioDto actualizado = usuarioService.update(id, usuarioDto);
+            UsuarioDto actualizado = usuarioServ.update(id, usuarioDto);
             if (actualizado == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -55,7 +58,7 @@ public class UsuarioController {
 @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarUsuario(@PathVariable Integer id) {
         try {
-            usuarioService.delete(id);
+            usuarioServ.delete(id);
             return ResponseEntity.ok().body("Usuario eliminado correctamente");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al eliminar usuario: " + e.getMessage());

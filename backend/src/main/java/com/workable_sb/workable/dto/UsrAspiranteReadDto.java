@@ -1,6 +1,7 @@
 package com.workable_sb.workable.dto;
 
-import java.sql.Date;
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,13 +22,11 @@ public class UsrAspiranteReadDto {
     // Campos específicos de UsrAspirante
     private String apellido;
     private String resumenProfesional;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
     
-    // Municipio
     private Integer municipioId;
     private String municipioNombre;
     
-    // Género
     private Short generoId;
     private String generoNombre;
 }

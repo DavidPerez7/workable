@@ -31,7 +31,7 @@ public class UsrReclutadorDto {
     private Integer municipio_id;
     private String municipio_nom;
     
-    @NotNull(message = "El id de la empresa es obligatorio")
+    //null para crear por primera vez sin empresa
     private Long empresa_nit_id;
     private String empresa_nom;
 }

@@ -1,5 +1,5 @@
 package com.workable_sb.workable.dto;
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,8 @@ public class UsrAspiranteDto {
     private String apellido;
     
     private String resumenProfesional;
-    private Date fechaNacimiento;
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    private LocalDate fechaNacimiento;
 
     @NotNull(message = "El id del municipio es obligatorio")
     private Integer municipio_id;
