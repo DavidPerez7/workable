@@ -32,6 +32,8 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll()
+            // Allow CORS preflight globally
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             
             // Empresa endpoints
             .requestMatchers(HttpMethod.GET, "/api/empresa/**").permitAll()  // GETs públicos
@@ -62,6 +64,28 @@ public class SecurityConfig {
             
             //admin endpoints
             .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            
+            // Modalidad endpoints
+            .requestMatchers(HttpMethod.GET, "/api/modalidad", "/api/modalidad/", "/api/modalidad/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/modalidad", "/api/modalidad/").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.PUT, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.DELETE, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.PATCH, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            
+            // TipoContrato endpoints
+            .requestMatchers(HttpMethod.GET, "/api/tipo-contrato", "/api/tipo-contrato/", "/api/tipo-contrato/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/tipo-contrato", "/api/tipo-contrato/").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.PUT, "/api/tipo-contrato/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.DELETE, "/api/tipo-contrato/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.PATCH, "/api/tipo-contrato/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            
+            // Beneficio endpoints
+            .requestMatchers(HttpMethod.GET, "/api/beneficio", "/api/beneficio/", "/api/beneficio/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/beneficio", "/api/beneficio/").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.PUT, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.DELETE, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            .requestMatchers(HttpMethod.PATCH, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
+            
             .anyRequest().authenticated()
             ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

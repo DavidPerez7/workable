@@ -28,7 +28,8 @@ public class Usuario {
     public enum RolUsr {
         ASPIRANTE,
         RECLUTADOR,
-        ADMIN
+        ADMIN,
+        ADSO
     }
 
     @Enumerated(EnumType.STRING)

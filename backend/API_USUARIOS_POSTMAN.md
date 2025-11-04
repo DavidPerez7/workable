@@ -820,3 +820,564 @@ Authorization: Bearer {{token}}
 - `"No tienes permisos para actualizar esta oferta"` - Intentas actualizar una oferta que no creaste
 - `"No tienes permisos para eliminar esta oferta"` - Intentas eliminar una oferta que no creaste
 - `"Oferta no encontrada"` - El ID no existe en la base de datos
+
+---
+
+## 13. CRUD DE TIPO DE CONTRATO
+
+### 13.1 Listar Tipos de Contrato
+**GET** `/tipo-contrato`
+
+**Autenticación**: ❌ No requerida
+
+**Response 200 (OK)**:
+```json
+[
+  {
+    "id": 1,
+    "nombre": "Tiempo Completo",
+    "estado": "ACTIVO"
+  },
+  {
+    "id": 2,
+    "nombre": "Medio Tiempo",
+    "estado": "ACTIVO"
+  }
+]
+```
+
+---
+
+### 13.2 Obtener Tipo de Contrato por ID
+**GET** `/tipo-contrato/{id}`
+
+**Autenticación**: ❌ No requerida
+
+**Ejemplo**: `GET /tipo-contrato/1`
+
+**Response 200 (OK)**:
+```json
+{
+  "id": 1,
+  "nombre": "Tiempo Completo",
+  "estado": "ACTIVO"
+}
+```
+
+**Response 404 (Not Found)**:
+```json
+{
+  "timestamp": "2025-11-04T14:30:00",
+  "status": 404,
+  "error": "Not Found"
+}
+```
+
+---
+
+### 13.3 Crear Tipo de Contrato
+**POST** `/tipo-contrato`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Body (con estado explícito)**:
+```json
+{
+  "nombre": "Tiempo Completo",
+  "estado": "ACTIVO"
+}
+```
+
+**Body (sin estado - usará ACTIVO por defecto)**:
+```json
+{
+  "nombre": "Medio Tiempo"
+}
+```
+
+**Body (crear inactivo)**:
+```json
+{
+  "nombre": "Por Horas",
+  "estado": "INACTIVO"
+}
+```
+
+**Response 201 (Created)**:
+```json
+{
+  "id": 1,
+  "nombre": "Tiempo Completo",
+  "estado": "ACTIVO"
+}
+```
+
+**Response 400 (Bad Request)** - Validación fallida:
+```json
+{
+  "timestamp": "2025-11-04T14:30:00",
+  "status": 400,
+  "errors": {
+    "nombre": "El nombre es obligatorio"
+  }
+}
+```
+
+---
+
+### 13.4 Actualizar Tipo de Contrato
+**PUT** `/tipo-contrato/{id}`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Ejemplo**: `PUT /tipo-contrato/1`
+
+**Body (actualizar nombre)**:
+```json
+{
+  "nombre": "Tiempo Completo - 40 horas"
+}
+```
+
+**Body (actualizar nombre y estado)**:
+```json
+{
+  "nombre": "Medio Tiempo Actualizado",
+  "estado": "INACTIVO"
+}
+```
+
+**Response 200 (OK)**:
+```json
+{
+  "id": 1,
+  "nombre": "Tiempo Completo - 40 horas",
+  "estado": "ACTIVO"
+}
+```
+
+**Response 404 (Not Found)**:
+Si el ID no existe.
+
+---
+
+### 13.5 Eliminar Tipo de Contrato
+**DELETE** `/tipo-contrato/{id}`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+```
+
+**Ejemplo**: `DELETE /tipo-contrato/1`
+
+**Response 204 (No Content)**
+(Sin contenido en el body - operación exitosa)
+
+**Response 404 (Not Found)**:
+Si el ID no existe.
+
+---
+
+### 13.6 Actualizar Estado de Tipo de Contrato (Activar/Desactivar)
+**PATCH** `/tipo-contrato/{id}/estado`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+```
+
+**Query Parameters**:
+- `estado` (requerido): Valores permitidos: `ACTIVO` o `INACTIVO` (no distingue mayúsculas/minúsculas)
+
+**Ejemplos**:
+- Desactivar: `PATCH /tipo-contrato/1/estado?estado=INACTIVO`
+- Activar: `PATCH /tipo-contrato/1/estado?estado=ACTIVO`
+
+**Response 200 (OK)**:
+```json
+{
+  "id": 1,
+  "nombre": "Tiempo Completo",
+  "estado": "INACTIVO"
+}
+```
+
+**Response 400 (Bad Request)**:
+Si el valor del estado no es válido (diferente a ACTIVO o INACTIVO).
+
+**Response 404 (Not Found)**:
+Si el ID no existe.
+
+---
+
+## 14. EJEMPLOS COMPLETOS PARA POSTMAN - TIPO DE CONTRATO
+
+### Ejemplo 1: Flujo Completo CRUD Tipo de Contrato
+```
+1. POST /api/auth/login
+   Body: { "correo": "admin@workable.com", "contrasena": "admin123" }
+   Guardar el token recibido
+
+2. POST /api/tipo-contrato (Con token en header)
+   Header: Authorization: Bearer {token}
+   Body: { "nombre": "Tiempo Completo", "estado": "ACTIVO" }
+
+3. GET /api/tipo-contrato
+   Ver todos los tipos de contrato creados
+
+4. GET /api/tipo-contrato/1
+   Ver un tipo de contrato específico
+
+5. PUT /api/tipo-contrato/1 (Con token en header)
+   Header: Authorization: Bearer {token}
+   Body: { "nombre": "Tiempo Completo - Actualizado", "estado": "ACTIVO" }
+
+6. PATCH /api/tipo-contrato/1/estado?estado=INACTIVO (Con token en header)
+   Header: Authorization: Bearer {token}
+   Desactivar el tipo de contrato
+
+7. DELETE /api/tipo-contrato/1 (Con token en header)
+   Header: Authorization: Bearer {token}
+   Eliminar el tipo de contrato
+```
+
+### Ejemplo 2: Consultar Tipos de Contrato (Sin autenticación)
+```
+1. GET /api/tipo-contrato - Ver todos los tipos de contrato
+2. GET /api/tipo-contrato/1 - Ver tipo de contrato específico por ID
+```
+
+### Ejemplo 3: Crear múltiples tipos de contrato
+```
+1. POST /api/tipo-contrato
+   Body: { "nombre": "Tiempo Completo" }
+   (Usará estado ACTIVO por defecto)
+
+2. POST /api/tipo-contrato
+   Body: { "nombre": "Medio Tiempo", "estado": "ACTIVO" }
+
+3. POST /api/tipo-contrato
+   Body: { "nombre": "Por Horas", "estado": "ACTIVO" }
+
+4. POST /api/tipo-contrato
+   Body: { "nombre": "Contrato de Obra", "estado": "ACTIVO" }
+
+5. POST /api/tipo-contrato
+   Body: { "nombre": "Freelance", "estado": "ACTIVO" }
+```
+
+---
+
+## 15. CÓDIGOS DE ERROR ESPECÍFICOS - TIPO DE CONTRATO
+
+### Tipo de Contrato
+- `400 Bad Request` - El nombre es obligatorio o supera 100 caracteres
+- `400 Bad Request` - El estado proporcionado no es válido (debe ser ACTIVO o INACTIVO)
+- `401 Unauthorized` - No se proporcionó token de autenticación
+- `403 Forbidden` - El token no corresponde a un usuario con rol ADMIN o RECLUTADOR
+- `404 Not Found` - El tipo de contrato con el ID especificado no existe
+
+---
+
+## 16. CRUD DE BENEFICIO
+
+### 16.1 Listar Beneficios
+**GET** `/beneficio`
+
+**Autenticación**: ❌ No requerida
+
+**Response 200 (OK)**:
+```json
+[
+  {
+    "beneficio_id": 1,
+    "nombre": "Seguro de Salud",
+    "estado": "ACTIVO"
+  },
+  {
+    "beneficio_id": 2,
+    "nombre": "Bonos Anuales",
+    "estado": "ACTIVO"
+  }
+]
+```
+
+---
+
+### 16.2 Obtener Beneficio por ID
+**GET** `/beneficio/{id}`
+
+**Autenticación**: ❌ No requerida
+
+**Ejemplo**: `GET /beneficio/1`
+
+**Response 200 (OK)**:
+```json
+{
+  "beneficio_id": 1,
+  "nombre": "Seguro de Salud",
+  "estado": "ACTIVO"
+}
+```
+
+**Response 404 (Not Found)**:
+```json
+{
+  "timestamp": "2025-11-04T14:30:00",
+  "status": 404,
+  "error": "Not Found"
+}
+```
+
+---
+
+### 16.3 Crear Beneficio
+**POST** `/beneficio`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Body (con estado explícito)**:
+```json
+{
+  "nombre": "Seguro de Salud",
+  "estado": "ACTIVO"
+}
+```
+
+**Body (sin estado - usará ACTIVO por defecto)**:
+```json
+{
+  "nombre": "Bonos Anuales"
+}
+```
+
+**Body (crear inactivo)**:
+```json
+{
+  "nombre": "Gimnasio",
+  "estado": "INACTIVO"
+}
+```
+
+**Response 201 (Created)**:
+```json
+{
+  "beneficio_id": 1,
+  "nombre": "Seguro de Salud",
+  "estado": "ACTIVO"
+}
+```
+
+**Response 400 (Bad Request)** - Validación fallida:
+```json
+{
+  "timestamp": "2025-11-04T14:30:00",
+  "status": 400,
+  "errors": {
+    "nombre": "El nombre del beneficio es obligatorio"
+  }
+}
+```
+
+---
+
+### 16.4 Actualizar Beneficio
+**PUT** `/beneficio/{id}`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Ejemplo**: `PUT /beneficio/1`
+
+**Body (actualizar nombre)**:
+```json
+{
+  "nombre": "Seguro de Salud Completo"
+}
+```
+
+**Body (actualizar nombre y estado)**:
+```json
+{
+  "nombre": "Bonos Anuales Actualizado",
+  "estado": "INACTIVO"
+}
+```
+
+**Response 200 (OK)**:
+```json
+{
+  "beneficio_id": 1,
+  "nombre": "Seguro de Salud Completo",
+  "estado": "ACTIVO"
+}
+```
+
+**Response 404 (Not Found)**:
+Si el ID no existe.
+
+---
+
+### 16.5 Eliminar Beneficio
+**DELETE** `/beneficio/{id}`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+```
+
+**Ejemplo**: `DELETE /beneficio/1`
+
+**Response 204 (No Content)**
+(Sin contenido en el body - operación exitosa)
+
+**Response 404 (Not Found)**:
+Si el ID no existe.
+
+---
+
+### 16.6 Actualizar Estado de Beneficio (Activar/Desactivar)
+**PATCH** `/beneficio/{id}/estado`
+
+**Autenticación**: ✅ Requerida (Token de ADMIN o RECLUTADOR)
+
+**Headers**:
+```
+Authorization: Bearer {token}
+```
+
+**Query Parameters**:
+- `estado` (requerido): Valores permitidos: `ACTIVO` o `INACTIVO` (no distingue mayúsculas/minúsculas)
+
+**Ejemplos**:
+- Desactivar: `PATCH /beneficio/1/estado?estado=INACTIVO`
+- Activar: `PATCH /beneficio/1/estado?estado=ACTIVO`
+
+**Response 200 (OK)**:
+```json
+{
+  "beneficio_id": 1,
+  "nombre": "Seguro de Salud",
+  "estado": "INACTIVO"
+}
+```
+
+**Response 400 (Bad Request)**:
+Si el valor del estado no es válido (diferente a ACTIVO o INACTIVO).
+
+**Response 404 (Not Found)**:
+Si el ID no existe.
+
+---
+
+## 17. EJEMPLOS COMPLETOS PARA POSTMAN - BENEFICIO
+
+### Ejemplo 1: Flujo Completo CRUD Beneficio
+```
+1. POST /api/auth/login
+   Body: { "correo": "admin@workable.com", "contrasena": "admin123" }
+   Guardar el token recibido
+
+2. POST /api/beneficio (Con token en header)
+   Header: Authorization: Bearer {token}
+   Body: { "nombre": "Seguro de Salud", "estado": "ACTIVO" }
+
+3. GET /api/beneficio
+   Ver todos los beneficios creados
+
+4. GET /api/beneficio/1
+   Ver un beneficio específico
+
+5. PUT /api/beneficio/1 (Con token en header)
+   Header: Authorization: Bearer {token}
+   Body: { "nombre": "Seguro de Salud Completo - Actualizado", "estado": "ACTIVO" }
+
+6. PATCH /api/beneficio/1/estado?estado=INACTIVO (Con token en header)
+   Header: Authorization: Bearer {token}
+   Desactivar el beneficio
+
+7. DELETE /api/beneficio/1 (Con token en header)
+   Header: Authorization: Bearer {token}
+   Eliminar el beneficio
+```
+
+### Ejemplo 2: Consultar Beneficios (Sin autenticación)
+```
+1. GET /api/beneficio - Ver todos los beneficios
+2. GET /api/beneficio/1 - Ver beneficio específico por ID
+```
+
+### Ejemplo 3: Crear múltiples beneficios
+```
+1. POST /api/beneficio
+   Body: { "nombre": "Seguro de Salud" }
+   (Usará estado ACTIVO por defecto)
+
+2. POST /api/beneficio
+   Body: { "nombre": "Seguro de Vida", "estado": "ACTIVO" }
+
+3. POST /api/beneficio
+   Body: { "nombre": "Bonos Anuales", "estado": "ACTIVO" }
+
+4. POST /api/beneficio
+   Body: { "nombre": "Días de Vacaciones Adicionales", "estado": "ACTIVO" }
+
+5. POST /api/beneficio
+   Body: { "nombre": "Subsidio de Transporte", "estado": "ACTIVO" }
+
+6. POST /api/beneficio
+   Body: { "nombre": "Plan de Pensiones", "estado": "ACTIVO" }
+
+7. POST /api/beneficio
+   Body: { "nombre": "Descuentos en Comercios", "estado": "ACTIVO" }
+
+8. POST /api/beneficio
+   Body: { "nombre": "Capacitaciones Pagadas", "estado": "ACTIVO" }
+
+9. POST /api/beneficio
+   Body: { "nombre": "Gimnasio Empresarial", "estado": "ACTIVO" }
+
+10. POST /api/beneficio
+    Body: { "nombre": "Trabajo Remoto", "estado": "ACTIVO" }
+```
+
+---
+
+## 18. CÓDIGOS DE ERROR ESPECÍFICOS - BENEFICIO
+
+### Beneficio
+- `400 Bad Request` - El nombre del beneficio es obligatorio o supera 100 caracteres
+- `400 Bad Request` - El estado proporcionado no es válido (debe ser ACTIVO o INACTIVO)
+- `401 Unauthorized` - No se proporcionó token de autenticación
+- `403 Forbidden` - El token no corresponde a un usuario con rol ADMIN o RECLUTADOR
+- `404 Not Found` - El beneficio con el ID especificado no existe
