@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.LoginRequestDto;
-import com.workable_sb.workable.dto.LoginResponseDto;
-import com.workable_sb.workable.dto.UsrAspiranteDto;
-import com.workable_sb.workable.dto.UsrReclutadorDto;
-import com.workable_sb.workable.dto.UsuarioDto;
+import com.workable_sb.workable.dto.login.LoginRequestDto;
+import com.workable_sb.workable.dto.login.LoginResponseDto;
+import com.workable_sb.workable.dto.usuario.UsrAspiranteDto;
+import com.workable_sb.workable.dto.usuario.UsrReclutadorDto;
+import com.workable_sb.workable.dto.usuario.UsuarioDto;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.UsrAspiranteRepository;
 import com.workable_sb.workable.repository.UsrReclutadorRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
-import com.workable_sb.workable.service.UsrAspiranteService;
-import com.workable_sb.workable.service.UsrReclutadorService;
-import com.workable_sb.workable.service.UsuarioService;
+import com.workable_sb.workable.service.usuario.UsrAspiranteService;
+import com.workable_sb.workable.service.usuario.UsrReclutadorService;
+import com.workable_sb.workable.service.usuario.UsuarioService;
 
 import jakarta.validation.Valid;
 

@@ -1,9 +1,10 @@
 package com.workable_sb.workable.controller;
 
-import com.workable_sb.workable.dto.UsrAspiranteDto;
-import com.workable_sb.workable.dto.UsrAspiranteReadDto;
+import com.workable_sb.workable.dto.usuario.UsrAspiranteDto;
+import com.workable_sb.workable.dto.usuario.UsrAspiranteReadDto;
 import com.workable_sb.workable.repository.UsrAspiranteRepository;
-import com.workable_sb.workable.service.UsrAspiranteService;
+import com.workable_sb.workable.service.usuario.UsrAspiranteService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;

@@ -3,9 +3,9 @@ package com.workable_sb.workable.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.ValoracionDto;
-import com.workable_sb.workable.dto.ValoracionReadDto;
-import com.workable_sb.workable.service.ValoracionService;
+import com.workable_sb.workable.dto.valoracion.ValoracionDto;
+import com.workable_sb.workable.dto.valoracion.ValoracionReadDto;
+import com.workable_sb.workable.service.valoracion.ValoracionService;
 
 import jakarta.validation.Valid;
 

@@ -1,8 +1,9 @@
 package com.workable_sb.workable.controller;
 
-import com.workable_sb.workable.dto.UsrReclutadorDto;
-import com.workable_sb.workable.dto.UsrReclutadorReadDto;
-import com.workable_sb.workable.service.UsrReclutadorService;
+import com.workable_sb.workable.dto.usuario.UsrReclutadorDto;
+import com.workable_sb.workable.dto.usuario.UsrReclutadorReadDto;
+import com.workable_sb.workable.service.usuario.UsrReclutadorService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;

@@ -2,7 +2,6 @@ package com.workable_sb.workable.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,32 +11,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.DataEstudioDto;
-import com.workable_sb.workable.service.DatoEstudioService;
+import com.workable_sb.workable.dto.dato.DataEstudioDto;
+import com.workable_sb.workable.service.dato.DatoEstudioService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/datoestudio")
-public class DatoEstudioController {
 
-    @Autowired
-    private DatoEstudioService datoEstudioService;
+public class DatoEstudioController {
+    private final DatoEstudioService datoEstudioService;
 
     public DatoEstudioController(DatoEstudioService datoEstudioService) {
         this.datoEstudioService = datoEstudioService;
     }
 
-
-    @PostMapping("/{id}")
+    @PostMapping
     public ResponseEntity<DataEstudioDto> crearyupdate(@Valid @RequestBody DataEstudioDto datoDataEstudioDto) {
         DataEstudioDto guardar = datoEstudioService.crearyupdate(datoDataEstudioDto);
         return ResponseEntity.ok(guardar);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DataEstudioDto> buscarPorId(@PathVariable Integer Est_id) {
-        DataEstudioDto datoDataEstudioDto = datoEstudioService.buscarPorId(Est_id);
+    public ResponseEntity<DataEstudioDto> buscarPorId(@PathVariable Integer id) {
+        DataEstudioDto datoDataEstudioDto = datoEstudioService.buscarPorId(id);
         return ResponseEntity.ok(datoDataEstudioDto);
     }
 
@@ -48,8 +45,8 @@ public class DatoEstudioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer Est_id) {
-        datoEstudioService.eliminar(Est_id);
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
+        datoEstudioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }

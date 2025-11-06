@@ -1,7 +1,8 @@
 package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.dto.EstadoDto;
-import com.workable_sb.workable.service.UsuarioService;
+import com.workable_sb.workable.service.usuario.UsuarioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

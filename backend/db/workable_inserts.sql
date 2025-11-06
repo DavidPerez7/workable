@@ -31,15 +31,15 @@ INSERT INTO nivel_educativo (id, nombre) VALUES
 (9, 'Doctorado');
 
 -- Categorías de Empresas
-INSERT INTO empresa_categoria (id, nombre, imagen, descripcion) VALUES
-(1, 'TECNOLOGIA', '', 'Empresas dedicadas a desarrollo de software y servicios TI'),
-(2, 'SALUD', '', 'Instituciones de atención médica y servicios de salud'),
-(3, 'EDUCACION', '', 'Organizaciones dedicadas a procesos educativos'),
-(4, 'FINANZAS', '', 'Entidades bancarias y de servicios financieros'),
-(5, 'COMERCIO', '', 'Comercios al por mayor y por menor'),
-(6, 'ALIMENTICIOS', '', 'Empresas dedicadas a la producción y distribución de alimentos y bebidas'),
-(7, 'CONSTRUCCION', '', 'Empresas del sector de construcción e ingeniería'),
-(8, 'TRANSPORTE', '', 'Empresas de logística y transporte');
+INSERT INTO empresa_categoria (id, nombre, imagen_url, descripcion, estado) VALUES
+(1, 'TECNOLOGIA', '', 'Empresas dedicadas a desarrollo de software y servicios TI', 'ACTIVO'),
+(2, 'SALUD', '', 'Instituciones de atención médica y servicios de salud', 'ACTIVO'),
+(3, 'EDUCACION', '', 'Organizaciones dedicadas a procesos educativos', 'ACTIVO'),
+(4, 'FINANZAS', '', 'Entidades bancarias y de servicios financieros', 'ACTIVO'),
+(5, 'COMERCIO', '', 'Comercios al por mayor y por menor', 'ACTIVO'),
+(6, 'ALIMENTICIOS', '', 'Empresas dedicadas a la producción y distribución de alimentos y bebidas', 'ACTIVO'),
+(7, 'CONSTRUCCION', '', 'Empresas del sector de construcción e ingeniería', 'ACTIVO'),
+(8, 'TRANSPORTE', '', 'Empresas de logística y transporte', 'ACTIVO');
 
 -- Empresas (referencia: empresa_categoria_id, municipio_id)
 -- Nota: nit_id es el NIT público de la empresa, clave primaria ingresada por el usuario
@@ -50,21 +50,21 @@ INSERT INTO empresa (nit_id, nombre, descripcion, numero_trabajadores, puntuacio
 (9004, 'HealthCare Plus', 'Centro médico especializado', 200, 4.6, 2, 2),
 (9005, 'FinanzCorp', 'Servicios financieros integrales', 120, 4.3, 4, 1);
 
--- Modalidades de trabajo
-INSERT INTO modalidad (id, nombre) VALUES
-(1, 'Presencial'),
-(2, 'Remoto'),
-(3, 'Híbrido');
+-- Modalidades de trabajo (tabla: oferta_modalidad)
+INSERT INTO oferta_modalidad (id, nombre, estado) VALUES
+(1, 'Presencial', 'ACTIVO'),
+(2, 'Remoto', 'ACTIVO'),
+(3, 'Híbrido', 'ACTIVO');
 
--- Tipos de Contrato
-INSERT INTO tipo_contrato (id, nombre) VALUES
-(1, 'Tiempo completo'),
-(2, 'Medio tiempo'),
-(3, 'Contrato temporal'),
-(4, 'Freelance'),
-(5, 'Prácticas profesionales'),
-(6, 'Contrato indefinido'),
-(7, 'Contrato por obra');
+-- Tipos de Contrato (tabla: oferta_tipo_contrato)
+INSERT INTO oferta_tipo_contrato (id, nombre, estado) VALUES
+(1, 'Tiempo completo', 'ACTIVO'),
+(2, 'Medio tiempo', 'ACTIVO'),
+(3, 'Contrato temporal', 'ACTIVO'),
+(4, 'Freelance', 'ACTIVO'),
+(5, 'Prácticas profesionales', 'ACTIVO'),
+(6, 'Contrato indefinido', 'ACTIVO'),
+(7, 'Contrato por obra', 'ACTIVO');
 
 -- Estados de Postulación (tabla: estado)
 INSERT INTO estado (id, nombre) VALUES
@@ -75,33 +75,26 @@ INSERT INTO estado (id, nombre) VALUES
 (5, 'Aceptado'),
 (6, 'Finalizado');
 
--- Géneros
-INSERT INTO genero (genero_id, nombre) VALUES
-(1, 'Masculino'),
-(2, 'Femenino'),
-(3, 'Prefiero no decir');
-
--- Beneficios
-INSERT INTO beneficio (beneficio_id, nombre) VALUES
-(1, 'Seguro médico'),
-(2, 'Seguro de vida'),
-(3, 'Bonificaciones'),
-(4, 'Comisiones'),
-(5, 'Capacitación'),
-(6, 'Días de teletrabajo'),
-(7, 'Horario flexible'),
-(8, 'Auxilio de transporte'),
-(9, 'Auxilio de alimentación'),
-(10, 'Primas extralegales');
+-- Beneficios (tabla: oferta_beneficio)
+INSERT INTO oferta_beneficio (beneficio_id, nombre, estado) VALUES
+(1, 'Seguro médico', 'ACTIVO'),
+(2, 'Seguro de vida', 'ACTIVO'),
+(3, 'Bonificaciones', 'ACTIVO'),
+(4, 'Comisiones', 'ACTIVO'),
+(5, 'Capacitación', 'ACTIVO'),
+(6, 'Días de teletrabajo', 'ACTIVO'),
+(7, 'Horario flexible', 'ACTIVO'),
+(8, 'Auxilio de transporte', 'ACTIVO'),
+(9, 'Auxilio de alimentación', 'ACTIVO'),
+(10, 'Primas extralegales', 'ACTIVO');
 
 -- Consultas de verificación
-SELECT * FROM departamento;
-SELECT * FROM municipio;
-SELECT * FROM nivel_educativo;
-SELECT * FROM empresa_categoria;
-SELECT * FROM empresa;
-SELECT * FROM modalidad;
-SELECT * FROM tipo_contrato;
-SELECT * FROM estado;
-SELECT * FROM genero;
-SELECT * FROM beneficio;
+-- SELECT * FROM departamento;
+-- SELECT * FROM municipio;
+-- SELECT * FROM nivel_educativo;
+-- SELECT * FROM empresa_categoria;
+-- SELECT * FROM empresa;
+-- SELECT * FROM oferta_modalidad;
+-- SELECT * FROM oferta_tipo_contrato;
+-- SELECT * FROM estado;
+-- SELECT * FROM oferta_beneficio;

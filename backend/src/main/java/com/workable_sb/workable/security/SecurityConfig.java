@@ -74,11 +74,11 @@ public class SecurityConfig {
             
             // TipoContrato endpoints
             .requestMatchers(HttpMethod.GET, "/api/tipo-contrato", "/api/tipo-contrato/", "/api/tipo-contrato/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/tipo-contrato", "/api/tipo-contrato/").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.PUT, "/api/tipo-contrato/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.DELETE, "/api/tipo-contrato/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.PATCH, "/api/tipo-contrato/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            
+            .requestMatchers(HttpMethod.POST, "/api/tipo-contrato", "/api/tipo-contrato/").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/api/tipo-contrato/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/tipo-contrato/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/api/tipo-contrato/**").hasRole("ADMIN")
+
             // Beneficio endpoints
             .requestMatchers(HttpMethod.GET, "/api/beneficio", "/api/beneficio/", "/api/beneficio/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/beneficio", "/api/beneficio/").hasAnyRole("ADMIN", "RECLUTADOR")

@@ -1,16 +1,20 @@
 package com.workable_sb.workable.controller;
 
-import com.workable_sb.workable.dto.NotificacionDto;
-import com.workable_sb.workable.service.NotificacionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.workable_sb.workable.dto.notificacion.NotificacionDto;
+import com.workable_sb.workable.service.notificacion.NotificacionService;
+
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/notificaciones")
+
 public class NotificacionController {
-    @Autowired
-    private NotificacionService notificacionService;
+    private final NotificacionService notificacionService;
+
+    public NotificacionController(NotificacionService notificacionService) {
+        this.notificacionService = notificacionService;
+    }
 
     @PostMapping
     public NotificacionDto crearNotificacion(@RequestBody NotificacionDto notificacionDto) {

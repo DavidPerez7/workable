@@ -4,32 +4,26 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
 @Getter
+@Setter
+@Table(name = "oferta")
 public class Oferta {
+	
+	public enum EstadoOferta {
+		ABIERTA, CERRADA, PAUSADA
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -45,13 +39,15 @@ public class Oferta {
 
 	@Column(nullable = false)
 	private LocalDate fechaLimite;
+	
 	private LocalDate fechaPublicacion;
 
 	@Column(nullable = false)
 	private Long salario;
 
-	@Column(nullable = false, length = 20)
-	private String estado = "ABIERTA";  // "ABIERTA", "CERRADA", "PAUSADA"
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'ABIERTA'")
+	private EstadoOferta estado = EstadoOferta.ABIERTA;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(
@@ -67,11 +63,11 @@ public class Oferta {
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "modalidad_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_modalidad"))
-	private Modalidad modalidad;
+	private OfertaModalidad modalidad;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "tipoContrato_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_tipoContrato"))
-	private TipoContrato tipoContrato;
+	private OfertaTipoContrato tipoContrato;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_empresa"))
@@ -82,10 +78,10 @@ public class Oferta {
 	private UsrReclutador reclutador;  // Quién creó la oferta (opcional para auditoría)
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "oferta_beneficio", 
-	joinColumns = @JoinColumn(name = "ofertaid", foreignKey = @ForeignKey(name = "FK_ofertaBeneficio_oferta")),
-	inverseJoinColumns = @JoinColumn(name = "beneficioid", foreignKey = @ForeignKey(name = "FK_ofertaBeneficio_beneficio")))
-	private Set<Beneficio> beneficios = new HashSet<>();
+	@JoinTable(name = "oferta_tiene_beneficio", 
+	joinColumns = @JoinColumn(name = "ofertaid", foreignKey = @ForeignKey(name = "FK_ofertaTieneBeneficio_oferta")),
+	inverseJoinColumns = @JoinColumn(name = "beneficioid", foreignKey = @ForeignKey(name = "FK_ofertaTieneBeneficio_beneficio")))
+	private Set<OfertaBeneficio> beneficios = new HashSet<>();
 
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
 	private Set<Postulacion> postulaciones = new HashSet<>();

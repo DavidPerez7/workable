@@ -1,8 +1,9 @@
 package com.workable_sb.workable.controller;
 
-import com.workable_sb.workable.dto.NivelEducativoCreateDto;
-import com.workable_sb.workable.dto.NivelEducativoDto;
-import com.workable_sb.workable.service.NivelEducativoService;
+import com.workable_sb.workable.dto.nivelEducativo.NivelEducativoCreateDto;
+import com.workable_sb.workable.dto.nivelEducativo.NivelEducativoDto;
+import com.workable_sb.workable.service.nivelEducativo.NivelEducativoService;
+
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
