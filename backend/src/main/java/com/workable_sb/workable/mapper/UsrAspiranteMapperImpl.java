@@ -4,21 +4,18 @@ import org.springframework.stereotype.Component;
 
 import com.workable_sb.workable.dto.UsrAspiranteDto;
 import com.workable_sb.workable.dto.UsrAspiranteReadDto;
-import com.workable_sb.workable.models.Genero;
+// Genero ahora se representa con un enum dentro de UsrAspirante
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.models.UsrAspirante;
-import com.workable_sb.workable.repository.GeneroRepository;
 import com.workable_sb.workable.repository.MunicipioRepository;
 
 @Component
 public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
 
     private final MunicipioRepository municipioRepository;
-    private final GeneroRepository generoRepository;
 
-    public UsrAspiranteMapperImpl(GeneroRepository generoRepository, MunicipioRepository municipioRepository) {
-        this.generoRepository = generoRepository;
+    public UsrAspiranteMapperImpl(MunicipioRepository municipioRepository) {
         this.municipioRepository = municipioRepository;
     }
 
@@ -46,10 +43,15 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
             aspirante.setMunicipio(municipio);
         }
 
-        if (dto.getGenero_id() != null) {
-            Genero genero = generoRepository.findById(dto.getGenero_id())
-                .orElseThrow(() -> new RuntimeException("Género no encontrado"));
-            aspirante.setGenero(genero);
+        // Mapear genero desde el nombre del enum (dto.getGenero_nom()) hacia el enum anidado
+        if (dto.getGenero_nom() != null) {
+            try {
+                // Usamos el enum anidado definido en UsrAspirante
+                UsrAspirante.GeneroUsr generoEnum = UsrAspirante.GeneroUsr.valueOf(dto.getGenero_nom().toUpperCase());
+                aspirante.setGenero(generoEnum);
+            } catch (IllegalArgumentException ex) {
+                throw new RuntimeException("Género no válido: " + dto.getGenero_nom());
+            }
         }
 
         return aspirante;
@@ -76,10 +78,10 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
             dto.setMunicipio_id(entity.getMunicipio().getId());
             dto.setMunicipio_nom(entity.getMunicipio().getNombre());
         }
-        
+        // Si genero es un enum, solo lo asignamos directamente como String
         if (entity.getGenero() != null) {
-            dto.setGenero_id(entity.getGenero().getGenero_id());
-            dto.setGenero_nom(entity.getGenero().getNombre());
+            dto.setGenero_nom(entity.getGenero().toString());
+            dto.setGenero_id(null);
         }
         
         return dto;
@@ -106,8 +108,8 @@ public class UsrAspiranteMapperImpl implements UsrAspiranteMapper {
         }
         
         if (entity.getGenero() != null) {
-            dto.setGeneroId(entity.getGenero().getGenero_id());
-            dto.setGeneroNombre(entity.getGenero().getNombre());
+            dto.setGeneroNombre(entity.getGenero().toString());
+            dto.setGeneroId(null);
         }
         
         return dto;

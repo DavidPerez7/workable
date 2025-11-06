@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class NivelEducativoDto {
+public class EmpresaCategoriaDto {
+    @NotNull
     private Integer id;
-
     @NotNull(message = "El nombre es obligatorio")
     private String nombre;
-    private com.workable_sb.workable.models.NivelEducativo.Estado estado;
+    private String imagenUrl;
+    private String descripcion;
 }

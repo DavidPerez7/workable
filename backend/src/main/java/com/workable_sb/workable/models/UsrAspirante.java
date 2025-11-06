@@ -2,12 +2,10 @@ package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,9 +25,13 @@ public class UsrAspirante extends Usuario {
     private String resumenProfesional;  // Descripción personal para el perfil
     private LocalDate fechaNacimiento;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "genero_id", referencedColumnName = "genero_id", foreignKey = @ForeignKey(name = "FK_usrAspirante_Genero"))
-    private Genero genero;
+    public enum GeneroUsr {
+        MASCULINO,
+        FEMENINO,
+        OTRO
+    }
 
-    
+    @Enumerated(EnumType.STRING)
+    private GeneroUsr genero;
+
 }
