@@ -29,6 +29,6 @@ public class EmpresaCategoria {
   }
 
   @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "ENUM('ACTIVO', 'INACTIVO') DEFAULT 'ACTIVO'")
+  @Column(nullable = false)
   private EstadoCategoria estado = EstadoCategoria.ACTIVO;
 }

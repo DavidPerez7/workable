@@ -1,5 +1,7 @@
 package com.workable_sb.workable.dto.empresa;
 
+import com.workable_sb.workable.models.EmpresaCategoria.EstadoCategoria;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +12,5 @@ public class EmpresaCategoriaReadDTO {
     private String nombre;
     private String imagenUrl;
     private String descripcion;
-    private Boolean estado; // true = ACTIVO, false = INACTIVO
+    private EstadoCategoria estado;
 }

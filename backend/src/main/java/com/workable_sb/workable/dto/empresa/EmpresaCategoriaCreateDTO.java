@@ -1,6 +1,7 @@
 package com.workable_sb.workable.dto.empresa;
 
-import com.workable_sb.workable.models.EmpresaCategoria;
+import com.workable_sb.workable.models.EmpresaCategoria.EstadoCategoria;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -19,5 +20,5 @@ public class EmpresaCategoriaCreateDTO {
     @Size(max = 500, message = "La descripción no debe exceder 500 caracteres")
     private String descripcion;
 
-    private EmpresaCategoria.EstadoCategoria estado;
+    private EstadoCategoria estado;
 }

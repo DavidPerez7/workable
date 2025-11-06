@@ -32,7 +32,7 @@ public class EmpresaCategoriaMapperImpl implements EmpresaCategoriaMapper {
         dto.setNombre(entity.getNombre());
         dto.setImagenUrl(entity.getImagenUrl());
         dto.setDescripcion(entity.getDescripcion());
-        dto.setEstado(entity.getEstado() == EmpresaCategoria.EstadoCategoria.ACTIVO);
+        dto.setEstado(entity.getEstado());
         
         return dto;
     }
