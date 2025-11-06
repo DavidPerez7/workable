@@ -43,9 +43,10 @@ public class SecurityConfig {
             
             // Oferta endpoints
             .requestMatchers(HttpMethod.GET, "/api/oferta/**").permitAll()  // GETs públicos
-            .requestMatchers(HttpMethod.POST, "/api/oferta").hasRole("RECLUTADOR")  // POST solo reclutador
-            .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasRole("RECLUTADOR")  // PUT solo reclutador
-            .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
+            .requestMatchers(HttpMethod.POST, "/api/oferta").hasAnyRole("ADMIN", "RECLUTADOR")  // POST admin o reclutador
+            .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // PUT admin o reclutador
+            .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // DELETE admin o reclutador
+            .requestMatchers(HttpMethod.PATCH, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // PATCH admin o reclutador
             
             // endpoints de Aspirante
             .requestMatchers(HttpMethod.POST, "/api/aspirante").hasRole("ADMIN") //solo puede crear el administrador

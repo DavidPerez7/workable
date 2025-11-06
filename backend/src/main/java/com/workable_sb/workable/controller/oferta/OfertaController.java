@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,14 +19,12 @@ public class OfertaController {
     private final OfertaService service;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     public ResponseEntity<OfertaReadDTO> create(@Valid @RequestBody OfertaCreateDTO dto) {
         OfertaReadDTO created = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     public ResponseEntity<OfertaReadDTO> update(
             @PathVariable Integer id,
             @Valid @RequestBody OfertaCreateDTO dto) {
@@ -36,7 +33,6 @@ public class OfertaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
@@ -55,7 +51,6 @@ public class OfertaController {
     }
 
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     public ResponseEntity<OfertaReadDTO> changeEstado(
             @PathVariable Integer id,
             @RequestParam Oferta.EstadoOferta estado) {
