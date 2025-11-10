@@ -88,3 +88,6 @@ dist-ssr/
 # Asegurar que las configuraciones de depuración y tareas queden fuera
 .vscode/launch.json
 .vscode/tasks.json
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md

@@ -35,6 +35,13 @@ public class SecurityConfig {
                 // Allow CORS preflight globally
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
+                // DataExperiencia endpoints
+                .requestMatchers(HttpMethod.GET, "/api/dataexperiencia/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.POST, "/api/dataexperiencia").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.PUT, "/api/dataexperiencia/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.PATCH, "/api/dataexperiencia/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.DELETE, "/api/dataexperiencia/**").hasAnyRole("ADMIN", "ASPIRANTE")
+
                 // DataEstudio endpoints
                 .requestMatchers(HttpMethod.GET, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
                 .requestMatchers(HttpMethod.POST, "/api/dataestudio").hasAnyRole("ADMIN", "ASPIRANTE")

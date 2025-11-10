@@ -100,6 +100,14 @@ INSERT INTO data_estudio (nombre, fecha_inicio, fecha_fin, en_curso, institucion
 VALUES ('Ingeniería de Software', '2018-01-01', '2022-01-01', false, 'Universidad de Antioquia', 'https://certificados.udea.edu/456.pdf', 3, 6, 'ACTIVO');
 
 
+-- DataExperiencia (referencia: usuario_id)
+INSERT INTO data_experiencia (cargo, empresa, descripcion, fecha_inicio, fecha_fin, trabajo_actual, ubicacion, usuario_id, anios_experiencia, estado)
+VALUES ('Desarrollador Backend', 'TechColombia SAS', 'Desarrollo de microservicios en Java', '2021-02-01', NULL, true, 'Bogotá', 1, 3, 'ACTIVO');
+
+INSERT INTO data_experiencia (cargo, empresa, descripcion, fecha_inicio, fecha_fin, trabajo_actual, ubicacion, usuario_id, anios_experiencia, estado)
+VALUES ('Analista QA', 'AgroTech Soluciones', 'Pruebas automatizadas y manuales', '2019-06-01', '2021-01-31', false, 'Cali', 1, 2, 'ACTIVO');
+
+
 -- Consultas de verificación
 -- SELECT * FROM departamento;
 -- SELECT * FROM municipio;

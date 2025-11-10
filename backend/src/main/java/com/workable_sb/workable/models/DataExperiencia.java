@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,9 +34,12 @@ public class DataExperiencia {
   private String descripcion;  // Descripción de funciones/logros
 
   @Column(nullable = false)
-  private Date fechaInicio;
+  private Float expYears;
 
-  private Date fechaFin;  // null si es trabajo actual
+  @Column(nullable = false)
+  private LocalDate fechaInicio;
+
+  private LocalDate fechaFin;  // null si es trabajo actual
 
   @Column(nullable = false)
   private Boolean trabajoActual = false;
@@ -46,4 +50,11 @@ public class DataExperiencia {
   @ManyToOne
   @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExperiencia_aspirante"))
   private Usuario usuario;
+
+  @Column(nullable = false, length = 10)
+  private Estado estado = Estado.ACTIVO;
+
+  public enum Estado {
+    ACTIVO, INACTIVO
+  }
 }

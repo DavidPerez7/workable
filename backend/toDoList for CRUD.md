@@ -1,4 +1,4 @@
-# Checklist CRUD para funcionalidades completas de entidad
+# toDoList CRUD para funcionalidades completas de entidad
 
 ## 1. Modelo (Entity)
 - Clase con `@Entity` y `@Table(name = "nombre_tabla")`
