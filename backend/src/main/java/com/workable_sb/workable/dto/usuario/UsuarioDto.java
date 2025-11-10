@@ -27,4 +27,7 @@ public class UsuarioDto {
     private String municipio_nom;
 
     private com.workable_sb.workable.models.Usuario.EstadoUsr estado; // ACTIVO o INACTIVO
+
+    // Discriminador para herencia SINGLE_TABLE ("Usuario", "UsrAspirante", "UsrReclutador")
+    private String dtype;
 }

@@ -52,16 +52,25 @@ public class UsuarioServiceImple implements UsuarioService {
     }
 
     @Override
-    public UsuarioDto update(Integer id, UsuarioDto usuarioDto) {
-    Integer safeId = Objects.requireNonNull(id, "El id no puede ser nulo");
-    return usuarioRepository.findById(safeId)
+    public UsuarioReadDto update(Integer id, UsuarioDto usuarioDto) {
+        Integer safeId = Objects.requireNonNull(id, "El id no puede ser nulo");
+        return usuarioRepository.findById(safeId)
             .filter(u -> u.getEstado() == EstadoUsr.ACTIVO)
             .map(usuario -> {
+                // Actualizar todos los campos relevantes desde UsuarioReadDto
+                // Se asume que el método ahora recibe UsuarioReadDto en vez de UsuarioDto
+                // Si necesitas más campos, agrégalos aquí
                 usuario.setNombre(usuarioDto.getNombre());
                 usuario.setCorreo(usuarioDto.getCorreo());
+                usuario.setTelefono(usuarioDto.getTelefono());
                 usuario.setRol(usuarioDto.getRol());
+                usuario.setFotoPerfilUrl(usuarioDto.getFotoPerfilUrl());
+                // Estado opcional
+                if (usuarioDto.getEstado() != null) {
+                    usuario.setEstado(EstadoUsr.valueOf(usuarioDto.getEstado().toString()));
+                }
                 Usuario actualizado = usuarioRepository.save(usuario);
-                return usuarioMapper.toDto(actualizado);
+                return usuarioMapper.toReadDto(actualizado);
             })
             .orElse(null);
     }

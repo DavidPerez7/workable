@@ -59,9 +59,13 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/reclutador").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/reclutador/empresa/**").hasAnyRole("ADMIN", "RECLUTADOR")
 
-            // Usuario endpoints
+            // Usuario endpoints (solo accesibles por ADMIN)
+            .requestMatchers("/api/usuario/**").hasRole("ADMIN")
             .requestMatchers(HttpMethod.GET, "/api/usuario").hasRole("ADMIN")
             .requestMatchers(HttpMethod.POST, "/api/usuario").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/api/usuario/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/usuario/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/api/usuario/**").hasRole("ADMIN")
             
             //admin endpoints
             .requestMatchers("/api/admin/**").hasRole("ADMIN")

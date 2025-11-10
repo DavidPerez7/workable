@@ -22,7 +22,7 @@ public class UsuarioMapperImpl implements UsuarioMapper {
     @Override
     public Usuario toEntity(UsuarioDto usuarioDto) {
         if (usuarioDto == null) return null;
-        
+
         Usuario usuario = new Usuario();
         usuario.setNombre(usuarioDto.getNombre());
         usuario.setCorreo(usuarioDto.getCorreo());
@@ -37,7 +37,20 @@ public class UsuarioMapperImpl implements UsuarioMapper {
                 .orElseThrow(() -> new EntityNotFoundException("Municipio no encontrado"));
             usuario.setMunicipio(municipio);
         }
-        
+
+        // Asignar estado si viene en el DTO (para updates)
+        if (usuarioDto.getEstado() != null) {
+            if (usuarioDto.getEstado() instanceof com.workable_sb.workable.models.Usuario.EstadoUsr estadoEnum) {
+                usuario.setEstado(estadoEnum);
+            } else {
+                try {
+                    usuario.setEstado(com.workable_sb.workable.models.Usuario.EstadoUsr.valueOf(usuarioDto.getEstado().toString()));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Valor de estado inválido: " + usuarioDto.getEstado());
+                }
+            }
+        }
+
         return usuario;
     }
 
@@ -77,6 +90,8 @@ public class UsuarioMapperImpl implements UsuarioMapper {
             dto.setMunicipioId(usuario.getMunicipio().getId());
             dto.setMunicipioNombre(usuario.getMunicipio().getNombre());
         }
+
+        dto.setEstado(usuario.getEstado().toString());
         
         return dto;
     }

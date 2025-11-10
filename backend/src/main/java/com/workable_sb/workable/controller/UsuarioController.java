@@ -18,6 +18,7 @@ public class UsuarioController {
         this.usuarioServ = usuarioServ;
     }
 
+    // este pedira el Dtype para creacion de usuarios en general
     @PostMapping
     public ResponseEntity<?> createUsuario(@RequestBody UsuarioDto usuarioDto) {
         try {
@@ -45,15 +46,11 @@ public class UsuarioController {
 
 @PutMapping("/{id}")
     public ResponseEntity<?> actualizarUsuario(@PathVariable Integer id, @RequestBody UsuarioDto usuarioDto) {
-        try {
-            UsuarioDto actualizado = usuarioServ.update(id, usuarioDto);
-            if (actualizado == null) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(actualizado);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al actualizar usuario: " + e.getMessage());
+        UsuarioReadDto actualizado = usuarioServ.update(id, usuarioDto);
+        if (actualizado == null) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")

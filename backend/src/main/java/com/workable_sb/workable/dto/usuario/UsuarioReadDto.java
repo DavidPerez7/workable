@@ -20,5 +20,5 @@ public class UsuarioReadDto {
     private Integer municipioId;
     private String municipioNombre;
 
-    private com.workable_sb.workable.models.Usuario.EstadoUsr estado; // ACTIVO o INACTIVO
+    private String estado; // ACTIVO o INACTIVO
 }
