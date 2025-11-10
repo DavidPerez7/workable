@@ -36,4 +36,6 @@ public class DataEstudioDto {
 
   @NotNull(message = "El id de aspirante es obligatorio")
   private Integer aspiranteId;
+
+  private String estado; // ACTIVO o INACTIVO
 }

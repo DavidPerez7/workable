@@ -46,4 +46,12 @@ public class DataEstudio {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoEstudio_usuario"))
     private Usuario usuario;
+
+    public enum EstadoEstudio {
+        ACTIVO,
+        INACTIVO
+    }
+
+    @Column(nullable = false)
+    private EstadoEstudio estado = EstadoEstudio.ACTIVO;
 }

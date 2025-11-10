@@ -12,4 +12,6 @@ public interface UsuarioService {
     UsuarioDto update(Integer id, UsuarioDto usuarioDto);
     void delete(Integer id);
     boolean cambiarEstado(Integer id, com.workable_sb.workable.models.Usuario.EstadoUsr estado);
+
+    UsuarioReadDto findByNombre(String nombre);
 }

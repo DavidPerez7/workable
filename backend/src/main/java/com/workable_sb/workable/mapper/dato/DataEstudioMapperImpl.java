@@ -49,6 +49,13 @@ public class DataEstudioMapperImpl implements DataEstudioMapper {
             estudio.setUsuario(usuario);
         }
 
+        if (dto.getEstado() != null) {
+            try {
+                estudio.setEstado(DataEstudio.EstadoEstudio.valueOf(dto.getEstado().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                estudio.setEstado(DataEstudio.EstadoEstudio.ACTIVO);
+            }
+        }
         return estudio;
     }
 
@@ -72,6 +79,9 @@ public class DataEstudioMapperImpl implements DataEstudioMapper {
             dto.setAspiranteId(entity.getUsuario().getId());
         }
         
+        if (entity.getEstado() != null) {
+            dto.setEstado(entity.getEstado().name());
+        }
         return dto;
     }
 }

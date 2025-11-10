@@ -56,7 +56,7 @@ public class UsuarioController {
         }
     }
 
-@DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarUsuario(@PathVariable Integer id) {
         try {
             usuarioServ.delete(id);
@@ -64,5 +64,14 @@ public class UsuarioController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al eliminar usuario: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<?> buscarPorNombre(@RequestParam String nombre) {
+        UsuarioReadDto usuario = usuarioServ.findByNombre(nombre);
+        if (usuario == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(usuario);
     }
 }

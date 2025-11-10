@@ -13,6 +13,7 @@ import com.workable_sb.workable.models.Usuario.EstadoUsr;
 
 @Service
 public class UsuarioServiceImple implements UsuarioService {
+
     private final UsuarioMapper usuarioMapper;
     private final com.workable_sb.workable.repository.UsuarioRepository usuarioRepository;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
@@ -80,5 +81,14 @@ public class UsuarioServiceImple implements UsuarioService {
                 usuarioRepository.save(usuario);
                 return true;
             }).orElse(false);
+    }
+
+    @Override
+    public UsuarioReadDto findByNombre(String nombre) {
+        String safeNombre = Objects.requireNonNull(nombre, "El nombre no puede ser nulo");
+        return usuarioRepository.findByNombre(safeNombre)
+            .filter(u -> u.getEstado() == EstadoUsr.ACTIVO)
+            .map(usuarioMapper::toReadDto)  // Sin clave
+            .orElse(null);
     }
 }
