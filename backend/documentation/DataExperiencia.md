@@ -1,9 +1,9 @@
 # Documentación Endpoints CRUD DataExperiencia
 
-## Base URL: http://localhost:8080/api
+## Base URL: `http://localhost:8080/api`
 
-## CREATE DataExperiencia
-- **Path:** /dataexperiencia
+## CREATE dataexperiencia
+- **Path:** `baseUrl/dataexperiencia`
 - **Http Method:** POST
 - **Body:** DataExperienciaCreateDto
 - **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
@@ -11,47 +11,27 @@
 
 ### Ejemplo petición (POST)
 **Método:** POST
-**URL:** http://localhost:8080/api/dataexperiencia
-**Headers:** Content-Type: application/json
+**URL:** `baseUrl/dataexperiencia`
+**Headers:** `Content-Type: application/json`
 **Body:**
 ```json
 {
-  "nombreEmpresa": "TechColombia SAS",
   "cargo": "Desarrollador Backend",
-  "expYears": 3
+  "empresa": "TechColombia SAS",
+  "descripcion": "Desarrollo de microservicios en Java",
+  "expYears": 3.5,
+  "fechaInicio": "2022-01-01",
+  "fechaFin": null,
+  "trabajoActual": true,
+  "ubicacion": "Bogotá",
+  "estado": "ACTIVO"
 }
 ```
 
 ---
 
-## GET ALL DataExperiencia
-- **Path:** /dataexperiencia
-- **Http Method:** GET
-- **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
-- **Respuesta:** List<DataExperienciaReadDto>
-
-### Ejemplo petición (GET)
-**Método:** GET
-**URL:** http://localhost:8080/api/dataexperiencia
-**Headers:** Authorization: Bearer {token}
-
----
-
-## GET DataExperiencia by ID
-- **Path:** /dataexperiencia/{id}
-- **Http Method:** GET
-- **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
-- **Respuesta:** DataExperienciaReadDto
-
-### Ejemplo petición (GET)
-**Método:** GET
-**URL:** http://localhost:8080/api/dataexperiencia/1
-**Headers:** Authorization: Bearer {token}
-
----
-
-## UPDATE DataExperiencia
-- **Path:** /dataexperiencia/{id}
+## UPDATE dataexperiencia
+- **Path:** `baseUrl/dataexperiencia/{id}`
 - **Http Method:** PUT
 - **Body:** DataExperienciaUpdateDto
 - **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
@@ -59,47 +39,85 @@
 
 ### Ejemplo petición (PUT)
 **Método:** PUT
-**URL:** http://localhost:8080/api/dataexperiencia/1
-**Headers:** Content-Type: application/json
+**URL:** `baseUrl/dataexperiencia/1`
+**Headers:** `Content-Type: application/json`
 **Body:**
 ```json
 {
-  "nombreEmpresa": "AgroTech Soluciones",
   "cargo": "Analista QA",
-  "expYears": 2,
-  "estado": "ACTIVO"
+  "empresa": "AgroTech Soluciones",
+  "descripcion": "Pruebas automatizadas de software",
+  "expYears": 2.0,
+  "fechaInicio": "2023-01-01",
+  "fechaFin": "2024-01-01",
+  "trabajoActual": false,
+  "ubicacion": "Medellín",
+  "estado": "INACTIVO"
 }
 ```
 
 ---
 
-## CHANGE ESTADO DataExperiencia
-- **Path:** /dataexperiencia/{id}/estado?estado=INACTIVO
-- **Http Method:** PATCH
-- **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
-- **Respuesta:** DataExperienciaReadDto
-
-### Ejemplo petición (PATCH)
-**Método:** PATCH
-**URL:** http://localhost:8080/api/dataexperiencia/1/estado?estado=INACTIVO
-**Headers:** Authorization: Bearer {token}
-
----
-
-## DELETE DataExperiencia
-- **Path:** /dataexperiencia/{id}
+## DELETE dataexperiencia
+- **Path:** `baseUrl/dataexperiencia/{id}`
 - **Http Method:** DELETE
 - **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
 - **Respuesta:** 204 No Content
 
 ### Ejemplo petición (DELETE)
 **Método:** DELETE
-**URL:** http://localhost:8080/api/dataexperiencia/1
-**Headers:** Authorization: Bearer {token}
+**URL:** `baseUrl/dataexperiencia/1`
+**Headers:** `Authorization: Bearer {token}`
 
 ---
 
-## Notas
-- Roles permitidos: ADMIN, ASPIRANTE
-- El campo estado puede ser ACTIVO o INACTIVO
-- Se requiere autenticación JWT Bearer para todos los endpoints excepto los públicos
+## GET dataexperiencia by ID
+- **Path:** `baseUrl/dataexperiencia/{id}`
+- **Http Method:** GET
+- **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
+- **Respuesta:** DataExperienciaReadDto
+
+### Ejemplo petición (GET by ID)
+**Método:** GET
+**URL:** `baseUrl/dataexperiencia/1`
+**Headers:** `Authorization: Bearer {token}`
+
+---
+
+## GET all dataexperiencia
+- **Path:** `baseUrl/dataexperiencia`
+- **Http Method:** GET
+- **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
+- **Respuesta:** List<DataExperienciaReadDto>
+
+### Ejemplo petición (GET all)
+**Método:** GET
+**URL:** `baseUrl/dataexperiencia`
+**Headers:** `Authorization: Bearer {token}`
+
+---
+
+## PATCH estado dataexperiencia (Activar/Inactivar)
+- **Path:** `baseUrl/dataexperiencia/{id}/estado`
+- **Http Method:** PATCH
+- **Body:** `{ "estado": "ACTIVO" | "INACTIVO" }`
+- **Roles (Authorization JWT Bearer):** ADMIN, ASPIRANTE
+- **Respuesta:** DataExperienciaReadDto
+
+### Ejemplo petición (PATCH estado)
+**Método:** PATCH
+**URL:** `baseUrl/dataexperiencia/1/estado`
+**Headers:** `Content-Type: application/json`
+**Body:**
+```json
+{
+  "estado": "INACTIVO"
+}
+```
+
+---
+
+**Notas:**
+- Todos los endpoints requieren autenticación JWT Bearer.
+- Los roles permitidos para crear, actualizar, eliminar y cambiar estado son ADMIN y ASPIRANTE.
+- El campo `estado` solo acepta los valores `ACTIVO` o `INACTIVO`.

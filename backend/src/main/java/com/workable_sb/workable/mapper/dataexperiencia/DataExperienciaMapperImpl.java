@@ -3,41 +3,60 @@ package com.workable_sb.workable.mapper.dataexperiencia;
 import org.springframework.stereotype.Component;
 import com.workable_sb.workable.dto.dataexperiencia.*;
 import com.workable_sb.workable.models.DataExperiencia;
+import com.workable_sb.workable.repository.UsuarioRepository;
 
 @Component
 public class DataExperienciaMapperImpl implements DataExperienciaMapper {
-    @Override
-    public DataExperiencia toEntity(DataExperienciaCreateDto dto) {
-        if (dto == null) return null;
-        DataExperiencia entity = new DataExperiencia();
-        entity.setCargo(dto.getCargo());
-        entity.setEmpresa(dto.getEmpresa());
-        entity.setDescripcion(dto.getDescripcion());
-    entity.setExpYears(dto.getExpYears());
-    entity.setFechaInicio(dto.getFechaInicio());
-    entity.setFechaFin(dto.getFechaFin());
-        entity.setTrabajoActual(dto.getTrabajoActual());
-        entity.setUbicacion(dto.getUbicacion());
-        // Estado por defecto ACTIVO
-        entity.setEstado(DataExperiencia.Estado.ACTIVO);
-        return entity;
+
+    private final UsuarioRepository usuarioRepo;
+
+    public DataExperienciaMapperImpl(UsuarioRepository usuarioRepo) {
+        this.usuarioRepo = usuarioRepo;
     }
 
     @Override
-    public DataExperiencia toEntity(DataExperienciaUpdateDto dto, DataExperiencia original) {
-        if (dto == null || original == null) return null;
-        original.setCargo(dto.getCargo());
-        original.setEmpresa(dto.getEmpresa());
-        original.setDescripcion(dto.getDescripcion());
-    original.setExpYears(dto.getExpYears());
-    original.setFechaInicio(dto.getFechaInicio());
-    original.setFechaFin(dto.getFechaFin());
-        original.setTrabajoActual(dto.getTrabajoActual());
-        original.setUbicacion(dto.getUbicacion());
-        if (dto.getEstado() != null) {
-            original.setEstado(stringToEstadoEnum(dto.getEstado(), DataExperiencia.Estado.class));
+    public DataExperiencia toEntity(Object dto, DataExperiencia original) {
+        if (dto == null) return null;
+        DataExperiencia entity = (original != null) ? original : new DataExperiencia();
+        try {
+            java.lang.reflect.Method getCargo = dto.getClass().getMethod("getCargo");
+            java.lang.reflect.Method getEmpresa = dto.getClass().getMethod("getEmpresa");
+            java.lang.reflect.Method getDescripcion = dto.getClass().getMethod("getDescripcion");
+            java.lang.reflect.Method getExpYears = dto.getClass().getMethod("getExpYears");
+            java.lang.reflect.Method getFechaInicio = dto.getClass().getMethod("getFechaInicio");
+            java.lang.reflect.Method getFechaFin = dto.getClass().getMethod("getFechaFin");
+            java.lang.reflect.Method getTrabajoActual = dto.getClass().getMethod("getTrabajoActual");
+            java.lang.reflect.Method getUbicacion = dto.getClass().getMethod("getUbicacion");
+            entity.setCargo((String) getCargo.invoke(dto));
+            entity.setEmpresa((String) getEmpresa.invoke(dto));
+            entity.setDescripcion((String) getDescripcion.invoke(dto));
+            entity.setExpYears((Float) getExpYears.invoke(dto));
+            entity.setFechaInicio((java.time.LocalDate) getFechaInicio.invoke(dto));
+            entity.setFechaFin((java.time.LocalDate) getFechaFin.invoke(dto));
+            entity.setTrabajoActual((Boolean) getTrabajoActual.invoke(dto));
+            entity.setUbicacion((String) getUbicacion.invoke(dto));
+            // usuarioId solo en create
+            try {
+                java.lang.reflect.Method getUsuarioId = dto.getClass().getMethod("getUsuarioId");
+                Integer usuarioId = (Integer) getUsuarioId.invoke(dto);
+                if (usuarioId == null) {
+                    throw new IllegalArgumentException("usuarioId no puede ser null");
+                } else {
+                    entity.setUsuario(usuarioRepo.findById(usuarioId).orElse(null));
+                }
+            } catch (NoSuchMethodException ignored) {}
+            // estado solo en update
+            try {
+                java.lang.reflect.Method getEstado = dto.getClass().getMethod("getEstado");
+                Object estadoValue = getEstado.invoke(dto);
+                if (estadoValue != null && estadoValue instanceof String) {
+                    entity.setEstado(stringToEstadoEnum((String) estadoValue, DataExperiencia.Estado.class));
+                }
+            } catch (NoSuchMethodException ignored) {}
+        } catch (Exception e) {
+            throw new RuntimeException("Error mapeando DataExperiencia", e);
         }
-        return original;
+        return entity;
     }
 
     @Override

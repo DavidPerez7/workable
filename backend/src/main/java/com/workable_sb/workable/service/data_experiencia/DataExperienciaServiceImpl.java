@@ -1,9 +1,10 @@
-package com.workable_sb.workable.service.dataexperiencia;
+package com.workable_sb.workable.service.data_experiencia;
 
 import com.workable_sb.workable.dto.dataexperiencia.*;
 import com.workable_sb.workable.mapper.dataexperiencia.DataExperienciaMapper;
 import com.workable_sb.workable.models.DataExperiencia;
-import com.workable_sb.workable.repository.dataexperiencia.DataExperienciaRepository;
+import com.workable_sb.workable.repository.DataExperienciaRepository;
+import com.workable_sb.workable.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +15,18 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 @RequiredArgsConstructor
 @Transactional
+
 public class DataExperienciaServiceImpl implements DataExperienciaService {
     private final DataExperienciaRepository repository;
     private final DataExperienciaMapper mapper;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
     public DataExperienciaReadDto create(DataExperienciaCreateDto dto) {
-        DataExperiencia entity = mapper.toEntity(dto);
+        // Validar que el usuario exista antes de mapear
+        usuarioRepository.findById(dto.getUsuarioId())
+            .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para id: " + dto.getUsuarioId()));
+        DataExperiencia entity = mapper.toEntity(dto, null);
         DataExperiencia saved = repository.save(entity);
         return mapper.toDto(saved);
     }

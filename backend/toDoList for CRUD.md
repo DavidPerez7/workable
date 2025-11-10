@@ -4,7 +4,7 @@
 - Clase con `@Entity` y `@Table(name = "nombre_tabla")`
 - Campo id autogenerado: `@Id` y `@GeneratedValue(strategy = GenerationType.IDENTITY)`
 - Campos con anotaciones JPA (`@Column`, `nullable`, `length`, etc.)
-- Enum para estado activar o desactivar: `ACTIVO`, `INACTIVO`
+- Enum para estado activar o desactivar OBLIGATORIO (debe ser autoseteado): `ACTIVO`, `INACTIVO`
 - Lombok: `@Data` + `@NoArgsConstructor`/`@AllArgsConstructor`
 
 ## 2. DTOs
@@ -24,7 +24,7 @@
 ## 4. Repository
 - Interface extiende `JpaRepository<Entidad, IdType>`
 - Métodos custom si se necesitan (ej: `findByNombre`, `findByEstado`)
-- Carpeta: `repository/[entidad]/`
+- Carpeta: `repository`
 
 ## 5. Service
 - Interface: métodos CRUD estándar
@@ -71,7 +71,7 @@
     - Título: `## CREATE {entidad}` (o UPDATE, DELETE, GET, PATCH, etc.)
     - Path: `- **Path:** baseUrl/{endpoint del controller de entidad}`
     - Http Method: `- **Http Method:** POST/PUT/DELETE/GET/PATCH`
-    - Body: `- **Body:** {Entidad}CreateDTO` (si aplica)
+    - Body, completo con todos los campos obligatorios: `- **Body:** {Entidad}CreateDTO` 
     - Roles: `- **Roles (Authorization JWT Bearer):** ...`
     - Respuesta: `- **Respuesta:** {Entidad}ReadDTO` o lo que corresponda
 
@@ -80,7 +80,7 @@
       - Método: `**Método:** POST`
       - URL: `**URL:** baseUrl/{entidad}`
       - Headers: `**Headers:** Content-Type: application/json` (si aplica)
-      - Body: (bloque JSON con ejemplo)
+      - Body: (bloque JSON con ejemplo (campos cobligatorios COMPLETOS))
 
     - Separar cada endpoint con `---` para claridad.
 

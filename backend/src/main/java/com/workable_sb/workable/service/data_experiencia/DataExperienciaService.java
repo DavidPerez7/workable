@@ -1,4 +1,4 @@
-package com.workable_sb.workable.service.dataexperiencia;
+package com.workable_sb.workable.service.data_experiencia;
 
 import com.workable_sb.workable.dto.dataexperiencia.*;
 import java.util.List;

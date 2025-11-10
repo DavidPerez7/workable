@@ -1,5 +1,5 @@
 
-package com.workable_sb.workable.service.dato;
+package com.workable_sb.workable.service.data_estudio;
 
 import com.workable_sb.workable.dto.dataestudio.DataEstudioDto;
 import com.workable_sb.workable.dto.dataestudio.DataEstudioReadDto;

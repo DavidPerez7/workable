@@ -89,23 +89,23 @@ INSERT INTO oferta_beneficio (beneficio_id, nombre, estado) VALUES
 (10, 'Primas extralegales', 'ACTIVO');
 
 -- Usuario de tipo ASPIRANTE (referencia: municipio_id)
-INSERT INTO usuario (nombre, correo, telefono, clave, rol, municipio_id) VALUES
-('Juan Aspirante', 'juan.aspirante@email.com', 3121234567, '$2a$10$hashprueba', 'ASPIRANTE', 1);
+INSERT INTO usuario (nombre, correo, telefono, clave, rol, municipio_id, dtype) VALUES
+('Juan Aspirante', 'juan.aspirante@email.com', 3121234567, '$2a$10$hashprueba', 'ASPIRANTE', 1, 'Usuario');
 
--- DataEstudio (referencia: usuario_id, nivelEducativo_id)
+-- data_estudio
 INSERT INTO data_estudio (nombre, fecha_inicio, fecha_fin, en_curso, institucion, certificado_url, nivel_educativo_id, usuario_id, estado)
-VALUES ('Ingeniería de Sistemas', '2020-01-01', '2024-01-01', false, 'Universidad Nacional', 'https://certificados.unal.edu/123.pdf', 2, 5, 'ACTIVO');
+VALUES ('Ingeniería de Sistemas', '2020-01-01', '2024-01-01', false, 'Universidad Nacional', 'https://certificados.unal.edu/123.pdf', 2, 1, 'ACTIVO');
 
 INSERT INTO data_estudio (nombre, fecha_inicio, fecha_fin, en_curso, institucion, certificado_url, nivel_educativo_id, usuario_id, estado)
-VALUES ('Ingeniería de Software', '2018-01-01', '2022-01-01', false, 'Universidad de Antioquia', 'https://certificados.udea.edu/456.pdf', 3, 6, 'ACTIVO');
+VALUES ('Ingeniería de Software', '2018-01-01', '2022-01-01', false, 'Universidad de Antioquia', 'https://certificados.udea.edu/456.pdf', 3, 1, 'ACTIVO');
 
 
--- DataExperiencia (referencia: usuario_id)
-INSERT INTO data_experiencia (cargo, empresa, descripcion, fecha_inicio, fecha_fin, trabajo_actual, ubicacion, usuario_id, anios_experiencia, estado)
-VALUES ('Desarrollador Backend', 'TechColombia SAS', 'Desarrollo de microservicios en Java', '2021-02-01', NULL, true, 'Bogotá', 1, 3, 'ACTIVO');
+-- data_experiencia
+INSERT INTO data_experiencia (cargo, empresa, descripcion, fecha_inicio, fecha_fin, trabajo_actual, ubicacion, usuario_id, exp_years, estado)
+VALUES ('Desarrollador Backend', 'TechColombia SAS', 'Desarrollo de microservicios en Java', '2021-02-01', NULL, true, 'Bogotá', 1, 1, 'ACTIVO');
 
-INSERT INTO data_experiencia (cargo, empresa, descripcion, fecha_inicio, fecha_fin, trabajo_actual, ubicacion, usuario_id, anios_experiencia, estado)
-VALUES ('Analista QA', 'AgroTech Soluciones', 'Pruebas automatizadas y manuales', '2019-06-01', '2021-01-31', false, 'Cali', 1, 2, 'ACTIVO');
+INSERT INTO data_experiencia (cargo, empresa, descripcion, fecha_inicio, fecha_fin, trabajo_actual, ubicacion, usuario_id, exp_years, estado)
+VALUES ('Analista QA', 'AgroTech Soluciones', 'Pruebas automatizadas y manuales', '2019-06-01', '2021-01-31', false, 'Cali', 1, 1, 'ACTIVO');
 
 
 -- Consultas de verificación

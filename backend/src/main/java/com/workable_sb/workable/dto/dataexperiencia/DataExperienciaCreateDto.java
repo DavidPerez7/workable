@@ -19,7 +19,6 @@ public class DataExperienciaCreateDto {
     @Size(max = 1000)
     private String descripcion;
 
-
     @NotNull
     private Float expYears;
 
@@ -34,4 +33,8 @@ public class DataExperienciaCreateDto {
     @NotBlank
     @Size(max = 255)
     private String ubicacion;
+
+    @NotNull
+    private Integer usuarioId;
+
 }

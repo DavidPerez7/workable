@@ -1,7 +1,7 @@
-package com.workable_sb.workable.controller.dataexperiencia;
+package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.dto.dataexperiencia.*;
-import com.workable_sb.workable.service.dataexperiencia.DataExperienciaService;
+import com.workable_sb.workable.service.data_experiencia.DataExperienciaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

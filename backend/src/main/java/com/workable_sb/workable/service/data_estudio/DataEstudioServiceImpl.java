@@ -1,12 +1,10 @@
-
-
-package com.workable_sb.workable.service.dato;
+package com.workable_sb.workable.service.data_estudio;
 
 import com.workable_sb.workable.dto.dataestudio.DataEstudioDto;
 import com.workable_sb.workable.dto.dataestudio.DataEstudioReadDto;
 import com.workable_sb.workable.mapper.dataestudio.DataEstudioMapper;
 import com.workable_sb.workable.models.DataEstudio;
-import com.workable_sb.workable.repository.dataestudio.DataEstudioRepository;
+import com.workable_sb.workable.repository.DataEstudioRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;

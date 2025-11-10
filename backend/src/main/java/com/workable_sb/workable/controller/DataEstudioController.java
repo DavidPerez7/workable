@@ -2,7 +2,7 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.dto.dataestudio.DataEstudioDto;
 import com.workable_sb.workable.dto.dataestudio.DataEstudioReadDto;
-import com.workable_sb.workable.service.dato.DataEstudioService;
+import com.workable_sb.workable.service.data_estudio.DataEstudioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
