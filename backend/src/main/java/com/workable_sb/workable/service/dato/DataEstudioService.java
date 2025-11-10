@@ -1,12 +1,14 @@
+
 package com.workable_sb.workable.service.dato;
 
-import com.workable_sb.workable.dto.dato.DataEstudioDto;
+import com.workable_sb.workable.dto.dataestudio.DataEstudioDto;
+import com.workable_sb.workable.dto.dataestudio.DataEstudioReadDto;
 import java.util.List;
 
 public interface DataEstudioService {
-    DataEstudioDto create(DataEstudioDto dto);
-    DataEstudioDto update(Integer id, DataEstudioDto dto);
+    DataEstudioReadDto create(DataEstudioDto dto);
+    DataEstudioReadDto update(Integer id, DataEstudioDto dto);
     void delete(Integer id);
-    DataEstudioDto findById(Integer id);
-    List<DataEstudioDto> findAll();
+    DataEstudioReadDto findById(Integer id);
+    List<DataEstudioReadDto> findAll();
 }

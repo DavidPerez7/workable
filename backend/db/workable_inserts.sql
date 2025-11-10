@@ -93,10 +93,12 @@ INSERT INTO usuario (nombre, correo, telefono, clave, rol, municipio_id) VALUES
 ('Juan Aspirante', 'juan.aspirante@email.com', 3121234567, '$2a$10$hashprueba', 'ASPIRANTE', 1);
 
 -- DataEstudio (referencia: usuario_id, nivelEducativo_id)
-INSERT INTO data_estudio (nombre, fecha_inicio, fecha_fin, en_curso, institucion, certificado_url, nivel_educativo_id, usuario_id) VALUES
-('Ingeniería de Sistemas', '2020-01-15', '2024-11-01', false, 'Universidad Nacional', 'https://certificados.unal.edu/123', 4, 1),
-('Técnico en Redes', '2018-02-01', '2019-12-15', false, 'SENA', 'https://certificados.sena.edu/456', 2, 1),
-('Maestría en IA', '2025-01-01', NULL, true, 'Universidad de Antioquia', '', 8, 1);
+INSERT INTO data_estudio (nombre, fecha_inicio, fecha_fin, en_curso, institucion, certificado_url, nivel_educativo_id, usuario_id, estado)
+VALUES ('Ingeniería de Sistemas', '2020-01-01', '2024-01-01', false, 'Universidad Nacional', 'https://certificados.unal.edu/123.pdf', 2, 5, 'ACTIVO');
+
+INSERT INTO data_estudio (nombre, fecha_inicio, fecha_fin, en_curso, institucion, certificado_url, nivel_educativo_id, usuario_id, estado)
+VALUES ('Ingeniería de Software', '2018-01-01', '2022-01-01', false, 'Universidad de Antioquia', 'https://certificados.udea.edu/456.pdf', 3, 6, 'ACTIVO');
+
 
 -- Consultas de verificación
 -- SELECT * FROM departamento;

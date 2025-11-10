@@ -1,10 +1,12 @@
 
+
 package com.workable_sb.workable.service.dato;
 
-import com.workable_sb.workable.dto.dato.DataEstudioDto;
-import com.workable_sb.workable.mapper.dato.DataEstudioMapper;
+import com.workable_sb.workable.dto.dataestudio.DataEstudioDto;
+import com.workable_sb.workable.dto.dataestudio.DataEstudioReadDto;
+import com.workable_sb.workable.mapper.dataestudio.DataEstudioMapper;
 import com.workable_sb.workable.models.DataEstudio;
-import com.workable_sb.workable.repository.DataEstudioRepository;
+import com.workable_sb.workable.repository.dataestudio.DataEstudioRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,16 +22,16 @@ public class DataEstudioServiceImpl implements DataEstudioService {
     }
 
     @Override
-    public DataEstudioDto create(DataEstudioDto dto) {
+    public DataEstudioReadDto create(DataEstudioDto dto) {
         if (dto == null) throw new IllegalArgumentException("El dto no puede ser nulo");
         DataEstudio entity = mapper.toEntity(dto);
         if (entity == null) throw new IllegalArgumentException("La entidad no puede ser nula");
         DataEstudio saved = repository.save(entity);
-        return mapper.toDto(saved);
+        return mapper.toReadDto(saved);
     }
 
     @Override
-    public DataEstudioDto update(Integer id, DataEstudioDto dto) {
+    public DataEstudioReadDto update(Integer id, DataEstudioDto dto) {
         if (id == null) throw new IllegalArgumentException("El id no puede ser nulo");
         DataEstudio entity = repository.findById(id).orElseThrow(() -> new RuntimeException("No encontrado"));
         // Setters manuales para actualizar campos
@@ -37,18 +39,18 @@ public class DataEstudioServiceImpl implements DataEstudioService {
         entity.setFechaInicio(dto.getFechaInicio());
         entity.setFechaFin(dto.getFechaFin());
         entity.setEnCurso(dto.getEnCurso());
-        entity.setCertificadoUrl(dto.getCertificado());
+        entity.setCertificadoUrl(dto.getCertificadoUrl());
         entity.setInstitucion(dto.getInstitucion());
         // Estado
         if (dto.getEstado() != null) {
             try {
-                entity.setEstado(DataEstudio.EstadoEstudio.valueOf(dto.getEstado().toUpperCase()));
+                entity.setEstado(DataEstudio.EstadoType.valueOf(dto.getEstado()));
             } catch (IllegalArgumentException e) {
                 // No cambiar estado si valor inválido
             }
         }
         // No se actualizan relaciones (usuario, nivelEducativo) aquí
-        return mapper.toDto(repository.save(entity));
+        return mapper.toReadDto(repository.save(entity));
     }
 
     @Override
@@ -58,13 +60,13 @@ public class DataEstudioServiceImpl implements DataEstudioService {
     }
 
     @Override
-    public DataEstudioDto findById(Integer id) {
+    public DataEstudioReadDto findById(Integer id) {
         if (id == null) throw new IllegalArgumentException("El id no puede ser nulo");
-        return repository.findById(id).map(mapper::toDto).orElse(null);
+        return repository.findById(id).map(mapper::toReadDto).orElse(null);
     }
 
     @Override
-    public List<DataEstudioDto> findAll() {
-        return repository.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+    public List<DataEstudioReadDto> findAll() {
+        return repository.findAll().stream().map(mapper::toReadDto).collect(Collectors.toList());
     }
 }

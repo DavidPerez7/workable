@@ -1,11 +1,10 @@
-
-# Checklist CRUD Entidad Independiente
+# Checklist CRUD para funcionalidades completas de entidad
 
 ## 1. Modelo (Entity)
 - Clase con `@Entity` y `@Table(name = "nombre_tabla")`
-- Campo `@Id` y `@GeneratedValue(strategy = GenerationType.IDENTITY)`
+- Campo id autogenerado: `@Id` y `@GeneratedValue(strategy = GenerationType.IDENTITY)`
 - Campos con anotaciones JPA (`@Column`, `nullable`, `length`, etc.)
-- Enum para estado (si aplica): `ACTIVO`, `INACTIVO`
+- Enum para estado activar o desactivar: `ACTIVO`, `INACTIVO`
 - Lombok: `@Data` + `@NoArgsConstructor`/`@AllArgsConstructor`
 
 ## 2. DTOs
@@ -53,9 +52,11 @@
 - `ResponseEntity<>` con códigos HTTP correctos (`200`, `201`, `204`, `404`, etc.)
 - Carpeta: `controller/[entidad]/`
 
+## 6.1. Seguridad (SecurityConfig)
+- Agregar protecciones obligatorias en el SecurityConfig para los endpoints dependiendo el usuario que lo usará (roles y permisos correctos para cada acción CRUD).
 
-## 7. SQL (Data)
-- Inserts en `workable_inserts.sql`
+## 7. SQL (data)
+- Añadir los inserts en el DML ya creado en /backend/db/`workable_inserts.sql`(tener en cuenta el orden de insersion ej: si la insersion usuario depende de municipio id no la puedes colcar antes de los inserts de municipios)
 - Datos iniciales con `estado = 'ACTIVO'` (si aplica)
 
 

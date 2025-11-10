@@ -31,67 +31,79 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll()
-            // Allow CORS preflight globally
-            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            
-            // Empresa endpoints
-            .requestMatchers(HttpMethod.GET, "/api/empresa/**").permitAll()  // GETs públicos
-            .requestMatchers(HttpMethod.POST, "/api/empresa").hasRole("RECLUTADOR")  // POST solo reclutador
-            .requestMatchers(HttpMethod.PUT, "/api/empresa/**").hasRole("RECLUTADOR")  // PUT solo reclutador
-            .requestMatchers(HttpMethod.DELETE, "/api/empresa/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
-            
-            // Oferta endpoints
-            .requestMatchers(HttpMethod.GET, "/api/oferta/**").permitAll()  // GETs públicos
-            .requestMatchers(HttpMethod.POST, "/api/oferta").hasAnyRole("ADMIN", "RECLUTADOR")  // POST admin o reclutador
-            .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // PUT admin o reclutador
-            .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // DELETE admin o reclutador
-            .requestMatchers(HttpMethod.PATCH, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // PATCH admin o reclutador
-            
-            // endpoints de Aspirante
-            .requestMatchers(HttpMethod.POST, "/api/aspirante").hasRole("ADMIN") //solo puede crear el administrador
-            .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
-            .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
-            .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
+                .requestMatchers("/api/auth/**").permitAll()
+                // Allow CORS preflight globally
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-            //endpoints reclutador
-            .requestMatchers(HttpMethod.POST, "/api/reclutador").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.GET, "/api/reclutador").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.GET, "/api/reclutador/empresa/**").hasAnyRole("ADMIN", "RECLUTADOR")
+                // DataEstudio endpoints
+                .requestMatchers(HttpMethod.GET, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.POST, "/api/dataestudio").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.PUT, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.DELETE, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
 
-            // Usuario endpoints (solo accesibles por ADMIN)
-            .requestMatchers("/api/usuario/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.GET, "/api/usuario").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.POST, "/api/usuario").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PUT, "/api/usuario/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.DELETE, "/api/usuario/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PATCH, "/api/usuario/**").hasRole("ADMIN")
-            
-            //admin endpoints
-            .requestMatchers("/api/admin/**").hasRole("ADMIN")
-            
-            // Modalidad endpoints
-            .requestMatchers(HttpMethod.GET, "/api/modalidad", "/api/modalidad/", "/api/modalidad/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/modalidad", "/api/modalidad/").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.PUT, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.DELETE, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.PATCH, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            
-            // TipoContrato endpoints
-            .requestMatchers(HttpMethod.GET, "/api/tipo-contrato", "/api/tipo-contrato/", "/api/tipo-contrato/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/tipo-contrato", "/api/tipo-contrato/").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PUT, "/api/tipo-contrato/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.DELETE, "/api/tipo-contrato/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.PATCH, "/api/tipo-contrato/**").hasRole("ADMIN")
+                // Empresa endpoints
+                .requestMatchers(HttpMethod.GET, "/api/empresa/**").permitAll()  // GETs públicos
+                .requestMatchers(HttpMethod.POST, "/api/empresa").hasRole("RECLUTADOR")  // POST solo reclutador
+                .requestMatchers(HttpMethod.PUT, "/api/empresa/**").hasRole("RECLUTADOR")  // PUT solo reclutador
+                .requestMatchers(HttpMethod.DELETE, "/api/empresa/**").hasRole("RECLUTADOR")  // DELETE solo reclutador
 
-            // Beneficio endpoints
-            .requestMatchers(HttpMethod.GET, "/api/beneficio", "/api/beneficio/", "/api/beneficio/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/beneficio", "/api/beneficio/").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.PUT, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.DELETE, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            .requestMatchers(HttpMethod.PATCH, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
-            
-            .anyRequest().authenticated()
+                // Oferta endpoints
+                .requestMatchers(HttpMethod.GET, "/api/oferta/**").permitAll()  // GETs públicos
+                .requestMatchers(HttpMethod.POST, "/api/oferta").hasAnyRole("ADMIN", "RECLUTADOR")  // POST admin o reclutador
+                .requestMatchers(HttpMethod.PUT, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // PUT admin o reclutador
+                .requestMatchers(HttpMethod.DELETE, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // DELETE admin o reclutador
+                .requestMatchers(HttpMethod.PATCH, "/api/oferta/**").hasAnyRole("ADMIN", "RECLUTADOR")  // PATCH admin o reclutador
+
+                // endpoints de Aspirante
+                .requestMatchers(HttpMethod.POST, "/api/aspirante").hasRole("ADMIN") //solo puede crear el administrador
+                .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
+                .requestMatchers("/api/administradores/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/api/hojasdevida/**").hasRole("ASPIRANTE")
+
+                //endpoints reclutador
+                .requestMatchers(HttpMethod.POST, "/api/reclutador").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.GET, "/api/reclutador").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/reclutador/empresa/**").hasAnyRole("ADMIN", "RECLUTADOR")
+
+                // Usuario endpoints (solo accesibles por ADMIN)
+                .requestMatchers("/api/usuario/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/usuario").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/usuario").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/usuario/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/usuario/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/usuario/**").hasRole("ADMIN")
+
+                // DataEstudio endpoints
+                .requestMatchers(HttpMethod.GET, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.POST, "/api/dataestudio").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.PUT, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
+                .requestMatchers(HttpMethod.DELETE, "/api/dataestudio/**").hasAnyRole("ADMIN", "ASPIRANTE")
+
+                //admin endpoints
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                // Modalidad endpoints
+                .requestMatchers(HttpMethod.GET, "/api/modalidad", "/api/modalidad/", "/api/modalidad/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/modalidad", "/api/modalidad/").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.DELETE, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.PATCH, "/api/modalidad/**").hasAnyRole("ADMIN", "RECLUTADOR")
+
+                // TipoContrato endpoints
+                .requestMatchers(HttpMethod.GET, "/api/tipo-contrato", "/api/tipo-contrato/", "/api/tipo-contrato/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/tipo-contrato", "/api/tipo-contrato/").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/tipo-contrato/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/tipo-contrato/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/tipo-contrato/**").hasRole("ADMIN")
+
+                // Beneficio endpoints
+                .requestMatchers(HttpMethod.GET, "/api/beneficio", "/api/beneficio/", "/api/beneficio/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/beneficio", "/api/beneficio/").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.DELETE, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
+                .requestMatchers(HttpMethod.PATCH, "/api/beneficio/**").hasAnyRole("ADMIN", "RECLUTADOR")
+
+                .anyRequest().authenticated()
             ).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
