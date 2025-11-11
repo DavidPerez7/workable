@@ -1,6 +1,5 @@
 package com.workable_sb.workable.mapper.dataexperiencia;
 
-import com.workable_sb.workable.dto.dataexperiencia.DataExperienciaCreateDto;
 import com.workable_sb.workable.dto.dataexperiencia.DataExperienciaReadDto;
 import com.workable_sb.workable.models.DataExperiencia;
 
