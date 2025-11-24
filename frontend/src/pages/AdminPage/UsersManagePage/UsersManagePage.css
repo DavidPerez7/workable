@@ -1,22 +1,394 @@
-.main-users-management-UMP {
+.main-users-manage-UMP {
   background-color: #f7fafc;
   min-height: calc(100vh - 120px);
   padding: 40px 20px;
 }
 
-.container-users-management-UMP {
-  background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 1200px;
+.container-users-manage-UMP {
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-.title-section-UMP {
-  font-weight: bold;
-  font-size: 1.8em;
-  color: #333;
-  margin-bottom: 1.5rem;
+
+.header-section-UMP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title-users-UMP {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle-users-UMP {
+  font-size: 1.1em;
+  color: #718096;
+}
+
+.btn-back-UMP {
+  background-color: #059669;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back-UMP:hover {
+  background-color: #047857;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+}
+
+
+.stats-section-UMP {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card-UMP {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card-UMP:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon-UMP {
+  font-size: 2.5em;
+}
+
+.stat-number-UMP {
+  font-size: 2em;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.stat-label-UMP {
+  font-size: 0.9em;
+  color: #718096;
+  font-weight: 600;
+}
+
+.stat-total-UMP .stat-number-UMP {
+  color: #059669;
+}
+
+.stat-activos-UMP .stat-number-UMP {
+  color: #48bb78;
+}
+
+.stat-inactivos-UMP .stat-number-UMP {
+  color: #ed8936;
+}
+
+.stat-postulaciones-UMP .stat-number-UMP {
+  color: #667eea;
+}
+
+
+.filters-section-UMP {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.search-box-UMP {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+}
+
+.search-input-UMP {
+  width: 100%;
+  padding: 0.8rem 3rem 0.8rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.search-input-UMP:focus {
+  outline: none;
+  border-color: #059669;
+}
+
+.search-icon-UMP {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2em;
+}
+
+.filter-group-UMP {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-label-UMP {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.filter-buttons-UMP {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.filter-btn-UMP {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid #e2e8f0;
+  background-color: white;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #4a5568;
+}
+
+.filter-btn-UMP:hover {
+  border-color: #059669;
+  color: #059669;
+}
+
+.filter-btn-UMP.active {
+  background-color: #059669;
+  border-color: #059669;
+  color: white;
+}
+
+
+.table-container-UMP {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.users-table-UMP {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+}
+
+.users-table-UMP thead {
+  background-color: #f7fafc;
+}
+
+.users-table-UMP th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 0.85em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.users-table-UMP td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #4a5568;
+  font-size: 0.9em;
+}
+
+.users-table-UMP tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.users-table-UMP tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+.user-name-UMP {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.documento-info-UMP {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.tipo-doc-UMP {
+  font-size: 0.8em;
+  color: #718096;
+  font-weight: 600;
+}
+
+.contact-info-UMP {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.phone-UMP {
+  font-size: 0.85em;
+  color: #718096;
+}
+
+.experiencia-UMP {
+  font-weight: 600;
+  color: #059669;
+}
+
+.postulaciones-count-UMP {
+  font-weight: 700;
+  color: #667eea;
   text-align: center;
+  font-size: 1.1em;
+}
+
+.estado-badge-UMP {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-activo-UMP {
+  background-color: #c6f6d5;
+  color: #22543d;
+}
+
+.badge-inactivo-UMP {
+  background-color: #fed7d7;
+  color: #742a2a;
+}
+
+.actions-buttons-UMP {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-action-UMP {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f7fafc;
+}
+
+.btn-action-UMP:hover {
+  transform: scale(1.1);
+}
+
+.btn-view-UMP:hover {
+  background-color: #bee3f8;
+}
+
+.btn-activate-UMP:hover {
+  background-color: #c6f6d5;
+}
+
+.btn-deactivate-UMP:hover {
+  background-color: #feebc8;
+}
+
+.btn-delete-UMP:hover {
+  background-color: #fecaca;
+}
+
+.no-results-UMP {
+  text-align: center;
+  padding: 3rem !important;
+  color: #a0aec0;
+  font-size: 1.1em;
+  font-style: italic;
+}
+
+
+@media (max-width: 1024px) {
+  .header-section-UMP {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-section-UMP {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .title-users-UMP {
+    font-size: 1.8em;
+  }
+
+  .stats-section-UMP {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-section-UMP {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box-UMP {
+    width: 100%;
+  }
+
+  .filter-group-UMP {
+    width: 100%;
+  }
+
+  .filter-buttons-UMP {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table-container-UMP {
+    border-radius: 0;
+    margin: 0 -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-users-manage-UMP {
+    padding: 20px 10px;
+  }
+
+  .stat-icon-UMP {
+    font-size: 2em;
+  }
+
+  .stat-number-UMP {
+    font-size: 1.5em;
+  }
 }

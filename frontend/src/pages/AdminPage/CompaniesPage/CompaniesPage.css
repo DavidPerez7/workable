@@ -1,22 +1,369 @@
-.main-companies-management-CMP {
+.main-companies-page-CP {
   background-color: #f7fafc;
   min-height: calc(100vh - 120px);
   padding: 40px 20px;
 }
 
-.container-companies-management-CMP {
-  background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 1200px;
+.container-companies-page-CP {
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-.title-section-CMP {
-  font-weight: bold;
-  font-size: 1.8em;
-  color: #333;
-  margin-bottom: 1.5rem;
+/* Header Section */
+.header-section-CP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title-companies-CP {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle-companies-CP {
+  font-size: 1.1em;
+  color: #718096;
+}
+
+.btn-back-CP {
+  background-color: #667eea;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back-CP:hover {
+  background-color: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Stats Section */
+.stats-section-CP {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card-CP {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card-CP:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon-CP {
+  font-size: 2.5em;
+}
+
+.stat-number-CP {
+  font-size: 2em;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.stat-label-CP {
+  font-size: 0.9em;
+  color: #718096;
+  font-weight: 600;
+}
+
+.stat-total-CP .stat-number-CP {
+  color: #667eea;
+}
+
+.stat-aprobadas-CP .stat-number-CP {
+  color: #48bb78;
+}
+
+.stat-pendientes-CP .stat-number-CP {
+  color: #ed8936;
+}
+
+.stat-rechazadas-CP .stat-number-CP {
+  color: #f56565;
+}
+
+/* Filters Section */
+.filters-section-CP {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box-CP {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-input-CP {
+  width: 100%;
+  padding: 0.8rem 3rem 0.8rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+.search-input-CP:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.search-icon-CP {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2em;
+}
+
+.filter-buttons-CP {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn-CP {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid #e2e8f0;
+  background-color: white;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #4a5568;
+}
+
+.filter-btn-CP:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.filter-btn-CP.active {
+  background-color: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* Table Section */
+.table-container-CP {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.companies-table-CP {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+}
+
+.companies-table-CP thead {
+  background-color: #f7fafc;
+}
+
+.companies-table-CP th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.companies-table-CP td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #4a5568;
+  font-size: 0.95em;
+}
+
+.companies-table-CP tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.companies-table-CP tbody tr:hover {
+  background-color: #f7fafc;
+}
+
+.empresa-name-CP {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.contact-info-CP {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.phone-CP {
+  font-size: 0.85em;
+  color: #718096;
+}
+
+.categoria-badge-CP {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  background-color: #edf2f7;
+  color: #4a5568;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.estado-badge-CP {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-aprobado-CP {
+  background-color: #c6f6d5;
+  color: #22543d;
+}
+
+.badge-pendiente-CP {
+  background-color: #feebc8;
+  color: #7c2d12;
+}
+
+.badge-rechazado-CP {
+  background-color: #fed7d7;
+  color: #742a2a;
+}
+
+.actions-buttons-CP {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-action-CP {
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f7fafc;
+}
+
+.btn-action-CP:hover {
+  transform: scale(1.1);
+}
+
+.btn-view-CP:hover {
+  background-color: #bee3f8;
+}
+
+.btn-approve-CP:hover {
+  background-color: #c6f6d5;
+}
+
+.btn-reject-CP:hover {
+  background-color: #fed7d7;
+}
+
+.btn-delete-CP:hover {
+  background-color: #fecaca;
+}
+
+.no-results-CP {
   text-align: center;
+  padding: 3rem !important;
+  color: #a0aec0;
+  font-size: 1.1em;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .header-section-CP {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-section-CP {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .title-companies-CP {
+    font-size: 1.8em;
+  }
+
+  .stats-section-CP {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-section-CP {
+    flex-direction: column;
+  }
+
+  .search-box-CP {
+    width: 100%;
+  }
+
+  .filter-buttons-CP {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .table-container-CP {
+    border-radius: 0;
+    margin: 0 -20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-companies-page-CP {
+    padding: 20px 10px;
+  }
+
+  .stat-icon-CP {
+    font-size: 2em;
+  }
+
+  .stat-number-CP {
+    font-size: 1.5em;
+  }
 }

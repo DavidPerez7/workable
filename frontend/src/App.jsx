@@ -55,7 +55,7 @@ function App() {
 				<Route path="/Administrador/Reportes" element={<ReportPage />} />
 				<Route path="/Administrador/Retroalimentacion" element={<FeedBackPage />} />
 				<Route path="/Administrador/Ofertas" element={<OffersPage />} />
-				<Route path="/Administrador/Usuarios" element={<UsersManagePage />} />
+				<Route path="/Administrador/Usuarios" element={<UsersManagePage/>} />
 				<Route path="/Empresas" element={<Empresas />} />
 				<Route path="/KFCPage" element={<KFCPage />} />
 			</Routes>
