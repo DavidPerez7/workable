@@ -6,27 +6,52 @@ function Header() {
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	return (
-
-		<header className="header-container" href='/ '>
+		<header className="header-container">
 			<Link to='/' className="logo-container"> 
-				<img src="https://i.postimg.cc/PrF6JqqC/WKB-LOGO-copia-removebg-preview.png" alt="imglogo" className='img-wkb'/>
+				<img src="https://i.postimg.cc/PrF6JqqC/WKB-LOGO-copia-removebg-preview.png" alt="Workable Logo" className='img-wkb'/>
 			</Link>
 
-			<button className="menu-toggle"
+			<button 
+				className="menu-toggle"
 				onClick={() => setMenuOpen(open => !open)}
 				aria-label="Abrir menú"
+				aria-expanded={menuOpen}
 			>
-				☰
+				<span className="menu-icon">☰</span>
 			</button>
 
 			<nav className={menuOpen ? 'nav-list show' : 'nav-list'}>
-				<Link to="/Professional">Perfil Profesional</Link>
-				<Link to="/Salary">Salarios</Link>
+				<NavLink 
+					to="/Professional" 
+					className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+					onClick={() => setMenuOpen(false)}
+				>
+					Perfil Profesional
+				</NavLink>
+				<NavLink 
+					to="/Salary" 
+					className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}
+					onClick={() => setMenuOpen(false)}
+				>
+					Salarios
+				</NavLink>
 			</nav>
 
 			<div className={menuOpen ? 'user-menu show' : 'user-menu'}>
-				<Link to="/Login" className="ls-link">Iniciar Sesión</Link>
-				<Link to="/SignUp" className="ls-link">Registrarse</Link>
+				<Link 
+					to="/Login" 
+					className="btn-login"
+					onClick={() => setMenuOpen(false)}
+				>
+					Iniciar Sesión
+				</Link>
+				<Link 
+					to="/SignUp" 
+					className="btn-signup"
+					onClick={() => setMenuOpen(false)}
+				>
+					Registrarse
+				</Link>
 			</div>
 		</header>
 	);
