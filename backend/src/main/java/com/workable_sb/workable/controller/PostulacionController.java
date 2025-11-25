@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.postulacion.PostulacionDto;
-import com.workable_sb.workable.service.postulacion.PostulacionService;
+import com.workable_sb.workable.service.PostulacionService;
 
 import jakarta.validation.Valid;
 

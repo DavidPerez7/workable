@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.valoracion.ValoracionDto;
 import com.workable_sb.workable.dto.valoracion.ValoracionReadDto;
-import com.workable_sb.workable.service.valoracion.ValoracionService;
+import com.workable_sb.workable.service.ValoracionService;
 
 import jakarta.validation.Valid;
 
