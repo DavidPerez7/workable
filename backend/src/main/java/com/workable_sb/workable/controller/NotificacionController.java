@@ -1,7 +1,7 @@
 package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.dto.notificacion.NotificacionDto;
-import com.workable_sb.workable.service.notificacion.NotificacionService;
+import com.workable_sb.workable.service.NotificacionService;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

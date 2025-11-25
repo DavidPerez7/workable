@@ -2,7 +2,7 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.dto.usuario.UsuarioDto;
 import com.workable_sb.workable.dto.usuario.UsuarioReadDto;
-import com.workable_sb.workable.service.usuario.UsuarioService;
+import com.workable_sb.workable.service.UsuarioService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
