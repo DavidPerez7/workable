@@ -20,9 +20,9 @@ import com.workable_sb.workable.repository.UsrAspiranteRepository;
 import com.workable_sb.workable.repository.UsrReclutadorRepository;
 import com.workable_sb.workable.repository.UsuarioRepository;
 import com.workable_sb.workable.security.JwtUtil;
+import com.workable_sb.workable.service.UsuarioService;
 import com.workable_sb.workable.service.usuario.UsrAspiranteService;
 import com.workable_sb.workable.service.usuario.UsrReclutadorService;
-import com.workable_sb.workable.service.usuario.UsuarioService;
 
 import jakarta.validation.Valid;
 
