@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.empresa.EmpresaDto;
-import com.workable_sb.workable.service.empresa.EmpresaService;
+import com.workable_sb.workable.service.EmpresaService;
 
 import jakarta.validation.Valid;
 
