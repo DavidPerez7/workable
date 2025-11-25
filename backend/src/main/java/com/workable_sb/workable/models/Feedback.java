@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,8 +21,7 @@ import jakarta.persistence.ForeignKey;
 @NoArgsConstructor
 @Entity
 @Data
-@Table(name = "valoracion")
-public class Valoracion {
+public class Feedback {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -33,21 +31,20 @@ public class Valoracion {
 
 	@Column(nullable = false)
 	private Float puntuacion;
-	private LocalDate fecha_valoracion;
+	private LocalDate fechaCreacion;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "empresa_id",nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_valoracion"))
+	@JoinColumn(name = "empresa_id",nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_feedback"))
 	private Empresa empresa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_valoracion"))
+	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_feedback"))
 	private Usuario usuario;
 
 	@PrePersist
-	private void setFecha_valoracion() {
-		if (this.fecha_valoracion == null) {
-			this.fecha_valoracion = LocalDate.now();
+	private void setCreationDate() {
+		if (this.fechaCreacion == null) {
+			this.fechaCreacion = LocalDate.now();
 		}
 	}
-	
 }

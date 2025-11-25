@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.workable_sb.workable.models.Municipio;
 
 @Repository
-public interface MunicipioRepository extends JpaRepository<Municipio, Integer> {
+public interface MunicipioRepo extends JpaRepository<Municipio, Integer> {
     
-    // Buscar municipios por departamento
     List<Municipio> findByDepartamentoId(Integer departamentoId);
 }
