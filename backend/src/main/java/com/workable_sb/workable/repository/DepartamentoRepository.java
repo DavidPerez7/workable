@@ -7,5 +7,5 @@ import com.workable_sb.workable.models.Departamento;
 
 @Repository
 public interface DepartamentoRepository extends JpaRepository<Departamento, Integer> {
-
+    
 }
