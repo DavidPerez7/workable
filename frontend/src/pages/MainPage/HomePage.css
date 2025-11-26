@@ -506,9 +506,7 @@ main {
   color: white;
 }
 
-/* ==========================================
-   FEATURES SECTION
-   ========================================== */
+
 
         .features-section {
           padding: 6rem 2rem;
@@ -606,9 +604,7 @@ main {
             width: 100%;
           }
         }
-/* ==========================================
-   RESPONSIVE DESIGN
-   ========================================== */
+
 
 @media (max-width: 768px) {
   .section-hero {

@@ -1,249 +1,735 @@
-.main-reclutador-rc {
-  background-color: #f7fafc;
-  min-height: calc(100vh - 60px);
-  margin: auto;
-  padding-bottom: 20px;
+/* ==========================================
+   RECLUTADOR PAGE - MODERN TECH DESIGN
+   Paleta: Navy (#0F172A), Blue (#3B82F6), 
+   Amber (#F59E0B), Green (#10B981)
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.nav-panel-rc {
+.reclutador-main {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #0F172A;
+  background: #F9FAFB;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0.5rem 1rem;
-  gap: 5rem;
+  min-height: calc(100vh - 80px);
 }
 
-.nav-item-rc {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* ==========================================
+   SIDEBAR NAVIGATION
+   ========================================== */
+
+.sidebar-nav {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #E5E7EB;
+  padding: 2rem 1rem;
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
 }
 
-.nav-item-rc:last-child {
-  margin-right: 0;
-}
-
-.icon-nav-rc {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 5px;
-  color: #333;
-}
-
-.link-nav-rc {
-  font-size: 0.875rem;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.link-nav-rc:hover {
-  text-decoration: none;
-}
-
-.link-nav-rc a {
-  color: #333;
-  text-decoration: none;
-}
-
-.link-nav-rc a:hover {
-  color: #2541a0;
-}
-
-.main-content-rc {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin: 10px;
-}
-
-
-.column-left-rc,
-.column-right-rc {
+.nav-list-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
-.info-company-rc,
-.section-recruitment-rc,
-.section-statistics-rc,
-.section-reviews-rc {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.info-company-rc {
+.nav-item-sidebar {
   display: flex;
   align-items: center;
   gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  color: #475569;
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-.logo-company-rc {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.nav-item-sidebar:hover {
+  background: #F8FAFC;
+  color: #1E293B;
+}
+
+.nav-item-sidebar.active {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.nav-icon {
   flex-shrink: 0;
+  color: currentColor;
 }
-.img-logo-rc {
+
+/* ==========================================
+   CONTENT WRAPPER
+   ========================================== */
+
+.content-wrapper {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
-.name-company-rc {
-  font-weight: bold;
-  font-size: 1.2em;
-  margin: 0;
-}
-
-.user-admin-rc {
-  font-size: 0.9em;
-  color: #666;
-  margin: 0;
-}
-
-.header-section-rc {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.title-section-rc {
-  font-weight: bold;
-  font-size: 1.1em;
-  margin: 0;
-}
-
-.link-manage-rc,
-.link-more-rc,
-.link-reviews-rc {
-  color: #2541a0;
-  cursor: pointer;
-  font-size: 0.9em;
-  text-decoration: none;
-  transition: text-decoration 0.3s ease, color 0.3s ease;
-}
-
-.link-manage-rc:hover,
-.link-more-rc:hover,
-.link-reviews-rc:hover {
-  text-decoration: underline;
-  color: #1f0d7d;
-}
-
-.cards-recruitment-rc,
-.graphs-statistics-rc {
+.content-grid {
   display: grid;
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
 }
 
-.cards-recruitment-rc {
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+.column-left,
+.column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.graphs-statistics-rc {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+/* ==========================================
+   COMPANY CARD
+   ========================================== */
+
+.company-card {
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
 }
 
-.card-recruitment-rc,
-.card-graph-rc {
-  text-align: center;
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.company-card:hover {
+  border-color: #3B82F6;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
 }
 
-.card-text-rc {
-  font-size: 0.9em;
-  color: #555;
-  margin-top: 0.5rem;
-}
-
-.circle-placeholder-rc {
+.company-avatar {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  margin: 0 auto 0.5rem auto;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #E5E7EB;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
 }
 
-.graph-placeholder-rc {
+.company-logo-img {
   width: 100%;
-  height: 100px;
-  background-color: #e0e0e0;
-  margin: 0 auto 0.5rem auto;
-  border-radius: 4px;
+  height: 100%;
+  object-fit: contain;
+  padding: 0.5rem;
 }
 
-.image-placeholder-rc {
-  width: 100%;
-  height: 200px;
-  background-color: #e0e0e0;
-  border-radius: 8px;
+.company-info {
+  flex: 1;
 }
 
-.container-button-publish-rc {
-  text-align: center;
-  margin-top: 1.5rem;
+.company-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 0.25rem;
 }
 
-.button-publish-rc {
-  background-color: #ff6302;
-  color: #fff;
-  padding: 0.8rem 1.8rem;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease, transform 0.1s ease;
-  font-size: 16px;
-  font-weight: 600;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.company-role {
+  font-size: 1rem;
+  color: #64748B;
 }
 
-.button-publish-rc:hover {
-  background-color: #db5400;
-  transform: translateY(-1px);
+/* ==========================================
+   SECTION CARD
+   ========================================== */
+
+.section-card {
+  background: white;
+  border: 2px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
 }
 
-.stars-reviews-rc,
-.users-reviews-rc,
-.comments-reviews-rc {
+.section-card:hover {
+  border-color: #CBD5E1;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #E5E7EB;
+}
+
+.section-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-icon {
+  color: #3B82F6;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0;
+}
+
+.section-link {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.review-label-rc {
+  color: #3B82F6;
   font-weight: 600;
-  color: #333;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.section-link:hover {
+  color: #1D4ED8;
+  gap: 0.75rem;
+}
+
+.section-link svg {
+  transition: transform 0.2s ease;
+}
+
+.section-link:hover svg {
+  transform: translateX(4px);
+}
+
+/* ==========================================
+   OFERTAS CONTAINER
+   ========================================== */
+
+.ofertas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #E5E7EB;
+  border-top-color: #3B82F6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: #64748B;
+  font-size: 1rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.empty-state svg {
+  color: #CBD5E1;
+  margin-bottom: 1rem;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #475569;
   margin-bottom: 0.5rem;
 }
 
-.container-reviews-rc {
-  margin-top: 1rem;
+.empty-subtext {
+  font-size: 0.95rem;
+  color: #94A3B8;
 }
 
-.stars-reviews-rc i {
-  color: #eab308;
-  font-size: 1.1em;
+.button-container {
+  display: flex;
+  justify-content: center;
 }
 
-.users-reviews-rc i,
-.comments-reviews-rc i {
-  color: #2541a0;
-  font-size: 1.1em;
+.btn-publish {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
+.btn-publish:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-publish:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================
+   STATISTICS
+   ========================================== */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #F8FAFC;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  background: white;
+  border-color: #3B82F6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-icon.blue-bg {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+.stat-icon.green-bg {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1E293B;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #64748B;
+}
+
+/* ==========================================
+   BANNER CARD
+   ========================================== */
+
+.banner-card {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  border-radius: 16px;
+  padding: 2.5rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+}
+
+.banner-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.banner-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.95;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.banner-text span {
+  font-weight: 300;
+}
+
+.banner-puntuation {
+  margin-top: 3px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-banner {
+  background: white;
+  color: #3B82F6;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-banner:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+}
+
+/* ==========================================
+   REVIEWS
+   ========================================== */
+
+.reviews-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.review-item {
+  padding: 1.25rem;
+  background: #F8FAFC;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.review-item:hover {
+  background: white;
+  border-color: #CBD5E1;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.review-info {
+  flex: 1;
+}
+
+.review-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 0.25rem;
+}
+
+.review-stars {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.review-text {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.empty-reviews {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.empty-reviews-text {
+  color: #94A3B8;
+  font-size: 0.95rem;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-nav {
+    width: 240px;
+  }
+}
+
+@media (max-width: 968px) {
+  .reclutador-main {
+    flex-direction: column;
+  }
+
+  .sidebar-nav {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 1rem;
+  }
+
+  .nav-list-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0.5rem;
+  }
+
+  .nav-item-sidebar {
+    white-space: nowrap;
+    padding: 0.75rem 1rem;
+  }
+
+  .nav-item-sidebar span {
+    display: none;
+  }
+
+  .content-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+
+  .content-grid {
+    gap: 1.5rem;
+  }
+
+  .section-card {
+    padding: 1.5rem;
+  }
+
+  .company-card {
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .company-name {
+    font-size: 1.3rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .banner-card {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .company-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .company-name {
+    font-size: 1.2rem;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .btn-publish {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stat-card {
+    padding: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+}
+
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+
+.nav-item-sidebar:focus-visible,
+.section-link:focus-visible,
+.btn-publish:focus-visible,
+.btn-banner:focus-visible {
+  outline: 3px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   DARK MODE SUPPORT (OPTIONAL)
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+  .reclutador-main {
+    background: #0F172A;
+    color: #E2E8F0;
+  }
+
+  .sidebar-nav {
+    background: #1E293B;
+    border-right-color: #334155;
+  }
+
+  .nav-item-sidebar {
+    color: #94A3B8;
+  }
+
+  .nav-item-sidebar:hover {
+    background: #0F172A;
+    color: #E2E8F0;
+  }
+
+  .section-card,
+  .company-card {
+    background: #1E293B;
+    border-color: #334155;
+  }
+
+  .company-name {
+    color: #E2E8F0;
+  }
+
+  .company-role {
+    color: #94A3B8;
+  }
+
+  .section-title {
+    color: #E2E8F0;
+  }
+
+  .section-header {
+    border-bottom-color: #334155;
+  }
+
+  .stat-card {
+    background: #0F172A;
+    border-color: #334155;
+  }
+
+  .stat-card:hover {
+    background: #1E293B;
+  }
+
+  .stat-value {
+    color: #E2E8F0;
+  }
+
+  .stat-label {
+    color: #94A3B8;
+  }
+
+  .review-item {
+    background: #0F172A;
+    border-color: #334155;
+  }
+
+  .review-item:hover {
+    background: #1E293B;
+  }
+
+  .review-name {
+    color: #E2E8F0;
+  }
+
+  .review-text {
+    color: #94A3B8;
+  }
+
+  .empty-text {
+    color: #94A3B8;
+  }
+
+  .empty-subtext {
+    color: #64748B;
+  }
+}

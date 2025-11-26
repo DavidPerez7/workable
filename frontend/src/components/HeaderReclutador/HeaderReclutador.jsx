@@ -26,7 +26,7 @@ function HeaderReclutador() {
       <div className={menuOpen ? 'user-profile-menu-rc show-rc' : 'user-profile-menu-rc'}>
         <div className="user-info-rc">
           <span className="username-text-rc">NombreReclutador</span>
-          <Link to='/Reclutador/EditarPerfil' className="avatar-placeholder-rc"></Link>
+          <Link to='/Reclutador/EmpresaPage' className="avatar-placeholder-rc"></Link>
         </div>
       </div>
     </header>
