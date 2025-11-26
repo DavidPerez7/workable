@@ -7,12 +7,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,17 +48,31 @@ public class Experiencia {
   @Column(nullable = false)
   private Boolean trabajoActual = false;
 
-  @Column(nullable = false, length = 255)
-  private String ubicacion;
+  // Ubicación del trabajo (Colombia): Municipio existente
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_experiencia_municipio"))
+  private Municipio municipio;
 
   @ManyToOne
   @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExperiencia_aspirante"))
   private Usuario usuario;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 10)
   private Estado estado = Estado.ACTIVO;
 
   public enum Estado {
     ACTIVO, INACTIVO
+  }
+
+  @PrePersist
+  @PreUpdate
+  protected void validateFechas() {
+    if (trabajoActual != null && trabajoActual && fechaFin != null) {
+      throw new IllegalStateException("Si el trabajo actual es verdadero, la fecha de fin debe ser null");
+    }
+    if (fechaFin != null && fechaInicio != null && fechaFin.isBefore(fechaInicio)) {
+      throw new IllegalStateException("La fecha de fin debe ser posterior a la fecha de inicio");
+    }
   }
 }
