@@ -104,6 +104,14 @@ public class Oferta {
 	@Column(name = "beneficio", length = 30, nullable = false)
 	private Set<Beneficio> beneficios = new HashSet<>();
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+		name = "oferta_habilidad_requerida",
+		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_oferta")),
+		inverseJoinColumns = @JoinColumn(name = "habilidad_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_habilidad"))
+	)
+	private Set<Habilidad> habilidadesRequeridas = new HashSet<>();
+
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
 	private Set<Postulacion> postulaciones = new HashSet<>();
 
