@@ -119,7 +119,10 @@ public class Empresa {
     private List<Oferta> ofertas = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Direction> directions = new ArrayList<>();
+    private List<Direccion> direcciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Feedback> feedbacks = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

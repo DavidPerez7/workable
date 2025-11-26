@@ -1,13 +1,37 @@
 package com.workable_sb.workable.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Getter;
-
-@Entity
-@Getter
-public class Departamento {
-    @Id
-    private Integer id;
-    private String nombre;
+public enum Departamento {
+    AMAZONAS,
+    ANTIOQUIA,
+    ARAUCA,
+    ATLANTICO,
+    BOLIVAR,
+    BOYACA,
+    CALDAS,
+    CAQUETA,
+    CASANARE,
+    CAUCA,
+    CESAR,
+    CHOCO,
+    CORDOBA,
+    CUNDINAMARCA,
+    GUAINIA,
+    GUAVIARE,
+    HUILA,
+    LA_GUAJIRA,
+    MAGDALENA,
+    META,
+    NARINO,
+    NORTE_DE_SANTANDER,
+    PUTUMAYO,
+    QUINDIO,
+    RISARALDA,
+    SAN_ANDRES_Y_PROVIDENCIA,
+    SANTANDER,
+    SUCRE,
+    TOLIMA,
+    VALLE_DEL_CAUCA,
+    VAUPES,
+    VICHADA,
+    BOGOTA_DC
 }
