@@ -1,5 +1,7 @@
 package com.workable_sb.workable.models;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,38 +16,42 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50)
     private String nombre;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50)
+    private String apellido;
+
+    @Column(nullable = false, unique =  true)
     private String correo;
     private Long telefono;
-    private String fotoPerfilUrl;
+    private String urlFotoPerfil;
+    private LocalDate fechaNacimiento;
+    private LocalDate fechaCreacion;
+    private Boolean isActive = true;
 
-    @Column(nullable = false, length = 255)
-    private String clave;
+    @Column(nullable = false, length = 500)
+    private String password;
 
-    public enum RolUsr {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol;
+
+    public enum Rol {
         ASPIRANTE,
         RECLUTADOR,
         ADMIN,
         ADSO
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RolUsr rol;
-
     @ManyToOne
     @JoinColumn(name = "municipio_id", nullable=false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 
-    public enum EstadoUsr {
-        ACTIVO,
-        INACTIVO
+    @PrePersist
+    protected void onCreate(){
+        if (this.fechaCreacion == null) {
+            this.fechaCreacion = LocalDate.now();
+        }
     }
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EstadoUsr estado = EstadoUsr.ACTIVO;
 }

@@ -15,12 +15,11 @@ import jakarta.persistence.ForeignKey;
 @Data
 @Entity
 public class Municipio {
-  @Id
-  private Integer id;
-  private String nombre;
+    @Id
+    private Integer id;
+    private String nombre;
 
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "departamento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_municipio_departamento"))
-  private Departamento departamento;
-
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "departamento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_municipio_departamento"))
+    private Departamento departamento;
 }
