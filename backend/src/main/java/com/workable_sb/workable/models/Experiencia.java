@@ -26,7 +26,7 @@ import jakarta.persistence.EnumType;
 public class Experiencia {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
 
   @Column(nullable = false, length = 255)
   private String cargo;
@@ -35,25 +35,18 @@ public class Experiencia {
   private String empresa;
 
   @Column(length = 1000)
-  private String descripcion;  // Descripción de funciones/logros
-
-  @Column(nullable = false)
-  private Float expYears;
+  private String descripcion;
 
   @Column(nullable = false)
   private LocalDate fechaInicio;
 
-  private LocalDate fechaFin;  // null si es trabajo actual
+  private LocalDate fechaFin;
 
-  @Column(nullable = false)
-  private Boolean trabajoActual = false;
-
-  // Ubicación del trabajo (Colombia): Municipio existente
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_experiencia_municipio"))
   private Municipio municipio;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExperiencia_aspirante"))
   private Usuario usuario;
 
@@ -68,9 +61,6 @@ public class Experiencia {
   @PrePersist
   @PreUpdate
   protected void validateFechas() {
-    if (trabajoActual != null && trabajoActual && fechaFin != null) {
-      throw new IllegalStateException("Si el trabajo actual es verdadero, la fecha de fin debe ser null");
-    }
     if (fechaFin != null && fechaInicio != null && fechaFin.isBefore(fechaInicio)) {
       throw new IllegalStateException("La fecha de fin debe ser posterior a la fecha de inicio");
     }
