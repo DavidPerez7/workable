@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String nombre;
@@ -22,9 +22,13 @@ public class Usuario {
     @Column(nullable = false, length = 50)
     private String apellido;
 
-    @Column(nullable = false, unique =  true)
+    @Column(nullable = false, unique = true, length = 255)
     private String correo;
-    private Long telefono;
+
+    @Column(length = 20)
+    private String telefono;
+
+    @Column(length = 500)
     private String urlFotoPerfil;
     private LocalDate fechaNacimiento;
     private LocalDate fechaCreacion;
@@ -44,8 +48,8 @@ public class Usuario {
         ADSO
     }
 
-    @ManyToOne
-    @JoinColumn(name = "municipio_id", nullable=false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 
     @PrePersist
