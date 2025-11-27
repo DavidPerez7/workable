@@ -8,27 +8,32 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.workable_sb.workable.models.Oferta;
+import com.workable_sb.workable.models.Oferta.EstadoOferta;
+import com.workable_sb.workable.models.Oferta.Modalidad;
 
 @Repository
-public interface OfertaRepository extends JpaRepository<Oferta, Integer> {
+public interface OfertaRepository extends JpaRepository<Oferta, Long> {
     
     // Buscar ofertas por empresa
-    List<Oferta> findByEmpresaNitId(Long empresaId);
+    List<Oferta> findByEmpresaId(Long empresaId);
     
-    // Buscar ofertas por estado
-    List<Oferta> findByEstado(String estado);
+    // Buscar ofertas por estado (enum)
+    List<Oferta> findByEstado(EstadoOferta estado);
     
     // Buscar ofertas por empresa y estado
-    List<Oferta> findByEmpresaNitIdAndEstado(Long empresaId, String estado);
+    List<Oferta> findByEmpresaIdAndEstado(Long empresaId, EstadoOferta estado);
     
     // Buscar ofertas por reclutador
-    List<Oferta> findByReclutadorId(Integer reclutadorId);
+    List<Oferta> findByReclutadorId(Long reclutadorId);
     
     // Buscar ofertas por municipio
     List<Oferta> findByMunicipioId(Integer municipioId);
     
-    // Buscar ofertas por modalidad
-    List<Oferta> findByModalidadId(Integer modalidadId);
+    // Buscar ofertas por modalidad (enum)
+    List<Oferta> findByModalidad(Modalidad modalidad);
+    
+    // Buscar ofertas activas (estado ABIERTA)
+    List<Oferta> findByEstadoOrderByFechaPublicacionDesc(EstadoOferta estado);
     
     // Buscar ofertas que contengan texto en título o descripción
     @Query("SELECT o FROM Oferta o WHERE LOWER(o.titulo) LIKE LOWER(CONCAT('%', :texto, '%')) OR LOWER(o.descripcion) LIKE LOWER(CONCAT('%', :texto, '%'))")

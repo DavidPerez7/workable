@@ -12,14 +12,23 @@ import com.workable_sb.workable.models.Empresa;
 @Repository
 public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
 
-    Optional<Empresa> findById(Long empresaId);
-    List<Empresa> findByCategoriaId(Integer categoriaId);
+    // Buscar empresas por municipio
     List<Empresa> findByMunicipioId(Integer municipioId);
     
-    @Query("SELECT e FROM Empresa e ORDER BY e.puntuacion DESC")
+    // Buscar empresas por nombre (búsqueda parcial)
+    List<Empresa> findByNombreContainingIgnoreCase(String nombre);
+    
+    // Obtener empresas con mejor puntuación
+    @Query("SELECT e FROM Empresa e WHERE e.isActive = true ORDER BY e.puntuacion DESC")
     List<Empresa> findTopByPuntuacion();
 
+    // Buscar empresa por NIT
     Optional<Empresa> findByNit(String nit);
     
+    // Verificar si existe empresa con ese NIT
     boolean existsByNit(String nit);
+    
+    // Buscar empresas activas
+    List<Empresa> findByIsActive(Boolean isActive);
 }
+
