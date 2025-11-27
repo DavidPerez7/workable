@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ public class Direccion {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String nombreSede;
+    private String nombre;
 
     @Column(nullable = false, length = 255)
     private String direccion;
@@ -33,7 +34,7 @@ public class Direccion {
 
     @Column(nullable = false, length = 255)
     private String correo;
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @Column(nullable = false)
     private Boolean isPrincipal;
@@ -46,4 +47,10 @@ public class Direccion {
     @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_direccion_municipio"))
     private Municipio municipio;
 
+    @PrePersist
+    protected void setIsActive(){
+        if (this.isActive == null) {
+            this.isActive = true;
+        }
+    }
 }
