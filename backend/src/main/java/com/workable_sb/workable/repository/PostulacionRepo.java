@@ -7,15 +7,29 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.workable_sb.workable.models.Postulacion;
+import com.workable_sb.workable.models.Postulacion.Estado;
 
 @Repository
-public interface PostulacionRepo extends JpaRepository<Postulacion, Integer> {
+public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
     
-    List<Postulacion> findByOferta(Integer ofertaId);
-    List<Postulacion> findByAspirante(Integer aspiranteId);
-    List<Postulacion> findByOfertaAndPostulacionEstado(Integer ofertaId, Short estadoId);
-    boolean existsByAspiranteIdAndOfertaId(Integer aspiranteId, Integer ofertaId);
+    // Buscar postulaciones por oferta
+    List<Postulacion> findByOfertaId(Long ofertaId);
     
-    // Buscar postulación específica de un aspirante a una oferta
-    Optional<Postulacion> findByAspiranteIdAndOfertaId(Integer aspiranteId, Integer ofertaId);
+    // Buscar postulaciones por usuario
+    List<Postulacion> findByUsuarioId(Long usuarioId);
+    
+    // Buscar postulaciones por oferta y estado
+    List<Postulacion> findByOfertaIdAndEstado(Long ofertaId, Estado estado);
+    
+    // Buscar postulaciones por usuario y estado
+    List<Postulacion> findByUsuarioIdAndEstado(Long usuarioId, Estado estado);
+    
+    // Verificar si existe postulación
+    boolean existsByUsuarioIdAndOfertaId(Long usuarioId, Long ofertaId);
+    
+    // Buscar postulación específica de un usuario a una oferta
+    Optional<Postulacion> findByUsuarioIdAndOfertaId(Long usuarioId, Long ofertaId);
+    
+    // Buscar postulaciones activas
+    List<Postulacion> findByUsuarioIdAndIsActive(Long usuarioId, Boolean isActive);
 }
