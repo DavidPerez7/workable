@@ -72,6 +72,15 @@ public class Empresa {
     @Column(nullable = false)
     private Boolean isActive = true;
 
+    // Código de invitación para que otros reclutadores se unan
+    @Column(length = 20, unique = true)
+    private String codigoInvitacion;
+
+    // Reclutador que creó la empresa (owner/administrador principal)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reclutador_owner_id", foreignKey = @ForeignKey(name = "FK_empresa_owner"))
+    private Usuario reclutadorOwner;
+
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "empresa_categoria", joinColumns = @JoinColumn(name = "empresa_id"))
     @Enumerated(EnumType.STRING)
@@ -124,10 +133,35 @@ public class Empresa {
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Feedback> feedbacks = new ArrayList<>();
 
+    // Relación unidireccional: La empresa conoce sus reclutadores
+    // Se crea una columna empresa_id en la tabla usuario
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empresa_id", foreignKey = @ForeignKey(name = "FK_usuario_empresa"))
+    private List<Usuario> reclutadores = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         if (fechaCreacion == null) {
             fechaCreacion = LocalDate.now();
         }
+        // Generar código de invitación si no existe
+        if (codigoInvitacion == null || codigoInvitacion.isEmpty()) {
+            generarCodigoInvitacion();
+        }
+    }
+
+    /**
+     * Genera un código de invitación único de 12 caracteres
+     */
+    public void generarCodigoInvitacion() {
+        String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        StringBuilder codigo = new StringBuilder();
+        java.util.Random random = new java.util.Random();
+        
+        for (int i = 0; i < 12; i++) {
+            codigo.append(caracteres.charAt(random.nextInt(caracteres.length())));
+        }
+        
+        this.codigoInvitacion = codigo.toString();
     }
 }

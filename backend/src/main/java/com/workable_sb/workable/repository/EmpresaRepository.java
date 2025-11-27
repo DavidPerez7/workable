@@ -18,4 +18,8 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
     
     @Query("SELECT e FROM Empresa e ORDER BY e.puntuacion DESC")
     List<Empresa> findTopByPuntuacion();
+
+    Optional<Empresa> findByNit(String nit);
+    
+    boolean existsByNit(String nit);
 }
