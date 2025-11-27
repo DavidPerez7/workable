@@ -26,7 +26,7 @@ import ReportPage from './pages/AdminPage/ReportPage/ReportPage';
 import UsersManagePage from './pages/AdminPage/UsersManagePage/UsersManagePage';
 import Empresas from './pages/MainPage/Empresas/Empresas';
 import KFCPage from './pages/MainPage/Empresas/KFC/KFCPage';
-import EmpresaPage from './pages/ReclutadorPage/EmpresaPage/EmpresaPage';
+import ReclutadorProfile from './pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile';
 
 function App() {
 	return (
@@ -59,7 +59,7 @@ function App() {
 				<Route path="/Administrador/Usuarios" element={<UsersManagePage/>} />
 				<Route path="/Empresas" element={<Empresas />} />
 				<Route path="/KFCPage" element={<KFCPage />} />
-				<Route path="/Reclutador/EmpresaPage" element={<EmpresaPage />} />
+				<Route path="/Reclutador/ReclutadorProfile" element={<ReclutadorProfile />} />
 			</Routes>
 		</Router>
 	);

@@ -202,8 +202,8 @@ const HomePage = () => {
 
         <section className="features-section">
         <div className="section-header">
-          <h2 className="section-title">¿Por qué elegir Workable?</h2>
-          <p className="section-description">
+          <h2 className="section-title-home">¿Por qué elegir Workable?</h2>
+          <p className="section-description-home">
             La plataforma líder en conexión laboral
           </p>
         </div>

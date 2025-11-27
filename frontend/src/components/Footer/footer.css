@@ -2,7 +2,7 @@
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	gap: 2em;
-	background-color: #2541a0;
+	background: linear-gradient(135deg, #1e6ff1 0%, #1D4ED8 100%);
 	color: white;
 	padding: 2em;
 	text-align: center;

@@ -1,0 +1,376 @@
+/* ReclutadorProfile.css */
+
+/* === Contenedor Principal === */
+.profile-main-RP {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #E5E7EB 0%, #F3F4F6 100%);
+  padding: 2rem 0;
+}
+
+.profile-container-RP {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* === Hero Section === */
+.profile-hero-RP {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.hero-background-RP {
+  height: 240px;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  position: relative;
+}
+
+.btn-edit-profile-RP {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0F172A;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.btn-edit-profile-RP:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-edit-profile-RP svg {
+  color: #3B82F6;
+}
+
+.hero-content-RP {
+  padding: 0 2.5rem 2.5rem;
+  display: flex;
+  gap: 2rem;
+  position: relative;
+  margin-top: -80px;
+}
+
+.profile-avatar-large-RP {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-img-RP {
+  width: 160px;
+  height: 160px;
+  border-radius: 16px;
+  border: 5px solid white;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.avatar-badge-RP {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.avatar-badge-RP svg {
+  color: white;
+  stroke-width: 3;
+}
+
+.profile-info-main-RP {
+  flex: 1;
+  padding-top: 1rem;
+}
+
+.name-section-RP {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-name-RP {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: white;
+  margin: 0;
+}
+
+.profile-role-badge-RP {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.profile-title-RP {
+  font-size: 1.1rem;
+  color: #475569;
+  margin: 0 0 1rem;
+}
+
+.profile-meta-RP {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.meta-item-RP {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #64748B;
+}
+
+.meta-item-RP svg {
+  color: #94A3B8;
+}
+
+.meta-separator-RP {
+  color: #CBD5E1;
+}
+
+.profile-company-RP {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #F8FAFC;
+  border-radius: 10px;
+  border: 2px solid #E2E8F0;
+}
+
+.company-logo-small-RP {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: white;
+  padding: 0.3rem;
+}
+
+.company-name-RP {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 0.25rem;
+}
+
+.company-desc-RP {
+  font-size: 0.9rem;
+  color: #64748B;
+  margin: 0;
+}
+
+.profile-actions-RP {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.btn-action-primary-RP {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-action-primary-RP:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* === Secciones de Perfil === */
+.profile-section-RP {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 2px solid #E2E8F0;
+}
+
+.section-header-profile-RP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-title-profile-RP {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+/* === Empresa Section === */
+.empresa-card-RP {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #F8FAFC;
+  border-radius: 12px;
+  border: 2px solid #E2E8F0;
+}
+
+.empresa-logo-RP {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: white;
+  padding: 0.5rem;
+  flex-shrink: 0;
+}
+
+.empresa-info-RP {
+  flex: 1;
+}
+
+.empresa-name-RP {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 0.5rem;
+}
+
+.empresa-desc-RP {
+  font-size: 1rem;
+  color: #64748B;
+  margin: 0 0 1rem;
+}
+
+.empresa-stats-RP {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.empresa-stat-RP {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.empresa-stat-RP svg {
+  color: #3B82F6;
+}
+
+/* === Actividad === */
+.activity-meta-RP {
+  margin-bottom: 1rem;
+}
+
+.followers-count-RP {
+  font-size: 0.95rem;
+  color: #3B82F6;
+  font-weight: 600;
+  margin: 0;
+}
+
+.activity-content-RP {
+  padding: 1.5rem;
+  background: #F8FAFC;
+  border-radius: 10px;
+  border: 2px solid #E2E8F0;
+}
+
+.activity-text-RP {
+  font-size: 1rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* === Estadísticas === */
+.recruiter-stats-RP {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-box-RP {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #F8FAFC;
+  border-radius: 12px;
+  border: 2px solid #E2E8F0;
+  transition: all 0.3s ease;
+}
+
+.stat-box-RP:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
+  border-color: #3B82F6;
+}
+
+.stat-icon-wrapper-RP {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.blue-bg-RP {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+}
+
+.green-bg-RP {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.stat-icon-wrapper-RP svg {
+  color: white;
+}
+
+.stat-content-RP {
+  flex: 1;
+}
+
