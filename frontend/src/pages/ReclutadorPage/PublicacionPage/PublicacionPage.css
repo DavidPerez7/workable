@@ -26,7 +26,6 @@
   margin-bottom: 1rem;
 }
 
-
 label {
   display: block;
   margin: 0.75rem 0 0.25rem;
@@ -120,7 +119,6 @@ textarea {
 .button-submit-PB:hover {
   background-color: #db5400;
 }
-
 
 @media (max-width: 768px) {
   .container-main-PB {

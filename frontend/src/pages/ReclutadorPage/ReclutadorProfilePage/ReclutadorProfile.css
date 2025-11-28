@@ -1,9 +1,6 @@
-/* ReclutadorProfile.css */
-
-/* === Contenedor Principal === */
 .profile-main-RP {
   min-height: 100vh;
-  background: linear-gradient(135deg, #E5E7EB 0%, #F3F4F6 100%);
+  background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
   padding: 2rem 0;
 }
 
@@ -25,7 +22,7 @@
 
 .hero-background-RP {
   height: 240px;
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   position: relative;
 }
 
@@ -39,7 +36,7 @@
   border-radius: 10px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #0F172A;
+  color: #0f172a;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -55,7 +52,7 @@
 }
 
 .btn-edit-profile-RP svg {
-  color: #3B82F6;
+  color: #3b82f6;
 }
 
 .hero-content-RP {
@@ -84,7 +81,7 @@
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -120,7 +117,7 @@
 }
 
 .profile-role-badge-RP {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
   padding: 0.4rem 1rem;
   border-radius: 50px;
@@ -147,15 +144,15 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  color: #64748B;
+  color: #64748b;
 }
 
 .meta-item-RP svg {
-  color: #94A3B8;
+  color: #94a3b8;
 }
 
 .meta-separator-RP {
-  color: #CBD5E1;
+  color: #cbd5e1;
 }
 
 .profile-company-RP {
@@ -163,9 +160,9 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem;
-  background: #F8FAFC;
+  background: #f8fafc;
   border-radius: 10px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
 }
 
 .company-logo-small-RP {
@@ -180,13 +177,13 @@
 .company-name-RP {
   font-size: 1rem;
   font-weight: 700;
-  color: #0F172A;
+  color: #0f172a;
   margin: 0 0 0.25rem;
 }
 
 .company-desc-RP {
   font-size: 0.9rem;
-  color: #64748B;
+  color: #64748b;
   margin: 0;
 }
 
@@ -198,7 +195,7 @@
 }
 
 .btn-action-primary-RP {
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   padding: 1rem 1.5rem;
@@ -225,7 +222,7 @@
   padding: 2rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
 }
 
 .section-header-profile-RP {
@@ -238,7 +235,7 @@
 .section-title-profile-RP {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0F172A;
+  color: #0f172a;
   margin: 0;
 }
 
@@ -247,9 +244,9 @@
   display: flex;
   gap: 1.5rem;
   padding: 1.5rem;
-  background: #F8FAFC;
+  background: #f8fafc;
   border-radius: 12px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
 }
 
 .empresa-logo-RP {
@@ -269,13 +266,13 @@
 .empresa-name-RP {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0F172A;
+  color: #0f172a;
   margin: 0 0 0.5rem;
 }
 
 .empresa-desc-RP {
   font-size: 1rem;
-  color: #64748B;
+  color: #64748b;
   margin: 0 0 1rem;
 }
 
@@ -295,7 +292,7 @@
 }
 
 .empresa-stat-RP svg {
-  color: #3B82F6;
+  color: #3b82f6;
 }
 
 /* === Actividad === */
@@ -305,21 +302,21 @@
 
 .followers-count-RP {
   font-size: 0.95rem;
-  color: #3B82F6;
+  color: #3b82f6;
   font-weight: 600;
   margin: 0;
 }
 
 .activity-content-RP {
   padding: 1.5rem;
-  background: #F8FAFC;
+  background: #f8fafc;
   border-radius: 10px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
 }
 
 .activity-text-RP {
   font-size: 1rem;
-  color: #64748B;
+  color: #64748b;
   margin: 0;
   line-height: 1.6;
 }
@@ -336,16 +333,16 @@
   align-items: center;
   gap: 1.5rem;
   padding: 1.5rem;
-  background: #F8FAFC;
+  background: #f8fafc;
   border-radius: 12px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
   transition: all 0.3s ease;
 }
 
 .stat-box-RP:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
-  border-color: #3B82F6;
+  border-color: #3b82f6;
 }
 
 .stat-icon-wrapper-RP {
@@ -359,11 +356,11 @@
 }
 
 .blue-bg-RP {
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .green-bg-RP {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 .stat-icon-wrapper-RP svg {
@@ -374,3 +371,241 @@
   flex: 1;
 }
 
+.stat-number-RP {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.25rem;
+}
+.stat-label-RP {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.sidebar-overlay-RP {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+  animation: fadeIn-RP 0.3s ease;
+}
+@keyframes fadeIn-RP {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.edit-sidebar-RP {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 480px;
+  max-width: 90vw;
+  height: 100vh;
+  background: white;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  animation: slideIn-RP 0.3s ease;
+}
+@keyframes slideIn-RP {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.sidebar-header-RP {
+  padding: 1.5rem 2rem;
+  border-bottom: 2px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sidebar-header-RP h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.btn-close-sidebar-RP {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-close-sidebar-RP:hover {
+  background: #f1f5f9;
+}
+.btn-close-sidebar-RP svg {
+  color: #64748b;
+}
+.sidebar-content-RP {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+.form-group-RP {
+  margin-bottom: 1.5rem;
+}
+.form-label-RP {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+.form-input-RP {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #0f172a;
+  transition: all 0.3s ease;
+  font-family: "Inter", sans-serif;
+}
+.form-input-RP:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+.preview-image-RP {
+  margin-top: 1rem;
+  text-align: center;
+}
+.preview-image-RP img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 3px solid #e2e8f0;
+}
+.preview-banner-RP {
+  margin-top: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 3px solid #e2e8f0;
+}
+.preview-banner-RP img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+.sidebar-footer-RP {
+  padding: 1.5rem 2rem;
+  border-top: 2px solid #e2e8f0;
+  display: flex;
+  gap: 1rem;
+  background: #f8fafc;
+}
+.btn-cancel-RP,
+.btn-save-RP {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+.btn-cancel-RP {
+  background: white;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+}
+.btn-cancel-RP:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+.btn-save-RP {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+.btn-save-RP:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+.btn-cancel-RP:disabled,
+.btn-save-RP:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+/* === Loading & Error States === */
+.loading-container-RP,
+.error-container-RP {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+.spinner-large-RP {
+  width: 64px;
+  height: 64px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin-RP 1s linear infinite;
+}
+@keyframes spin-RP {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.btn-back-RP {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.btn-back-RP:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+/* === Responsive === */
+@media (max-width: 768px) {
+  .hero-content-RP {
+    flex-direction: column;
+    margin-top: -60px;
+    padding: 0 1.5rem 1.5rem;
+  }
+  .profile-avatar-large-RP {
+    margin: 0 auto;
+  }
+  .profile-info-main-RP {
+    text-align: center;
+  }
+  .profile-meta-RP {
+    justify-content: center;
+  }
+  .profile-company-RP {
+    flex-direction: column;
+    text-align: center;
+  }
+  .recruiter-stats-RP {
+    grid-template-columns: 1fr;
+  }
+  .edit-sidebar-RP {
+    width: 100%;
+  }
+}

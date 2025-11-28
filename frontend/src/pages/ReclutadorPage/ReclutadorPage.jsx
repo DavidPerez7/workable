@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaStar} from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador";
 import OfertaCard from "../../components/OfertaCard/ofertaCard";
 import "./ReclutadorPage.css";
@@ -32,7 +32,15 @@ function ReclutadorPage() {
         <aside className="sidebar-nav">
           <nav className="nav-list-sidebar">
             <Link to="/Reclutador" className="nav-item-sidebar active">
-              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
               </svg>
@@ -40,7 +48,15 @@ function ReclutadorPage() {
             </Link>
 
             <Link to="/Reclutador/reclutamiento" className="nav-item-sidebar">
-              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
               </svg>
@@ -48,7 +64,15 @@ function ReclutadorPage() {
             </Link>
 
             <Link to="/Reclutador/GestigOferts" className="nav-item-sidebar">
-              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -59,7 +83,15 @@ function ReclutadorPage() {
             </Link>
 
             <Link to="/Reclutador/Configuracion" className="nav-item-sidebar">
-              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg
+                className="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
                 <circle cx="12" cy="12" r="3"></circle>
                 <path d="M12 1v6m0 6v6m8.66-9l-5.2 3m-5.92 3l-5.2 3M1.34 9l5.2 3m5.92 3l5.2 3"></path>
               </svg>
@@ -71,38 +103,63 @@ function ReclutadorPage() {
         {/* Main Content */}
         <div className="content-wrapper">
           <div className="content-grid">
-            
             {/* Left Column */}
             <div className="column-left">
-              
               {/* Company Info Card */}
-              <div className="company-card">
-                <div className="company-avatar">
-                  <img 
-                    src="https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png" 
-                    alt="Logo empresa" 
-                    className="company-logo-img"
-                  />
+              <Link
+                to="/Reclutador/EnterprisePage"
+                className="company-card-link"
+              >
+                <div className="company-card">
+                  <div className="company-avatar">
+                    <img
+                      src="https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png"
+                      alt="Logo empresa"
+                      className="company-logo-img"
+                    />
+                  </div>
+                  <div className="company-info">
+                    <h2 className="company-name">Empresa genérica</h2>
+                    <p className="company-role">Usuario administrador</p>
+                  </div>
                 </div>
-                <div className="company-info">
-                  <h2 className="company-name">Empresa genérica</h2>
-                  <p className="company-role">Usuario administrador</p>
-                </div>
-              </div>
+              </Link>
 
               {/* Recruitment Section */}
               <section className="section-card">
                 <div className="section-header">
                   <div className="section-title-group">
-                    <svg className="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <rect
+                        x="2"
+                        y="7"
+                        width="20"
+                        height="14"
+                        rx="2"
+                        ry="2"
+                      ></rect>
                       <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                     </svg>
                     <h3 className="section-title">Reclutamiento</h3>
                   </div>
                   <Link to="/Reclutador/GestigOferts" className="section-link">
                     Gestionar avisos
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
@@ -116,30 +173,61 @@ function ReclutadorPage() {
                       <p>Cargando ofertas...</p>
                     </div>
                   ) : ofertas.length > 0 ? (
-                    ofertas.slice(0, 3).map((oferta) => (
-                      <OfertaCard
-                        key={oferta.id}
-                        titulo={oferta.titulo || oferta.nom || "Sin título"}
-                        descripcion={oferta.descripcion || oferta.desc || "Sin descripción"}
-                        salario={oferta.salario || oferta.sueldo || 0}
-                        ubicacion={oferta.ubicacion || oferta.ubi || "No especificada"}
-                      />
-                    ))
+                    ofertas
+                      .slice(0, 3)
+                      .map((oferta) => (
+                        <OfertaCard
+                          key={oferta.id}
+                          titulo={oferta.titulo || oferta.nom || "Sin título"}
+                          descripcion={
+                            oferta.descripcion ||
+                            oferta.desc ||
+                            "Sin descripción"
+                          }
+                          salario={oferta.salario || oferta.sueldo || 0}
+                          ubicacion={
+                            oferta.ubicacion || oferta.ubi || "No especificada"
+                          }
+                        />
+                      ))
                   ) : (
                     <div className="empty-state">
-                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                      <svg
+                        width="64"
+                        height="64"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                      >
+                        <rect
+                          x="2"
+                          y="7"
+                          width="20"
+                          height="14"
+                          rx="2"
+                          ry="2"
+                        ></rect>
                         <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                       </svg>
                       <p className="empty-text">No hay ofertas disponibles</p>
-                      <p className="empty-subtext">Publica tu primera oferta para comenzar</p>
+                      <p className="empty-subtext">
+                        Publica tu primera oferta para comenzar
+                      </p>
                     </div>
                   )}
                 </div>
 
                 <div className="button-container">
                   <Link to="/Reclutador/Publicacion" className="btn-publish">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
@@ -152,7 +240,15 @@ function ReclutadorPage() {
               <section className="section-card">
                 <div className="section-header">
                   <div className="section-title-group">
-                    <svg className="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
                       <polyline points="17 6 23 6 23 12"></polyline>
                     </svg>
@@ -160,7 +256,14 @@ function ReclutadorPage() {
                   </div>
                   <Link to="/Reclutador/estadisticas" className="section-link">
                     Ver más
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
@@ -170,7 +273,14 @@ function ReclutadorPage() {
                 <div className="stats-grid">
                   <div className="stat-card">
                     <div className="stat-icon blue-bg">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -185,7 +295,14 @@ function ReclutadorPage() {
 
                   <div className="stat-card">
                     <div className="stat-icon green-bg">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
                     </div>
@@ -200,42 +317,70 @@ function ReclutadorPage() {
 
             {/* Right Column */}
             <div className="column-right">
-              
-
               <div className="banner-card">
                 <div className="banner-content">
                   <h3 className="banner-title">Informacion de la empresa</h3>
                   <p className="banner-text">
-                    <p>Descripcion: <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti dicta, saepe vitae numquam culpa qui? Beatae est ea quod asperiores voluptate. Pariatur delectus provident possimus ipsam dolores ad laboriosam quam?</span></p>
-                    <p>Numero de trabajadores: <span>30</span></p>
+                    <p>
+                      Descripcion:{" "}
+                      <span>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Deleniti dicta, saepe vitae numquam culpa qui? Beatae
+                        est ea quod asperiores voluptate. Pariatur delectus
+                        provident possimus ipsam dolores ad laboriosam quam?
+                      </span>
+                    </p>
+                    <p>
+                      Numero de trabajadores: <span>30</span>
+                    </p>
                     <div className="banner-puntuation">
                       <p>Puntuacion: </p>
                       <div className="banner-puntuation">
                         <FaStar color="#ffffff" />
                         <FaStar color="#ffffff" />
                         <FaStar color="#ffffff" />
-                        <FaStar color="#ffffff"/>
+                        <FaStar color="#ffffff" />
                       </div>
                     </div>
-                    <p>Fecha de creacion: <span>10/10/2020</span></p>
-                    <p>Email: <span>info@generico.com</span></p>
-                    <p>Telefono: <span>+123456789</span></p>
+                    <p>
+                      Fecha de creacion: <span>10/10/2020</span>
+                    </p>
+                    <p>
+                      Email: <span>info@generico.com</span>
+                    </p>
+                    <p>
+                      Telefono: <span>+123456789</span>
+                    </p>
                   </p>
                 </div>
               </div>
 
-
               <section className="section-card">
                 <div className="section-header">
                   <div className="section-title-group">
-                    <svg className="section-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
                     <h3 className="section-title">Reviews</h3>
                   </div>
                   <Link to="/Reclutador/reviews" className="section-link">
                     Ver todas
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
@@ -246,36 +391,47 @@ function ReclutadorPage() {
                   <div className="review-item">
                     <div className="review-header">
                       <div className="review-avatar">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                           <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                       </div>
                       <div className="review-info">
                         <p className="review-name">Juan Pérez</p>
-                        <div className="review-stars">
-                          ⭐⭐⭐⭐⭐
-                        </div>
+                        <div className="review-stars">⭐⭐⭐⭐⭐</div>
                       </div>
                     </div>
                     <p className="review-text">
-                      Excelente proceso de selección, muy profesional y transparente.
+                      Excelente proceso de selección, muy profesional y
+                      transparente.
                     </p>
                   </div>
 
                   <div className="review-item">
                     <div className="review-header">
                       <div className="review-avatar">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                           <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                       </div>
                       <div className="review-info">
                         <p className="review-name">María García</p>
-                        <div className="review-stars">
-                          ⭐⭐⭐⭐
-                        </div>
+                        <div className="review-stars">⭐⭐⭐⭐</div>
                       </div>
                     </div>
                     <p className="review-text">
@@ -284,12 +440,13 @@ function ReclutadorPage() {
                   </div>
 
                   <div className="empty-reviews">
-                    <p className="empty-reviews-text">No hay más reviews recientes</p>
+                    <p className="empty-reviews-text">
+                      No hay más reviews recientes
+                    </p>
                   </div>
                 </div>
               </section>
             </div>
-
           </div>
         </div>
       </main>

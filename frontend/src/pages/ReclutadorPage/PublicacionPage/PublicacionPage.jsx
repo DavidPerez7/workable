@@ -1,46 +1,45 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import HeaderReclutador from '../../../components/HeaderReclutador/HeaderReclutador';
-import './PublicacionPage.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import "./PublicacionPage.css";
 
 const PublicacionPage = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    tituloAviso: '',
-    descripcionTrabajo: '',
-    direccion: '',
-    fechaPublicacion: '',
-    fechaLimite: '',
-    modalidadTrabajo: '',
-    tipoContrato: '',
-    empresa: '',
-    municipio: ''
+    tituloAviso: "",
+    descripcionTrabajo: "",
+    direccion: "",
+    fechaPublicacion: "",
+    fechaLimite: "",
+    modalidadTrabajo: "",
+    tipoContrato: "",
+    empresa: "",
+    municipio: "",
   });
 
-
   const modalidades = [
-    { id: 1, nombre: 'Presencial' },
-    { id: 2, nombre: 'Remoto' },
-    { id: 3, nombre: 'Híbrido' }
+    { id: 1, nombre: "Presencial" },
+    { id: 2, nombre: "Remoto" },
+    { id: 3, nombre: "Híbrido" },
   ];
 
   const tiposContrato = [
-    { id: 1, nombre: 'Indefinido' },
-    { id: 2, nombre: 'Término fijo' },
-    { id: 3, nombre: 'Prácticas' }
+    { id: 1, nombre: "Indefinido" },
+    { id: 2, nombre: "Término fijo" },
+    { id: 3, nombre: "Prácticas" },
   ];
 
   const empresas = [
-    { id: 1, nombre: 'Empresa A' },
-    { id: 2, nombre: 'Empresa B' },
-    { id: 3, nombre: 'Empresa C' }
+    { id: 1, nombre: "Empresa A" },
+    { id: 2, nombre: "Empresa B" },
+    { id: 3, nombre: "Empresa C" },
   ];
 
   const municipios = [
-    { id: 1, nombre: 'Bogotá' },
-    { id: 2, nombre: 'Medellín' },
-    { id: 3, nombre: 'Cali' }
+    { id: 1, nombre: "Bogotá" },
+    { id: 2, nombre: "Medellín" },
+    { id: 3, nombre: "Cali" },
   ];
 
   const handleChange = (e) => {
@@ -60,7 +59,7 @@ const PublicacionPage = () => {
       MODAL_ID: parseInt(formData.modalidadTrabajo),
       TIP_CONT_ID: parseInt(formData.tipoContrato),
       EMPRE_ID: parseInt(formData.empresa),
-      MUNIC_ID: parseInt(formData.municipio)
+      MUNIC_ID: parseInt(formData.municipio),
     };
 
     console.log("Datos listos para guardar en la base de datos:", datosListos);
