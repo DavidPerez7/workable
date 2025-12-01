@@ -62,7 +62,7 @@ public class Empresa {
     private String logoUrl;
 
     // Identificación legal/fiscal
-    @Column(length = 50)
+    @Column(length = 50, unique = true)
     private String nit;
 
     @Column(length = 255)
