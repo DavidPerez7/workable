@@ -12,7 +12,7 @@ import com.workable_sb.workable.models.Oferta.EstadoOferta;
 import com.workable_sb.workable.models.Oferta.Modalidad;
 
 @Repository
-public interface OfertaRepository extends JpaRepository<Oferta, Long> {
+public interface OfertaRepo extends JpaRepository<Oferta, Long> {
     
     // Buscar ofertas por empresa
     List<Oferta> findByEmpresaId(Long empresaId);
