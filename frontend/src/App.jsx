@@ -28,6 +28,7 @@ import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
+import ReclutadorForm from "./components/SignUpPage/reclutador/ReclutadorForm";
 
 function App() {
   return (
@@ -71,6 +72,8 @@ function App() {
           element={<ReclutadorProfile />}
         />
         <Route path="/Reclutador/EnterprisePage" element={<EnterprisePage />} />
+        <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />
+        
       </Routes>
     </Router>
   );

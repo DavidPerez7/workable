@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../../components/Header/Header';
-import './SignUpPage.css';
-import EmpresaForm from './empresa/empresaForm';
-import AspiranteForm from './aspirante/aspiranteForm';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Header from "../../components/Header/Header";
+import "./SignUpPage.css";
+import ReclutadorForm from "./reclutador/ReclutadorForm";
+import AspiranteForm from "./aspirante/AspiranteForm";
 
 const SignUpPage = () => {
-  const [userType, setUserType] = useState('aspirante');
+  const [userType, setUserType] = useState("aspirante");
 
   return (
     <>
@@ -17,22 +17,23 @@ const SignUpPage = () => {
           <p className="p-signup-instruction">Crea una cuenta para comenzar</p>
           <div className="signup-buttons">
             <button
-              className={`Btn-signup${userType === 'aspirante' ? ' active' : ''}`}
-              onClick={() => setUserType('aspirante')}
+              className={`Btn-signup${
+                userType === "aspirante" ? " active" : ""
+              }`}
+              onClick={() => setUserType("aspirante")}
             >
               Soy Aspirante
             </button>
             <button
-              className={`Btn-signup${userType === 'empresa' ? ' active' : ''}`}
-              onClick={() => setUserType('empresa')}
+              className={`Btn-signup${
+                userType === "reclutador" ? " active" : ""
+              }`}
+              onClick={() => setUserType("reclutador")}
             >
-              Soy Empresa
+              Soy Reclutador
             </button>
           </div>
-          {userType === 'aspirante' ? <AspiranteForm /> : <EmpresaForm />}
-          <div className="text-link">
-            ¿Ya tienes una cuenta? <Link to='/Login'>Iniciar Sesión</Link>
-          </div>
+          {userType === "aspirante" ? <AspiranteForm /> : <ReclutadorForm />}
         </div>
       </main>
     </>

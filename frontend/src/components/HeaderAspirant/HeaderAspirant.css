@@ -1,95 +1,159 @@
 .header-conta {
-  display:grid;
-  grid-template-columns:1fr 2fr 1fr;
-  align-items:center;
-  padding:0 40px;
-  height:4.4em;
-  background-color:#2541a0;
-  position:relative;
-  z-index:1;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  padding: 0 40px;
+  height: 4.4em;
+  background-color: #2541a0;
+  position: relative;
+  z-index: 1;
 }
-.header-left {justify-self:start;}
-.header-center {display:flex;justify-content:left;align-items:center;}
+
+.header-left {
+  justify-self: start;
+}
+.header-center {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
 .header-right-container .perfil-section {
-  justify-self:end;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid #ddd;
-  border-radius:50px;
-  padding:1px 16px;
-  background:#fff;
-  box-shadow:0 0 5px rgba(0,0,0,0.1);
-  max-width:300px;
-  width:70%;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  border-radius: 50px;
+  padding: 1px 16px;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  width: 70%;
 }
+
 .header-center .job-search-bar {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid #ddd;
-  border-radius:50px;
-  padding:1px 16px;
-  background:#fff;
-  box-shadow:0 0 5px rgba(0,0,0,0.1);
-  max-width:450px;
-  width:100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ddd;
+  border-radius: 50px;
+  padding: 1px 16px;
+  background: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  width: 100%;
 }
-.search-section {display:flex;align-items:center;}
+.search-section {
+  display: flex;
+  align-items: center;
+}
 .search-section input.input-text {
-  height:9px;
-  border:none;
-  outline:none;
-  font-size:14px;
-  background:transparent;
-  margin-top:15px;
+  height: 9px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  margin-top: 15px;
 }
-.search-icon {color:#007bff;}
+.search-icon {
+  color: #007bff;
+}
 .search-button {
-  background:#002f6c;
-  border:none;
-  border-radius:50%;
-  padding:6px;
-  cursor:pointer;
-  margin-left:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:background 0.3s;
+  background: #002f6c;
+  border: none;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
 }
-.header-conta .divider {width:1px;height:24px;background:#ccc;margin:0 12px;}
-.name {color:#2541a0;}
+.header-conta .divider {
+  width: 1px;
+  height: 24px;
+  background: #ccc;
+  margin: 0 12px;
+}
+.name {
+  color: #2541a0;
+}
 .name .n {
-  background-color:transparent;
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  border:1px solid grey;
+  background-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid grey;
 }
-.search-seccion {display:flex;align-items:center;background-color:#fff;}
+.search-seccion {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+}
 .button-perfil {
-  background-color:transparent;
-  color:#0d1e53;
-  border:1px solid #fff;
-  padding:10px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:all 0.3s ease;
+  background-color: transparent;
+  color: #0d1e53;
+  border: 1px solid #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-@media (max-width:1024px){
-  .header-conta{grid-template-columns:1fr 1fr;padding:0 20px;height:auto;}
-  .header-center .job-search-bar{max-width:350px;}
-  .header-right-container .perfil-section{width:100%;max-width:220px;}
+@media (max-width: 1024px) {
+  .header-conta {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 20px;
+    height: auto;
+  }
+  .header-center .job-search-bar {
+    max-width: 350px;
+  }
+  .header-right-container .perfil-section {
+    width: 100%;
+    max-width: 220px;
+  }
 }
-@media (max-width:768px){
-  .header-conta{grid-template-columns:1fr;gap:12px;padding:12px 20px;text-align:center;}
-  .header-left,.header-center,.header-right-container{justify-content:center;display:flex;width:100%;}
-  .header-center .job-search-bar{width:100%;max-width:100%;flex-direction:row;}
-  .header-right-container .perfil-section{width:100%;max-width:100%;justify-content:center;}
+@media (max-width: 768px) {
+  .header-conta {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px 20px;
+    text-align: center;
+  }
+  .header-left,
+  .header-center,
+  .header-right-container {
+    justify-content: center;
+    display: flex;
+    width: 100%;
+  }
+  .header-center .job-search-bar {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+  }
+  .header-right-container .perfil-section {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
 }
-@media (max-width:480px){
-  .header-conta{padding:10px;gap:8px;}
-  .search-section input.input-text{font-size:12px;margin-top:10px;width:100%;}
-  .button-perfil{padding:6px 10px;font-size:12px;}
-  .header-center .job-search-bar{padding:6px 12px;}
+@media (max-width: 480px) {
+  .header-conta {
+    padding: 10px;
+    gap: 8px;
+  }
+  .search-section input.input-text {
+    font-size: 12px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .button-perfil {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .header-center .job-search-bar {
+    padding: 6px 12px;
+  }
 }
