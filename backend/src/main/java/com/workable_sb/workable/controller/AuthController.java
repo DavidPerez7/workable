@@ -18,7 +18,7 @@ import com.workable_sb.workable.dto.usuario.UsuarioDto;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.UsrAspiranteRepository;
 import com.workable_sb.workable.repository.UsrReclutadorRepository;
-import com.workable_sb.workable.repository.UsuarioRepository;
+import com.workable_sb.workable.repository.UsuarioRepo;
 import com.workable_sb.workable.security.JwtUtil;
 import com.workable_sb.workable.service.UsuarioService;
 import com.workable_sb.workable.service.usuario.UsrAspiranteService;
@@ -44,7 +44,7 @@ public class AuthController {
     private UsrReclutadorRepository usrReclutadorRepo;
 
     @Autowired
-    private UsuarioRepository usrRepo;
+    private UsuarioRepo usrRepo;
 
     @Autowired
     private UsuarioService usrServ;
