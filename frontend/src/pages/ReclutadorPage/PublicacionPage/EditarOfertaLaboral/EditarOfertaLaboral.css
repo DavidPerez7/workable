@@ -1,28 +1,33 @@
-/* --- GENERAL PAGE LAYOUT --- */
+/* ============================================================
+   EDITAR OFERTA LABORAL — ESTILOS WORKABLE
+   Basado en estilos_documentacion.md
+   ============================================================ */
+
+/* ---------- CONTENEDOR GENERAL ---------- */
 .pb-container {
   max-width: 900px;
-  margin: 40px auto;         /* Centra el contenido horizontalmente */
-  padding: 4rem 1rem;     /* Espaciado desde el header */
+  margin: 0 auto;
+  padding: 4rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: 30px;     /* Centra el contenido internamente */
+  font-family: 'Inter', sans-serif;
 }
 
-
+/* ---------- TÍTULO DE LA PÁGINA ---------- */
 .pb-title {
   font-size: clamp(2rem, 4vw, 2.8rem);
-  color: #0F172A;
   font-weight: 800;
-  text-align: center;
+  color: #0F172A;
   margin-bottom: 2.5rem;
+  text-align: center;
+  width: 100%;
 }
 
-/* --- CARD SECTION --- */
+/* ---------- CARD ---------- */
 .pb-card {
   width: 100%;
-  max-width: 800px;        
-  margin: 0 auto; 
+  max-width: 820px;
   background: white;
   padding: 2.5rem;
   border-radius: 16px;
@@ -37,7 +42,7 @@
   margin-bottom: 1.5rem;
 }
 
-/* --- FIELD STYLE --- */
+/* ---------- CAMPOS (LABEL + INPUT) ---------- */
 .pb-field {
   display: flex;
   flex-direction: column;
@@ -51,7 +56,7 @@
   margin-bottom: 0.4rem;
 }
 
-/* --- INPUTS --- */
+/* ---------- INPUTS Y SELECTS ---------- */
 .pb-input,
 .pb-select,
 .pb-textarea {
@@ -65,7 +70,7 @@
   outline: none;
 }
 
-/* Hover + Focus (según tu guía) */
+/* Hover */
 .pb-input:hover,
 .pb-select:hover,
 .pb-textarea:hover {
@@ -73,6 +78,7 @@
   box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
 }
 
+/* Focus */
 .pb-input:focus,
 .pb-select:focus,
 .pb-textarea:focus {
@@ -81,7 +87,22 @@
   outline: 3px solid rgba(59, 130, 246, 0.4);
 }
 
-/* --- BUTTON PRIMARY --- */
+/* Textarea */
+.pb-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ---------- INPUT DESHABILITADO ---------- */
+.pb-disabled {
+  background: #F1F5F9;
+  cursor: not-allowed;
+  border-color: #CBD5E1 !important;
+  color: #64748B;
+  opacity: 0.8;
+}
+
+/* ---------- BOTÓN PRINCIPAL ---------- */
 .pb-btn-primary {
   background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
   color: white;
@@ -90,10 +111,11 @@
   border-radius: 10px;
   font-size: 1.05rem;
   font-weight: 600;
-  border: none;
   cursor: pointer;
-  margin-top: 1.5rem;
+  border: none;
+  margin-top: 1.8rem;
   transition: all 0.3s ease;
+  min-height: 48px;
 }
 
 /* Hover */
@@ -107,7 +129,16 @@
   transform: scale(0.97);
 }
 
-/* Responsive */
+/* ---------- ESTILO DE CARGA ---------- */
+.pb-loading {
+  font-size: 1.2rem;
+  color: #1E293B;
+  font-weight: 600;
+  text-align: center;
+  padding-top: 4rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
   .pb-card {
     padding: 1.8rem;

@@ -328,13 +328,13 @@ const MiPerfil = () => {
                 <p>Actualiza tu información personal</p>
               </Link>
 
-              <Link to="/mis-postulaciones" className="action-card-MPF">
+              <Link to="/MiPerfil/MisPostulaciones" className="action-card-MPF">
                 <Rocket size={32} className="action-icon" />
                 <h3>Mis Postulaciones</h3>
                 <p>Revisa el estado de tus aplicaciones</p>
               </Link>
 
-              <Link to="/visualizar-perfil" className="action-card-MPF">
+              <Link to="/MiPerfil/VerPerfil" className="action-card-MPF">
                 <Eye size={32} className="action-icon" />
                 <h3>Ver Perfil Público</h3>
                 <p>Mira cómo te ven los reclutadores</p>

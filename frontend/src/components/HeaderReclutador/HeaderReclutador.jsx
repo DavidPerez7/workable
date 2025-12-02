@@ -8,7 +8,7 @@ function HeaderReclutador() {
   return (
     <header className="header-container-rc">
       <Link to='/' className="logo-container-rc">
-        <img src="https://i.postimg.cc/PrF6JqqC/WKB-LOGO-copia-removebg-preview.png" alt="workable logo" className='img-logo-wkb-rc'/>
+        <img src="https://i.ibb.co/gMwyTHb7/logotipo-workable.png" alt="workable logo" className='img-logo-wkb-rc'/>
       </Link>
 
       <button className="menu-toggle-rc"

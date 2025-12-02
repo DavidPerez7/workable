@@ -1,0 +1,129 @@
+/* ==========================================
+   VER POSTULACIONES RECIBIDAS – PANEL COMPLETO
+   ========================================== */
+
+.vp-page {
+  padding: 2rem;
+}
+
+.vp-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 1.5rem;
+}
+
+/* ===== FILTROS ===== */
+
+.vp-filters {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.vp-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vp-filter-group label {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.vp-filter-group select {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #CBD5E1;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vp-filter-group select:hover {
+  border-color: #3B82F6;
+}
+
+/* ===== CONTADOR ===== */
+.vp-count {
+  font-size: 0.95rem;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+/* ===== LISTA ===== */
+
+.vp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vp-item {
+  padding: 1.25rem;
+  background: #F8FAFC;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.vp-item:hover {
+  background: white;
+  border-color: #CBD5E1;
+  transform: translateY(-3px);
+}
+
+.vp-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.vp-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+
+.vp-info {
+  flex: 1;
+}
+
+.vp-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.vp-status {
+  font-size: 0.9rem;
+  color: #3B82F6;
+  font-weight: 600;
+}
+
+.vp-text {
+  font-size: 0.95rem;
+  color: #475569;
+  margin-bottom: 0.25rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .vp-filters {
+    flex-direction: column;
+  }
+}

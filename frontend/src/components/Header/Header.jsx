@@ -8,7 +8,7 @@ function Header() {
 	return (
 		<header className="header-container">
 			<Link to='/' className="logo-container"> 
-				<img src="https://i.postimg.cc/PrF6JqqC/WKB-LOGO-copia-removebg-preview.png" alt="Workable Logo" className='img-wkb'/>
+				<img src="https://i.ibb.co/gMwyTHb7/logotipo-workable.png" alt="Workable Logo" className='img-wkb'/>
 			</Link>
 
 			<button 

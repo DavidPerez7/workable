@@ -528,6 +528,110 @@
   font-weight: 600;
 }
 
+/* ============================================================
+   🔵 RF14 – VALORAR OFERTA Y EMPRESA
+   Sección nueva agregada al panel de detalles.
+   Respeta totalmente el estilo general existente.
+   ============================================================ */
+
+.rating-section-AP {
+  margin-top: 25px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.rating-title-AP {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 15px;
+}
+
+.rating-stars-AP {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0 16px;
+  cursor: pointer;
+}
+
+.rating-star-AP {
+  font-size: 28px;
+  color: #cbd5e1;
+  transition: 0.25s ease;
+}
+
+.rating-star-AP.active {
+  color: #3b82f6; /* Azul principal */
+  transform: scale(1.15);
+}
+
+.rating-star-AP:hover {
+  color: #2563eb;
+  transform: scale(1.18);
+}
+
+.rating-comment-AP {
+  width: 100%;
+  height: 90px;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #d0d7e2;
+  border-radius: 8px;
+  background: #f8fafc;
+  resize: none;
+  font-size: 14px;
+  color: #334155;
+  outline: none;
+  transition: 0.2s ease-in-out;
+}
+
+.rating-comment-AP:focus {
+  border-color: #3b82f6;
+  background: #fff;
+}
+
+.rating-submit-btn-AP {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.rating-submit-btn-AP:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.rating-success-message-AP {
+  margin-top: 15px;
+  padding: 12px;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Sutil animación */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
 /* ===========================
    RESPONSIVE
    =========================== */

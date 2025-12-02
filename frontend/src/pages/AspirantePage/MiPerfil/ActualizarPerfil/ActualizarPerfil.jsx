@@ -288,10 +288,10 @@ const ActualizarPerfil = () => {
   const handleCancel = () => {
     if (hasChanges) {
       if (window.confirm("¿Descartar los cambios realizados?")) {
-        navigate("/mi-perfil");
+        navigate("/Aspirante/MiPerfil");
       }
     } else {
-      navigate("/mi-perfil");
+      navigate("/Aspirante/MiPerfil");
     }
   };
 

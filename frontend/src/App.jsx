@@ -30,6 +30,10 @@ import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/Recl
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
 import ReclutadorForm from "./components/SignUpPage/reclutador/ReclutadorForm";
 import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil"
+import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral"
+import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
+import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones"
+import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil"
 
 function App() {
   return (
@@ -75,6 +79,10 @@ function App() {
         <Route path="/Reclutador/EnterprisePage" element={<EnterprisePage />} />
         <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />
         <Route path="/ActualizarPerfil/ActualizarPerfil" element={<ActualizarPerfil />}/>
+        <Route path="/Reclutador/EditarOfertaLaboral" element={<EditarOfertaLaboral/>}/>
+        <Route path="/Reclutador/VerPostulacionesRecibidas" element={<VerPostulacionesRecibidas />}/>
+        <Route path="/MiPerfil/MisPostulaciones" element={<MisPostulaciones/>}/>
+        <Route path="/MiPerfil/VerPerfil" element={<VerPerfil/>}/>
       </Routes>
     </Router>
   );

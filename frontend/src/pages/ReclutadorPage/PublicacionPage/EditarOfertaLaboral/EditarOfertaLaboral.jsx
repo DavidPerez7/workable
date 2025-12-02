@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import "./PublicacionPage.css";
+import React, { useEffect, useState } from "react";
+import HeaderReclutador from "../../../../components/HeaderReclutador/HeaderReclutador";
+import "./EditarOfertaLaboral.css";
 
-const PublicacionPage = () => {
+const EditarOfertaLaboral = () => {
   const [formData, setFormData] = useState({
+    id: "",
     tituloAviso: "",
     descripcionTrabajo: "",
     salario: "",
@@ -13,8 +14,12 @@ const PublicacionPage = () => {
     modalidadTrabajo: "",
     tipoContrato: "",
     municipio: "",
+    nitEmpresa: "", // NO editable (RF08)
   });
 
+  const [cargando, setCargando] = useState(true);
+
+  // Datos estáticos de prueba (deberás reemplazar con fetch real)
   const modalidades = [
     { id: 1, nombre: "Presencial" },
     { id: 2, nombre: "Remoto" },
@@ -33,48 +38,93 @@ const PublicacionPage = () => {
     { id: 3, nombre: "Cali" },
   ];
 
+  // ⚡ RF08 — Cargar datos actuales de la oferta
+  useEffect(() => {
+    // Simulación de carga (deberás reemplazar con API GET oferta/:id)
+    setTimeout(() => {
+      setFormData({
+        id: "25",
+        tituloAviso: "Desarrollador Frontend React",
+        descripcionTrabajo: "Mantenimiento y desarrollo de nuevas funcionalidades.",
+        salario: "3500000",
+        direccion: "Calle 45 # 12 - 22",
+        fechaPublicacion: "2025-02-01",
+        fechaLimite: "2025-02-20",
+        modalidadTrabajo: "2",
+        tipoContrato: "1",
+        municipio: "1",
+        nitEmpresa: "901457890", // NO editable
+      });
+      setCargando(false);
+    }, 600);
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ⚡ RF08 — Actualizar oferta
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const datosListos = {
-      NOMBRE: formData.tituloAviso,
+      ID: formData.id,
+      TITULO: formData.tituloAviso,
       DESCRIPCION: formData.descripcionTrabajo,
       SALARIO: formData.salario,
       DIRECCION: formData.direccion,
       FECHA_PUBLI: formData.fechaPublicacion,
       FECHA_LIMIT: formData.fechaLimite,
       MODAL_ID: parseInt(formData.modalidadTrabajo),
-      TIP_CONT_ID: parseInt(formData.tipoContrato),
+      CONTRATO_ID: parseInt(formData.tipoContrato),
       MUNIC_ID: parseInt(formData.municipio),
+      NIT_EMPRESA: formData.nitEmpresa,
     };
 
-    console.log("Datos listos para guardar:", datosListos);
-    alert("Oferta preparada para guardar (ver consola).");
+    console.log("Datos actualizados:", datosListos);
+    alert("Oferta actualizada exitosamente ✔");
   };
+
+  if (cargando) {
+    return (
+        <>
+          <HeaderReclutador />
+          <main className="pb-container">
+            <p className="pb-loading">Cargando datos...</p>
+          </main>
+        </>
+    );
+  }
 
   return (
     <>
       <HeaderReclutador />
 
       <main className="pb-container">
-        <h1 className="pb-title">Publicar oferta</h1>
+        <h1 className="pb-title">Editar oferta laboral</h1>
 
         <form className="pb-form" onSubmit={handleSubmit}>
           <section className="pb-card">
 
-            <h2 className="pb-section-title">Datos de la oferta</h2>
+            <h2 className="pb-section-title">Información de la oferta</h2>
 
             <div className="pb-field">
-              <label htmlFor="tituloAviso">Título del aviso *</label>
+              <label>NIT de la empresa (No editable)</label>
               <input
                 type="text"
+                disabled
+                className="pb-input pb-disabled"
+                value={formData.nitEmpresa}
+              />
+            </div>
+
+            <div className="pb-field">
+              <label htmlFor="tituloAviso">Título *</label>
+              <input
                 id="tituloAviso"
                 name="tituloAviso"
+                type="text"
                 value={formData.tituloAviso}
                 onChange={handleChange}
                 required
@@ -87,9 +137,9 @@ const PublicacionPage = () => {
               <textarea
                 id="descripcionTrabajo"
                 name="descripcionTrabajo"
+                rows="4"
                 value={formData.descripcionTrabajo}
                 onChange={handleChange}
-                rows="4"
                 required
                 className="pb-textarea"
               />
@@ -98,9 +148,9 @@ const PublicacionPage = () => {
             <div className="pb-field">
               <label htmlFor="salario">Salario *</label>
               <input
-                type="number"
                 id="salario"
                 name="salario"
+                type="number"
                 value={formData.salario}
                 onChange={handleChange}
                 required
@@ -111,9 +161,9 @@ const PublicacionPage = () => {
             <div className="pb-field">
               <label htmlFor="direccion">Dirección *</label>
               <input
-                type="text"
                 id="direccion"
                 name="direccion"
+                type="text"
                 value={formData.direccion}
                 onChange={handleChange}
                 required
@@ -124,9 +174,9 @@ const PublicacionPage = () => {
             <div className="pb-field">
               <label htmlFor="fechaPublicacion">Fecha de publicación *</label>
               <input
-                type="date"
                 id="fechaPublicacion"
                 name="fechaPublicacion"
+                type="date"
                 value={formData.fechaPublicacion}
                 onChange={handleChange}
                 required
@@ -137,9 +187,9 @@ const PublicacionPage = () => {
             <div className="pb-field">
               <label htmlFor="fechaLimite">Fecha límite *</label>
               <input
-                type="date"
                 id="fechaLimite"
                 name="fechaLimite"
+                type="date"
                 value={formData.fechaLimite}
                 onChange={handleChange}
                 required
@@ -157,7 +207,7 @@ const PublicacionPage = () => {
                 required
                 className="pb-select"
               >
-                <option value="">Selecciona una modalidad</option>
+                <option value="">Selecciona...</option>
                 {modalidades.map((mod) => (
                   <option key={mod.id} value={mod.id}>{mod.nombre}</option>
                 ))}
@@ -174,14 +224,14 @@ const PublicacionPage = () => {
                 required
                 className="pb-select"
               >
-                <option value="">Selecciona un tipo de contrato</option>
-                {tiposContrato.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+                <option value="">Selecciona...</option>
+                {tiposContrato.map((tc) => (
+                  <option key={tc.id} value={tc.id}>{tc.nombre}</option>
                 ))}
               </select>
             </div>
 
-            <div className="pb-field">
+            <div classNAME="pb-field">
               <label htmlFor="municipio">Municipio *</label>
               <select
                 id="municipio"
@@ -191,16 +241,17 @@ const PublicacionPage = () => {
                 required
                 className="pb-select"
               >
-                <option value="">Selecciona un municipio</option>
+                <option value="">Selecciona...</option>
                 {municipios.map((mun) => (
                   <option key={mun.id} value={mun.id}>{mun.nombre}</option>
                 ))}
               </select>
             </div>
 
-            <button className="pb-btn-primary" type="submit">
-              Publicar
+            <button type="submit" className="pb-btn-primary">
+              Guardar cambios
             </button>
+
           </section>
         </form>
       </main>
@@ -208,4 +259,4 @@ const PublicacionPage = () => {
   );
 };
 
-export default PublicacionPage;
+export default EditarOfertaLaboral;
