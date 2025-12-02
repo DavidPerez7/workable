@@ -29,6 +29,7 @@ const ReclutadorForm = () => {
       "fechaNacimiento",
       "municipioId",
       "nombreEmpresa",
+      "ubicacion",
       "nit",
       "razonSocial",
       "descripcionEmpresa",
@@ -78,6 +79,7 @@ const ReclutadorForm = () => {
       numeroTrabajadores: Number(data.numeroTrabajadores),
       emailContacto: data.emailContacto,
       telefonoContacto: data.telefonoContacto,
+      ubicacion: data.ubicacion,
       website: data.website || null,
       categories: Array.from(formData.getAll("categories")),
       municipio: {
@@ -219,6 +221,13 @@ const ReclutadorForm = () => {
                 placeholder="Razón social *"
                 required
                 className="form-input"
+              />
+              <input 
+              type="text" 
+              name="ubicacion" 
+              placeholder="Ubicacion" 
+              required 
+              className="form-input"
               />
               <input
                 type="number"

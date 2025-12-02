@@ -1,298 +1,602 @@
-.main-perfil {
-    background-color: #f7fafc;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* ============================================================
+   MI PERFIL - ESTILOS BASADOS EN GUÍA DEL PROYECTO
+   Colores principales: Navy (#0F172A), Blue (#3B82F6), Amber (#F59E0B)
+   ============================================================ */
+
+/* Variables de color según la guía */
+:root {
+  --navy: #0F172A;
+  --navy-dark: #1E293B;
+  --blue: #3B82F6;
+  --blue-dark: #1D4ED8;
+  --amber: #F59E0B;
+  --amber-dark: #D97706;
+  --green: #10B981;
+  --sky-gray: #E5E7EB;
+  --light-gray: #CBD5E1;
+  --slate: #475569;
+  --slate-light: #64748B;
 }
 
-.left-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    flex: 1;
-    min-width: 280px;
+/* ============================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================ */
+.main-perfil-MPF {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%);
+  padding: 2rem 1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.box-left-perfil,
-.box-left-application,
-.section-perfil {
-    background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 12px;
-    width: 100%;
+.container-perfil-MPF {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.perfil {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+/* ============================================================
+   ENCABEZADO DEL PERFIL
+   ============================================================ */
+.profile-header-MPF {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 2px solid var(--light-gray);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
-.text-perfil h1 {
-    font-size: 22px;
-    margin: 4px 0;
-    color: #2d3748;
+.profile-header-MPF:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+  border-color: var(--blue);
 }
 
-.text-perfil p {
-    margin: 2px 0;
-    font-size: 14px;
-    color: #4a5568;
+.profile-pic-MPF {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--blue);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  flex-shrink: 0;
 }
 
-.profile-pic {
-    position: relative;
-    width: 90px;
-    height: 90px;
-    border: 3px solid #ccc;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
+.profile-pic-MPF img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.profile-pic .overlay {
-    position: absolute;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.profile-pic-placeholder-MPF {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.profile-info-MPF {
+  flex: 1;
+}
+
+.profile-name-MPF {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: var(--navy-dark);
+  margin: 0 0 0.5rem 0;
+}
+
+.profile-cargo-MPF {
+  font-size: 1.1rem;
+  color: var(--slate);
+  margin: 0 0 1rem 0;
+  font-weight: 500;
+}
+
+.profile-status-MPF {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--green);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.icon-check {
+  color: var(--green);
+}
+
+/* ============================================================
+   RESUMEN DEL PERFIL
+   ============================================================ */
+.profile-summary-MPF {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 2px solid var(--light-gray);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.profile-summary-MPF h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0 0 1rem 0;
+}
+
+.profile-summary-MPF p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--slate);
+  margin: 0;
+}
+
+/* ============================================================
+   GRID DE INFORMACIÓN
+   ============================================================ */
+.profile-grid-MPF {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.card-info-MPF {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 2px solid var(--light-gray);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.card-title-MPF {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0 0 1.5rem 0;
+}
+
+.icon-title {
+  color: var(--blue);
+  font-size: 1.5rem;
+}
+
+/* ============================================================
+   LISTA DE INFORMACIÓN
+   ============================================================ */
+.info-list-MPF {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.info-item-MPF {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--sky-gray);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.info-icon {
+  color: var(--blue);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.info-item-MPF > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--slate-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--navy-dark);
+}
+
+/* ============================================================
+   ACCIONES RÁPIDAS
+   ============================================================ */
+.quick-actions-MPF {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 2px solid var(--light-gray);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.quick-actions-MPF h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  margin: 0 0 2rem 0;
+}
+
+.actions-grid-MPF {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.action-card-MPF {
+  background: white;
+  border: 2px solid var(--light-gray);
+  border-radius: 14px;
+  padding: 2rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.action-card-MPF:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+  border-color: var(--blue);
+}
+
+.action-icon {
+  color: var(--blue);
+  transition: all 0.3s ease;
+}
+
+.action-card-MPF:hover .action-icon {
+  transform: scale(1.1);
+  color: var(--blue-dark);
+}
+
+.action-card-MPF h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0;
+}
+
+.action-card-MPF p {
+  font-size: 0.95rem;
+  color: var(--slate);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Acción peligrosa (Eliminar) */
+.action-danger-MPF {
+  border-color: #fecaca;
+}
+
+.action-danger-MPF:hover {
+  border-color: #ef4444;
+  box-shadow: 0 12px 32px rgba(239, 68, 68, 0.2);
+}
+
+.action-danger-MPF .action-icon {
+  color: #ef4444;
+}
+
+.action-danger-MPF:hover .action-icon {
+  color: #dc2626;
+}
+
+/* ============================================================
+   MODAL DE CONFIRMACIÓN (RF04)
+   ============================================================ */
+.modal-overlay-MPF {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
     opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.profile-pic:hover .overlay {
+  }
+  to {
     opacity: 1;
+  }
 }
 
-.sub-text p {
-    font-size: 14px;
-    margin-bottom: 5px;
+.modal-content-MPF {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
 }
 
-.sub-text h3 {
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 1.4;
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.title-box-left {
-    text-align: center;
-    margin-bottom: 12px;
-    font-size: 20px;
-    font-weight: bold;
+.modal-header-MPF {
+  padding: 2rem 2rem 1rem 2rem;
+  text-align: center;
 }
 
-.buttons-container {
-    display: flex;
+.modal-icon-danger {
+  color: #ef4444;
+  margin-bottom: 1rem;
+}
+
+.modal-header-MPF h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--navy-dark);
+  margin: 0;
+}
+
+.modal-body-MPF {
+  padding: 0 2rem 2rem 2rem;
+}
+
+.warning-text-MPF {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #991b1b;
+  font-size: 1rem;
+  margin: 1rem 0;
+}
+
+.delete-list-MPF {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.delete-list-MPF li {
+  padding: 0.5rem 0;
+  color: var(--slate);
+  font-size: 0.95rem;
+}
+
+.form-group-MPF {
+  margin-top: 1.5rem;
+}
+
+.form-group-MPF label {
+  display: block;
+  font-weight: 600;
+  color: var(--navy-dark);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.input-delete-MPF {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--light-gray);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.input-delete-MPF:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.error-message-MPF {
+  display: block;
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.modal-footer-MPF {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  border-top: 2px solid var(--sky-gray);
+}
+
+.btn-cancel-MPF,
+.btn-delete-MPF {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-family: inherit;
+}
+
+.btn-cancel-MPF {
+  background: var(--sky-gray);
+  color: var(--navy-dark);
+}
+
+.btn-cancel-MPF:hover {
+  background: var(--light-gray);
+  transform: scale(1.02);
+}
+
+.btn-delete-MPF {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.btn-delete-MPF:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-delete-MPF:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   ESTADOS DE CARGA Y ERROR
+   ============================================================ */
+.loading-container,
+.error-container {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--sky-gray);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-container p,
+.error-container p {
+  font-size: 1.1rem;
+  color: var(--slate);
+  text-align: center;
+}
+
+.error-icon {
+  color: #ef4444;
+}
+
+.error-container h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0;
+}
+
+.btn-retry {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btn-retry:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+@media (max-width: 768px) {
+  .main-perfil-MPF {
+    padding: 1rem 0.5rem;
+  }
+
+  .profile-header-MPF {
     flex-direction: column;
-    gap: 15px;
-}
-
-.buttons-1, .buttons-2 {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-}
-
-.button {
-    border: none;
-    background: transparent;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border-radius: 8px;
-}
-
-.button:hover {
-    background-color: #ebf4ff;
-}
-
-.icon {
-    width: 35px;
-    height: 35px;
-    background-color: #e2e8f0;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.buttons-perfil {
-    font-size: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px;
-    text-decoration: none;
-    color: inherit;
-    border-radius: 12px;
-    transition: background-color 0.3s ease;
-}
-
-.buttons-perfil:hover {
-    background-color: #f0f4f8;
-}
-
-.Button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.icon-2 {
-    width: 45px;
-    height: 28px;
-    border-radius: 8px;
-}
-
-.right-section {
-    flex: 2;
-    min-width: 300px;
-}
-
-.container-oferts {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 1px 2px 2px 0px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.title-offers {
-    padding: 12px 16px;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: #edf2f7;
-}
-
-.text-offers {
-    font-weight: 500;
-    font-size: 18px;
-}
-
-.text-offers strong {
-    color: #2541a0;
-}
-
-.offers-scroll {
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 16px;
-    scrollbar-gutter: stable;
-}
-
-.offers-scroll::-webkit-scrollbar {
-    width: 6px;
-}
-
-.offers-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.offers-scroll::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 6px;
-}
-
-.offers-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: #94a3b8;
-}
-
-.box-offers {
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    font-size: 14px;
-}
-
-.box-offers:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.salary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    margin-top: 6px;
-}
-
-.icon-money {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.btn-eliminar {
-    font-size: 16px;
-    padding: 12px 24px; /* agrega algo de espacio horizontal */
-    background-color: #e53e3e;
-    color: white;
-    border: none; /* quita el borde por defecto del button */
-    border-radius: 12px;
     text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-    display: inline-flex; /* para alinear iconos si los agregas */
-    justify-content: center;
-    align-items: center;
+    padding: 2rem 1.5rem;
+  }
+
+  .profile-pic-MPF {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-name-MPF {
+    font-size: 1.8rem;
+  }
+
+  .profile-grid-MPF {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-grid-MPF {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content-MPF {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-footer-MPF {
+    flex-direction: column;
+  }
 }
 
-.btn-eliminar:hover {
-    background-color: #c53030;
-}
+@media (max-width: 480px) {
+  .card-info-MPF,
+  .quick-actions-MPF,
+  .profile-summary-MPF {
+    padding: 1.5rem;
+  }
 
-@media (max-width: 1024px) {
-    .main-perfil {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .profile-name-MPF {
+    font-size: 1.5rem;
+  }
 
-    .left-section, .right-section {
-        width: 100%;
-        margin: 0;
-    }
-
-    .box-left-perfil, .box-left-application, .section-perfil, .container-oferts {
-        width: 100%;
-    }
-
-    .buttons-1, .buttons-2 {
-        gap: 12px;
-    }
-}
-
-@media (max-width: 600px) {
-    .perfil {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .text-perfil {
-        margin-left: 0;
-        padding: 8px 0;
-    }
-
-    .buttons-1, .buttons-2 {
-        flex-direction: column;
-    }
-
-    .salary {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
+  .info-item-MPF {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

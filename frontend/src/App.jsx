@@ -29,6 +29,7 @@ import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
 import ReclutadorForm from "./components/SignUpPage/reclutador/ReclutadorForm";
+import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil"
 
 function App() {
   return (
@@ -73,7 +74,7 @@ function App() {
         />
         <Route path="/Reclutador/EnterprisePage" element={<EnterprisePage />} />
         <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />
-        
+        <Route path="/ActualizarPerfil/ActualizarPerfil" element={<ActualizarPerfil />}/>
       </Routes>
     </Router>
   );

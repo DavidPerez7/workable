@@ -9,12 +9,12 @@ const PublicacionPage = () => {
   const [formData, setFormData] = useState({
     tituloAviso: "",
     descripcionTrabajo: "",
+    salario: "",
     direccion: "",
     fechaPublicacion: "",
     fechaLimite: "",
     modalidadTrabajo: "",
     tipoContrato: "",
-    empresa: "",
     municipio: "",
   });
 
@@ -28,12 +28,6 @@ const PublicacionPage = () => {
     { id: 1, nombre: "Indefinido" },
     { id: 2, nombre: "Término fijo" },
     { id: 3, nombre: "Prácticas" },
-  ];
-
-  const empresas = [
-    { id: 1, nombre: "Empresa A" },
-    { id: 2, nombre: "Empresa B" },
-    { id: 3, nombre: "Empresa C" },
   ];
 
   const municipios = [
@@ -53,6 +47,7 @@ const PublicacionPage = () => {
     const datosListos = {
       NOMBRE: formData.tituloAviso,
       DESCRIPCION: formData.descripcionTrabajo,
+      SALARIO: formData.salario,
       DIRECCION: formData.direccion,
       FECHA_PUBLI: formData.fechaPublicacion,
       FECHA_LIMIT: formData.fechaLimite,
@@ -98,6 +93,18 @@ const PublicacionPage = () => {
                 rows="4"
                 required
               />
+            </label>
+
+            <label htmlFor="salario">
+              Salario:
+             <input 
+               type="number"
+               id="salario"
+               name="salario"
+               value={formData.salario}
+               onChange={handleChange}
+               required
+                />
             </label>
 
             <label htmlFor="direccion">
@@ -171,25 +178,7 @@ const PublicacionPage = () => {
                 ))}
               </select>
             </label>
-
-            <label htmlFor="empresa">
-              Empresa:
-              <select
-                id="empresa"
-                name="empresa"
-                value={formData.empresa}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Selecciona una empresa</option>
-                {empresas.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.nombre}
-                  </option>
-                ))}
-              </select>
-            </label>
-
+            
             <label htmlFor="municipio">
               Municipio:
               <select
