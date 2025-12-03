@@ -1,177 +1,267 @@
-/* ===========================
+/* ============================
    CONTENEDOR PRINCIPAL
-   =========================== */
+===============================*/
 .perfil-container-PF {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
   font-family: "Inter", sans-serif;
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 16px;
-  border: 2px solid #e5e7eb;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
 }
 
-/* ===========================
+/* ============================
    HEADER DEL PERFIL
-   =========================== */
+===============================*/
 .perfil-header-PF {
   display: flex;
-  gap: 2rem;
   align-items: center;
-  margin-bottom: 2rem;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  margin-bottom: 25px;
+  position: relative;
 }
 
 .perfil-foto-PF {
-  width: 120px;
-  height: 120px;
-  border-radius: 16px;
-  border: 3px solid #e5e7eb;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #1e40af;
+}
+
+.perfil-header-info-PF {
+  margin-left: 25px;
+  flex: 1;
 }
 
 .perfil-nombre-PF {
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 800;
   color: #0f172a;
-  margin: 0;
 }
 
 .perfil-titulo-PF {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #3b82f6;
-  margin: 0.2rem 0;
+  color: #475569;
 }
 
 .perfil-ubicacion-PF {
-  color: #64748b;
   font-size: 0.95rem;
-  margin: 0;
+  margin-top: 4px;
+  color: #64748b;
 }
 
-.perfil-verificado-PF {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.3rem 0.8rem;
-  background: #d1fae5;
-  color: #059669;
-  font-weight: 700;
+/* BOTÓN EDITAR PERFIL */
+.editar-perfil-btn-PF {
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 10px 18px;
   border-radius: 10px;
-  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
-/* ===========================
-   BLOQUES DE INFORMACIÓN
-   =========================== */
+.editar-perfil-btn-PF:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 12px rgba(30, 64, 175, 0.4);
+}
+
+/* ============================
+   BLOQUES GENÉRICOS
+===============================*/
 .perfil-bloque-PF {
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.perfil-bloque-top-PF {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .perfil-bloque-titulo-PF {
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.45rem;
   color: #1e293b;
-  margin-bottom: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
-.perfil-descripcion-PF {
-  font-size: 1rem;
-  color: #475569;
-  line-height: 1.7;
-}
-
-/* ===========================
+/* ============================
    HABILIDADES
-   =========================== */
+===============================*/
 .perfil-habilidades-PF {
   display: flex;
-  gap: 0.8rem;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 .perfil-skill-PF {
   background: #eff6ff;
-  border: 2px solid #3b82f6;
   color: #1d4ed8;
-  padding: 0.45rem 1rem;
-  border-radius: 50px;
+  padding: 6px 12px;
+  border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* ===========================
-   EXPERIENCIA
-   =========================== */
-.perfil-experiencia-card-PF {
-  background: #f9fafb;
-  padding: 1.2rem;
-  border-radius: 14px;
-  border: 2px solid #e5e7eb;
-  margin-bottom: 1rem;
-}
-
-.perfil-exp-empresa-PF {
-  font-weight: 600;
-  color: #3b82f6;
-}
-
-.perfil-exp-fecha-PF {
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-/* ===========================
-   EDUCACIÓN
-   =========================== */
-.perfil-educ-card-PF {
-  background: #f9fafb;
-  padding: 1.2rem;
-  border-radius: 14px;
-  border: 2px solid #e5e7eb;
-  margin-bottom: 1rem;
-}
-
-.perfil-edu-inst-PF {
-  color: #3b82f6;
-  font-weight: 600;
-}
-
-.perfil-edu-fecha-PF {
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-/* ===========================
-   LOADING / EMPTY
-   =========================== */
-.perfil-loading,
-.perfil-empty {
-  text-align: center;
-  padding: 3rem;
-  color: #64748b;
-  font-size: 1.1rem;
-}
-
-/* ===========================
-   BOTÓN EDITAR PERFIL
-   =========================== */
-.editar-perfil-btn-PF {
-  margin-left: auto;
-  background-color: #3b82f6;
+/* BOTÓN ELIMINAR HABILIDAD */
+.perfil-skill-delete-PF {
+  background: #1e6ff1;
   color: white;
-  padding: 0.7rem 1.4rem;
-  border-radius: 12px;
-  font-weight: 600;
   border: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 18px;
+  text-align: center;
+  padding: 0;
+  transition: 0.3s;
+}
+
+.perfil-skill-delete-PF:hover {
+  background: #0052d6;
+}
+
+/* BOTÓN AÑADIR */
+.perfil-add-btn-PF {
+  background: transparent;
+  color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: 0.2s ease;
+}
+
+.perfil-add-btn-PF:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+/* FORMULARIO INLINE */
+.perfil-form-inline-PF {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.perfil-form-inline-PF input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.perfil-form-inline-PF button {
+  background: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ============================
+   EXPERIENCIA
+===============================*/
+.perfil-experiencia-card-PF {
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 12px;
+  border-left: 4px solid #1d4ed8;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/* BOTÓN ELIMINAR EXPERIENCIA */
+.perfil-exp-delete-PF {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: #1e6ff1;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: 0.3s;
+}
+
+.perfil-exp-delete-PF:hover {
+  background: #0052d6;
+}
+
+/* FORMULARIO NUEVA EXPERIENCIA */
+.perfil-form-exp-PF {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+
+.perfil-form-exp-PF input,
+.perfil-form-exp-PF textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
   font-size: 0.95rem;
 }
 
-.editar-perfil-btn-PF:hover {
-  background-color: #1d4ed8;
-  transform: translateY(-2px);
+.perfil-form-exp-PF textarea {
+  grid-column: 1 / -1;
+  min-height: 90px;
 }
 
+.perfil-form-exp-PF button {
+  grid-column: 1 / -1;
+  background: #1d4ed8;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ============================
+   CONTACTO / EDUCACIÓN
+===============================*/
+.perfil-educ-card-PF,
+.perfil-bloque-PF p {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+/* ============================
+   RESPONSIVO
+===============================*/
+@media (max-width: 768px) {
+  .perfil-header-PF {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .perfil-form-inline-PF {
+    flex-direction: column;
+  }
+
+  .perfil-form-exp-PF {
+    grid-template-columns: 1fr;
+  }
+}

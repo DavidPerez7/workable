@@ -29,11 +29,12 @@ import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
 import ReclutadorForm from "./components/SignUpPage/reclutador/ReclutadorForm";
-import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil"
-import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral"
+import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
+import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
 import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
-import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones"
-import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil"
+import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
+import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil";
+import NewReclutador from "./components/SignUpPage/reclutador/newreclutador/NewReclutador";
 
 function App() {
   return (
@@ -78,11 +79,24 @@ function App() {
         />
         <Route path="/Reclutador/EnterprisePage" element={<EnterprisePage />} />
         <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />
-        <Route path="/ActualizarPerfil/ActualizarPerfil" element={<ActualizarPerfil />}/>
-        <Route path="/Reclutador/EditarOfertaLaboral" element={<EditarOfertaLaboral/>}/>
-        <Route path="/Reclutador/VerPostulacionesRecibidas" element={<VerPostulacionesRecibidas />}/>
-        <Route path="/MiPerfil/MisPostulaciones" element={<MisPostulaciones/>}/>
-        <Route path="/MiPerfil/VerPerfil" element={<VerPerfil/>}/>
+        <Route
+          path="/ActualizarPerfil/ActualizarPerfil"
+          element={<ActualizarPerfil />}
+        />
+        <Route
+          path="/Reclutador/EditarOfertaLaboral"
+          element={<EditarOfertaLaboral />}
+        />
+        <Route
+          path="/Reclutador/VerPostulacionesRecibidas"
+          element={<VerPostulacionesRecibidas />}
+        />
+        <Route
+          path="/MiPerfil/MisPostulaciones"
+          element={<MisPostulaciones />}
+        />
+        <Route path="/MiPerfil/VerPerfil" element={<VerPerfil />} />
+        <Route path="/SignUpPage/NewReclutador" element={<NewReclutador />} />
       </Routes>
     </Router>
   );

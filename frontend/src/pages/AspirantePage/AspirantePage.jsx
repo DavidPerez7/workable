@@ -10,7 +10,7 @@ const AspirantePage = () => {
   const [loading, setLoading] = useState(false);
 
   // ============================
-  // NUEVOS ESTADOS – RF14
+  // RF14 — ESTADOS DE VALORACIÓN
   // ============================
   const [offerRating, setOfferRating] = useState(0);
   const [companyRating, setCompanyRating] = useState(0);
@@ -30,7 +30,7 @@ const AspirantePage = () => {
   });
 
   // ============================================
-  // DATOS DE OFERTAS (SIMULADAS)
+  // DATOS SIMULADOS
   // ============================================
   const allJobListings = [
     {
@@ -76,46 +76,57 @@ const AspirantePage = () => {
   ];
 
   // ============================================
-  // FILTRO GENERAL POR ?query=
+  // LECTURA DE PARÁMETROS DE LA URL
   // ============================================
-  const queryParams = new URLSearchParams(location.search);
-  const generalQuery = queryParams.get("query")?.toLowerCase() || "";
+  const params = new URLSearchParams(location.search);
+
+  const filterCargo = params.get("cargo")?.toLowerCase() || "";
+  const filterCiudad = params.get("ciudad")?.toLowerCase() || "";
+  const generalQuery = params.get("query")?.toLowerCase() || "";
+
+  // ============================================
+  // FILTRADO COMPLETO
+  // ============================================
   let filteredJobListings = allJobListings.filter((job) => {
-  const matchesGeneral =
-    job.name.toLowerCase().includes(generalQuery) ||
-    job.description.toLowerCase().includes(generalQuery) ||
-    job.location.toLowerCase().includes(generalQuery) ||
-    job.empresa.toLowerCase().includes(generalQuery);
-    job.salary.toLowerCase().includes(generalQuery)
-  return matchesGeneral;
-});
+    const matchCargo = filterCargo
+      ? job.name.toLowerCase().includes(filterCargo)
+      : true;
 
-if (filters.ordenar === "recientes") {
-  filteredJobListings = filteredJobListings.sort((a, b) => {
-    // Simulación simple: ordena por minutos / horas / días
-    const getMinutes = (timeString) => {
-      if (timeString.includes("minuto")) return parseInt(timeString) || 0;
-      if (timeString.includes("hora")) return (parseInt(timeString) || 0) * 60;
-      if (timeString.includes("día")) return (parseInt(timeString) || 0) * 1440;
-      return 999999; // Por si hay formatos no estándar
-    };
-    return getMinutes(a.timePosted) - getMinutes(b.timePosted);
+    const matchCiudad = filterCiudad
+      ? job.location.toLowerCase().includes(filterCiudad)
+      : true;
+
+    const matchesGeneral =
+      job.name.toLowerCase().includes(generalQuery) ||
+      job.description.toLowerCase().includes(generalQuery) ||
+      job.location.toLowerCase().includes(generalQuery) ||
+      job.empresa.toLowerCase().includes(generalQuery);
+
+    return matchCargo && matchCiudad && matchesGeneral;
   });
-}
-
-if (filters.ordenar === "salario") {
-  filteredJobListings = filteredJobListings.sort(
-    (a, b) => Number(b.salary) - Number(a.salary)
-  );
-}
-
 
   // ============================================
-  // SIMULACIÓN POSTULARSE
+  // ORDENAR RESULTADOS
   // ============================================
-  const handlePostularse = (id) => {
-    alert(`Postulación exitosa a la oferta ${id} (simulación)`);
-  };
+  if (filters.ordenar === "recientes") {
+    filteredJobListings = filteredJobListings.sort((a, b) => {
+      const getMinutes = (timeString) => {
+        if (timeString.includes("minuto")) return parseInt(timeString) || 0;
+        if (timeString.includes("hora"))
+          return (parseInt(timeString) || 0) * 60;
+        if (timeString.includes("día"))
+          return (parseInt(timeString) || 0) * 1440;
+        return 999999;
+      };
+      return getMinutes(a.timePosted) - getMinutes(b.timePosted);
+    });
+  }
+
+  if (filters.ordenar === "salario") {
+    filteredJobListings = filteredJobListings.sort(
+      (a, b) => Number(b.salary) - Number(a.salary)
+    );
+  }
 
   // ============================================
   // FORMATEAR SALARIO
@@ -128,7 +139,25 @@ if (filters.ordenar === "salario") {
     }).format(value);
 
   // ============================================
-  // RF14 — Enviar valoración
+  // SELECCIONAR AUTOMÁTICAMENTE LA PRIMERA OFERTA
+  // ============================================
+  useEffect(() => {
+    if (filteredJobListings.length > 0) {
+      setSelectedJob(filteredJobListings[0]);
+    } else {
+      setSelectedJob(null);
+    }
+  }, [location.search]);
+
+  // ============================================
+  // POSTULARSE
+  // ============================================
+  const handlePostularse = (id) => {
+    alert(`Postulación exitosa a la oferta ${id} (simulación)`);
+  };
+
+  // ============================================
+  // ENVIAR VALORACIÓN
   // ============================================
   const submitRating = async () => {
     if (hasRated) return;
@@ -153,12 +182,8 @@ if (filters.ordenar === "salario") {
       <HeaderAspirant />
 
       <main className="main-aspirant-page-AP">
-        
-        {/* ============================================
-            SIDEBAR DE FILTROS (RESTAURADO)
-        ============================================ */}
+        {/* SIDEBAR */}
         <aside className="sidebar-filters-AP">
-
           <div className="filters-header-AP">
             <h2 className="filters-title-AP">Filtros de búsqueda</h2>
             <button
@@ -180,7 +205,7 @@ if (filters.ordenar === "salario") {
             </button>
           </div>
 
-          {/* ORDENAR POR */}
+          {/* Ordenar */}
           <div className="filter-group-AP">
             <label className="filter-label-AP">Ordenar por</label>
             <select
@@ -196,7 +221,7 @@ if (filters.ordenar === "salario") {
             </select>
           </div>
 
-          {/* EXPERIENCIA */}
+          {/* Experiencia */}
           <div className="filter-group-AP">
             <label className="filter-label-AP">Experiencia</label>
             <select
@@ -213,7 +238,7 @@ if (filters.ordenar === "salario") {
             </select>
           </div>
 
-          {/* MODALIDAD */}
+          {/* Modalidad */}
           <div className="filter-group-AP">
             <label className="filter-label-AP">Modalidad</label>
             <select
@@ -230,7 +255,7 @@ if (filters.ordenar === "salario") {
             </select>
           </div>
 
-          {/* CONTRATO */}
+          {/* Tipo de contrato */}
           <div className="filter-group-AP">
             <label className="filter-label-AP">Tipo de contrato</label>
             <select
@@ -246,18 +271,14 @@ if (filters.ordenar === "salario") {
               <option value="Aprendiz">Aprendiz</option>
             </select>
           </div>
-
         </aside>
 
-        {/* ============================================
-            PANEL CONTENIDO
-        ============================================ */}
+        {/* CONTENIDO */}
         <div className="content-wrapper-AP">
-
           <div className="results-header-AP">
             <h1 className="results-title-AP">
-              {generalQuery
-                ? `Resultados para "${generalQuery}"`
+              {filterCargo || filterCiudad || generalQuery
+                ? "Resultados de búsqueda"
                 : "Todas las ofertas"}
             </h1>
             <p className="results-count-AP">
@@ -266,56 +287,62 @@ if (filters.ordenar === "salario") {
           </div>
 
           <section className="section-job-panels-AP">
-            
             {/* LISTADO */}
             <section className="section-listings-panel-AP">
-              {filteredJobListings.map((job) => (
-                <article
-                  key={job.id}
-                  className={`job-card-AP ${
-                    selectedJob?.id === job.id ? "selected" : ""
-                  }`}
-                  onClick={() => {
-                    setSelectedJob(job);
-                    setOfferRating(0);
-                    setCompanyRating(0);
-                    setComment("");
-                    setRatingSuccess(false);
-                    setHasRated(false);
-                  }}
-                >
-                  <div className="job-card-header-AP">
-                    <h3 className="job-card-title-AP">{job.name}</h3>
-                    <span className="job-time-badge-AP">{job.timePosted}</span>
-                  </div>
+              {filteredJobListings.length === 0 ? (
+                <p className="no-results-msg">
+                  No encontramos ofertas que coincidan con tu búsqueda.
+                </p>
+              ) : (
+                filteredJobListings.map((job) => (
+                  <article
+                    key={job.id}
+                    className={`job-card-AP ${
+                      selectedJob?.id === job.id ? "selected" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedJob(job);
+                      setOfferRating(0);
+                      setCompanyRating(0);
+                      setComment("");
+                      setRatingSuccess(false);
+                      setHasRated(false);
+                    }}
+                  >
+                    <div className="job-card-header-AP">
+                      <h3 className="job-card-title-AP">{job.name}</h3>
+                      <span className="job-time-badge-AP">
+                        {job.timePosted}
+                      </span>
+                    </div>
 
-                  <p className="job-company-AP">{job.empresa}</p>
-                  <p className="job-location-AP">{job.location}</p>
+                    <p className="job-company-AP">{job.empresa}</p>
+                    <p className="job-location-AP">{job.location}</p>
 
-                  <div className="job-tags-AP">
-                    <span className="job-tag-AP tag-modalidad-AP">
-                      {job.modalidad}
-                    </span>
-                    <span className="job-tag-AP tag-contrato-AP">
-                      {job.contrato}
-                    </span>
-                  </div>
+                    <div className="job-tags-AP">
+                      <span className="job-tag-AP tag-modalidad-AP">
+                        {job.modalidad}
+                      </span>
+                      <span className="job-tag-AP tag-contrato-AP">
+                        {job.contrato}
+                      </span>
+                    </div>
 
-                  <div className="job-card-footer-AP">
-                    <p className="job-salary-AP">
-                      {formatSalary(job.salary)}
-                    </p>
-                    <p className="job-deadline-AP">{job.timepostuled}</p>
-                  </div>
-                </article>
-              ))}
+                    <div className="job-card-footer-AP">
+                      <p className="job-salary-AP">
+                        {formatSalary(job.salary)}
+                      </p>
+                      <p className="job-deadline-AP">{job.timepostuled}</p>
+                    </div>
+                  </article>
+                ))
+              )}
             </section>
 
             {/* DETALLES */}
             <section className="section-details-panel-AP">
               {selectedJob ? (
                 <div className="job-detail-content-AP">
-                  
                   <div className="job-detail-header-AP">
                     <div>
                       <h2 className="job-detail-title-AP">
@@ -329,13 +356,13 @@ if (filters.ordenar === "salario") {
 
                   <div className="job-detail-info-AP">
                     <div className="info-item-AP">{selectedJob.location}</div>
-                    <div className="info-item-AP">{selectedJob.modalidad}</div>
+                    <div className="info-item-AP">{selectedJob.modalidad}</div>;
                     <div className="info-item-AP">{selectedJob.contrato}</div>
                     <div className="info-item-AP">{selectedJob.fulltime}</div>
                   </div>
 
                   <div className="job-detail-salary-AP">
-                    <span className="salary-label-AP">Salario:</span>
+                    <span className="salary-label-AP">Salario: </span>
                     <span className="salary-value-AP">
                       {formatSalary(selectedJob.salary)}
                     </span>
@@ -362,13 +389,9 @@ if (filters.ordenar === "salario") {
                     <span>{selectedJob.timepostuled}</span>
                   </div>
 
-                  {/* =====================================
-                      SECCIÓN RF14 — VALORACIÓN
-                  ===================================== */}
+                  {/* VALORACIÓN RF14 */}
                   <div className="rating-section-AP">
-                    <h3 className="rating-title-AP">
-                      Valorar esta oferta
-                    </h3>
+                    <h3 className="rating-title-AP">Valorar esta oferta</h3>
 
                     <p>Calificación de la oferta:</p>
                     <div className="rating-stars-AP">
@@ -429,7 +452,6 @@ if (filters.ordenar === "salario") {
                 </div>
               )}
             </section>
-
           </section>
         </div>
       </main>
