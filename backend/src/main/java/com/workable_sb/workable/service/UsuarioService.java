@@ -25,7 +25,7 @@ public class UsuarioService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    // ===== READ =====
+    // - READ
     public Optional<Usuario> getById(Long id) {
         return usuarioRepo.findById(id);
     }
@@ -50,55 +50,50 @@ public class UsuarioService {
         return usuarioRepo.findByMunicipioId(municipioId);
     }
 
-    // ===== CREATE =====
+
+    // - CREATE
     public Usuario createPublic(Usuario request) {
-        
+        // Solo validación de correo único y municipio existente
         if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
             throw new RuntimeException("Correo already in use");
         }
-
-        // Validación: No permitir ADMIN en registro público
         if (request.getRol() == Usuario.Rol.ADMIN) {
-            throw new RuntimeException("Cannot register user with ADMIN role");
+            throw new IllegalStateException("No se permite crear usuarios ADMIN desde el registro público");
         }
 
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                .orElseThrow(() -> new RuntimeException("Municipio not found"));
+        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
+
         request.setMunicipio(municipio);
-
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-        request.setPassword(hashedPassword);
-
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
         return usuarioRepo.save(request);
     }
 
     public Usuario create(Usuario request) {
-        
-        if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new RuntimeException("Correo already in use");
+        if (request.getMunicipio() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
+            request.setMunicipio(municipio);
         }
-
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                .orElseThrow(() -> new RuntimeException("Municipio not found"));
-        request.setMunicipio(municipio);
-
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-        request.setPassword(hashedPassword);
-
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
         return usuarioRepo.save(request);
     }
 
-    // ===== UPDATE =====
-    public Usuario update(Long id, Usuario request, Long usuarioActualId) {
 
+
+    // - UPDATE (PUBLICO: solo aspirantes/reclutadores, no puede modificar ADMIN)
+    public Usuario updatePublic(Long id, Usuario request, Long usuarioActualId) {
         Usuario existingUsuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Validar permisos: solo el mismo usuario o ADMIN pueden actualizar
-        if (!puedeModificarUsuario(existingUsuario, usuarioActualId)) {
-            throw new IllegalStateException("Solo el dueño o un ADMIN pueden actualizar este usuario");
+        // Solo el propio usuario puede actualizar
+        if (!existingUsuario.getId().equals(usuarioActualId)) {
+            throw new IllegalStateException("Solo puedes actualizar tu propio usuario");
         }
-
+        // No se puede modificar un usuario ADMIN
+        if (existingUsuario.getRol() == Usuario.Rol.ADMIN) {
+            throw new IllegalStateException("No puedes modificar un usuario ADMIN");
+        }
         // Validar correo único (solo si cambió)
         if (!existingUsuario.getCorreo().equals(request.getCorreo())) {
             if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
@@ -106,44 +101,70 @@ public class UsuarioService {
             }
             existingUsuario.setCorreo(request.getCorreo());
         }
-
         existingUsuario.setNombre(request.getNombre());
         existingUsuario.setApellido(request.getApellido());
         existingUsuario.setTelefono(request.getTelefono());
         existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
         existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
-
-        // Solo ADMIN puede cambiar isActive y rol
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-        if (usuarioActual.getRol() == Usuario.Rol.ADMIN) {
-            existingUsuario.setIsActive(request.getIsActive());
-            existingUsuario.setRol(request.getRol());
-        }
-
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            String hashedPassword = passwordEncoder.encode(request.getPassword());
-            existingUsuario.setPassword(hashedPassword);
+            existingUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-
         if (request.getMunicipio() != null) {
             Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
                     .orElseThrow(() -> new RuntimeException("Municipio not found"));
             existingUsuario.setMunicipio(municipio);
         }
-
         return usuarioRepo.save(existingUsuario);
     }
 
-    // ===== DELETE =====
-    public void delete(Long id, Long usuarioActualId) {
+    // - UPDATE (ADMIN: gestión completa)
+    public Usuario update(Long id, Usuario request) {
         Usuario existingUsuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        if (!puedeModificarUsuario(existingUsuario, usuarioActualId)) {
-            throw new IllegalStateException("Solo el dueño o un ADMIN pueden eliminar este usuario");
+        // Validar correo único (solo si cambió)
+        if (!existingUsuario.getCorreo().equals(request.getCorreo())) {
+            if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
+                throw new RuntimeException("Correo already in use");
+            }
+            existingUsuario.setCorreo(request.getCorreo());
         }
+        existingUsuario.setNombre(request.getNombre());
+        existingUsuario.setApellido(request.getApellido());
+        existingUsuario.setTelefono(request.getTelefono());
+        existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
+        existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
+        existingUsuario.setIsActive(request.getIsActive());
+        existingUsuario.setRol(request.getRol());
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            existingUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        if (request.getMunicipio() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                    .orElseThrow(() -> new RuntimeException("Municipio not found"));
+            existingUsuario.setMunicipio(municipio);
+        }
+        return usuarioRepo.save(existingUsuario);
+    }
 
+    // - DELETE (PUBLICO: solo aspirantes/reclutadores, no puede eliminar ADMIN)
+    public void deletePublic(Long id, Long usuarioActualId) {
+        Usuario existingUsuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Solo el propio usuario puede eliminar
+        if (!existingUsuario.getId().equals(usuarioActualId)) {
+            throw new IllegalStateException("Solo puedes eliminar tu propio usuario");
+        }
+        // No se puede eliminar un usuario ADMIN
+        if (existingUsuario.getRol() == Usuario.Rol.ADMIN) {
+            throw new IllegalStateException("No puedes eliminar un usuario ADMIN");
+        }
+        usuarioRepo.delete(existingUsuario);
+    }
+
+    // - DELETE (ADMIN: gestión completa)
+    public void delete(Long id) {
+        Usuario existingUsuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuarioRepo.delete(existingUsuario);
     }
 

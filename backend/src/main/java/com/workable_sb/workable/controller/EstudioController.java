@@ -1,48 +1,68 @@
+
 package com.workable_sb.workable.controller;
 
-import com.workable_sb.workable.dto.dataestudio.DataEstudioDto;
-import com.workable_sb.workable.dto.dataestudio.DataEstudioReadDto;
+import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.service.EstudioService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api/dataestudio")
+@RequestMapping("/api/estudio")
 public class EstudioController {
-    private final EstudioService service;
 
-    public EstudioController(EstudioService service) {
-        this.service = service;
-    }
+    @Autowired
+    private EstudioService estudioService;
 
+    // - CREATE
     @PostMapping
-    public ResponseEntity<DataEstudioReadDto> create(@RequestBody DataEstudioDto dto) {
-        return ResponseEntity.status(201).body(service.create(dto));
+    public ResponseEntity<Estudio> crearEstudio(@RequestBody Estudio estudio, @RequestParam Long usuarioId) {
+        return ResponseEntity.ok(estudioService.crearEstudio(estudio, usuarioId));
     }
 
+    // - READ by id
     @GetMapping("/{id}")
-    public ResponseEntity<DataEstudioReadDto> findById(@PathVariable Integer id) {
-        DataEstudioReadDto dto = service.findById(id);
-        if (dto == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<Estudio> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(estudioService.obtenerPorId(id));
     }
 
+    // - READ por usuario
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Estudio>> obtenerEstudiosPorUsuario(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(estudioService.obtenerEstudiosPorUsuario(usuarioId));
+    }
+
+    // - READ en curso por usuario
+    @GetMapping("/usuario/{usuarioId}/encurso")
+    public ResponseEntity<List<Estudio>> obtenerEstudiosEnCurso(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(estudioService.obtenerEstudiosEnCurso(usuarioId));
+    }
+
+    // - READ por nivel educativo
+    @GetMapping("/usuario/{usuarioId}/nivel")
+    public ResponseEntity<List<Estudio>> obtenerEstudiosPorNivel(@PathVariable Long usuarioId, @RequestParam Estudio.NivelEducativo nivel) {
+        return ResponseEntity.ok(estudioService.obtenerEstudiosPorNivel(usuarioId, nivel));
+    }
+
+    // - READ todos
     @GetMapping
-    public ResponseEntity<List<DataEstudioReadDto>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<List<Estudio>> listarTodos() {
+        return ResponseEntity.ok(estudioService.listarTodos());
     }
 
+    // - UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<DataEstudioReadDto> update(@PathVariable Integer id, @RequestBody DataEstudioDto dto) {
-        return ResponseEntity.ok(service.update(id, dto));
+    public ResponseEntity<Estudio> actualizarEstudio(@PathVariable Long id, @RequestBody Estudio estudio, @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(estudioService.actualizarEstudio(id, estudio, usuarioIdActual));
     }
 
+    // - DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id) {
-        service.delete(id);
+    public ResponseEntity<Void> eliminarEstudio(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
+        estudioService.eliminarEstudio(id, usuarioIdActual);
         return ResponseEntity.noContent().build();
     }
 }
