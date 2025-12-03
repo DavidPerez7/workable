@@ -26,10 +26,8 @@ public class ExperienciaService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    // ===== CREACIÓN =====
+    // ===== CREATE =====
     public Experiencia crearExperiencia(Experiencia experiencia, Long usuarioId) {
-        if (experiencia == null) throw new IllegalArgumentException("Experiencia no puede ser null");
-        if (usuarioId == null) throw new IllegalArgumentException("UsuarioId requerido");
 
         // Validar campos obligatorios
         if (experiencia.getCargo() == null || experiencia.getCargo().isEmpty()) {
@@ -46,25 +44,18 @@ public class ExperienciaService {
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Solo ASPIRANTE puede tener experiencias (ADMIN puede crear para cualquier aspirante)
-        if (usuario.getRol() != Usuario.Rol.ASPIRANTE) {
-            throw new IllegalArgumentException("Solo usuarios con rol ASPIRANTE pueden tener experiencias");
-        }
-
         // Validar municipio
         if (experiencia.getMunicipio() != null) {
             municipioRepo.findById(experiencia.getMunicipio().getId())
                     .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
         }
 
-        // Asignar usuario
         experiencia.setUsuario(usuario);
 
-        // Guardar (validaciones de fechas en @PrePersist)
         return experienciaRepo.save(experiencia);
     }
 
-    // ===== CONSULTAS =====
+    // ===== READ =====
     public Experiencia obtenerPorId(Long id) {
         return experienciaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Experiencia no encontrada con id: " + id));
@@ -96,7 +87,7 @@ public class ExperienciaService {
         return experienciaRepo.findAll();
     }
 
-    // ===== ACTUALIZACIÓN (dueño o ADMIN) =====
+    // ===== UPDATE =====
     public Experiencia actualizarExperiencia(Long id, Experiencia experienciaActualizada, Long usuarioIdActual) {
         Experiencia existente = obtenerPorId(id);
 
@@ -118,11 +109,10 @@ public class ExperienciaService {
             existente.setMunicipio(experienciaActualizada.getMunicipio());
         }
 
-        // Guardar (validaciones en @PreUpdate)
         return experienciaRepo.save(existente);
     }
 
-    // ===== ELIMINACIÓN (soft delete - dueño o ADMIN) =====
+    // ===== DELETE =====
     public void eliminarExperiencia(Long id, Long usuarioIdActual) {
         Experiencia existente = obtenerPorId(id);
 
@@ -131,31 +121,18 @@ public class ExperienciaService {
             throw new IllegalStateException("Solo el dueño o un administrador pueden eliminar esta experiencia");
         }
 
-        // Soft delete
         existente.setEstado(Estado.INACTIVO);
         experienciaRepo.save(existente);
     }
 
-    // ===== ELIMINACIÓN FÍSICA (solo ADMIN) =====
-    public void eliminarExperienciaFisica(Long id, String correoUsuarioActual) {
-        // Validar que el usuario actual es ADMIN
-        Usuario usuarioActual = usuarioRepo.findByCorreo(correoUsuarioActual)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        if (usuarioActual.getRol() != Usuario.Rol.ADMIN) {
-            throw new IllegalStateException("Solo administradores pueden eliminar experiencias físicamente");
-        }
-
-        // Verificar que la experiencia existe
+    public void eliminarExperienciaFisica(Long id) {
         if (!experienciaRepo.existsById(id)) {
             throw new RuntimeException("Experiencia no encontrada con id: " + id);
         }
 
-        // Eliminación física
         experienciaRepo.deleteById(id);
     }
 
-    // ===== CAMBIAR ESTADO (dueño o ADMIN) =====
     public Experiencia cambiarEstado(Long id, Estado nuevoEstado, Long usuarioIdActual) {
         Experiencia existente = obtenerPorId(id);
 
@@ -169,9 +146,6 @@ public class ExperienciaService {
     }
 
     // ===== MÉTODOS AUXILIARES =====
-    /**
-     * Verifica si un usuario puede modificar una experiencia (es el dueño o es ADMIN)
-     */
     private boolean puedeModificarExperiencia(Experiencia experiencia, Long usuarioId) {
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
