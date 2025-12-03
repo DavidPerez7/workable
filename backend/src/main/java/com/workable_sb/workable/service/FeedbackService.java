@@ -10,11 +10,12 @@ import com.workable_sb.workable.repository.OfertaRepo;
 import com.workable_sb.workable.repository.UsuarioRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 public class FeedbackService {
     @Autowired
     private FeedbackRepo feedbackRepo;
@@ -25,19 +26,20 @@ public class FeedbackService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
-    // CREATE
+    // ===== CREATE =====
     public Feedback create(Feedback request) {
-        // Validar usuario
-        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         request.setUsuario(usuario);
 
-        // Validar empresa/oferta (solo una puede estar presente)
         if (request.getEmpresa() != null) {
-            Empresa empresa = empresaRepository.findById(request.getEmpresa().getId()).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+            Empresa empresa = empresaRepository.findById(request.getEmpresa().getId())
+                    .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
             request.setEmpresa(empresa);
         }
         if (request.getOferta() != null) {
-            Oferta oferta = ofertaRepo.findById(request.getOferta().getId()).orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+            Oferta oferta = ofertaRepo.findById(request.getOferta().getId())
+                    .orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
             request.setOferta(oferta);
         }
         Feedback saved = feedbackRepo.save(request);
@@ -45,37 +47,42 @@ public class FeedbackService {
         return saved;
     }
 
-    // READ
-    public Optional<Feedback> getById(Long id) {
-        return feedbackRepo.findById(id);
+    // ===== READ =====
+    public Feedback getById(Long id) {
+        return feedbackRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Feedback no encontrado"));
     }
 
     public List<Feedback> getByEmpresa(Long empresaId) {
-        return feedbackRepo.findByEmpresaId(empresaId);
+        return feedbackRepo.findByEmpresaIdAndIsActiveTrue(empresaId);
+    }
+
+    public List<Feedback> getByOferta(Long ofertaId) {
+        return feedbackRepo.findByOfertaIdAndIsActiveTrue(ofertaId);
     }
 
     public List<Feedback> getByUsuario(Long usuarioId) {
-        return feedbackRepo.findByUsuarioId(usuarioId);
+        return feedbackRepo.findByUsuarioIdAndIsActiveTrue(usuarioId);
     }
 
-    public Optional<Feedback> getByUsuarioAndEmpresa(Long usuarioId, Long empresaId) {
-        return feedbackRepo.findByUsuarioIdAndEmpresaId(usuarioId, empresaId);
+    public Feedback getByUsuarioAndEmpresa(Long usuarioId, Long empresaId) {
+        return feedbackRepo.findByUsuarioIdAndEmpresaIdAndIsActiveTrue(usuarioId, empresaId)
+                .orElse(null);
     }
 
-    // UPDATE
+    // ===== UPDATE =====
     public Feedback update(Long id, Feedback request) {
         Feedback existente = feedbackRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Feedback no encontrado"));
         existente.setTitulo(request.getTitulo());
         existente.setDescripcion(request.getDescripcion());
         existente.setPuntuacion(request.getPuntuacion());
-        existente.setIsActive(request.getIsActive());
         Feedback saved = feedbackRepo.save(existente);
         actualizarPuntuacionEntidad(saved);
         return saved;
     }
 
-    // DELETE
+    // ===== DELETE =====
     public void delete(Long id) {
         Feedback existente = feedbackRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Feedback no encontrado"));
@@ -83,13 +90,19 @@ public class FeedbackService {
         actualizarPuntuacionEntidad(existente);
     }
 
-    // Lógica adicional: calcular promedio de puntuación
+    // ===== HELPER PARA @PreAuthorize =====
+    public boolean esOwner(Long feedbackId, Long usuarioId) {
+        return feedbackRepo.findById(feedbackId)
+                .map(f -> f.getUsuario().getId().equals(usuarioId))
+                .orElse(false);
+    }
+
+    // ===== LÓGICA DE NEGOCIO =====
     private void actualizarPuntuacionEntidad(Feedback feedback) {
         if (feedback.getEmpresa() != null) {
             Long empresaId = feedback.getEmpresa().getId();
-            List<Feedback> feedbacks = feedbackRepo.findByEmpresaId(empresaId);
+            List<Feedback> feedbacks = feedbackRepo.findByEmpresaIdAndIsActiveTrue(empresaId);
             double promedio = feedbacks.stream()
-                    .filter(f -> f.getIsActive() == null || f.getIsActive())
                     .mapToDouble(f -> f.getPuntuacion() != null ? f.getPuntuacion() : 0.0)
                     .average().orElse(0.0);
             Empresa empresa = feedback.getEmpresa();
@@ -98,13 +111,12 @@ public class FeedbackService {
         }
         if (feedback.getOferta() != null) {
             Long ofertaId = feedback.getOferta().getId();
-            List<Feedback> feedbacks = feedbackRepo.findByOfertaId(ofertaId);
+            List<Feedback> feedbacks = feedbackRepo.findByOfertaIdAndIsActiveTrue(ofertaId);
             double promedio = feedbacks.stream()
-                    .filter(f -> f.getIsActive() == null || f.getIsActive())
                     .mapToDouble(f -> f.getPuntuacion() != null ? f.getPuntuacion() : 0.0)
                     .average().orElse(0.0);
-            Oferta oferta = new Oferta();
-            oferta = ofertaRepo.findById(feedback.getOferta().getId()).orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+            Oferta oferta = ofertaRepo.findById(ofertaId)
+                    .orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
             oferta.setPuntuacion((float) promedio);
             ofertaRepo.save(oferta);
         }

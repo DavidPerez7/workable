@@ -108,26 +108,10 @@ public class HabilidadService {
     }
 
     // ===== DELETE =====
-    public void eliminarHabilidad(Long id, Long usuarioId) {
-
-        // Solo ADMIN puede eliminar (validado en controller)
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+    public void eliminarHabilidad(Long id) {
         Habilidad habilidad = habilidadRepo.findById(id)
-                .filter(h -> h.getIsActive())
                 .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
 
-        habilidad.setIsActive(false);
-        habilidadRepo.save(habilidad);
-    }
-
-    public void eliminarHabilidadFisica(Long id) {
-
-        if (!habilidadRepo.existsById(id)) {
-            throw new RuntimeException("Habilidad no encontrada");
-        }
-
-        habilidadRepo.deleteById(id);
+        habilidadRepo.delete(habilidad);
     }
 }

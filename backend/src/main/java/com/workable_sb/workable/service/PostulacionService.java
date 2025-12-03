@@ -139,26 +139,13 @@ public class PostulacionService {
 		Usuario usuario = usuarioRepo.findById(usuarioIdActual)
 			.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-		// Validar ownership: solo el dueño o ADMIN pueden eliminar
 		if (usuario.getRol() != Usuario.Rol.ADMIN && 
 			!postulacion.getUsuario().getId().equals(usuarioIdActual)) {
 			throw new IllegalStateException("Solo puedes eliminar tus propias postulaciones");
 		}
 
-		postulacion.setIsActive(false);
-		postulacionRepo.save(postulacion);
+		postulacionRepo.delete(postulacion);
 	}
-
-	public void eliminarPostulacionFisica(Long postulacionId) {
-		if (!postulacionRepo.existsById(postulacionId)) {
-			throw new RuntimeException("Postulación no encontrada");
-		}
-
-		postulacionRepo.deleteById(postulacionId);
-	}
-	/**
-	 * Verifica si un usuario puede ver una postulación
-	 */
 	private boolean puedeVerPostulacion(Postulacion postulacion, Long usuarioId) {
 		Usuario usuario = usuarioRepo.findById(usuarioId)
 			.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -183,9 +170,6 @@ public class PostulacionService {
 		return false;
 	}
 
-	/**
-	 * Verifica si un usuario puede modificar una postulación (cambiar estado)
-	 */
 	private boolean puedeModificarPostulacion(Postulacion postulacion, Long usuarioId) {
 		Usuario usuario = usuarioRepo.findById(usuarioId)
 			.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
