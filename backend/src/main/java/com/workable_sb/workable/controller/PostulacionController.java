@@ -71,11 +71,4 @@ public class PostulacionController {
         postulacionService.eliminarPostulacion(id, usuarioIdActual);
         return ResponseEntity.noContent().build();
     }
-
-    // DELETE físico
-    @DeleteMapping("/{id}/fisico")
-    public ResponseEntity<Void> deleteFisico(@PathVariable Long id) {
-        postulacionService.eliminarPostulacionFisica(id);
-        return ResponseEntity.noContent().build();
-    }
 }
