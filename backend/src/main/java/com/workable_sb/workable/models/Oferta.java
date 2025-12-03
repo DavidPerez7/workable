@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "oferta")
 public class Oferta {
 	
 	public enum EstadoOferta {
@@ -112,8 +111,11 @@ public class Oferta {
 	)
 	private Set<Habilidad> habilidadesRequeridas = new HashSet<>();
 
+
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
 	private Set<Postulacion> postulaciones = new HashSet<>();
+
+	private Float puntuacion = 0.0f;
 
 	@PrePersist
 	public void setFechaPublicacion() {

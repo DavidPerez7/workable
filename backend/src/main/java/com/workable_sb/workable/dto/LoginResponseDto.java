@@ -1,4 +1,4 @@
-package com.workable_sb.workable.dto.auth;
+package com.workable_sb.workable.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

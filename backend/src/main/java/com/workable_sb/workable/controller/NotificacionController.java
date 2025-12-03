@@ -1,43 +1,74 @@
 package com.workable_sb.workable.controller;
-
-import com.workable_sb.workable.dto.notificacion.NotificacionDto;
+import com.workable_sb.workable.models.Notificacion;
 import com.workable_sb.workable.service.NotificacionService;
 
+import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
-@RequestMapping("/api/notificaciones")
+@RequestMapping("/api/notificacion")
 
 public class NotificacionController {
-    private final NotificacionService notificacionService;
 
-    public NotificacionController(NotificacionService notificacionService) {
-        this.notificacionService = notificacionService;
-    }
+    @Autowired
+    private NotificacionService notificacionService;
 
+    // CREATE
     @PostMapping
-    public NotificacionDto crearNotificacion(@RequestBody NotificacionDto notificacionDto) {
-        return notificacionService.crearNotificacion(notificacionDto);
+    public ResponseEntity<Notificacion> create(@Valid @RequestBody Notificacion request) {
+        return ResponseEntity.ok(notificacionService.create(request)); 
     }
 
+    // READ
     @GetMapping("/{id}")
-    public NotificacionDto obtenerNotificacionPorId(@PathVariable Integer id) {
-        return notificacionService.obtenerNotificacionPorId(id);
+    public ResponseEntity<Optional<Notificacion>> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(notificacionService.getById(id));
+    }
+
+    @GetMapping("/titulo/{titulo}")
+    public ResponseEntity<Optional<Notificacion>> getByTitulo(@PathVariable String titulo) {
+        return ResponseEntity.ok(notificacionService.getByTitulo(titulo));
     }
 
     @GetMapping("/usuario/{usuarioId}")
-    public List<NotificacionDto> listarNotificacionesPorUsuario(@PathVariable Integer usuarioId) {
-        return notificacionService.listarNotificacionesPorUsuario(usuarioId);
+    public ResponseEntity<List<Notificacion>> getByUsuarioId(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(notificacionService.getByUsuario(usuarioId));
+    }
+    
+    @GetMapping("/usuario-leida/{usuarioId}")
+    public ResponseEntity<List<Notificacion>> getByUsuarioLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) {
+        return ResponseEntity.ok(notificacionService.getByUsuarioAndLeida(usuarioId, leida));
+    }
+    
+    @GetMapping("/usuario-tipo/{usuarioId}")
+    public ResponseEntity<List<Notificacion>> getByUsuarioTipo(@PathVariable Long usuarioId, @RequestParam Notificacion.Tipo tipo) {
+        return ResponseEntity.ok(notificacionService.getByUsuarioAndTipo(usuarioId, tipo));
     }
 
-    @PutMapping("/leida/{id}")
-    public NotificacionDto marcarComoLeida(@PathVariable Integer id) {
-        return notificacionService.marcarComoLeida(id);
+    @GetMapping("/usuario-fecha-desc/{usuarioId}")
+    public ResponseEntity<List<Notificacion>> getByUsuarioOrderByFechaDesc(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(notificacionService.getByUsuarioOrderByFechaDesc(usuarioId));
+    }
+    
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<Notificacion> update(@PathVariable Long id, @Valid @RequestBody Notificacion request) {
+        return ResponseEntity.ok(notificacionService.update(id, request));
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
-    public void eliminarNotificacion(@PathVariable Integer id) {
-        notificacionService.eliminarNotificacion(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        notificacionService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
