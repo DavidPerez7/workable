@@ -27,9 +27,6 @@ public interface NotificacionRepo extends JpaRepository<Notificacion, Long> {
     // Contar notificaciones no leídas
     Long countByUsuarioIdAndLeida(Long usuarioId, Boolean leida);
     
-    // Buscar notificaciones activas
-    List<Notificacion> findByUsuarioIdAndIsActive(Long usuarioId, Boolean isActive);
-    
     // Ordenar por fecha descendente
     List<Notificacion> findByUsuarioIdOrderByFechaCreacionDesc(Long usuarioId);
 }

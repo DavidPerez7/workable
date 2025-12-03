@@ -19,6 +19,14 @@ public class NotificacionService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
+    //CREATE
+    public Notificacion create(Notificacion request) {
+
+        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId()).orElseThrow(() -> new RuntimeException("user not found"));
+        request.setUsuario(usuario);
+        return notificacionRepo.save(request);
+    }
+
     //READ
     public Optional<Notificacion> getById(Long id) {
         return notificacionRepo.findById(id);
@@ -40,24 +48,8 @@ public class NotificacionService {
         return notificacionRepo.findByUsuarioIdAndTipo(usuarioId, tipo);
     }
 
-    public Long getNoLeidas(Long usuarioId, Boolean leida) {
-        return notificacionRepo.countByUsuarioIdAndLeida(usuarioId, leida);
-    }
-
-    public List<Notificacion> getActiveByUsuarioId(Long usuarioId, Boolean isActive) {
-        return notificacionRepo.findByUsuarioIdAndIsActive(usuarioId, isActive);
-    }
-
     public List<Notificacion> getByUsuarioOrderByFechaDesc(Long usuarioId) {
         return notificacionRepo.findByUsuarioIdOrderByFechaCreacionDesc(usuarioId);
-    }
-
-    //CREATE
-    public Notificacion create(Notificacion request) {
-
-        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId()).orElseThrow(() -> new RuntimeException("user not found"));
-        request.setUsuario(usuario);
-        return notificacionRepo.save(request);
     }
 
     //UPDATE
