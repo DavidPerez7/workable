@@ -11,9 +11,10 @@
 }
 
 main {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #0F172A;
-  background: #FFFFFF;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  color: #0f172a;
+  background: #ffffff;
 }
 
 /* ==========================================
@@ -22,7 +23,7 @@ main {
 
 .section-hero {
   position: relative;
-  background: #E5E7EB;
+  background: #e5e7eb;
   min-height: 85vh;
   display: flex;
   align-items: center;
@@ -33,9 +34,16 @@ main {
 .hero-gradient-overlay {
   position: absolute;
   inset: 0;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+  background: radial-gradient(
+      circle at 20% 30%,
+      rgba(59, 130, 246, 0.12) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(245, 158, 11, 0.08) 0%,
+      transparent 50%
+    );
   pointer-events: none;
 }
 
@@ -53,10 +61,10 @@ main {
   align-items: center;
   gap: 0.5rem;
   background: white;
-  border: 2px solid #3B82F6;
+  border: 2px solid #3b82f6;
   padding: 0.5rem 1.25rem;
   border-radius: 50px;
-  color: #3B82F6;
+  color: #3b82f6;
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
@@ -66,13 +74,13 @@ main {
 .hero-main-title {
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 800;
-  color: #1E293B;
+  color: #1e293b;
   line-height: 1.15;
   margin-bottom: 1.5rem;
 }
 
 .hero-title-accent {
-  background:#3c6ffa;
+  background: #3c6ffa;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -97,7 +105,7 @@ main {
   display: flex;
   align-items: center;
   background: white;
-  border: 2px solid #CBD5E1;
+  border: 2px solid #cbd5e1;
   border-radius: 14px;
   padding: 0.4rem;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
@@ -105,12 +113,12 @@ main {
 }
 
 .search-wrapper:hover {
-  border-color: #3B82F6;
+  border-color: #3b82f6;
   box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
 }
 
 .search-wrapper:focus-within {
-  border-color: #3B82F6;
+  border-color: #3b82f6;
   box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
 }
 
@@ -120,23 +128,23 @@ main {
   outline: none;
   padding: 1rem 1.5rem;
   font-size: 1.05rem;
-  color: #0F172A;
+  color: #0f172a;
   background: transparent;
   font-family: inherit;
   margin-top: 13px;
 }
 
 .search-icon {
-  color: #3B82F6;
+  color: #3b82f6;
   margin-left: 1rem;
   flex-shrink: 0;
 }
 .search-input::placeholder {
-  color: #94A3B8;
+  color: #94a3b8;
 }
 
 .search-btn {
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   padding: 1.2rem 2rem;
@@ -174,7 +182,7 @@ main {
 .stat-number {
   font-size: 2.2rem;
   font-weight: 800;
-  color: #1E293B;
+  color: #1e293b;
   margin-bottom: 0.3rem;
 }
 
@@ -187,7 +195,7 @@ main {
 .stat-divider {
   width: 1px;
   height: 40px;
-  background: #94A3B8;
+  background: #94a3b8;
 }
 
 /* ==========================================
@@ -196,7 +204,7 @@ main {
 
 .section-companies {
   padding: 5rem 1.5rem;
-  background: #F9FAFB;
+  background: #f9fafb;
 }
 
 .section-header-content {
@@ -206,7 +214,7 @@ main {
 
 .section-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   padding: 0.5rem 1.25rem;
   border-radius: 50px;
@@ -216,19 +224,19 @@ main {
 }
 
 .secondary-badge {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-.section-title {
+.section-title-home {
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 800;
-  color: #0F172A;
+  color: #0f172a;
   margin-bottom: 1rem;
 }
 
-.section-description {
+.section-description-home {
   font-size: 1.15rem;
-  color: #64748B;
+  color: #64748b;
   max-width: 650px;
   margin: 0 auto;
 }
@@ -245,7 +253,7 @@ main {
   background: white;
   padding: 2.5rem 2rem;
   border-radius: 16px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
   position: relative;
@@ -254,7 +262,7 @@ main {
 .step-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
-  border-color: #3B82F6;
+  border-color: #3b82f6;
 }
 
 .step-number {
@@ -263,7 +271,7 @@ main {
   right: 1.5rem;
   font-size: 3rem;
   font-weight: 900;
-  color: #F1F5F9;
+  color: #f1f5f9;
 }
 
 .step-icon-wrapper {
@@ -278,37 +286,37 @@ main {
 }
 
 .step-icon-wrapper.purple {
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 .step-icon-wrapper.pink {
-  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
 }
 
 .step-icon-wrapper.cyan {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 .step-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #0F172A;
+  color: #0f172a;
   margin-bottom: 1rem;
 }
 
 .step-link {
-  color: #3B82F6;
+  color: #3b82f6;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .step-link:hover {
-  color: #1D4ED8;
+  color: #1d4ed8;
 }
 
 .step-desc {
   font-size: 1rem;
-  color: #64748B;
+  color: #64748b;
   line-height: 1.6;
 }
 
@@ -318,7 +326,7 @@ main {
 
 .section-trusted {
   padding: 5rem 1.5rem;
-  background: #E5E7EB;
+  background: #e5e7eb;
 }
 
 .trusted-header {
@@ -329,13 +337,13 @@ main {
 .trusted-title {
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 800;
-  color: #0F172A;
+  color: #0f172a;
   margin-bottom: 1rem;
 }
 
 .trusted-subtitle {
   font-size: 1.15rem;
-  color: #64748B;
+  color: #64748b;
 }
 
 .companies-logos {
@@ -351,7 +359,7 @@ main {
   background: white;
   padding: 2rem;
   border-radius: 14px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -359,7 +367,7 @@ main {
 }
 
 .company-card:hover {
-  border-color: #3B82F6;
+  border-color: #3b82f6;
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.1);
 }
@@ -384,8 +392,8 @@ main {
 
 .btn-view-all {
   display: inline-block;
-  border: 2px solid #3B82F6;
-  color: #3B82F6;
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
   padding: 1rem 2.5rem;
   border-radius: 10px;
   font-size: 1.05rem;
@@ -395,7 +403,7 @@ main {
 }
 
 .btn-view-all:hover {
-  background: #3B82F6;
+  background: #3b82f6;
   color: white;
   transform: scale(1.03);
 }
@@ -436,13 +444,13 @@ main {
 .applicants-title {
   font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 800;
-  color: #0F172A;
+  color: #0f172a;
   margin-bottom: 1.5rem;
 }
 
 .applicants-text {
   font-size: 1.1rem;
-  color: #64748B;
+  color: #64748b;
   line-height: 1.7;
   margin-bottom: 1.5rem;
 }
@@ -457,11 +465,11 @@ main {
   gap: 1rem;
   margin-bottom: 1rem;
   font-size: 1.05rem;
-  color: #0F172A;
+  color: #0f172a;
 }
 
 .benefit-check {
-  color: #10B981;
+  color: #10b981;
   flex-shrink: 0;
 }
 
@@ -474,7 +482,7 @@ main {
 
 .btn-primary-large {
   display: inline-block;
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   padding: 1rem 2rem;
   border-radius: 10px;
@@ -491,8 +499,8 @@ main {
 
 .btn-secondary-large {
   display: inline-block;
-  border: 2px solid #3B82F6;
-  color: #3B82F6;
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
   padding: 1rem 2rem;
   border-radius: 10px;
   font-size: 1.05rem;
@@ -502,113 +510,108 @@ main {
 }
 
 .btn-secondary-large:hover {
-  background: #3B82F6;
+  background: #3b82f6;
   color: white;
 }
 
-/* ==========================================
-   FEATURES SECTION
-   ========================================== */
+.features-section {
+  padding: 6rem 2rem;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
 
-        .features-section {
-          padding: 6rem 2rem;
-          background: white;
-        }
+.section-header-home {
+  text-align: center;
+  margin-bottom: 4rem;
+}
 
-        .section-header {
-          text-align: center;
-          margin-bottom: 4rem;
-        }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-        .features-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
+.feature-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  text-align: center;
+}
 
-        .feature-card {
-          background: white;
-          padding: 2.5rem;
-          border-radius: 20px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-          transition: all 0.3s ease;
-          text-align: center;
-        }
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
 
-        .feature-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-        }
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+}
 
-        .feature-icon {
-          width: 80px;
-          height: 80px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 1.5rem;
-          color: white;
-        }
+.feature-icon.purple-bg {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+}
 
-        .feature-icon.purple-bg {
-          background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
-        }
+.feature-icon.pink-bg {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
 
-        .feature-icon.pink-bg {
-          background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
-        }
+.feature-icon.cyan-bg {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
 
-        .feature-icon.cyan-bg {
-          background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
-        }
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
 
-        .feature-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #0F172A;
-          margin-bottom: 1rem;
-        }
+.feature-description {
+  font-size: 1rem;
+  color: #64748b;
+  line-height: 1.6;
+}
 
-        .feature-description {
-          font-size: 1rem;
-          color: #64748B;
-          line-height: 1.6;
-        }
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 100vh;
+    padding: 1rem;
+  }
 
-        @media (max-width: 768px) {
-          .hero-section {
-            min-height: 100vh;
-            padding: 1rem;
-          }
+  .search-wrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 
-          .search-wrapper {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
+  .search-button {
+    width: 100%;
+  }
 
-          .search-button {
-            width: 100%;
-          }
+  .candidates-grid {
+    grid-template-columns: 1fr;
+  }
 
-          .candidates-grid {
-            grid-template-columns: 1fr;
-          }
+  .candidates-buttons {
+    flex-direction: column;
+  }
 
-          .candidates-buttons {
-            flex-direction: column;
-          }
-
-          .primary-button,
-          .secondary-button {
-            width: 100%;
-          }
-        }
-/* ==========================================
-   RESPONSIVE DESIGN
-   ========================================== */
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+}
 
 @media (max-width: 768px) {
   .section-hero {

@@ -10,10 +10,10 @@ import com.workable_sb.workable.repository.DireccionRepo;
 
 @Service
 public class DireccionService {
-    
     @Autowired
     public DireccionRepo direccionRepo;
 
+    // - READ
     public Direccion findById(Long id) {
         return direccionRepo.findById(id).orElse(null);
     }
@@ -26,10 +26,12 @@ public class DireccionService {
         return direccionRepo.findByNombreAndEmpresaId(nombre, empresaId).orElse(null);
     }
 
+    // - CREATE
     public Direccion create(Direccion request) {
         return direccionRepo.save(request);
     }
 
+    // - UPDATE
     public Direccion update(Long id, Direccion request) {
         Direccion existingDireccion = direccionRepo.findById(id).orElseThrow(() -> new RuntimeException("Direccion no encontrada"));
 
@@ -44,13 +46,8 @@ public class DireccionService {
         return direccionRepo.save(existingDireccion);
     }
 
+    // - DELETE
     public void Delete(Long id) {
         direccionRepo.deleteById(id);
-    }
-
-    public void Desactivar(Long id) {
-        Direccion direccion = direccionRepo.findById(id).orElseThrow(() -> new RuntimeException("Direccion no encontrada"));
-        direccion.setIsActive(false);
-        direccionRepo.save(direccion);
     }
 }

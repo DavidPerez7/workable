@@ -1,61 +1,111 @@
+/* =============================
+   CONTENEDOR PRINCIPAL
+   ============================= */
 .main-empresas {
-  text-align: center;
-  padding: 20px 0;
-  margin: 50px 0 80px;
-}
-
-.main-empresas h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.empresas-forms {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
-  width: 1380px;
+  padding: 3rem 2rem;
+  max-width: 1300px;
   margin: 0 auto;
-  flex-wrap: wrap;
+  font-family: 'Inter', sans-serif;
+}
+
+.empresas-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #1e3a8a;
+  margin-bottom: 3rem;
+  font-weight: 700;
+}
+
+
+/* =============================
+   GRID DE FORMULARIOS
+   ============================= */
+.empresas-forms {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.2rem;
 }
 
 .form-section {
-  flex: 1;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 12px;
-  background-color: white;
-  min-width: 300px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 1.8rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.25s ease;
 }
 
-.form-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: #333;
+.form-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
 }
 
+.form-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 1.2rem;
+}
+
+
+/* =============================
+   LISTADO DE EMPRESAS
+   ============================= */
 .empresa-list {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 .empresa-list li {
-  margin-bottom: 10px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  font-size: 19px;
-  color: #333;
+  padding: 0.9rem 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1f2937;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #e5e7eb;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.empresa-list li span {
-  font-size: 30px;
-  color: #0074d9;
+.empresa-list li:last-child {
+  border-bottom: none;
 }
 
+.empresa-list li:hover {
+  background-color: #f1f5ff;
+  padding-left: 0.8rem;
+}
+
+.arrow-item {
+  font-size: 1.3rem;
+  color: #1d4ed8;
+  font-weight: bold;
+  transition: transform 0.25s ease;
+}
+
+.empresa-list li:hover .arrow-item {
+  transform: translateX(4px);
+}
+
+
+/* =============================
+   RESPONSIVE
+   ============================= */
+@media (max-width: 1100px) {
+  .empresas-forms {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .empresas-forms {
+    grid-template-columns: 1fr;
+  }
+
+  .form-section {
+    padding: 1.5rem;
+  }
+}

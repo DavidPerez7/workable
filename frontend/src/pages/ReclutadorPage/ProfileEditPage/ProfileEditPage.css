@@ -1,160 +1,402 @@
-* {
-  box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
+/* ===========================
+   VARIABLES Y CONFIGURACIÓN
+   =========================== */
 .main-profile-edit-PEP {
-  background-color: #f7fafc;
-  min-height: calc(100vh - 60px);
-  padding: 40px 20px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+  padding: 3rem 2rem 5rem;
 }
 
-.nav-sub-edit-PEP {
+/* ===========================
+   HEADER DE PÁGINA
+   =========================== */
+.header-page-PEP {
+  max-width: 1000px;
+  margin: 0 auto 3rem;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  background-color: #f4fafe;
-  padding: 20px 40px;
-  margin-top: 20px;
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
-.title-nav-edit-PEP {
-  color: #333;
-  font-size: 19px;
+.title-page-PEP {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #0f172a;
   margin: 0;
 }
 
 .link-return-PEP {
+  color: #475569;
   text-decoration: none;
-  color: #2541a0;
+  font-size: 1.05rem;
   font-weight: 600;
-  transition: color 0.3s ease;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  background: white;
+  border: 2px solid #cbd5e1;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .link-return-PEP:hover {
-  color: #1f0d7d;
-  text-decoration: underline;
+  color: #1d4ed8;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
 }
 
-.container-forms-edit-PEP {
+/* ===========================
+   NAVEGACIÓN DE SECCIONES
+   =========================== */
+.nav-sections-PEP {
+  max-width: 1000px;
+  margin: 0 auto 2.5rem;
   display: flex;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.nav-item-PEP {
+  flex: 1;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  gap: 20px;
-  margin: 40px auto;
-  max-width: 1100px;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.form-email-edit-PEP,
-.form-password-edit-PEP {
-  width: 100%;
-  max-width: 500px;
-  background-color: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.nav-item-PEP:hover {
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
 }
 
-.current-email-display-PEP {
+.nav-item-PEP.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-color: #3b82f6;
+  color: white;
+}
+
+.nav-icon-PEP {
+  width: 24px;
+  height: 24px;
+}
+
+/* ===========================
+   CONTENEDOR DE FORMULARIOS
+   =========================== */
+.container-forms-edit-PEP {
+  max-width: 1000px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 20px;
-  font-size: 16px;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  gap: 2.5rem;
 }
 
-.label-email-PEP {
-  font-weight: bold;
+/* ===========================
+   SECCIONES DE FORMULARIO
+   =========================== */
+.form-section-edit-PEP {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.form-section-edit-PEP:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.1);
+}
+
+.section-header-PEP {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 2.5rem;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.icon-container-PEP {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-svg-PEP {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.email-icon-PEP {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.password-icon-PEP {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.section-title-PEP {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
   margin: 0;
 }
 
-.value-email-PEP {
-  color: #2541a0;
-  font-weight: 500;
-  margin: 0;
+/* ===========================
+   CONTENIDO DEL FORMULARIO
+   =========================== */
+.form-content-PEP {
+  padding: 2.5rem;
 }
 
+.current-info-display-PEP {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  padding: 1.5rem;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.label-current-PEP {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0 0 0.5rem 0;
+  display: block;
+}
+
+.value-current-PEP {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===========================
+   GRUPOS DE INPUT
+   =========================== */
 .input-group-edit-PEP {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 1.5rem;
 }
 
 .input-label-edit-PEP {
-  font-size: 14px;
-  color: #5a5959;
-  margin: 0;
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.6rem;
 }
 
-.input-group-edit-PEP input {
+.input-field-PEP {
   width: 100%;
-  height: 40px;
-  border-radius: 8px;
-  border: 1px solid #d0d0d0;
-  padding: 5px 10px;
-  font-size: 16px;
-  color: #333;
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #0f172a;
+  background: white;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.input-field-PEP:focus {
   outline: none;
-  transition: border-color 0.3s ease;
+  border-color: #3b82f6;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
 }
 
-.input-group-edit-PEP input::placeholder {
-  color: #a0a0a0;
+.input-field-PEP::placeholder {
+  color: #94a3b8;
 }
 
-.input-group-edit-PEP input:focus {
-  border: 1px solid #2541a0;
+.input-hint-PEP {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0.5rem 0 0 0;
 }
 
-.button-action-PEP {
-  width: 100%;
-  height: 45px;
-  background-color: #ff6302;
+/* ===========================
+   INPUT DE CONTRASEÑA CON TOGGLE
+   =========================== */
+.input-password-wrapper-PEP {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-password-wrapper-PEP .input-field-PEP {
+  padding-right: 3.5rem;
+}
+
+.toggle-password-PEP {
+  position: absolute;
+  right: 1rem;
+  background: transparent;
   border: none;
-  color: white;
-  border-radius: 8px;
-  font-size: 17px;
-  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-  margin-top: 15px;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.button-action-PEP:hover {
-  background-color: #df4e00;
+.toggle-password-PEP:hover {
+  transform: scale(1.1);
 }
 
-@media (max-width: 768px) {
-  .nav-sub-edit-PEP {
+.toggle-password-PEP:active {
+  transform: scale(0.95);
+}
+
+/* ===========================
+   BOTONES DE ACCIÓN
+   =========================== */
+.button-action-edit-PEP {
+  width: 100%;
+  padding: 1.2rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 1rem;
+}
+
+.button-action-edit-PEP:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-primary-PEP {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.button-primary-PEP:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.button-primary-PEP:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 968px) {
+  .main-profile-edit-PEP {
+    padding: 2rem 1rem 4rem;
+  }
+
+  .header-page-PEP {
     flex-direction: column;
-    padding: 15px 20px;
-    margin-top: 10px;
-    gap: 15px;
+    gap: 1.5rem;
+    align-items: flex-start;
   }
 
-  .nav-sub-edit-PEP h1 {
-    font-size: 16px;
+  .link-return-PEP {
+    width: 100%;
+    text-align: center;
   }
 
-  .container-forms-edit-PEP {
+  .nav-sections-PEP {
     flex-direction: column;
-    gap: 20px;
-    margin: 20px auto;
-    padding: 0 10px;
+    gap: 1rem;
   }
 
-  .form-email-edit-PEP,
-  .form-password-edit-PEP {
-    padding: 20px;
+  .section-header-PEP {
+    padding: 1.5rem;
+  }
+
+  .form-content-PEP {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-profile-edit-PEP {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .title-page-PEP {
+    font-size: 1.8rem;
+  }
+
+  .nav-sections-PEP {
+    padding: 1rem;
+  }
+
+  .nav-item-PEP {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .section-header-PEP {
+    padding: 1.2rem;
+    gap: 1rem;
+  }
+
+  .icon-container-PEP {
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-svg-PEP {
+    width: 22px;
+    height: 22px;
+  }
+
+  .section-title-PEP {
+    font-size: 1.2rem;
+  }
+
+  .form-content-PEP {
+    padding: 1.2rem;
+  }
+
+  .input-field-PEP {
+    padding: 0.9rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .button-action-edit-PEP {
+    padding: 1rem 1.5rem;
   }
 }

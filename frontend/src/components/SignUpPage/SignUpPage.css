@@ -4,41 +4,40 @@
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 120px);
-  background-color: #f7f9fc;
 }
 
 .div-signup-container {
   background-color: #ffffff;
   padding: 40px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   text-align: center;
   width: 100%;
-  max-width: 800px;
+  max-width: 3000px;
   box-sizing: border-box;
 }
 
 .h2-signup-title {
-  font-size: 28px;
+  font-size: 70px;
   color: #333333;
   margin-bottom: 10px;
   font-weight: 700;
 }
 
 .p-signup-instruction {
-  font-size: 16px;
+  font-size: 25px;
   color: #666666;
   margin-bottom: 30px;
 }
 
 .signup-buttons {
   display: flex;
+  flex-direction: row;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 25px;
 }
 
 .Btn-signup {
-  flex: 1;
   padding: 12px 15px;
   border: 1px solid #dee2e6;
   border-radius: 6px;
@@ -48,6 +47,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
+  width: 380px;
 }
 
 .Btn-signup:hover {

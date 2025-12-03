@@ -1,0 +1,146 @@
+/* ============================================================
+   EDITAR OFERTA LABORAL — ESTILOS WORKABLE
+   Basado en estilos_documentacion.md
+   ============================================================ */
+
+/* ---------- CONTENEDOR GENERAL ---------- */
+.pb-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ---------- TÍTULO DE LA PÁGINA ---------- */
+.pb-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+/* ---------- CARD ---------- */
+.pb-card {
+  width: 100%;
+  max-width: 820px;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 2px solid #E2E8F0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.pb-section-title {
+  font-size: 1.6rem;
+  color: #1E293B;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* ---------- CAMPOS (LABEL + INPUT) ---------- */
+.pb-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+.pb-field label {
+  font-size: 1.05rem;
+  color: #475569;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+/* ---------- INPUTS Y SELECTS ---------- */
+.pb-input,
+.pb-select,
+.pb-textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 2px solid #CBD5E1;
+  background: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Hover */
+.pb-input:hover,
+.pb-select:hover,
+.pb-textarea:hover {
+  border-color: #3B82F6;
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+}
+
+/* Focus */
+.pb-input:focus,
+.pb-select:focus,
+.pb-textarea:focus {
+  border-color: #1D4ED8;
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
+  outline: 3px solid rgba(59, 130, 246, 0.4);
+}
+
+/* Textarea */
+.pb-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ---------- INPUT DESHABILITADO ---------- */
+.pb-disabled {
+  background: #F1F5F9;
+  cursor: not-allowed;
+  border-color: #CBD5E1 !important;
+  color: #64748B;
+  opacity: 0.8;
+}
+
+/* ---------- BOTÓN PRINCIPAL ---------- */
+.pb-btn-primary {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  width: 100%;
+  padding: 1.1rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  margin-top: 1.8rem;
+  transition: all 0.3s ease;
+  min-height: 48px;
+}
+
+/* Hover */
+.pb-btn-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Active */
+.pb-btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* ---------- ESTILO DE CARGA ---------- */
+.pb-loading {
+  font-size: 1.2rem;
+  color: #1E293B;
+  font-weight: 600;
+  text-align: center;
+  padding-top: 4rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .pb-card {
+    padding: 1.8rem;
+  }
+}

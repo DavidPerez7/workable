@@ -1,0 +1,177 @@
+/* ===========================
+   CONTENEDOR PRINCIPAL
+   =========================== */
+.perfil-container-PF {
+  font-family: "Inter", sans-serif;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+/* ===========================
+   HEADER DEL PERFIL
+   =========================== */
+.perfil-header-PF {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.perfil-foto-PF {
+  width: 120px;
+  height: 120px;
+  border-radius: 16px;
+  border: 3px solid #e5e7eb;
+}
+
+.perfil-nombre-PF {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.perfil-titulo-PF {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin: 0.2rem 0;
+}
+
+.perfil-ubicacion-PF {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.perfil-verificado-PF {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  background: #d1fae5;
+  color: #059669;
+  font-weight: 700;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+/* ===========================
+   BLOQUES DE INFORMACIÓN
+   =========================== */
+.perfil-bloque-PF {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.perfil-bloque-titulo-PF {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.perfil-descripcion-PF {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* ===========================
+   HABILIDADES
+   =========================== */
+.perfil-habilidades-PF {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.perfil-skill-PF {
+  background: #eff6ff;
+  border: 2px solid #3b82f6;
+  color: #1d4ed8;
+  padding: 0.45rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* ===========================
+   EXPERIENCIA
+   =========================== */
+.perfil-experiencia-card-PF {
+  background: #f9fafb;
+  padding: 1.2rem;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.perfil-exp-empresa-PF {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.perfil-exp-fecha-PF {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* ===========================
+   EDUCACIÓN
+   =========================== */
+.perfil-educ-card-PF {
+  background: #f9fafb;
+  padding: 1.2rem;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.perfil-edu-inst-PF {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.perfil-edu-fecha-PF {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* ===========================
+   LOADING / EMPTY
+   =========================== */
+.perfil-loading,
+.perfil-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+/* ===========================
+   BOTÓN EDITAR PERFIL
+   =========================== */
+.editar-perfil-btn-PF {
+  margin-left: auto;
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.7rem 1.4rem;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.editar-perfil-btn-PF:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+

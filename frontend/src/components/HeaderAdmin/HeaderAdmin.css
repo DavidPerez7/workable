@@ -1,24 +1,25 @@
 .header-admin-HAD {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  padding: 0 40px;
-  height: 4.4em;
-  background-color: #2541a0;
-  position: relative;
-  z-index: 1;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #1e6ff1 0%, #1D4ED8 100%);
+  border-bottom: 1px solid #E2E8F0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .logo-container-HAD {
-  display: flex;
-  max-width: auto;
-  height: 100%;
-  align-items: center;
-  transition: transform 0.5s;
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .img-wkb-HAD {
-  width: 10em;
+  width: 20em;
 }
 
 .img-wkb-HAD:hover {
