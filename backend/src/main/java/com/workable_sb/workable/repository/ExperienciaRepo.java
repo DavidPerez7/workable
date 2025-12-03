@@ -6,8 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.workable_sb.workable.models.Experiencia;
+import com.workable_sb.workable.models.Experiencia.Estado;
 
 @Repository
-public interface ExperienciaRepo extends JpaRepository<Experiencia, Integer> {
-    List<Experiencia> findByUsuarioId(Integer usuarioId);
+public interface ExperienciaRepo extends JpaRepository<Experiencia, Long> {
+    // Buscar experiencias por usuario
+    List<Experiencia> findByUsuarioId(Long usuarioId);
+    
+    // Buscar experiencias activas de un usuario
+    List<Experiencia> findByUsuarioIdAndEstado(Long usuarioId, Estado estado);
+    
+    // Buscar experiencias ordenadas por fecha
+    List<Experiencia> findByUsuarioIdOrderByFechaInicioDesc(Long usuarioId);
 }

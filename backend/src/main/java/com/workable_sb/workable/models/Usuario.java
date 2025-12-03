@@ -1,5 +1,7 @@
 package com.workable_sb.workable.models;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,40 +14,57 @@ import lombok.NoArgsConstructor;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50)
     private String nombre;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 50)
+    private String apellido;
+
+    @Column(nullable = false, unique = true, length = 255)
     private String correo;
-    private Long telefono;
-    private String fotoPerfilUrl;
 
-    @Column(nullable = false, length = 255)
-    private String clave;
+    @Column(length = 20)
+    private String telefono;
 
-    public enum RolUsr {
+    @Column(length = 500)
+    private String urlFotoPerfil;
+
+    @Column(nullable = false)
+    private LocalDate fechaNacimiento;
+    private LocalDate fechaCreacion;
+    private Boolean isActive;
+
+    @Column(nullable = false, length = 500)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol;
+
+    public enum Rol {
         ASPIRANTE,
         RECLUTADOR,
         ADMIN,
         ADSO
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private RolUsr rol;
-
-    @ManyToOne
-    @JoinColumn(name = "municipio_id", nullable=false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 
-    public enum EstadoUsr {
-        ACTIVO,
-        INACTIVO
+    @PrePersist
+    protected void setFechaCreacion(){
+        if (this.fechaCreacion == null) {
+            this.fechaCreacion = LocalDate.now();
+        }
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EstadoUsr estado = EstadoUsr.ACTIVO;
+    @PrePersist
+    protected void setIsActive(){
+        if (this.isActive == null) {
+            this.isActive = true;
+        }
+    }
 }
