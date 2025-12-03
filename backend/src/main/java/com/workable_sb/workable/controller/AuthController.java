@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.workable_sb.workable.dto.LoginRequestDto;
+import com.workable_sb.workable.dto.LoginResponseDto;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.UsuarioRepo;
 import com.workable_sb.workable.security.JwtUtil;
@@ -75,7 +77,7 @@ public class AuthController {
 
     // - READ (login)
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Usuario loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
         try {
             Usuario usuario = usuarioRepo.findByCorreo(loginRequest.getCorreo()).orElse(null);
             if (usuario == null || !passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
@@ -83,7 +85,15 @@ public class AuthController {
             }
             String rolString = usuario.getRol().toString();
             String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
-            return ResponseEntity.ok(Map.of("token", token, "rol", rolString));
+            
+            LoginResponseDto response = new LoginResponseDto();
+            response.setToken(token);
+            response.setRol(rolString);
+            response.setUsuarioId(usuario.getId());
+            response.setNombre(usuario.getNombre());
+            response.setCorreo(usuario.getCorreo());
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
