@@ -54,8 +54,13 @@ public class EmpresaService {
         return empresa.getReclutadores();
     }
 
-    // - CREATE
-    public Empresa create(Empresa request) {
+    // ===== CREATE =====
+    public Empresa create(Empresa request, Long usuarioId) {
+
+        // Validar que el usuario existe
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         if (empresaRepository.existsByNit(request.getNit())) {
             throw new RuntimeException("NIT already in use");
         }
@@ -70,6 +75,7 @@ public class EmpresaService {
     }
 
     public Empresa createWithOwner(Empresa empresa, Usuario reclutadorOwner) {
+
         if (empresaRepository.existsByNit(empresa.getNit())) {
             throw new RuntimeException("NIT already in use");
         }
@@ -86,9 +92,15 @@ public class EmpresaService {
         return empresaRepository.save(empresa);
     }
 
-    public Empresa addReclutador(Long empresaId, Usuario nuevoReclutador) {
+    public Empresa addReclutador(Long empresaId, Usuario nuevoReclutador, Long usuarioIdActual) {
+
         Empresa empresa = empresaRepository.findById(empresaId)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        // Validar que el usuario actual puede modificar la empresa (owner o ADMIN)
+        if (!puedeModificarEmpresa(empresa, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el owner o un ADMIN pueden agregar reclutadores");
+        }
 
         if (usuarioRepository.findByCorreo(nuevoReclutador.getCorreo()).isPresent()) {
             throw new RuntimeException("Correo already in use");
@@ -100,10 +112,16 @@ public class EmpresaService {
         return empresaRepository.save(empresa);
     }
 
-    // - UPDATE
-    public Empresa update(Long id, Empresa request) {
+    // ===== UPDATE =====
+    public Empresa update(Long id, Empresa request, Long usuarioIdActual) {
+
         Empresa existingEmpresa = empresaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        // Validar que el usuario actual puede modificar (owner o ADMIN)
+        if (!puedeModificarEmpresa(existingEmpresa, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el owner o un ADMIN pueden actualizar esta empresa");
+        }
 
         existingEmpresa.setNombre(request.getNombre());
         existingEmpresa.setDescripcion(request.getDescripcion());
@@ -124,18 +142,30 @@ public class EmpresaService {
         return empresaRepository.save(existingEmpresa);
     }
 
-    // -DELETE
-    public void delete(Long id) {
+    // ===== DELETE =====
+    public void delete(Long id, Long usuarioIdActual) {
+
         Empresa existingEmpresa = empresaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        // Validar que el usuario actual puede eliminar (owner o ADMIN)
+        if (!puedeModificarEmpresa(existingEmpresa, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el owner o un ADMIN pueden eliminar esta empresa");
+        }
 
         existingEmpresa.setIsActive(false);
         empresaRepository.save(existingEmpresa);
     }
 
-    public void removeReclutador(Long empresaId, Long reclutadorId) {
+    public void removeReclutador(Long empresaId, Long reclutadorId, Long usuarioIdActual) {
+
         Empresa empresa = empresaRepository.findById(empresaId)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        // Validar que el usuario actual puede modificar (owner o ADMIN)
+        if (!puedeModificarEmpresa(empresa, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el owner o un ADMIN pueden remover reclutadores");
+        }
 
         if (empresa.getReclutadorOwner() != null && empresa.getReclutadorOwner().getId().equals(reclutadorId)) {
             throw new RuntimeException("Cannot remove owner directly");
@@ -155,15 +185,31 @@ public class EmpresaService {
     }
 
     // - CODIGO INVITACION
-    public String getCodigoInvitacion(Long empresaId) {
+    // @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')") en controller
+    public String getCodigoInvitacion(Long empresaId, Long usuarioIdActual) {
+        if (empresaId == null) throw new IllegalArgumentException("EmpresaId requerido");
+        if (usuarioIdActual == null) throw new IllegalArgumentException("UsuarioIdActual requerido");
+
         Empresa empresa = empresaRepository.findById(empresaId)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        // Validar que el usuario actual puede ver el código (owner o ADMIN)
+        if (!puedeModificarEmpresa(empresa, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el owner o un ADMIN pueden ver el código de invitación");
+        }
+
         return empresa.getCodigoInvitacion();
     }
 
-    public String regenerarCodigoInvitacion(Long empresaId) {
+    public String regenerarCodigoInvitacion(Long empresaId, Long usuarioIdActual) {
+
         Empresa empresa = empresaRepository.findById(empresaId)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        // Validar que el usuario actual puede regenerar (owner o ADMIN)
+        if (!puedeModificarEmpresa(empresa, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el owner o un ADMIN pueden regenerar el código");
+        }
 
         empresa.generarCodigoInvitacion();
         empresaRepository.save(empresa);
@@ -175,5 +221,63 @@ public class EmpresaService {
         if (opt.isEmpty()) return false;
         Empresa empresa = opt.get();
         return empresa.getCodigoInvitacion() != null && empresa.getCodigoInvitacion().equals(codigo);
+    }
+
+    public Empresa unirseAEmpresaConCodigo(String nit, String codigoInvitacion, Usuario nuevoReclutador) {
+        if (nit == null || nit.isEmpty()) {
+            throw new IllegalArgumentException("NIT requerido");
+        }
+        if (codigoInvitacion == null || codigoInvitacion.isEmpty()) {
+            throw new IllegalArgumentException("Código de invitación requerido");
+        }
+        if (nuevoReclutador == null) {
+            throw new IllegalArgumentException("Datos del reclutador requeridos");
+        }
+
+        // 1. Buscar empresa por NIT
+        Empresa empresa = empresaRepository.findByNit(nit)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con NIT: " + nit));
+
+        // 2. Validar que la empresa está activa
+        if (!empresa.getIsActive()) {
+            throw new IllegalStateException("La empresa no está activa");
+        }
+
+        // 3. Validar código de invitación
+        if (!validarCodigoInvitacion(nit, codigoInvitacion)) {
+            throw new IllegalArgumentException("Código de invitación inválido");
+        }
+
+        // 4. Verificar que el correo no esté ya en uso
+        if (usuarioRepository.findByCorreo(nuevoReclutador.getCorreo()).isPresent()) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
+
+        // 5. Guardar el nuevo reclutador
+        Usuario reclutadorGuardado = usuarioRepository.save(nuevoReclutador);
+
+        // 6. Agregar a la lista de reclutadores de la empresa
+        empresa.getReclutadores().add(reclutadorGuardado);
+
+        // 7. Guardar la empresa actualizada
+        return empresaRepository.save(empresa);
+    }
+
+    private boolean puedeModificarEmpresa(Empresa empresa, Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        // Es ADMIN
+        if (usuario.getRol() == Usuario.Rol.ADMIN) {
+            return true;
+        }
+        
+        // Es el owner de la empresa
+        if (empresa.getReclutadorOwner() != null && 
+            empresa.getReclutadorOwner().getId().equals(usuarioId)) {
+            return true;
+        }
+        
+        return false;
     }
 }

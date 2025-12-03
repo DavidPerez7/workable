@@ -13,7 +13,7 @@ import com.workable_sb.workable.models.Oferta.Modalidad;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
-import com.workable_sb.workable.repository.OfertaRepository;
+import com.workable_sb.workable.repository.OfertaRepo;
 import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
@@ -21,7 +21,7 @@ import com.workable_sb.workable.repository.UsuarioRepo;
 public class OfertaService {
 
     @Autowired
-    private OfertaRepository ofertaRepository;
+    private OfertaRepo ofertaRepository;
 
     @Autowired
     private EmpresaRepository empresaRepository;
@@ -32,11 +32,8 @@ public class OfertaService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    // ===== CREACIÓN =====
+    // ===== CREATE =====
     public Oferta crearOferta(Oferta oferta, Long empresaId, Long reclutadorId) {
-        if (oferta == null) throw new IllegalArgumentException("Oferta no puede ser null");
-        if (empresaId == null) throw new IllegalArgumentException("EmpresaId requerido");
-        if (reclutadorId == null) throw new IllegalArgumentException("ReclutadorId requerido");
 
         // Validar campos obligatorios
         if (oferta.getTitulo() == null || oferta.getTitulo().isEmpty()) {
@@ -64,16 +61,10 @@ public class OfertaService {
         // Validar que la empresa existe
         Empresa empresa = empresaRepository.findById(empresaId)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-
-        // Validar que el reclutador existe y es RECLUTADOR
         Usuario reclutador = usuarioRepo.findById(reclutadorId)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
 
-        if (reclutador.getRol() != Usuario.Rol.RECLUTADOR && reclutador.getRol() != Usuario.Rol.ADMIN) {
-            throw new IllegalArgumentException("Solo usuarios con rol RECLUTADOR o ADMIN pueden crear ofertas");
-        }
-
-        // Validar que el reclutador pertenece a la empresa (excepto ADMIN)
+        // Validar que el reclutador pertenece a la empresa (regla de negocio, excepto ADMIN)
         if (reclutador.getRol() == Usuario.Rol.RECLUTADOR) {
             boolean perteneceAEmpresa = empresa.getReclutadores().stream()
                     .anyMatch(r -> r.getId().equals(reclutadorId));
@@ -93,11 +84,10 @@ public class OfertaService {
         oferta.setEmpresa(empresa);
         oferta.setReclutador(reclutador);
 
-        // Guardar (fechaPublicacion se establece en @PrePersist)
         return ofertaRepository.save(oferta);
     }
 
-    // ===== CONSULTAS =====
+    // ===== READ =====
     public Oferta obtenerPorId(Long id) {
         return ofertaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Oferta no encontrada con id: " + id));
@@ -129,7 +119,7 @@ public class OfertaService {
         return ofertaRepository.findByReclutadorId(reclutadorId);
     }
 
-    public List<Oferta> listarPorMunicipio(Integer municipioId) {
+    public List<Oferta> listarPorMunicipio(Long municipioId) {
         if (!municipioRepo.existsById(municipioId)) {
             throw new RuntimeException("Municipio no encontrado");
         }
@@ -147,7 +137,7 @@ public class OfertaService {
         return ofertaRepository.buscarPorTexto(texto);
     }
 
-    // ===== ACTUALIZACIÓN (reclutador de la empresa o ADMIN) =====
+    // ===== UPDATE =====
     public Oferta actualizarOferta(Long id, Oferta ofertaActualizada, Long usuarioIdActual) {
         Oferta existente = obtenerPorId(id);
 
@@ -175,11 +165,9 @@ public class OfertaService {
             existente.setMunicipio(ofertaActualizada.getMunicipio());
         }
 
-        // Guardar (validaciones en @PreUpdate)
         return ofertaRepository.save(existente);
     }
 
-    // ===== CAMBIAR ESTADO (reclutador de la empresa o ADMIN) =====
     public Oferta cambiarEstado(Long id, EstadoOferta nuevoEstado, Long usuarioIdActual) {
         Oferta existente = obtenerPorId(id);
 
@@ -192,30 +180,26 @@ public class OfertaService {
         return ofertaRepository.save(existente);
     }
 
-    // ===== ELIMINACIÓN FÍSICA (solo ADMIN) =====
-    public void eliminarOfertaFisica(Long id, String correoUsuarioActual) {
-        // Validar que el usuario actual es ADMIN
-        Usuario usuarioActual = usuarioRepo.findByCorreo(correoUsuarioActual)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    // ===== DELETE =====
+    public void eliminarOferta(Long id, Long usuarioIdActual) {
+        Oferta existente = obtenerPorId(id);
 
-        if (usuarioActual.getRol() != Usuario.Rol.ADMIN) {
-            throw new IllegalStateException("Solo administradores pueden eliminar ofertas físicamente");
+        if (!puedeModificarOferta(existente, usuarioIdActual)) {
+            throw new IllegalStateException("Solo el reclutador de la empresa o un administrador pueden eliminar esta oferta");
         }
 
-        // Verificar que la oferta existe
+        existente.setEstado(EstadoOferta.CERRADA);
+        ofertaRepository.save(existente);
+    }
+
+    public void eliminarOfertaFisica(Long id) {
         if (!ofertaRepository.existsById(id)) {
             throw new RuntimeException("Oferta no encontrada con id: " + id);
         }
 
-        // Eliminación física
         ofertaRepository.deleteById(id);
     }
 
-    // ===== MÉTODOS AUXILIARES =====
-    /**
-     * Verifica si un usuario puede modificar una oferta
-     * (es reclutador de la empresa de la oferta o es ADMIN)
-     */
     private boolean puedeModificarOferta(Oferta oferta, Long usuarioId) {
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

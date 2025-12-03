@@ -118,15 +118,19 @@ public class Oferta {
 	private Float puntuacion = 0.0f;
 
 	@PrePersist
-	public void setFechaPublicacion() {
+	protected void onCreate() {
 		if (this.fechaPublicacion == null) {
 			this.fechaPublicacion = LocalDate.now();
 		}
+		validateFechas();
 	}
 
-	@PrePersist
 	@PreUpdate
-	protected void validateFechas() {
+	protected void onUpdate() {
+		validateFechas();
+	}
+
+	private void validateFechas() {
 		if (fechaLimite != null && fechaPublicacion != null && fechaLimite.isBefore(fechaPublicacion)) {
 			throw new IllegalStateException("La fecha límite debe ser posterior a la fecha de publicación");
 		}
