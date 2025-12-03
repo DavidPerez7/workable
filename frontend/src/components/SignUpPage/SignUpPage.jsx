@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import "./SignUpPage.css";
 import ReclutadorForm from "./reclutador/ReclutadorForm";
@@ -11,28 +10,34 @@ const SignUpPage = () => {
   return (
     <>
       <Header />
+
       <main className="main-signup">
         <div className="div-signup-container">
           <h2 className="h2-signup-title">Regístrate en workable</h2>
           <p className="p-signup-instruction">Crea una cuenta para comenzar</p>
+
+          {/* BOTONES DE SELECCIÓN */}
           <div className="signup-buttons">
             <button
-              className={`Btn-signup${
-                userType === "aspirante" ? " active" : ""
+              className={`btn-signup ${
+                userType === "aspirante" ? "active" : ""
               }`}
               onClick={() => setUserType("aspirante")}
             >
               Soy Aspirante
             </button>
+
             <button
-              className={`Btn-signup${
-                userType === "reclutador" ? " active" : ""
+              className={`btn-signup ${
+                userType === "reclutador" ? "active" : ""
               }`}
               onClick={() => setUserType("reclutador")}
             >
               Soy Reclutador
             </button>
           </div>
+
+          {/* FORMULARIO ELEGIDO */}
           {userType === "aspirante" ? <AspiranteForm /> : <ReclutadorForm />}
         </div>
       </main>

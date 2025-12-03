@@ -222,12 +222,12 @@ const ReclutadorForm = () => {
                 required
                 className="form-input"
               />
-              <input 
-              type="text" 
-              name="ubicacion" 
-              placeholder="Ubicacion" 
-              required 
-              className="form-input"
+              <input
+                type="text"
+                name="ubicacion"
+                placeholder="Ubicacion"
+                required
+                className="form-input"
               />
               <input
                 type="number"
@@ -303,10 +303,16 @@ const ReclutadorForm = () => {
             </div>
           </div>
         </form>
-
         <button type="submit" className="submit-button">
           Registrar Reclutador y Empresa
         </button>
+
+        <p className="new-reclutador-link">
+          ¿Deseas ser reclutador de una empresa?{" "}
+          <a href="/SignUpPage/NewReclutador" className="new-reclutador-anchor">
+            Regístrate aquí
+          </a>
+        </p>
 
         <p className="login-link">
           ¿Ya tienes cuenta?{" "}
