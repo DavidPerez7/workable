@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  FaUser, 
-  FaBriefcase, 
+import {
+  FaUser,
+  FaBriefcase,
   FaWheelchair,
   FaPhone,
   FaMapMarkerAlt,
   FaCalendar,
-  FaIdCard
+  FaIdCard,
 } from "react-icons/fa";
 import {
   CheckCircle,
@@ -15,7 +15,7 @@ import {
   Settings,
   Rocket,
   Trash2,
-  AlertCircle
+  AlertCircle,
 } from "lucide-react";
 import HeaderAspirant from "../../../components/HeaderAspirant/HeaderAspirant";
 import Menu from "../../../components/Menu/Menu";
@@ -61,7 +61,8 @@ const MiPerfil = () => {
         nom: "Juan Carlos",
         ape: "Pérez González",
         cargo: "Desarrollador Full Stack",
-        descripcion: "Desarrollador apasionado por crear soluciones tecnológicas inclusivas y accesibles. Con experiencia en React, Node.js y bases de datos.",
+        descripcion:
+          "Desarrollador apasionado por crear soluciones tecnológicas inclusivas y accesibles. Con experiencia en React, Node.js y bases de datos.",
         numerDoc: "1020304050",
         nombreTipDoc: "C.C",
         nombreMunicipio: "Bogotá D.C",
@@ -70,11 +71,11 @@ const MiPerfil = () => {
         ubi: "Calle 123 #45-67, Bogotá",
         feNa: "1995-06-15",
         nombreDiscapacidad: "Discapacidad Motriz",
-        fotoPerfilUrl: null // Cambia a una URL válida si tienes imagen
+        fotoPerfilUrl: null, // Cambia a una URL válida si tienes imagen
       };
 
       // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
       setAspirante(data);
       setError("");
@@ -107,7 +108,7 @@ const MiPerfil = () => {
       //   `http://localhost:8080/api/aspirante/${idAspirante}`,
       //   {
       //     method: "DELETE",
-      //     headers: { 
+      //     headers: {
       //       Authorization: `Bearer ${token}`,
       //       "Content-Type": "application/json"
       //     },
@@ -133,7 +134,7 @@ const MiPerfil = () => {
       }
 
       // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Éxito: limpiar localStorage y redirigir
       alert("Tu cuenta ha sido eliminada exitosamente");
@@ -177,7 +178,10 @@ const MiPerfil = () => {
         <AlertCircle size={48} className="error-icon" />
         <h2>Error al cargar perfil</h2>
         <p>{error}</p>
-        <button onClick={() => obtenerAspirante(idAspirante)} className="btn-retry">
+        <button
+          onClick={() => obtenerAspirante(idAspirante)}
+          className="btn-retry"
+        >
           Reintentar
         </button>
       </div>
@@ -191,17 +195,16 @@ const MiPerfil = () => {
 
       <main className="main-perfil-MPF">
         <div className="container-perfil-MPF">
-          
           {/* Encabezado del Perfil */}
           <section className="profile-header-MPF">
             <div className="profile-pic-MPF">
               {aspirante?.fotoPerfilUrl ? (
-                <img 
-                  src={aspirante.fotoPerfilUrl} 
+                <img
+                  src={aspirante.fotoPerfilUrl}
                   alt={`${aspirante.nom} ${aspirante.ape}`}
                   onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
                   }}
                 />
               ) : null}
@@ -233,21 +236,21 @@ const MiPerfil = () => {
           )}
 
           <div className="profile-grid-MPF">
-            
             {/* Información Personal */}
             <section className="card-info-MPF">
               <h2 className="card-title-MPF">
                 <FaUser className="icon-title" />
                 Información Personal
               </h2>
-              
+
               <div className="info-list-MPF">
                 <div className="info-item-MPF">
                   <FaIdCard className="info-icon" />
                   <div>
                     <span className="info-label">Documento</span>
                     <span className="info-value">
-                      {aspirante?.nombreTipDoc || "N/A"} {aspirante?.numerDoc || ""}
+                      {aspirante?.nombreTipDoc || "N/A"}{" "}
+                      {aspirante?.numerDoc || ""}
                     </span>
                   </div>
                 </div>
@@ -256,7 +259,9 @@ const MiPerfil = () => {
                   <FaUser className="info-icon" />
                   <div>
                     <span className="info-label">Género</span>
-                    <span className="info-value">{aspirante?.nombreGenero || "N/A"}</span>
+                    <span className="info-value">
+                      {aspirante?.nombreGenero || "N/A"}
+                    </span>
                   </div>
                 </div>
 
@@ -266,10 +271,10 @@ const MiPerfil = () => {
                     <span className="info-label">Fecha de Nacimiento</span>
                     <span className="info-value">
                       {aspirante?.feNa
-                        ? new Date(aspirante.feNa).toLocaleDateString('es-CO', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
+                        ? new Date(aspirante.feNa).toLocaleDateString("es-CO", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
                           })
                         : "N/A"}
                     </span>
@@ -284,13 +289,15 @@ const MiPerfil = () => {
                 <FaPhone className="icon-title" />
                 Información de Contacto
               </h2>
-              
+
               <div className="info-list-MPF">
                 <div className="info-item-MPF">
                   <FaPhone className="info-icon" />
                   <div>
                     <span className="info-label">Teléfono</span>
-                    <span className="info-value">{aspirante?.tel || "No registrado"}</span>
+                    <span className="info-value">
+                      {aspirante?.tel || "No registrado"}
+                    </span>
                   </div>
                 </div>
 
@@ -321,8 +328,10 @@ const MiPerfil = () => {
           <section className="quick-actions-MPF">
             <h2>Acciones</h2>
             <div className="actions-grid-MPF">
-              
-              <Link to="/ActualizarPerfil/ActualizarPerfil" className="action-card-MPF">
+              <Link
+                to="/ActualizarPerfil/ActualizarPerfil"
+                className="action-card-MPF"
+              >
                 <Settings size={32} className="action-icon" />
                 <h3>Editar Perfil</h3>
                 <p>Actualiza tu información personal</p>
@@ -336,11 +345,11 @@ const MiPerfil = () => {
 
               <Link to="/MiPerfil/VerPerfil" className="action-card-MPF">
                 <Eye size={32} className="action-icon" />
-                <h3>Ver Perfil Público</h3>
+                <h3>Ver Mi Hoja de Vida</h3>
                 <p>Mira cómo te ven los reclutadores</p>
               </Link>
 
-              <button 
+              <button
                 onClick={() => setShowDeleteModal(true)}
                 className="action-card-MPF action-danger-MPF"
               >
@@ -350,14 +359,19 @@ const MiPerfil = () => {
               </button>
             </div>
           </section>
-
         </div>
       </main>
 
       {/* Modal de Confirmación para Eliminar Cuenta (RF04) */}
       {showDeleteModal && (
-        <div className="modal-overlay-MPF" onClick={() => setShowDeleteModal(false)}>
-          <div className="modal-content-MPF" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="modal-overlay-MPF"
+          onClick={() => setShowDeleteModal(false)}
+        >
+          <div
+            className="modal-content-MPF"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header-MPF">
               <AlertCircle size={48} className="modal-icon-danger" />
               <h2>¿Eliminar cuenta?</h2>

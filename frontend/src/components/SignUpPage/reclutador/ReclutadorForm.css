@@ -1,4 +1,6 @@
-/* Container principal */
+/* ================================
+   Container principal
+================================ */
 .reclutador-form-container {
   min-height: 100vh;
   display: flex;
@@ -7,17 +9,25 @@
   padding: 1rem;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
+  background: #f5f7fa;
 }
 
-/* Card del formulario */
+/* ================================
+   Card del formulario
+================================ */
 .reclutador-form-card {
   background: white;
   border-radius: 16px;
   padding: 3rem;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1100px; /* CORRECCIÓN IMPORTANTE */
+  animation: fadeIn 0.5s ease-out;
 }
 
-/* Header del formulario */
+/* ================================
+   Header del formulario
+================================ */
 .reclutador-form-header {
   text-align: center;
   margin-bottom: 2.5rem;
@@ -28,30 +38,34 @@
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 0.5rem;
-  line-height: 1.2;
 }
 
 .reclutador-form-subtitle {
   font-size: 1.1rem;
   color: #64748b;
-  margin-top: 0.5rem;
   line-height: 1.5;
 }
 
+/* ================================
+   Formulario (CORREGIDO)
+================================ */
 form {
   display: flex;
-  flex-direction: row;
+  flex-direction: column; /* CORRECCIÓN IMPORTANTE */
   gap: 20px;
-  width: 1200px;
+  width: 100%; /* CORRECCIÓN IMPORTANTE */
 }
 
-/* Secciones del formulario */
-.form-section-personal-section {
+/* ================================
+   Secciones del formulario
+================================ */
+.form-section-personal-section,
+.empresa-section,
+.compromiso-section {
   margin-bottom: 2rem;
   border-radius: 12px;
   border: 2px solid #e2e8f0;
   background: #f8fafc;
-  border-color: #e2e8f0;
   padding: 20px;
 }
 
@@ -65,7 +79,9 @@ form {
   border-color: #fcd34d;
 }
 
-/* Títulos de sección */
+/* ================================
+   Títulos de sección
+================================ */
 .section-title-reclutador {
   text-align: center;
   font-size: 1.4rem;
@@ -73,38 +89,38 @@ form {
   color: #1e293b;
   margin-bottom: 1.5rem;
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 0.5rem;
 }
 
-.section-icon {
-  font-size: 1.5rem;
-}
-
-/* Grid de formularios */
+/* ================================
+   Grid general
+================================ */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
 }
 
-/* Inputs del formulario */
+/* ================================
+   Inputs
+================================ */
 .form-input {
   width: 100%;
   padding: 0.9rem 1rem;
   border: 2px solid #cbd5e1;
   border-radius: 10px;
   font-size: 1rem;
-  transition: all 0.3s ease;
   outline: none;
-  font-family: "Inter", sans-serif;
   background: white;
   color: #0f172a;
+  transition: all 0.3s ease;
 }
 
 .form-input:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .form-input::placeholder {
@@ -116,18 +132,21 @@ form {
   min-height: 100px;
 }
 
-/* Full width para campos especiales */
+/* ================================
+   Full width
+================================ */
 .full-width {
   grid-column: 1 / -1;
 }
 
-/* Categorías */
+/* ================================
+   Categorías
+================================ */
 .categories-label {
   display: block;
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 0.5rem;
-  font-size: 1rem;
 }
 
 .categories-grid {
@@ -144,10 +163,10 @@ form {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  cursor: pointer;
   padding: 0.5rem;
   border-radius: 6px;
   transition: background 0.2s ease;
+  cursor: pointer;
 }
 
 .category-item:hover {
@@ -167,42 +186,9 @@ form {
   text-transform: capitalize;
 }
 
-/* Compromiso de inclusión */
-.compromiso-label {
-  display: flex;
-  align-items: start;
-  gap: 1rem;
-  cursor: pointer;
-}
-
-.compromiso-checkbox {
-  margin-top: 0.25rem;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  accent-color: #f59e0b;
-  flex-shrink: 0;
-}
-
-.compromiso-content {
-  flex: 1;
-}
-
-.compromiso-title {
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-  font-size: 1.05rem;
-}
-
-.compromiso-text {
-  font-size: 0.95rem;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Botón de submit */
+/* ================================
+   Botón de submit
+================================ */
 .submit-button {
   width: 100%;
   padding: 1.2rem;
@@ -215,7 +201,6 @@ form {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  font-family: "Inter", sans-serif;
   margin-top: 1rem;
 }
 
@@ -224,23 +209,24 @@ form {
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
-.submit-button:active {
-  transform: scale(0.98);
+.submit-button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
 }
 
-/* Link de login */
+/* ================================
+   Link login
+================================ */
 .login-link {
   text-align: center;
   margin-top: 1.5rem;
   color: #64748b;
-  font-size: 0.95rem;
 }
 
 .login-anchor {
   color: #3b82f6;
   font-weight: 600;
   text-decoration: none;
-  transition: color 0.2s ease;
 }
 
 .login-anchor:hover {
@@ -248,14 +234,34 @@ form {
   text-decoration: underline;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .reclutador-form-container {
-    padding: 1rem;
-  }
+.new-reclutador-link {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
 
+.new-reclutador-anchor {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.new-reclutador-anchor:hover {
+  text-decoration: underline;
+  color: #1e40af;
+}
+
+/* ================================
+   Responsive
+================================ */
+@media (max-width: 768px) {
   .reclutador-form-card {
     padding: 2rem 1.5rem;
+  }
+
+  .section-title-reclutador {
+    font-size: 1.2rem; /* CORRECCIÓN */
   }
 
   .form-grid {
@@ -264,15 +270,6 @@ form {
 
   .categories-grid {
     grid-template-columns: 1fr;
-  }
-
-  .section-title {
-    font-size: 1.2rem;
-  }
-
-  .submit-button {
-    padding: 1rem;
-    font-size: 1rem;
   }
 }
 
@@ -289,12 +286,17 @@ form {
     font-size: 1rem;
   }
 
-  .form-section {
+  /* CORRECCIÓN: aplicar padding a secciones reales */
+  .form-section-personal-section,
+  .empresa-section,
+  .compromiso-section {
     padding: 1rem;
   }
 }
 
-/* Mejoras de accesibilidad */
+/* ================================
+   Accesibilidad
+================================ */
 .form-input:invalid:not(:placeholder-shown) {
   border-color: #ef4444;
 }
@@ -303,7 +305,9 @@ form {
   border-color: #10b981;
 }
 
-/* Animaciones */
+/* ================================
+   Animación
+================================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -313,19 +317,4 @@ form {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.reclutador-form-card {
-  animation: fadeIn 0.5s ease-out;
-}
-
-/* Estados de carga */
-.submit-button:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.submit-button:disabled:hover {
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }

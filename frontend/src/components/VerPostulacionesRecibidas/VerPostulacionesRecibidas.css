@@ -7,9 +7,10 @@
 }
 
 .vp-title {
+  text-align: center;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #1E293B;
+  color: #1e293b;
   margin-bottom: 1.5rem;
 }
 
@@ -19,8 +20,8 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: #F1F5F9;
-  border: 1px solid #E2E8F0;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   margin-bottom: 1rem;
 }
@@ -41,14 +42,14 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
   border-radius: 8px;
-  border: 1px solid #CBD5E1;
+  border: 1px solid #cbd5e1;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .vp-filter-group select:hover {
-  border-color: #3B82F6;
+  border-color: #3b82f6;
 }
 
 /* ===== CONTADOR ===== */
@@ -68,15 +69,15 @@
 
 .vp-item {
   padding: 1.25rem;
-  background: #F8FAFC;
-  border: 1px solid #E5E7EB;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   transition: all 0.25s ease;
 }
 
 .vp-item:hover {
   background: white;
-  border-color: #CBD5E1;
+  border-color: #cbd5e1;
   transform: translateY(-3px);
 }
 
@@ -91,7 +92,7 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,12 +107,12 @@
 .vp-name {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #1e293b;
 }
 
 .vp-status {
   font-size: 0.9rem;
-  color: #3B82F6;
+  color: #3b82f6;
   font-weight: 600;
 }
 
