@@ -55,14 +55,10 @@ public class Usuario {
     private Municipio municipio;
 
     @PrePersist
-    protected void setFechaCreacion(){
+    protected void onCreate() {
         if (this.fechaCreacion == null) {
             this.fechaCreacion = LocalDate.now();
         }
-    }
-
-    @PrePersist
-    protected void setIsActive(){
         if (this.isActive == null) {
             this.isActive = true;
         }
