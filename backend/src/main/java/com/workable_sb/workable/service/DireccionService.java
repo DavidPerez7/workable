@@ -109,15 +109,7 @@ public class DireccionService {
             throw new IllegalStateException("Solo el owner o un ADMIN pueden eliminar direcciones");
         }
 
-        existingDireccion.setIsActive(false);
-        direccionRepo.save(existingDireccion);
-    }
-
-    public void deleteFisico(Long id) {
-        if (!direccionRepo.existsById(id)) {
-            throw new RuntimeException("Direccion no encontrada");
-        }
-        direccionRepo.deleteById(id);
+        direccionRepo.delete(existingDireccion);
     }
 
     private boolean puedeModificarEmpresa(Empresa empresa, Long usuarioId) {

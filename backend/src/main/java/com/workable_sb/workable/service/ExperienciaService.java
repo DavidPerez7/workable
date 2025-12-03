@@ -116,21 +116,11 @@ public class ExperienciaService {
     public void eliminarExperiencia(Long id, Long usuarioIdActual) {
         Experiencia existente = obtenerPorId(id);
 
-        // Validar que el usuario actual es el dueño o ADMIN
         if (!puedeModificarExperiencia(existente, usuarioIdActual)) {
             throw new IllegalStateException("Solo el dueño o un administrador pueden eliminar esta experiencia");
         }
 
-        existente.setEstado(Estado.INACTIVO);
-        experienciaRepo.save(existente);
-    }
-
-    public void eliminarExperienciaFisica(Long id) {
-        if (!experienciaRepo.existsById(id)) {
-            throw new RuntimeException("Experiencia no encontrada con id: " + id);
-        }
-
-        experienciaRepo.deleteById(id);
+        experienciaRepo.delete(existente);
     }
 
     public Experiencia cambiarEstado(Long id, Estado nuevoEstado, Long usuarioIdActual) {

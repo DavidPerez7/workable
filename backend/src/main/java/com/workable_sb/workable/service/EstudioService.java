@@ -131,25 +131,11 @@ public class EstudioService {
     public void eliminarEstudio(Long id, Long usuarioIdActual) {
         Estudio existente = obtenerPorId(id);
 
-        // Validar que el usuario actual es el dueño o ADMIN
         if (!puedeModificarEstudio(existente, usuarioIdActual)) {
             throw new IllegalStateException("Solo el dueño o un administrador pueden eliminar este estudio");
         }
 
-        existente.setEstadoEstudio(Estudio.EstadoEstudio.INACTIVO);
-        estudioRepo.save(existente);
-    }
-
-    // ===== ELIMINACIÓN FÍSICA (solo ADMIN) =====
-    // @PreAuthorize("hasRole('ADMIN')") en controller
-    public void eliminarEstudioFisico(Long id) {
-        // Verificar que el estudio existe
-        if (!estudioRepo.existsById(id)) {
-            throw new RuntimeException("Estudio no encontrado con id: " + id);
-        }
-
-        // Eliminación física
-        estudioRepo.deleteById(id);
+        estudioRepo.delete(existente);
     }
 
     private boolean puedeModificarEstudio(Estudio estudio, Long usuarioId) {
