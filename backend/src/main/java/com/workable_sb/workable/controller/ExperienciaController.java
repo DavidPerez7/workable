@@ -1,52 +1,74 @@
+
 package com.workable_sb.workable.controller;
 
-import com.workable_sb.workable.dto.dataexperiencia.*;
+import com.workable_sb.workable.models.Experiencia;
 import com.workable_sb.workable.service.ExperienciaService;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/dataexperiencia")
-@RequiredArgsConstructor
+@RequestMapping("/api/experiencia")
 public class ExperienciaController {
-    private final ExperienciaService service;
 
-    @GetMapping
-    public ResponseEntity<List<DataExperienciaReadDto>> getAll() {
-        return ResponseEntity.ok(service.findAll());
-    }
+    @Autowired
+    private ExperienciaService experienciaService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DataExperienciaReadDto> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.findById(id));
-    }
-
+    // - CREATE
     @PostMapping
-    public ResponseEntity<DataExperienciaReadDto> create(@Valid @RequestBody DataExperienciaCreateDto dto) {
-        DataExperienciaReadDto created = service.create(dto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    public ResponseEntity<Experiencia> crearExperiencia(@RequestBody Experiencia experiencia, @RequestParam Long usuarioId) {
+        return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, usuarioId));
     }
 
+    // - READ by id
+    @GetMapping("/{id}")
+    public ResponseEntity<Experiencia> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(experienciaService.obtenerPorId(id));
+    }
+
+    // - READ por usuario
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Experiencia>> obtenerExperienciasPorUsuario(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(experienciaService.obtenerExperienciasPorUsuario(usuarioId));
+    }
+
+    // - READ activas por usuario
+    @GetMapping("/usuario/{usuarioId}/activas")
+    public ResponseEntity<List<Experiencia>> obtenerExperienciasActivas(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(experienciaService.obtenerExperienciasActivas(usuarioId));
+    }
+
+    // - READ ordenadas por fecha
+    @GetMapping("/usuario/{usuarioId}/ordenadas")
+    public ResponseEntity<List<Experiencia>> obtenerExperienciasOrdenadasPorFecha(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(experienciaService.obtenerExperienciasOrdenadasPorFecha(usuarioId));
+    }
+
+    // - READ todas
+    @GetMapping
+    public ResponseEntity<List<Experiencia>> listarTodas() {
+        return ResponseEntity.ok(experienciaService.listarTodas());
+    }
+
+    // - UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<DataExperienciaReadDto> update(@PathVariable Integer id, @Valid @RequestBody DataExperienciaUpdateDto dto) {
-        DataExperienciaReadDto updated = service.update(id, dto);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<Experiencia> actualizarExperiencia(@PathVariable Long id, @RequestBody Experiencia experiencia, @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(experienciaService.actualizarExperiencia(id, experiencia, usuarioIdActual));
     }
 
+    // - PATCH cambiar estado
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<DataExperienciaReadDto> changeEstado(@PathVariable Integer id, @RequestParam String estado) {
-        DataExperienciaReadDto updated = service.changeEstado(id, estado);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<Experiencia> cambiarEstado(@PathVariable Long id, @RequestParam Experiencia.Estado estado, @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(experienciaService.cambiarEstado(id, estado, usuarioIdActual));
     }
 
+    // - DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        service.delete(id);
+    public ResponseEntity<Void> eliminarExperiencia(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
+        experienciaService.eliminarExperiencia(id, usuarioIdActual);
         return ResponseEntity.noContent().build();
     }
 }
