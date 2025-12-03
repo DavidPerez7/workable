@@ -44,11 +44,11 @@ public class DireccionService {
         return direccionRepo.save(existingDireccion);
     }
 
-    public void Delete(Long id) {
+    public void delete(Long id) {
         direccionRepo.deleteById(id);
     }
 
-    public void Desactivar(Long id) {
+    public void desactivar(Long id) {
         Direccion direccion = direccionRepo.findById(id).orElseThrow(() -> new RuntimeException("Direccion no encontrada"));
         direccion.setIsActive(false);
         direccionRepo.save(direccion);
