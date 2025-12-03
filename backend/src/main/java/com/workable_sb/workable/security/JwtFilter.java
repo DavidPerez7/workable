@@ -9,6 +9,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.workable_sb.workable.exception.JwtAuthenticationException;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import jakarta.servlet.FilterChain;
@@ -16,28 +19,32 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Filtro que intercepta todas las peticiones HTTP para validar tokens JWT.
+ * Se ejecuta una vez por petición antes de los filtros de autenticación de Spring Security.
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    
     public JwtFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
+            throws ServletException, IOException {
+        
         String path = request.getRequestURI();
         
-        System.out.println("🔍 JwtFilter - Path: " + path); // DEBUG
-
-        // Ignorar rutas públicas, sin token
-        if (path.startsWith("/api/auth")) {
-            System.out.println("✅ Ruta pública permitida: " + path); // DEBUG
+        // Ignorar rutas públicas (auth endpoints y OPTIONS para CORS)
+        if (path.startsWith("/api/auth") || request.getMethod().equals("OPTIONS")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Extraer y validar el token JWT
+        // Extraer token del header Authorization
         final String authHeader = request.getHeader("Authorization");
         String correo = null;
         String jwt = null;
@@ -45,24 +52,43 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            correo = jwtUtil.extractCorreo(jwt);
-            rol = jwtUtil.extractRol(jwt);
+            
+            try {
+                // Validar que sea un access token (no refresh token)
+                if (!jwtUtil.isAccessToken(jwt)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"error\": \"Token inválido. Usa un access token.\"}");
+                    return;
+                }
+                
+                correo = jwtUtil.extractCorreo(jwt);
+                rol = jwtUtil.extractRol(jwt);
+                
+            } catch (JwtAuthenticationException e) {
+                // Token malformado, expirado, etc.
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+                return;
+            }
         }
 
-        // Validar si el token existe y no ha sido autenticado aún
+        // Si hay correo y no está autenticado aún, validar y autenticar
         if (correo != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             if (jwtUtil.validateToken(jwt, correo)) {
 
-                // Crear la lista de autoridades para roles
+                // Crear lista de autoridades (roles)
                 var authorities = new ArrayList<SimpleGrantedAuthority>();
                 if (rol != null) {
                     authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
                 }
 
-                // crear token de autenticación
+                // Crear token de autenticación de Spring Security
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    new User(correo, "", authorities), null, authorities
+                    new User(correo, "", authorities), 
+                    null, 
+                    authorities
                 );
 
                 // Establecer detalles de autenticación
@@ -70,6 +96,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+        
         filterChain.doFilter(request, response);
     }
 }
