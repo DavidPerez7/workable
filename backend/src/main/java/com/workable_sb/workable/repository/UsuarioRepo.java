@@ -14,9 +14,6 @@ public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
     // Buscar usuario por correo (para login)
     Optional<Usuario> findByCorreo(String correo);
     
-    // Verificar si existe un correo
-    boolean existsByCorreo(String correo);
-    
     // Buscar usuario por nombre
     Optional<Usuario> findByNombre(String nombre);
     
@@ -27,5 +24,5 @@ public interface UsuarioRepo extends JpaRepository<Usuario, Long> {
     List<Usuario> findByIsActive(Boolean isActive);
     
     // Buscar usuarios por municipio
-    List<Usuario> findByMunicipioId(Integer municipioId);
+    List<Usuario> findByMunicipioId(Long municipioId);
 }

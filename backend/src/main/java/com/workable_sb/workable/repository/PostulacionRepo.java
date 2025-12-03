@@ -24,12 +24,6 @@ public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
     // Buscar postulaciones por usuario y estado
     List<Postulacion> findByUsuarioIdAndEstado(Long usuarioId, Estado estado);
     
-    // Verificar si existe postulación
-    boolean existsByUsuarioIdAndOfertaId(Long usuarioId, Long ofertaId);
-    
     // Buscar postulación específica de un usuario a una oferta
     Optional<Postulacion> findByUsuarioIdAndOfertaId(Long usuarioId, Long ofertaId);
-    
-    // Buscar postulaciones activas
-    List<Postulacion> findByUsuarioIdAndIsActive(Long usuarioId, Boolean isActive);
 }

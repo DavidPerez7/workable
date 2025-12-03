@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @Table(name = "feedback", uniqueConstraints = {
-	@UniqueConstraint(name = "UK_usuario_empresa", columnNames = {"usuario_id", "empresa_id"})
+	@UniqueConstraint(name = "FK_usuario_empresa", columnNames = {"usuario_id", "empresa_id"})
 })
 public class Feedback {
 	@Id

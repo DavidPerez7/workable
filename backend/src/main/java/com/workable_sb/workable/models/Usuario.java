@@ -30,9 +30,11 @@ public class Usuario {
 
     @Column(length = 500)
     private String urlFotoPerfil;
+
+    @Column(nullable = false)
     private LocalDate fechaNacimiento;
     private LocalDate fechaCreacion;
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @Column(nullable = false, length = 500)
     private String password;
@@ -53,9 +55,16 @@ public class Usuario {
     private Municipio municipio;
 
     @PrePersist
-    protected void onCreate(){
+    protected void setFechaCreacion(){
         if (this.fechaCreacion == null) {
             this.fechaCreacion = LocalDate.now();
+        }
+    }
+
+    @PrePersist
+    protected void setIsActive(){
+        if (this.isActive == null) {
+            this.isActive = true;
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,14 @@ public class NotificacionService {
     private UsuarioRepo usuarioRepo;
 
     //READ
+    public Optional<Notificacion> getById(Long id) {
+        return notificacionRepo.findById(id);
+    }
+
+    public Optional<Notificacion> getByTitulo(String titulo) {
+        return notificacionRepo.findByTitulo(titulo);
+    }
+
     public List<Notificacion> getByUsuario(Long usuarioId) {
         return notificacionRepo.findByUsuarioId(usuarioId);
     }

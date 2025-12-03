@@ -19,7 +19,4 @@ public interface FeedbackRepo extends JpaRepository<Feedback, Long> {
     
     // Buscar feedback específico de un usuario a una empresa
     Optional<Feedback> findByUsuarioIdAndEmpresaId(Long usuarioId, Long empresaId);
-    
-    // Buscar feedbacks activos de una empresa
-    List<Feedback> findByEmpresaIdAndIsActive(Long empresaId, Boolean isActive);
 }

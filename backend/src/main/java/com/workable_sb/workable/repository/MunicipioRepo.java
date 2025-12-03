@@ -9,7 +9,7 @@ import com.workable_sb.workable.models.Departamento;
 import com.workable_sb.workable.models.Municipio;
 
 @Repository
-public interface MunicipioRepo extends JpaRepository<Municipio, Integer> {
+public interface MunicipioRepo extends JpaRepository<Municipio, Long> {
     
     // Buscar municipios por departamento (enum)
     List<Municipio> findByDepartamento(Departamento departamento);
