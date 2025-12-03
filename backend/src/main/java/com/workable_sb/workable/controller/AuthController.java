@@ -10,44 +10,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.workable_sb.workable.dto.login.LoginRequestDto;
-import com.workable_sb.workable.dto.login.LoginResponseDto;
-import com.workable_sb.workable.dto.usuario.UsrAspiranteDto;
-import com.workable_sb.workable.dto.usuario.UsrReclutadorDto;
-import com.workable_sb.workable.dto.usuario.UsuarioDto;
 import com.workable_sb.workable.models.Usuario;
-import com.workable_sb.workable.repository.UsrAspiranteRepository;
-import com.workable_sb.workable.repository.UsrReclutadorRepository;
 import com.workable_sb.workable.repository.UsuarioRepo;
 import com.workable_sb.workable.security.JwtUtil;
 import com.workable_sb.workable.service.UsuarioService;
-import com.workable_sb.workable.service.usuario.UsrAspiranteService;
-import com.workable_sb.workable.service.usuario.UsrReclutadorService;
-
-import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
-    private UsrAspiranteService usrAspiranteService;
+    private UsuarioService usuarioService;
 
     @Autowired
-    private UsrReclutadorService usrReclutadorService;
-
-    @Autowired
-    private UsrAspiranteRepository usrAspiranteRepo;
-
-    @Autowired
-    private UsrReclutadorRepository usrReclutadorRepo;
-
-    @Autowired
-    private UsuarioRepo usrRepo;
-
-    @Autowired
-    private UsuarioService usrServ;
+    private UsuarioRepo usuarioRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -55,86 +31,61 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-@PostMapping("/register-aspirante")
-public ResponseEntity<?> registrarAspirante(@Valid @RequestBody UsrAspiranteDto aspiranteDto) {
-    if (usrAspiranteRepo.findByCorreo(aspiranteDto.getCorreo()).isPresent()) {
-        return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+    // - CREATE (register aspirante)
+    @PostMapping("/register-aspirante")
+    public ResponseEntity<?> registrarAspirante(@RequestBody Usuario usuario) {
+        try {
+            if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+            }
+            Usuario usuarioCreado = usuarioService.createPublic(usuario);
+            return ResponseEntity.ok(usuarioCreado);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
+        }
     }
-    try {
-        UsrAspiranteDto aspiranteCreado = usrAspiranteService.crear(aspiranteDto);
-        
-        return ResponseEntity.ok(Map.of(
-            "mensaje", "Aspirante registrado con éxito. Por favor, inicia sesión.",
-            "rol", "ASPIRANTE",
-            "usuario", Map.of(
-                "id", aspiranteCreado.getId(),
-                "nombre", aspiranteCreado.getNombre(),
-                "correo", aspiranteCreado.getCorreo()
-            )
-        ));
-    } catch (Exception e) {
-        return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
-    }
-}
 
-@PostMapping("/register-reclutador")
-public ResponseEntity<?> registrarReclutador(@Valid @RequestBody UsrReclutadorDto reclutadorDto) {
-    if (usrReclutadorRepo.findByCorreo(reclutadorDto.getCorreo()).isPresent()) {
-        return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+    // - CREATE (register reclutador)
+    @PostMapping("/register-reclutador")
+    public ResponseEntity<?> registrarReclutador(@RequestBody Usuario usuario) {
+        try {
+            if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+            }
+            Usuario usuarioCreado = usuarioService.createPublic(usuario);
+            return ResponseEntity.ok(usuarioCreado);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
+        }
     }
-    try {
-        UsrReclutadorDto reclutadorCreado = usrReclutadorService.crear(reclutadorDto);
-        
-        return ResponseEntity.ok(Map.of(
-            "mensaje", "Reclutador registrado con éxito. Por favor, inicia sesión.",
-            "rol", "RECLUTADOR",
-            "usuario", Map.of(
-                "id", reclutadorCreado.getId(),
-                "nombre", reclutadorCreado.getNombre(),
-                "correo", reclutadorCreado.getCorreo()
-            )
-        ));
-    } catch (Exception e) {
-        return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
-    }
-}
 
-@PostMapping("/register-admin")
-public ResponseEntity<?> registrarAdmin(@Valid @RequestBody UsuarioDto adminDto) {
-    if (usrRepo.findByCorreo(adminDto.getCorreo()).isPresent()) {
-        return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+    // - CREATE (register admin)
+    @PostMapping("/register-admin")
+    public ResponseEntity<?> registrarAdmin(@RequestBody Usuario usuario) {
+        try {
+            if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
+            }
+            Usuario usuarioCreado = usuarioService.create(usuario);
+            return ResponseEntity.ok(usuarioCreado);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
+        }
     }
-    try {
-        UsuarioDto adminCreado = usrServ.create(adminDto);
-        return ResponseEntity.ok(Map.of(
-            "mensaje", "Administrador registrado con éxito. Por favor, inicia sesión.",
-            "rol", "ADMIN",
-            "usuario", Map.of(
-                "id", adminCreado.getId(),
-                "nombre", adminCreado.getNombre(),
-                "correo", adminCreado.getCorreo()
-            )
-        ));
-    } catch (Exception e) {
-        return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+
+    // - READ (login)
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Usuario loginRequest) {
+        try {
+            Usuario usuario = usuarioRepo.findByCorreo(loginRequest.getCorreo()).orElse(null);
+            if (usuario == null || !passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
+                return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
+            }
+            String rolString = usuario.getRol().toString();
+            String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
+            return ResponseEntity.ok(Map.of("token", token, "rol", rolString));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
+        }
     }
-}
-
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
-    Usuario usuario = usrRepo.findByCorreo(loginDto.getCorreo()).orElse(null);
-    if (usuario == null || !passwordEncoder.matches(loginDto.getClave(), usuario.getClave())) {
-        return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
-    }
-    
-    // Convertir enum a String para JWT y respuesta
-    String rolString = usuario.getRol().toString();
-    String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
-
-    LoginResponseDto responseDto = new LoginResponseDto();
-    responseDto.setRol(rolString);
-    responseDto.setToken(token);
-
-    return ResponseEntity.ok(responseDto);
-}
 }
