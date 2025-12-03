@@ -1,10 +1,10 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Notificacion;
 import com.workable_sb.workable.models.Usuario;
@@ -12,6 +12,7 @@ import com.workable_sb.workable.repository.NotificacionRepo;
 import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
+@Transactional
 public class NotificacionService {
     @Autowired
     private NotificacionRepo notificacionRepo;
@@ -19,13 +20,18 @@ public class NotificacionService {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
-    //READ
-    public Optional<Notificacion> getById(Long id) {
-        return notificacionRepo.findById(id);
+    // ===== CREATE =====
+    public Notificacion create(Notificacion request, Long usuarioDestinoId) {
+        Usuario usuario = usuarioRepo.findById(usuarioDestinoId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        request.setUsuario(usuario);
+        return notificacionRepo.save(request);
     }
 
-    public Optional<Notificacion> getByTitulo(String titulo) {
-        return notificacionRepo.findByTitulo(titulo);
+    // ===== READ =====
+    public Notificacion getById(Long id) {
+        return notificacionRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
     }
 
     public List<Notificacion> getByUsuario(Long usuarioId) {
@@ -40,47 +46,52 @@ public class NotificacionService {
         return notificacionRepo.findByUsuarioIdAndTipo(usuarioId, tipo);
     }
 
-    public Long getNoLeidas(Long usuarioId, Boolean leida) {
-        return notificacionRepo.countByUsuarioIdAndLeida(usuarioId, leida);
-    }
-
-    public List<Notificacion> getActiveByUsuarioId(Long usuarioId, Boolean isActive) {
-        return notificacionRepo.findByUsuarioIdAndIsActive(usuarioId, isActive);
-    }
-
     public List<Notificacion> getByUsuarioOrderByFechaDesc(Long usuarioId) {
         return notificacionRepo.findByUsuarioIdOrderByFechaCreacionDesc(usuarioId);
     }
 
-    //CREATE
-    public Notificacion create(Notificacion request) {
-
-        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId()).orElseThrow(() -> new RuntimeException("user not found"));
-        request.setUsuario(usuario);
-        return notificacionRepo.save(request);
+    public List<Notificacion> getActivasByUsuario(Long usuarioId) {
+        return notificacionRepo.findByUsuarioId(usuarioId).stream()
+                .filter(n -> n.getIsActive())
+                .toList();
     }
 
-    //UPDATE
+    public Long contarNoLeidas(Long usuarioId) {
+        return notificacionRepo.countByUsuarioIdAndLeida(usuarioId, false);
+    }
+
+    // ===== UPDATE =====
+    public Notificacion marcarComoLeida(Long id) {
+        Notificacion notificacion = getById(id);
+        notificacion.setLeida(true);
+        return notificacionRepo.save(notificacion);
+    }
+
+    public void marcarTodasComoLeidas(Long usuarioId) {
+        List<Notificacion> noLeidas = notificacionRepo.findByUsuarioIdAndLeida(usuarioId, false);
+        noLeidas.forEach(n -> n.setLeida(true));
+        notificacionRepo.saveAll(noLeidas);
+    }
+
     public Notificacion update(Long id, Notificacion request) {
-        Notificacion existingNotificacion  = notificacionRepo.findById(id).orElseThrow(() -> new RuntimeException("Notificacion not found"));
-
-        existingNotificacion.setTipo(request.getTipo());
-        existingNotificacion.setTitulo(request.getTitulo());
-        existingNotificacion.setMensaje(request.getMensaje());
-        existingNotificacion.setUrl(request.getUrl());
-        existingNotificacion.setLeida(request.getLeida());
-        existingNotificacion.setIsActive(request.getIsActive());
-        
-        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId()).orElseThrow(() -> new RuntimeException("user not found"));
-        existingNotificacion.setUsuario(usuario);
-
-        return notificacionRepo.save(existingNotificacion);
+        Notificacion existente = getById(id);
+        existente.setTitulo(request.getTitulo());
+        existente.setMensaje(request.getMensaje());
+        existente.setUrl(request.getUrl());
+        existente.setTipo(request.getTipo());
+        return notificacionRepo.save(existente);
     }
 
-    //DELETE
+    // ===== DELETE =====
     public void delete(Long id) {
-        Notificacion existingNotificacion  = notificacionRepo.findById(id).orElseThrow(() -> new RuntimeException("Notificacion not found"));
-        notificacionRepo.delete(existingNotificacion);
+        Notificacion existente = getById(id);
+        notificacionRepo.delete(existente);
     }
 
+    // ===== MÉTODO AUXILIAR PARA @PreAuthorize =====
+    public boolean esOwner(Long notificacionId, Long usuarioId) {
+        return notificacionRepo.findById(notificacionId)
+                .map(n -> n.getUsuario().getId().equals(usuarioId))
+                .orElse(false);
+    }
 }

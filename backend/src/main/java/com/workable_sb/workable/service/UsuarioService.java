@@ -137,26 +137,14 @@ public class UsuarioService {
 
     // ===== DELETE =====
     public void delete(Long id, Long usuarioActualId) {
-
         Usuario existingUsuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Validar permisos: solo el mismo usuario o ADMIN pueden eliminar
         if (!puedeModificarUsuario(existingUsuario, usuarioActualId)) {
             throw new IllegalStateException("Solo el dueño o un ADMIN pueden eliminar este usuario");
         }
 
-        existingUsuario.setIsActive(false);
-        usuarioRepo.save(existingUsuario);
-    }
-
-    public void deleteFisico(Long id) {
-
-        if (!usuarioRepo.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-
-        usuarioRepo.deleteById(id);
+        usuarioRepo.delete(existingUsuario);
     }
 
     private boolean puedeModificarUsuario(Usuario usuario, Long usuarioActualId) {

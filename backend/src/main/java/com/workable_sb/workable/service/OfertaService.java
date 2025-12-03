@@ -188,16 +188,7 @@ public class OfertaService {
             throw new IllegalStateException("Solo el reclutador de la empresa o un administrador pueden eliminar esta oferta");
         }
 
-        existente.setEstado(EstadoOferta.CERRADA);
-        ofertaRepository.save(existente);
-    }
-
-    public void eliminarOfertaFisica(Long id) {
-        if (!ofertaRepository.existsById(id)) {
-            throw new RuntimeException("Oferta no encontrada con id: " + id);
-        }
-
-        ofertaRepository.deleteById(id);
+        ofertaRepository.delete(existente);
     }
 
     private boolean puedeModificarOferta(Oferta oferta, Long usuarioId) {

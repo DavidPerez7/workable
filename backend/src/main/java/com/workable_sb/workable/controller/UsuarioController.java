@@ -4,68 +4,63 @@ import com.workable_sb.workable.dto.usuario.UsuarioDto;
 import com.workable_sb.workable.dto.usuario.UsuarioReadDto;
 import com.workable_sb.workable.service.UsuarioService;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuario")
 public class UsuarioController {
 
-    private final UsuarioService usuarioServ;
+    @Autowired
+    private UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioService usuarioServ) {
-        this.usuarioServ = usuarioServ;
-    }
-
-    // este pedira el Dtype para creacion de usuarios en general
+    // CREATE
     @PostMapping
-    public ResponseEntity<?> createUsuario(@RequestBody UsuarioDto usuarioDto) {
-        try {
-            UsuarioDto creado = usuarioServ.create(usuarioDto);
-            return ResponseEntity.ok(creado);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al crear usuario: " + e.getMessage());
-        }
+    public ResponseEntity<UsuarioDto> create(@Valid @RequestBody UsuarioDto usuarioDto) {
+        return ResponseEntity.ok(usuarioService.create(usuarioDto));
     }
 
+    // READ by id
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Integer id) {
-        UsuarioReadDto usuario = usuarioServ.findById(id);  // Sin clave
+    public ResponseEntity<UsuarioReadDto> getById(@PathVariable Integer id) {
+        UsuarioReadDto usuario = usuarioService.findById(id);
         if (usuario == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(usuario);
     }
 
+    // READ all
     @GetMapping
-    public ResponseEntity<List<UsuarioReadDto>> listarUsuarios() {
-        List<UsuarioReadDto> usuarios = usuarioServ.findAll();  // Sin clave
-        return ResponseEntity.ok(usuarios);
+    public ResponseEntity<List<UsuarioReadDto>> getAll() {
+        return ResponseEntity.ok(usuarioService.findAll());
     }
 
-@PutMapping("/{id}")
-    public ResponseEntity<?> actualizarUsuario(@PathVariable Integer id, @RequestBody UsuarioDto usuarioDto) {
-        UsuarioReadDto actualizado = usuarioServ.update(id, usuarioDto);
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioReadDto> update(@PathVariable Integer id, @Valid @RequestBody UsuarioDto usuarioDto) {
+        UsuarioReadDto actualizado = usuarioService.update(id, usuarioDto);
         if (actualizado == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(actualizado);
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarUsuario(@PathVariable Integer id) {
-        try {
-            usuarioServ.delete(id);
-            return ResponseEntity.ok().body("Usuario eliminado correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al eliminar usuario: " + e.getMessage());
-        }
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        usuarioService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
+    // READ by nombre
     @GetMapping("/buscar")
-    public ResponseEntity<?> buscarPorNombre(@RequestParam String nombre) {
-        UsuarioReadDto usuario = usuarioServ.findByNombre(nombre);
+    public ResponseEntity<UsuarioReadDto> getByNombre(@RequestParam String nombre) {
+        UsuarioReadDto usuario = usuarioService.findByNombre(nombre);
         if (usuario == null) {
             return ResponseEntity.notFound().build();
         }

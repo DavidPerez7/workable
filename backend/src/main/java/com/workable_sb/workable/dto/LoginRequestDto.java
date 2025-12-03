@@ -1,4 +1,4 @@
-package com.workable_sb.workable.dto.auth;
+package com.workable_sb.workable.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

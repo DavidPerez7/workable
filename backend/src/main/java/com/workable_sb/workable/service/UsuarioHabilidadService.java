@@ -140,12 +140,9 @@ public class UsuarioHabilidadService {
 
     // ===== DELETE =====
     public void eliminarHabilidad(Long id, Long usuarioActualId) {
-
         UsuarioHabilidad usuarioHabilidad = usuarioHabilidadRepo.findById(id)
-                .filter(uh -> uh.getIsActive())
                 .orElseThrow(() -> new RuntimeException("UsuarioHabilidad no encontrado"));
 
-        // Validar permisos
         Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
                 .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
 
@@ -153,17 +150,7 @@ public class UsuarioHabilidadService {
             throw new RuntimeException("No tienes permiso para eliminar esta habilidad");
         }
 
-        usuarioHabilidad.setIsActive(false);
-        usuarioHabilidadRepo.save(usuarioHabilidad);
-    }
-
-    public void eliminarHabilidadFisica(Long id) {
-
-        if (!usuarioHabilidadRepo.existsById(id)) {
-            throw new RuntimeException("UsuarioHabilidad no encontrado");
-        }
-
-        usuarioHabilidadRepo.deleteById(id);
+        usuarioHabilidadRepo.delete(usuarioHabilidad);
     }
 
     private boolean puedeModificarHabilidades(Long usuarioIdObjetivo, Usuario usuarioActual) {

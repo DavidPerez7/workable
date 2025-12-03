@@ -27,7 +27,7 @@ public class EmpresaService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    // - READ
+    // ===== READ =====
     public Optional<Empresa> getById(Long id) {
         return empresaRepository.findById(id);
     }
@@ -144,17 +144,14 @@ public class EmpresaService {
 
     // ===== DELETE =====
     public void delete(Long id, Long usuarioIdActual) {
-
         Empresa existingEmpresa = empresaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
 
-        // Validar que el usuario actual puede eliminar (owner o ADMIN)
         if (!puedeModificarEmpresa(existingEmpresa, usuarioIdActual)) {
             throw new IllegalStateException("Solo el owner o un ADMIN pueden eliminar esta empresa");
         }
 
-        existingEmpresa.setIsActive(false);
-        empresaRepository.save(existingEmpresa);
+        empresaRepository.delete(existingEmpresa);
     }
 
     public void removeReclutador(Long empresaId, Long reclutadorId, Long usuarioIdActual) {
@@ -184,11 +181,8 @@ public class EmpresaService {
         empresaRepository.save(empresa);
     }
 
-    // - CODIGO INVITACION
-    // @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')") en controller
+    // ===== CODIGO INVITACION =====
     public String getCodigoInvitacion(Long empresaId, Long usuarioIdActual) {
-        if (empresaId == null) throw new IllegalArgumentException("EmpresaId requerido");
-        if (usuarioIdActual == null) throw new IllegalArgumentException("UsuarioIdActual requerido");
 
         Empresa empresa = empresaRepository.findById(empresaId)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
