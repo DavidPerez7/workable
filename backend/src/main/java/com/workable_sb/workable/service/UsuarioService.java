@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.Usuario;
@@ -13,6 +14,7 @@ import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
+@Transactional
 public class UsuarioService {
     @Autowired
     private UsuarioRepo usuarioRepo;
@@ -20,7 +22,10 @@ public class UsuarioService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    //- READ
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    // ===== READ =====
     public Optional<Usuario> getById(Long id) {
         return usuarioRepo.findById(id);
     }
@@ -45,20 +50,22 @@ public class UsuarioService {
         return usuarioRepo.findByMunicipioId(municipioId);
     }
 
-    //- CREATE
+    // ===== CREATE =====
     public Usuario createPublic(Usuario request) {
-        if(usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
+        
+        if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
             throw new RuntimeException("Correo already in use");
         }
 
+        // Validación: No permitir ADMIN en registro público
         if (request.getRol() == Usuario.Rol.ADMIN) {
             throw new RuntimeException("Cannot register user with ADMIN role");
         }
 
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
+        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                .orElseThrow(() -> new RuntimeException("Municipio not found"));
         request.setMunicipio(municipio);
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(request.getPassword());
         request.setPassword(hashedPassword);
 
@@ -66,83 +73,97 @@ public class UsuarioService {
     }
 
     public Usuario create(Usuario request) {
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
+        
+        if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
+            throw new RuntimeException("Correo already in use");
+        }
+
+        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                .orElseThrow(() -> new RuntimeException("Municipio not found"));
         request.setMunicipio(municipio);
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(request.getPassword());
         request.setPassword(hashedPassword);
 
         return usuarioRepo.save(request);
     }
 
-    //- UPDATE
-    public Usuario updatePublic(Long id, Usuario request) {
-        if (request.getRol() == Usuario.Rol.ADMIN) {
-            throw new RuntimeException("Cannot assign ADMIN role");
+    // ===== UPDATE =====
+    public Usuario update(Long id, Usuario request, Long usuarioActualId) {
+
+        Usuario existingUsuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Validar permisos: solo el mismo usuario o ADMIN pueden actualizar
+        if (!puedeModificarUsuario(existingUsuario, usuarioActualId)) {
+            throw new IllegalStateException("Solo el dueño o un ADMIN pueden actualizar este usuario");
         }
 
-        if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent() || request.getCorreo() == null) {
-            throw new RuntimeException("Correo already in use or null");
+        // Validar correo único (solo si cambió)
+        if (!existingUsuario.getCorreo().equals(request.getCorreo())) {
+            if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
+                throw new RuntimeException("Correo already in use");
+            }
+            existingUsuario.setCorreo(request.getCorreo());
         }
-
-        Usuario existingUsuario = usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
 
         existingUsuario.setNombre(request.getNombre());
         existingUsuario.setApellido(request.getApellido());
-        existingUsuario.setCorreo(request.getCorreo());
         existingUsuario.setTelefono(request.getTelefono());
         existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
         existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
-        existingUsuario.setIsActive(request.getIsActive());
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-        existingUsuario.setPassword(hashedPassword);
+        // Solo ADMIN puede cambiar isActive y rol
+        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
+                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
+        if (usuarioActual.getRol() == Usuario.Rol.ADMIN) {
+            existingUsuario.setIsActive(request.getIsActive());
+            existingUsuario.setRol(request.getRol());
+        }
 
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException());
-        existingUsuario.setMunicipio(municipio);
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            String hashedPassword = passwordEncoder.encode(request.getPassword());
+            existingUsuario.setPassword(hashedPassword);
+        }
+
+        if (request.getMunicipio() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                    .orElseThrow(() -> new RuntimeException("Municipio not found"));
+            existingUsuario.setMunicipio(municipio);
+        }
 
         return usuarioRepo.save(existingUsuario);
     }
 
-    public Usuario update(Long id, Usuario request) {
-        if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent() || request.getCorreo() == null) {
-            throw new RuntimeException("Correo already in use or null");
+    // ===== DELETE =====
+    public void delete(Long id, Long usuarioActualId) {
+
+        Usuario existingUsuario = usuarioRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Validar permisos: solo el mismo usuario o ADMIN pueden eliminar
+        if (!puedeModificarUsuario(existingUsuario, usuarioActualId)) {
+            throw new IllegalStateException("Solo el dueño o un ADMIN pueden eliminar este usuario");
         }
 
-        Usuario existingUsuario = usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("user not found"));
-
-        existingUsuario.setNombre(request.getNombre());
-        existingUsuario.setApellido(request.getApellido());
-        existingUsuario.setCorreo(request.getCorreo());
-        existingUsuario.setTelefono(request.getTelefono());
-        existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
-        existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
-        existingUsuario.setIsActive(request.getIsActive());
-
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(request.getPassword());
-        existingUsuario.setPassword(hashedPassword);
-
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException());
-        existingUsuario.setMunicipio(municipio);
-
-        return usuarioRepo.save(existingUsuario);
+        existingUsuario.setIsActive(false);
+        usuarioRepo.save(existingUsuario);
     }
 
-    //- DELETE
-    public void deletePublic(Long id) {
-        Usuario exisistingUsuario = usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuarionot found"));
+    public void deleteFisico(Long id) {
 
-        if (exisistingUsuario.getRol() == Usuario.Rol.ADMIN) {
-            throw new RuntimeException("Cannot delete ADMIN user");
+        if (!usuarioRepo.existsById(id)) {
+            throw new RuntimeException("Usuario no encontrado");
         }
-        usuarioRepo.delete(exisistingUsuario);
+
+        usuarioRepo.deleteById(id);
     }
 
-    public void delete(Long id) {
-        Usuario exisistingUsuario = usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuarionot found"));
-        usuarioRepo.delete(exisistingUsuario);
+    private boolean puedeModificarUsuario(Usuario usuario, Long usuarioActualId) {
+        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
+                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
+        
+        // Es ADMIN o es el mismo usuario
+        return usuarioActual.getRol() == Usuario.Rol.ADMIN || usuario.getId().equals(usuarioActualId);
     }
 }

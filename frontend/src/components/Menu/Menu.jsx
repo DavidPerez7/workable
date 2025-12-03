@@ -34,7 +34,7 @@ const Menu = () => {
                 </li>
                 <li className='selec'>
                 <div className='Icons'>
-                    <Link to='/' className="link">
+                    <Link to='/MiPerfil/VerPerfil' className="link">
                     <div className='Icon'>
                         <FileText></FileText>
                     </div>
@@ -44,21 +44,11 @@ const Menu = () => {
                 </li>
                 <li className='selec'>
                 <div className='Icons'>
-                    <Link to='/' className="link">
+                    <Link to='/MiPerfil/MisPostulaciones' className="link">
                     <div className='Icon'>
                         <Send></Send>
                     </div>
-                        Aplicaciones
-                    </Link>
-                </div>
-                </li>
-                <li className='selec'>
-                <div className='Icons'>
-                    <Link to='/' className="link">
-                    <div className="Icon">
-                        <Star></Star>
-                    </div>
-                        Mis favoritos
+                        Postulaciones
                     </Link>
                 </div>
                 </li>

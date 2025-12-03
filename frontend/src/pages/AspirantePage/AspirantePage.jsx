@@ -1,119 +1,440 @@
-import React, { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import './AspirantePage.css';
-import HeaderAspirant from '../../components/HeaderAspirant/HeaderAspirant'
-import Buttons  from '../../components/Buttons/Buttons';
-import Dropdown from '../../components/Dropdown/Dropdown';
-
-
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import "./AspirantePage.css";
+import HeaderAspirant from "../../components/HeaderAspirant/HeaderAspirant";
+import Footer from "../../components/Footer/Footer";
 
 const AspirantePage = () => {
   const location = useLocation();
   const [selectedJob, setSelectedJob] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const allJobListings = [
-    { id: 1, name: 'Desarrollador Frontend', location: 'Medellín, Antioquia', timePosted: 'Hace 11 minutos', timepostuled: 'Termina el 28-08-2025', modalidad: 'Presencial', contrato: 'Término Fijo', empresa: "Empresa: Nexabyte Solutions", description: "Estamos en la búsqueda de un desarrollador frontend con experiencia en React, CSS, JavaScript y HTML. La persona ideal debe ser capaz de construir interfaces modernas, dinámicas y responsivas, trabajar en equipo con diseñadores y backend, y aportar ideas que mejoren la experiencia del usuario. Valoramos la atención al detalle, la creatividad y la capacidad de transformar requerimientos en soluciones funcionales y atractivas.s", salary: "2.500.000", fulltime: "Tiempo Completo"},
-    { id: 2, name: 'Analista de Datos', location: 'Bogotá, Cundinamarca', timePosted: 'Hace 1 hora', timepostuled: 'Termina el 18-09-2025', modalidad: 'Remota', contrato: 'Término Indefinido', empresa: "Empresa: Codexia Tech Labs", description: "Experto en SQL, Python y Power BI, manejo de grandes volúmenes de datos." },
-    { id: 3, name: 'Especialista QA', location: 'Cali, Valle', timePosted: 'Hace 2 días', timepostuled: 'Termina el 08-10-2025', modalidad: 'Presencial', contrato: 'Aprendiz', empresa: "Empresa: Lumitech Global", description: "Pruebas de software, automatización, metodologías ágiles." },
-    { id: 4, name: 'Diseñador UX/UI', location: 'Barranquilla, Atlántico', timePosted: 'Hace 3 días', timepostuled: 'Termina el 20-11-2025', modalidad: 'Presencial', contrato: 'Prestación de Servicios', empresa: "Empresa: QuantumEdge Systems", description: "Experiencia con Figma, Sketch, Adobe XD, prototipado." },
-    { id: 5, name: 'Ingeniero Backend', location: 'Cartagena, Bolívar', timePosted: 'Hace 5 días', timepostuled: 'Termina el 11-07-2025', modalidad: 'Hibrido', contrato: 'Aprendiz', empresa: "Empresa: Synapse Core", description: "Desarrollo de APIs con Node.js y bases de datos SQL, microservicios." },
-    { id: 6, name: 'Asesor Comercial', location: 'Bogotá, D.C.', timePosted: 'Hace 1 día', timepostuled: 'Termina el 01-12-2025', modalidad: 'Presencial', contrato: 'Término Indefinido', empresa: "Empresa: Ventas Pro S.A.", description: "Experiencia en ventas y atención al cliente, manejo de CRM." },
-    { id: 7, name: 'Desarrollador Java', location: 'Medellín, Antioquia', timePosted: 'Hace 4 días', timepostuled: 'Termina el 15-11-2025', modalidad: 'Remota', contrato: 'Término Fijo', empresa: "Empresa: Tech Solutions", description: "Desarrollo de aplicaciones empresariales con Java y Spring Boot." },
-    { id: 8, name: 'Asistente Administrativo', location: 'Bogotá, D.C.', timePosted: 'Hace 6 días', timepostuled: 'Termina el 20-10-2025', modalidad: 'Hibrido', contrato: 'Prestación de Servicios', empresa: "Empresa: Oficina Eficaz", description: "Manejo de documentos, atención telefónica, organización, excel." }
-  ];
+  // ============================
+  // NUEVOS ESTADOS – RF14
+  // ============================
+  const [offerRating, setOfferRating] = useState(0);
+  const [companyRating, setCompanyRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [ratingSuccess, setRatingSuccess] = useState(false);
+  const [hasRated, setHasRated] = useState(false);
 
-  const queryParams = new URLSearchParams(location.search);
-  const generalQuery = queryParams.get('query')?.toLowerCase() || '';
-
-  const filteredJobListings = generalQuery
-    ? allJobListings.filter(job =>
-        job.salary.toLowerCase().includes(generalQuery)||
-        job.salary.toLowerCase().includes(generalQuery)||
-        job.name.toLowerCase().includes(generalQuery) ||
-        job.description.toLowerCase().includes(generalQuery) ||
-        job.location.toLowerCase().includes(generalQuery) ||
-        job.empresa.toLowerCase().includes(generalQuery) ||
-        job.modalidad.toLowerCase().includes(generalQuery) ||
-        job.contrato.toLowerCase().includes(generalQuery)
-      )
-    : allJobListings;
-
-    document.querySelectorAll('.dropdown-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-    const menu = this.nextElementSibling;
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    });
+  const [filters, setFilters] = useState({
+    ordenar: "",
+    experiencia: "",
+    salario: "",
+    jornada: "",
+    contrato: "",
+    modalidad: "",
+    fecha: "",
+    ciudad: "",
   });
 
+  // ============================================
+  // DATOS DE OFERTAS (SIMULADAS)
+  // ============================================
+  const allJobListings = [
+    {
+      id: 1,
+      name: "Desarrollador Frontend",
+      location: "Medellín, Antioquia",
+      timePosted: "Hace 11 minutos",
+      timepostuled: "Termina el 28-08-2025",
+      modalidad: "Presencial",
+      contrato: "Término Fijo",
+      empresa: "Nexabyte Solutions",
+      description:
+        "Estamos en la búsqueda de un desarrollador frontend con experiencia en React, CSS, JavaScript y HTML...",
+      salary: "2500000",
+      fulltime: "Tiempo Completo",
+    },
+    {
+      id: 2,
+      name: "Analista de Datos",
+      location: "Bogotá, Cundinamarca",
+      timePosted: "Hace 1 hora",
+      timepostuled: "Termina el 18-09-2025",
+      modalidad: "Remota",
+      contrato: "Término Indefinido",
+      empresa: "Codexia Tech Labs",
+      description: "Experto en SQL, Python y Power BI...",
+      salary: "3200000",
+      fulltime: "Tiempo Completo",
+    },
+    {
+      id: 3,
+      name: "Especialista QA",
+      location: "Cali, Valle",
+      timePosted: "Hace 2 días",
+      timepostuled: "Termina el 08-10-2025",
+      modalidad: "Presencial",
+      contrato: "Aprendiz",
+      empresa: "Lumitech Global",
+      description: "Pruebas de software, automatización, metodologías ágiles.",
+      salary: "1800000",
+      fulltime: "Tiempo Completo",
+    },
+  ];
+
+  // ============================================
+  // FILTRO GENERAL POR ?query=
+  // ============================================
+  const queryParams = new URLSearchParams(location.search);
+  const generalQuery = queryParams.get("query")?.toLowerCase() || "";
+  let filteredJobListings = allJobListings.filter((job) => {
+  const matchesGeneral =
+    job.name.toLowerCase().includes(generalQuery) ||
+    job.description.toLowerCase().includes(generalQuery) ||
+    job.location.toLowerCase().includes(generalQuery) ||
+    job.empresa.toLowerCase().includes(generalQuery);
+    job.salary.toLowerCase().includes(generalQuery)
+  return matchesGeneral;
+});
+
+if (filters.ordenar === "recientes") {
+  filteredJobListings = filteredJobListings.sort((a, b) => {
+    // Simulación simple: ordena por minutos / horas / días
+    const getMinutes = (timeString) => {
+      if (timeString.includes("minuto")) return parseInt(timeString) || 0;
+      if (timeString.includes("hora")) return (parseInt(timeString) || 0) * 60;
+      if (timeString.includes("día")) return (parseInt(timeString) || 0) * 1440;
+      return 999999; // Por si hay formatos no estándar
+    };
+    return getMinutes(a.timePosted) - getMinutes(b.timePosted);
+  });
+}
+
+if (filters.ordenar === "salario") {
+  filteredJobListings = filteredJobListings.sort(
+    (a, b) => Number(b.salary) - Number(a.salary)
+  );
+}
+
+
+  // ============================================
+  // SIMULACIÓN POSTULARSE
+  // ============================================
+  const handlePostularse = (id) => {
+    alert(`Postulación exitosa a la oferta ${id} (simulación)`);
+  };
+
+  // ============================================
+  // FORMATEAR SALARIO
+  // ============================================
+  const formatSalary = (value) =>
+    new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(value);
+
+  // ============================================
+  // RF14 — Enviar valoración
+  // ============================================
+  const submitRating = async () => {
+    if (hasRated) return;
+
+    if (offerRating === 0 || companyRating === 0) {
+      alert("Debes calificar la oferta y la empresa.");
+      return;
+    }
+
+    setHasRated(true);
+
+    setTimeout(() => {
+      setRatingSuccess(true);
+    }, 800);
+  };
+
+  // ============================================
+  // RENDER
+  // ============================================
   return (
     <>
-      <HeaderAspirant/>
-      <main className="main-aspirant-page">
+      <HeaderAspirant />
 
-    <div className='dropdown-buttons'>
-      <Dropdown label="Ordenar" options={["Relevancia", "Fecha", "Salario"]} />
-      <Dropdown label="Distancia" options={["Hasta 5 km", "Hasta 10 km", "Hasta 25 km"]} />
-      <Dropdown label="Fecha" options={["Urgente", "Hoy", "Ultimos 3 dias"]} />
-      <Dropdown label="Categoria" options={["Administracion", "Contabilidad, Finanzas", "Ventas"]}></Dropdown>
-      <Dropdown label="Lugar de trabajo" options={["Bogota"]}></Dropdown>
-      <Dropdown label="Experiencia" options={["Sin experiencia", "1 año", "2 años"]}></Dropdown>
-      <Dropdown label="Salario" options={["Menos de 700.000", "Mas de 700.000", "Mas de 1.000.000"]}></Dropdown>
-      <Dropdown label="Jornada" options={["Tiempo completo", "Tiempo parcial"]}></Dropdown>
-      <Dropdown label="Contrato" options={["Contrato a termino indefinido", "Contrato de obra o labor", "Contrato a termino fijo"]}></Dropdown>
-    </div>
+      <main className="main-aspirant-page-AP">
+        
+        {/* ============================================
+            SIDEBAR DE FILTROS (RESTAURADO)
+        ============================================ */}
+        <aside className="sidebar-filters-AP">
 
-        <section className="section-job-panels">
-          <section className="section-listings-panel">
-              <nav className="nav-job-categories"><p>Busca tu trabajo deseado</p></nav>
-            <div className="div-job-cards-grid">
-              {filteredJobListings.length > 0 ? (
-                filteredJobListings.map((job) => (
-                  <div
-                    key={job.id}
-                    className="div-job-card"
-                    onClick={() => setSelectedJob(job)}
-                  >
-                    <h3 className="h3-job-card-title">{job.name}</h3>
-                    <p className="p-job-location">{job.location}</p>
-                    <p className="p-job-time">{job.timePosted}</p>
-                    <p className="p-job-postuled">{job.timepostuled}</p>
-                    <p className="p-modalidad">{job.modalidad}</p>
-                    <p className="p-contrato">{job.contrato}</p>
-                    <p className="p-empresa">{job.empresa}</p>
-                    <div className="div-job-card-actions">
+          <div className="filters-header-AP">
+            <h2 className="filters-title-AP">Filtros de búsqueda</h2>
+            <button
+              className="btn-clear-filters-AP"
+              onClick={() =>
+                setFilters({
+                  ordenar: "",
+                  experiencia: "",
+                  salario: "",
+                  jornada: "",
+                  contrato: "",
+                  modalidad: "",
+                  fecha: "",
+                  ciudad: "",
+                })
+              }
+            >
+              Limpiar
+            </button>
+          </div>
+
+          {/* ORDENAR POR */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Ordenar por</label>
+            <select
+              className="filter-select-AP"
+              value={filters.ordenar}
+              onChange={(e) =>
+                setFilters({ ...filters, ordenar: e.target.value })
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="recientes">Más recientes</option>
+              <option value="salario">Mayor salario</option>
+            </select>
+          </div>
+
+          {/* EXPERIENCIA */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Experiencia</label>
+            <select
+              className="filter-select-AP"
+              value={filters.experiencia}
+              onChange={(e) =>
+                setFilters({ ...filters, experiencia: e.target.value })
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="junior">Junior</option>
+              <option value="semi">Semi-Senior</option>
+              <option value="senior">Senior</option>
+            </select>
+          </div>
+
+          {/* MODALIDAD */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Modalidad</label>
+            <select
+              className="filter-select-AP"
+              value={filters.modalidad}
+              onChange={(e) =>
+                setFilters({ ...filters, modalidad: e.target.value })
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="Presencial">Presencial</option>
+              <option value="Remota">Remota</option>
+              <option value="Híbrida">Híbrida</option>
+            </select>
+          </div>
+
+          {/* CONTRATO */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Tipo de contrato</label>
+            <select
+              className="filter-select-AP"
+              value={filters.contrato}
+              onChange={(e) =>
+                setFilters({ ...filters, contrato: e.target.value })
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="Término Fijo">Término Fijo</option>
+              <option value="Término Indefinido">Término Indefinido</option>
+              <option value="Aprendiz">Aprendiz</option>
+            </select>
+          </div>
+
+        </aside>
+
+        {/* ============================================
+            PANEL CONTENIDO
+        ============================================ */}
+        <div className="content-wrapper-AP">
+
+          <div className="results-header-AP">
+            <h1 className="results-title-AP">
+              {generalQuery
+                ? `Resultados para "${generalQuery}"`
+                : "Todas las ofertas"}
+            </h1>
+            <p className="results-count-AP">
+              {filteredJobListings.length} ofertas encontradas
+            </p>
+          </div>
+
+          <section className="section-job-panels-AP">
+            
+            {/* LISTADO */}
+            <section className="section-listings-panel-AP">
+              {filteredJobListings.map((job) => (
+                <article
+                  key={job.id}
+                  className={`job-card-AP ${
+                    selectedJob?.id === job.id ? "selected" : ""
+                  }`}
+                  onClick={() => {
+                    setSelectedJob(job);
+                    setOfferRating(0);
+                    setCompanyRating(0);
+                    setComment("");
+                    setRatingSuccess(false);
+                    setHasRated(false);
+                  }}
+                >
+                  <div className="job-card-header-AP">
+                    <h3 className="job-card-title-AP">{job.name}</h3>
+                    <span className="job-time-badge-AP">{job.timePosted}</span>
+                  </div>
+
+                  <p className="job-company-AP">{job.empresa}</p>
+                  <p className="job-location-AP">{job.location}</p>
+
+                  <div className="job-tags-AP">
+                    <span className="job-tag-AP tag-modalidad-AP">
+                      {job.modalidad}
+                    </span>
+                    <span className="job-tag-AP tag-contrato-AP">
+                      {job.contrato}
+                    </span>
+                  </div>
+
+                  <div className="job-card-footer-AP">
+                    <p className="job-salary-AP">
+                      {formatSalary(job.salary)}
+                    </p>
+                    <p className="job-deadline-AP">{job.timepostuled}</p>
+                  </div>
+                </article>
+              ))}
+            </section>
+
+            {/* DETALLES */}
+            <section className="section-details-panel-AP">
+              {selectedJob ? (
+                <div className="job-detail-content-AP">
+                  
+                  <div className="job-detail-header-AP">
+                    <div>
+                      <h2 className="job-detail-title-AP">
+                        {selectedJob.name}
+                      </h2>
+                      <p className="job-detail-company-AP">
+                        {selectedJob.empresa}
+                      </p>
                     </div>
                   </div>
-                ))
+
+                  <div className="job-detail-info-AP">
+                    <div className="info-item-AP">{selectedJob.location}</div>
+                    <div className="info-item-AP">{selectedJob.modalidad}</div>
+                    <div className="info-item-AP">{selectedJob.contrato}</div>
+                    <div className="info-item-AP">{selectedJob.fulltime}</div>
+                  </div>
+
+                  <div className="job-detail-salary-AP">
+                    <span className="salary-label-AP">Salario:</span>
+                    <span className="salary-value-AP">
+                      {formatSalary(selectedJob.salary)}
+                    </span>
+                    <span className="salary-period-AP">/ mensual</span>
+                  </div>
+
+                  <button
+                    className="btn-apply-AP"
+                    onClick={() => handlePostularse(selectedJob.id)}
+                  >
+                    Postularme ahora
+                  </button>
+
+                  <div className="job-detail-description-AP">
+                    <h3 className="description-title-AP">
+                      Descripción del puesto
+                    </h3>
+                    <p className="description-text-AP">
+                      {selectedJob.description}
+                    </p>
+                  </div>
+
+                  <div className="job-detail-deadline-AP">
+                    <span>{selectedJob.timepostuled}</span>
+                  </div>
+
+                  {/* =====================================
+                      SECCIÓN RF14 — VALORACIÓN
+                  ===================================== */}
+                  <div className="rating-section-AP">
+                    <h3 className="rating-title-AP">
+                      Valorar esta oferta
+                    </h3>
+
+                    <p>Calificación de la oferta:</p>
+                    <div className="rating-stars-AP">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={`rating-star-AP ${
+                            offerRating >= star ? "active" : ""
+                          }`}
+                          onClick={() => setOfferRating(star)}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+
+                    <p>Calificación de la empresa:</p>
+                    <div className="rating-stars-AP">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={`rating-star-AP ${
+                            companyRating >= star ? "active" : ""
+                          }`}
+                          onClick={() => setCompanyRating(star)}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+
+                    <textarea
+                      className="rating-comment-AP"
+                      placeholder="Escribe un comentario..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    />
+
+                    {!ratingSuccess ? (
+                      <button
+                        className="rating-submit-btn-AP"
+                        onClick={submitRating}
+                      >
+                        Enviar valoración
+                      </button>
+                    ) : (
+                      <p className="rating-success-message-AP">
+                        ¡Gracias por tu valoración! ✔
+                      </p>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <div className="no-offers-message">
-                  <p>No hay ofertas disponibles que coincidan con tu búsqueda.</p>
+                <div className="no-selection-message-AP">
+                  <p className="no-selection-text-AP">
+                    Selecciona una oferta para ver los detalles.
+                  </p>
                 </div>
               )}
-            </div>
-          </section>
+            </section>
 
-          <section className="section-details-panel">
-            {selectedJob ? (
-              <div className="div-job-detail-content">
-                <h2 className="h2-job-detail-title">{selectedJob.name}</h2>
-                <p className="p-job-detail-empresa"> <p>{selectedJob.empresa}</p></p>
-                <p className="p-job-detail-location">{selectedJob.location}</p>
-                <Buttons></Buttons>
-                <p className="p-job-detail-salary">{selectedJob.salary} (Mensual)</p>
-                <p className="p-job-detail-contrato">Contrato: {selectedJob.contrato}</p>
-                <p className="p-job-detail-fulltime">{selectedJob.fulltime}</p>
-                <p className="p-job-detail-description">
-                  {selectedJob.description}
-                </p>
-              </div>
-            ) : (
-              <div className="div-no-selection-message">
-                <p>Selecciona una oferta para ver los detalles aquí.</p>
-              </div>
-            )}
           </section>
-        </section>
+        </div>
       </main>
+
+      <Footer />
     </>
   );
 };

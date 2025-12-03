@@ -26,10 +26,8 @@ public class EstudioService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    // ===== CREACIÓN =====
+    // ===== CREATE =====
     public Estudio crearEstudio(Estudio estudio, Long usuarioId) {
-        if (estudio == null) throw new IllegalArgumentException("Estudio no puede ser null");
-        if (usuarioId == null) throw new IllegalArgumentException("UsuarioId requerido");
 
         // Validar campos obligatorios
         if (estudio.getTitulo() == null || estudio.getTitulo().isEmpty()) {
@@ -49,11 +47,6 @@ public class EstudioService {
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Solo ASPIRANTE puede crear estudios (ADMIN puede crear para cualquier aspirante)
-        if (usuario.getRol() != Usuario.Rol.ASPIRANTE) {
-            throw new IllegalArgumentException("Solo usuarios con rol ASPIRANTE pueden tener estudios");
-        }
-
         // Validar municipio
         if (estudio.getMunicipio() != null) {
             municipioRepo.findById(estudio.getMunicipio().getId())
@@ -65,14 +58,12 @@ public class EstudioService {
             throw new IllegalArgumentException("Un estudio finalizado debe tener fecha de fin");
         }
 
-        // Asignar usuario
         estudio.setUsuario(usuario);
 
-        // Guardar (validaciones de fechas en @PrePersist)
         return estudioRepo.save(estudio);
     }
 
-    // ===== CONSULTAS =====
+    // ===== READ =====
     public Estudio obtenerPorId(Long id) {
         return estudioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estudio no encontrado con id: " + id));
@@ -107,7 +98,7 @@ public class EstudioService {
         return estudioRepo.findAll();
     }
 
-    // ===== ACTUALIZACIÓN (dueño o ADMIN) =====
+    // ===== UPDATE =====
     public Estudio actualizarEstudio(Long id, Estudio estudioActualizado, Long usuarioIdActual) {
         Estudio existente = obtenerPorId(id);
 
@@ -133,11 +124,10 @@ public class EstudioService {
             existente.setMunicipio(estudioActualizado.getMunicipio());
         }
 
-        // Guardar (validaciones en @PreUpdate)
         return estudioRepo.save(existente);
     }
 
-    // ===== ELIMINACIÓN (soft delete - dueño o ADMIN) =====
+    // ===== DELETE =====
     public void eliminarEstudio(Long id, Long usuarioIdActual) {
         Estudio existente = obtenerPorId(id);
 
@@ -146,21 +136,13 @@ public class EstudioService {
             throw new IllegalStateException("Solo el dueño o un administrador pueden eliminar este estudio");
         }
 
-        // Soft delete
         existente.setEstadoEstudio(Estudio.EstadoEstudio.INACTIVO);
         estudioRepo.save(existente);
     }
 
     // ===== ELIMINACIÓN FÍSICA (solo ADMIN) =====
-    public void eliminarEstudioFisico(Long id, String correoUsuarioActual) {
-        // Validar que el usuario actual es ADMIN
-        Usuario usuarioActual = usuarioRepo.findByCorreo(correoUsuarioActual)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        if (usuarioActual.getRol() != Usuario.Rol.ADMIN) {
-            throw new IllegalStateException("Solo administradores pueden eliminar estudios físicamente");
-        }
-
+    // @PreAuthorize("hasRole('ADMIN')") en controller
+    public void eliminarEstudioFisico(Long id) {
         // Verificar que el estudio existe
         if (!estudioRepo.existsById(id)) {
             throw new RuntimeException("Estudio no encontrado con id: " + id);
@@ -170,10 +152,6 @@ public class EstudioService {
         estudioRepo.deleteById(id);
     }
 
-    // ===== MÉTODOS AUXILIARES =====
-    /**
-     * Verifica si un usuario puede modificar un estudio (es el dueño o es ADMIN)
-     */
     private boolean puedeModificarEstudio(Estudio estudio, Long usuarioId) {
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

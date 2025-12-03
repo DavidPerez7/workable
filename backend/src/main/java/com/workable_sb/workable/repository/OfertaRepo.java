@@ -27,7 +27,7 @@ public interface OfertaRepo extends JpaRepository<Oferta, Long> {
     List<Oferta> findByReclutadorId(Long reclutadorId);
     
     // Buscar ofertas por municipio
-    List<Oferta> findByMunicipioId(Integer municipioId);
+    List<Oferta> findByMunicipioId(Long municipioId);
     
     // Buscar ofertas por modalidad (enum)
     List<Oferta> findByModalidad(Modalidad modalidad);

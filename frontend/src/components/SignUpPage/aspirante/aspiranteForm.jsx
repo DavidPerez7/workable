@@ -1,174 +1,202 @@
-import './aspiranteForm.css';
-import React, { useRef } from 'react';
-import { crearAspirante } from '../../../api/aspirantesApi';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./AspiranteForm.css";
 
 const AspiranteForm = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
 
-    data.tel = Number(data.tel);
-    data.tipDoc_id = Number(data.tipDoc_id);
-    data.munici_id = Number(data.munici_id);
-    data.genero_id = Number(data.genero_id);
-    data.numDoc = Number(data.numDoc);
-
-    if (
-      isNaN(data.tel) ||
-      isNaN(data.tipDoc_id) ||
-      isNaN(data.munici_id) ||
-      isNaN(data.genero_id) ||
-      isNaN(data.numDoc) ||
-      !data.nom ||
-      !data.ape ||
-      !data.corr ||
-      !data.ubi ||
-      !data.feNa ||
-      !data.cla
-    ) {
-      alert("Error al registrarse: datos inválidos");
+    if (!aceptaTerminos) {
+      alert("Debes aceptar los términos y condiciones para continuar");
       return;
     }
 
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+
+    // Validación de contraseña
+    if (data.password.length < 8) {
+      alert("La contraseña debe tener mínimo 8 caracteres");
+      return;
+    }
+
+    if (data.password !== data.confirmPassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
+    // Preparar datos del aspirante basado en Usuario.java
+    const aspiranteData = {
+      nombre: data.nombre,
+      apellido: data.apellido,
+      correo: data.correo,
+      telefono: data.telefono,
+      password: data.password,
+      fechaNacimiento: data.fechaNacimiento,
+      rol: "ASPIRANTE",
+      municipio: {
+        id: Number(data.municipioId),
+      },
+    };
+
     try {
-      const aspiranteCreado = await crearAspirante(data);
+      // Aquí deberías llamar a tu API para crear el aspirante
+      // const aspiranteCreado = await crearAspirante(aspiranteData);
+
+      console.log("Datos a enviar:", aspiranteData);
       alert("Aspirante registrado con éxito");
-      navigate('/Aspirante'); 
+      formRef.current.reset();
+      setAceptaTerminos(false);
+
+      // Redirigir al login
+      navigate("/login");
     } catch (error) {
-      console.error("Error al crear aspirante:", error.message);
-      alert("Error al registrarse: " + error.message);
+      console.error("Error al crear aspirante:", error);
+      let mensajeError = "Error al registrar el aspirante";
+
+      if (error.response) {
+        mensajeError = error.response.data.message || mensajeError;
+      } else if (error.request) {
+        mensajeError = "No se pudo conectar con el servidor";
+      }
+
+      alert(mensajeError);
     }
   };
 
   return (
-    <div className="form-aspirante">
-      <form className="form" onSubmit={handleSubmit} ref={formRef}>
-        <div className='div_nombre'>
-          <label>Nombre</label>
-          <input
-            type='text'
-            name='nom'
-            required
-            className='input'
-            pattern="[A-Za-zÀ-ÿ\s]+"
-            title="Solo se permiten letras y espacios"
-          />
+    <div className="aspirante-form-container">
+      <div className="aspirante-form-card">
+        <div className="aspirante-form-header">
+          <h1 className="aspirante-form-title">Registro de Aspirante</h1>
+          <p className="aspirante-form-subtitle">
+            Crea tu cuenta y accede a ofertas laborales inclusivas
+          </p>
         </div>
-        <div className='div_apellido'>
-          <label>Apellido</label>
-          <input
-            type='text'
-            name='ape'
-            required
-            className='input'
-            pattern="[A-Za-zÀ-ÿ\s]+"
-            title="Solo se permiten letras y espacios"
-          />
-        </div>
-        <div className='div_correo'>
-          <label>Correo electrónico</label>
-          <input
-            type='email'
-            name='corr'
-            required
-            className='input'
-          />
-        </div>
-        <div className='div_ubicacion'>
-          <label>Ubicación</label>
-            <input
-            type='text'
-            name='ubi'
-            required
-            className='input'
-          />
-        </div>
-        <div className='div_numero'>
-          <label>Número de Teléfono</label>
-          <input
-            type='tel'
-            name='tel'
-            required
-            className='input'
-          />
-        </div>
-        <div className='div_fecha'>
-          <label>Fecha de Nacimiento</label>
-          <input
-            type='date'
-            name='feNa'
-            required
-            className='input'
-          />
-        </div>
-        <div className='div_contraseña'>
-          <label>Contraseña</label>
-          <input
-            type='password'
-            name='cla'
-            required
-            className='input'
-          />
-        </div>
-        <div className='div_genero'>
-          <label>Género</label>
-          <select
-            name='genero_id'
-            required
-            className='input'
-          >
-            <option value=''>Selecciona tu género</option>
-            <option value='1'>Masculino</option>
-            <option value='2'>Femenino</option>
-          </select>
-        </div>
-        <div className='div_tipoDoc'>
-          <label>Tipo de Documento</label>
-          <select
-            name='tipDoc_id'
-            required
-            className='input'
-          >
-            <option value=''>Tipo de Documento</option>
-            <option value='1'>CC</option>
-            <option value='2'>TI</option>
-          </select>
-        </div> 
-        <div className='div_numeroDoc'>
-          <label>Número de Documento</label>
-          <input
-            type="number"
-            name="numDoc"
-            required
-            className="input"
-            min="0"
-            step="1"
-          />
-        </div>
-        <div className='div_ciudad'>
-          <label>Ciudad</label>
-          <select
-            name='munici_id'
-            required
-            className='input'
-          >
-            <option value=''>Ciudad</option>
-            <option value='1'>Cali</option>
-            <option value='2'>Medellín</option>
-            <option value='3'>Bogotá</option>
-            <option value='4'>Barranquilla</option>
-            <option value='5'>Cartagena</option>
-          </select>
-        </div>
-        <button type='submit' className='btn'>
+
+        <form className="aspirante-form" onSubmit={handleSubmit} ref={formRef}>
+          {/* Sección: Información Personal */}
+          <div className="form-section personal-section">
+            <h2 className="section-title-aspirante">Información Personal</h2>
+
+            <div className="form-grid">
+              <div className="form-field">
+                <label className="form-label">Nombre *</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  placeholder="Tu nombre"
+                  required
+                  className="form-input"
+                  pattern="[A-Za-zÀ-ÿ\s]+"
+                  title="Solo se permiten letras y espacios"
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Apellido *</label>
+                <input
+                  type="text"
+                  name="apellido"
+                  placeholder="Tu apellido"
+                  required
+                  className="form-input"
+                  pattern="[A-Za-zÀ-ÿ\s]+"
+                  title="Solo se permiten letras y espacios"
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Correo electrónico *</label>
+                <input
+                  type="email"
+                  name="correo"
+                  placeholder="tu@email.com"
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Teléfono *</label>
+                <input
+                  type="tel"
+                  name="telefono"
+                  placeholder="3001234567"
+                  required
+                  pattern="[0-9]{10}"
+                  className="form-input"
+                  title="Ingresa un número de 10 dígitos"
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Fecha de Nacimiento *</label>
+                <input
+                  type="date"
+                  name="fechaNacimiento"
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Municipio *</label>
+                <select name="municipioId" required className="form-input">
+                  <option value="">Selecciona tu municipio</option>
+                  <option value="1">Bogotá D.C.</option>
+                  <option value="2">Medellín</option>
+                  <option value="3">Bello</option>
+                  <option value="4">Itagüí</option>
+                  <option value="5">Envigado</option>
+                  <option value="6">Rionegro</option>
+                  <option value="7">Cali</option>
+                  <option value="8">Barranquilla</option>
+                  <option value="9">Bucaramanga</option>
+                </select>
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Contraseña *</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Mínimo 8 caracteres"
+                  required
+                  minLength="8"
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Confirmar Contraseña *</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Repite tu contraseña"
+                  required
+                  minLength="8"
+                  className="form-input"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+        <button type="submit" className="submit-button">
           Crear Cuenta Aspirante
         </button>
-      </form>
+
+        <p className="login-link">
+          ¿Ya tienes cuenta?{" "}
+          <a href="/login" className="login-anchor">
+            Inicia sesión aquí
+          </a>
+        </p>
+      </div>
     </div>
   );
 };

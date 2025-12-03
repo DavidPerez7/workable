@@ -1,0 +1,331 @@
+/* Container principal */
+.reclutador-form-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* Card del formulario */
+.reclutador-form-card {
+  background: white;
+  border-radius: 16px;
+  padding: 3rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Header del formulario */
+.reclutador-form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.reclutador-form-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.reclutador-form-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+form {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 1200px;
+}
+
+/* Secciones del formulario */
+.form-section-personal-section {
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  padding: 20px;
+}
+
+.empresa-section {
+  background: #f0f9ff;
+  border-color: #bfdbfe;
+}
+
+.compromiso-section {
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+
+/* Títulos de sección */
+.section-title-reclutador {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-icon {
+  font-size: 1.5rem;
+}
+
+/* Grid de formularios */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Inputs del formulario */
+.form-input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  font-family: "Inter", sans-serif;
+  background: white;
+  color: #0f172a;
+}
+
+.form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input::placeholder {
+  color: #94a3b8;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Full width para campos especiales */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Categorías */
+.categories-label {
+  display: block;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.category-item:hover {
+  background: #f1f5f9;
+}
+
+.category-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+}
+
+.category-label {
+  font-size: 0.95rem;
+  color: #475569;
+  text-transform: capitalize;
+}
+
+/* Compromiso de inclusión */
+.compromiso-label {
+  display: flex;
+  align-items: start;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.compromiso-checkbox {
+  margin-top: 0.25rem;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.compromiso-content {
+  flex: 1;
+}
+
+.compromiso-title {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
+
+.compromiso-text {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Botón de submit */
+.submit-button {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  font-family: "Inter", sans-serif;
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.submit-button:active {
+  transform: scale(0.98);
+}
+
+/* Link de login */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.login-anchor {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.login-anchor:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reclutador-form-container {
+    padding: 1rem;
+  }
+
+  .reclutador-form-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .submit-button {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reclutador-form-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .reclutador-form-title {
+    font-size: 1.75rem;
+  }
+
+  .reclutador-form-subtitle {
+    font-size: 1rem;
+  }
+
+  .form-section {
+    padding: 1rem;
+  }
+}
+
+/* Mejoras de accesibilidad */
+.form-input:invalid:not(:placeholder-shown) {
+  border-color: #ef4444;
+}
+
+.form-input:valid:not(:placeholder-shown) {
+  border-color: #10b981;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reclutador-form-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Estados de carga */
+.submit-button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-button:disabled:hover {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}

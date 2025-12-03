@@ -13,7 +13,7 @@ import com.workable_sb.workable.models.Empresa;
 public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
 
     // Buscar empresas por municipio
-    List<Empresa> findByMunicipioId(Integer municipioId);
+    List<Empresa> findByMunicipioId(Long municipioId);
     
     // Buscar empresas por nombre (búsqueda parcial)
     List<Empresa> findByNombreContainingIgnoreCase(String nombre);
