@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ← IMPORTANTE
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import "./PublicacionPage.css";
 
 const PublicacionPage = () => {
+  const navigate = useNavigate(); // ← NAVEGACIÓN
+
   const [formData, setFormData] = useState({
     tituloAviso: "",
     descripcionTrabajo: "",
@@ -55,6 +58,9 @@ const PublicacionPage = () => {
 
     console.log("Datos listos para guardar:", datosListos);
     alert("Oferta preparada para guardar (ver consola).");
+
+    // 🔵 REDIRECCIÓN A ReclutadorPage.jsx
+    navigate("/Reclutador");
   };
 
   return (
@@ -66,7 +72,6 @@ const PublicacionPage = () => {
 
         <form className="pb-form" onSubmit={handleSubmit}>
           <section className="pb-card">
-
             <h2 className="pb-section-title">Datos de la oferta</h2>
 
             <div className="pb-field">
@@ -159,7 +164,9 @@ const PublicacionPage = () => {
               >
                 <option value="">Selecciona una modalidad</option>
                 {modalidades.map((mod) => (
-                  <option key={mod.id} value={mod.id}>{mod.nombre}</option>
+                  <option key={mod.id} value={mod.id}>
+                    {mod.nombre}
+                  </option>
                 ))}
               </select>
             </div>
@@ -176,7 +183,9 @@ const PublicacionPage = () => {
               >
                 <option value="">Selecciona un tipo de contrato</option>
                 {tiposContrato.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
+                  <option key={tipo.id} value={tipo.id}>
+                    {tipo.nombre}
+                  </option>
                 ))}
               </select>
             </div>
@@ -193,11 +202,14 @@ const PublicacionPage = () => {
               >
                 <option value="">Selecciona un municipio</option>
                 {municipios.map((mun) => (
-                  <option key={mun.id} value={mun.id}>{mun.nombre}</option>
+                  <option key={mun.id} value={mun.id}>
+                    {mun.nombre}
+                  </option>
                 ))}
               </select>
             </div>
 
+            {/* 🔵 BOTÓN ACTUALIZADO */}
             <button className="pb-btn-primary" type="submit">
               Publicar
             </button>

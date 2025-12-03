@@ -6,17 +6,17 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #1e6ff1 0%, #1D4ED8 100%);
-  border-bottom: 1px solid #E2E8F0;
+  background: linear-gradient(135deg, #1e6ff1 0%, #1d4ed8 100%);
+  border-bottom: 1px solid #e2e8f0;
   position: sticky;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .header-container-asp::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -250px;
   width: 300px;
@@ -86,7 +86,7 @@
 }
 
 .search-btn-asp {
-  background: #2563EB;
+  background: #2563eb;
   color: white;
   border: none;
   padding: 0.5rem 0.8rem;
@@ -96,12 +96,12 @@
 }
 
 .search-btn-asp:hover {
-  background: #1D4ED8;
+  background: #1d4ed8;
 }
 
 .divider-asp {
   width: 1px;
-  background: #CBD5E1;
+  background: #cbd5e1;
   height: 25px;
 }
 
@@ -151,8 +151,51 @@
   transition: 0.2s ease;
 }
 
-.button-perfil-asp:hover {
-  background: #F1F5F9;
+.search-dropdown-asp {
+  position: absolute;
+  top: 95px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 650px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.dropdown-item-asp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item-asp:hover {
+  background: #f3f7ff;
+}
+
+.dropdown-icon-asp {
+  font-size: 20px;
+  color: #2563eb;
+}
+
+.dropdown-cargo-asp {
+  font-weight: 600;
+}
+
+.dropdown-ciudad-asp {
+  font-size: 14px;
+  color: #555;
+}
+
+.dropdown-no-results-asp {
+  text-align: center;
+  padding: 15px;
+  color: #777;
+  font-size: 14px;
 }
 
 /* ========================================
@@ -170,7 +213,7 @@
     top: 4.4em;
     left: 0;
     right: 0;
-    background: #1D4ED8;
+    background: #1d4ed8;
     padding: 1em 0;
     flex-direction: column;
     gap: 1em;

@@ -1,0 +1,137 @@
+/* ==== CONTENEDOR PRINCIPAL ==== */
+.new-reclutador-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-family: "Inter", sans-serif;
+  background: #f8fafc;
+}
+
+/* ==== TARJETA DEL FORMULARIO ==== */
+.new-reclutador-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==== TITULOS ==== */
+.new-reclutador-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-align: center;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.new-reclutador-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+/* ==== FORMULARIO ==== */
+.new-reclutador-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Grid de inputs */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* ==== INPUTS ==== */
+.form-input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+  color: #0f172a;
+}
+
+.form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.form-input::placeholder {
+  color: #94a3b8;
+}
+
+/* ==== BOTÓN ==== */
+.submit-button {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+/* ==== LINK DE LOGIN ==== */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.login-anchor {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-anchor:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ==== ANIMACIÓN ==== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 600px) {
+  .new-reclutador-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .new-reclutador-title {
+    font-size: 1.8rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
