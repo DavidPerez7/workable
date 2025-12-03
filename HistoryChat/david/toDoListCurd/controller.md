@@ -1,91 +1,146 @@
-# ToDoList: Cómo crear un Controller en Spring Boot
 
-## Nota sobre comentarios en el Controller
-- **Los únicos comentarios permitidos en los controllers deben ser similares a los del ejemplo de NotificacionController adjunto:**
-  - Solo comentarios de documentación arriba de cada endpoint (método), con el nombre del metodo crud.
-  - No se deben agregar comentarios dentro de la lógica interna de los métodos (por ejemplo, no comentar cada línea de código dentro del método).
-  - Ejemplo correcto:
-```java
-// READ
-@GetMapping("/usuario-leida/{usuarioId}")
-public ResponseEntity<List<Notificacion>> getByUsuarioLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) { ... }
+# ToDoList: Cómo crear un Controller en Spring Boot (Ejemplo tipo NotificacionController)
+
+## NOTA OBLIGATORIA PRINCIPAL
+- **NO asumas que el controller está bien si ya tiene código dentro del archivo.**
+- **Cuando el usuario adjunte esta documentación, DEBES hacer el controller desde 0.**
+- **SIEMPRE lee el archivo del Service ANTES de escribir cualquier código del controller.**
+
+---
+
+## 1. (OBLIGATORIO - PASO MÁS IMPORTANTE) Revisar el Service de la entidad
+
+### ANTES DE ESCRIBIR CUALQUIER CÓDIGO:
+1. **USA LA HERRAMIENTA read_file** para leer el archivo del Service completo.
+2. **HAZ UNA LISTA ESCRITA** de TODOS los métodos públicos del Service.
+3. **CUENTA cuántos métodos públicos tiene** el Service (ejemplo: "El service tiene 8 métodos públicos").
+4. **PLANEA cada endpoint** antes de codificar:
+   - Nombre del método del service → Ruta del endpoint
+   - Parámetros del método → @PathVariable, @RequestParam, @RequestBody
+   - Tipo de retorno → ResponseEntity<TipoRetorno>
+
+### REGLA DE ORO:
+- **Si el Service tiene 5 métodos públicos, el Controller DEBE tener 5 endpoints.**
+- **Si el Service tiene 10 métodos públicos, el Controller DEBE tener 10 endpoints.**
+- **NUNCA hagas menos endpoints que métodos públicos tiene el Service.**
+
+### Ejemplo de lista antes de codificar:
 ```
-  - Ejemplo incorrecto:
-```java
-@GetMapping("/usuario-leida/{usuarioId}")
-public ResponseEntity<List<Notificacion>> getByUsuarioLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) {
-    // Se obtiene el usuario por id
-    // Se filtran las notificaciones por leída
-    ...
-}
+Métodos del PostulacionService (8 métodos):
+1. crearPostulacion(Long usuarioId, Long ofertaId) → POST /api/postulacion
+2. obtenerPorId(Long id, Long usuarioIdActual) → GET /api/postulacion/{id}
+3. listarPorOferta(Long ofertaId, Long usuarioIdActual) → GET /api/postulacion/oferta/{ofertaId}
+4. listarPorUsuario(Long usuarioId, Long usuarioIdActual) → GET /api/postulacion/usuario/{usuarioId}
+5. listarPorOfertaYEstado(...) → GET /api/postulacion/oferta/{ofertaId}/estado
+6. listarPorUsuarioYEstado(...) → GET /api/postulacion/usuario/{usuarioId}/estado
+7. yaSePostulo(Long usuarioId, Long ofertaId) → GET /api/postulacion/verificar
+8. cambiarEstado(...) → PUT /api/postulacion/{id}/estado
+9. eliminarPostulacion(...) → DELETE /api/postulacion/{id}
+10. eliminarPostulacionFisica(...) → DELETE /api/postulacion/{id}/fisico
 ```
-- Esto mantiene el código limpio y la documentación clara para cada endpoint.
 
-## 1. Revisa el Service de la entidad
-- Identifica los métodos CRUD y métodos adicionales disponibles en el Service.
-- Anota qué endpoints necesitas (crear, leer, actualizar, eliminar, búsquedas personalizadas, etc).
-- Ejemplo: Si el service tiene `getByUsuarioAndLeida`, planea un endpoint tipo `/usuario-leida/{usuarioId}`.
+### ERRORES A EVITAR:
+- ❌ NO asumas nombres de métodos genéricos como `create`, `getById`, `getAll`, `update`, `delete`.
+- ❌ NO uses DTOs si el Service usa entidades directamente.
+- ❌ NO hagas solo endpoints CRUD básicos si el Service tiene más métodos.
+- ✅ USA los nombres EXACTOS de los métodos del Service.
+- ✅ USA los tipos de parámetros EXACTOS del Service.
 
-## 2. Define la ruta base del Controller
-- Usa `@RestController` para indicar que es un controller REST.
-- Usa `@RequestMapping("/api/entidad")` para definir la ruta base de la API.
+## 2. Crea la clase Controller
+- Usa la anotación `@RestController`.
+- Define la ruta base con `@RequestMapping("/api/entidad")` (cambia "entidad" por el nombre real, ej: "notificacion").
 
 ## 3. Inyecta el Service correspondiente
 - Usa `@Autowired` para inyectar el Service de la entidad.
-- Ejemplo:
 ```java
 @Autowired
 private NotificacionService notificacionService;
 ```
 
-## 4. Crea los endpoints básicos
-- **POST** para crear: `@PostMapping` y recibe el objeto con `@RequestBody` y `@Valid`.
-- **GET** para leer:
-  - Por id: `@GetMapping("/{id}")` con `@PathVariable`.
-  - Listar todos o por filtros: `@GetMapping` o `@GetMapping("/usuario/{usuarioId}")`.
-  - Por campos específicos: `@GetMapping("/titulo/{titulo}")`.
-- **PUT** para actualizar: `@PutMapping("/{id}")` con `@PathVariable` y `@RequestBody`.
-- **DELETE** para eliminar: `@DeleteMapping("/{id}")` con `@PathVariable`.
+## 4. Implementa los endpoints CRUD y personalizados 
 
-## 5. Define los parámetros de entrada
-- Usa `@RequestBody` para recibir objetos completos (crear/actualizar).
-- Usa `@PathVariable` para parámetros en la URL (id, usuarioId, etc).
-- Usa `@RequestParam` para filtros o parámetros opcionales (por ejemplo, `leida`, `tipo`).
-- Ejemplo:
+### CREATE
+```java
+// CREATE
+@PostMapping
+public ResponseEntity<Notificacion> create(@Valid @RequestBody Notificacion request) {
+  return ResponseEntity.ok(notificacionService.create(request));
+}
+```
+
+### READ por id
+```java
+// READ
+@GetMapping("/{id}")
+public ResponseEntity<Optional<Notificacion>> getById(@PathVariable Long id) {
+  return ResponseEntity.ok(notificacionService.getById(id));
+}
+```
+
+### READ por campo específico
+```java
+@GetMapping("/titulo/{titulo}")
+public ResponseEntity<Optional<Notificacion>> getByTitulo(@PathVariable String titulo) {
+  return ResponseEntity.ok(notificacionService.getByTitulo(titulo));
+}
+```
+
+### READ por usuario
+```java
+@GetMapping("/usuario/{usuarioId}")
+public ResponseEntity<List<Notificacion>> getByUsuarioId(@PathVariable Long usuarioId) {
+  return ResponseEntity.ok(notificacionService.getByUsuario(usuarioId));
+}
+```
+
+### READ por usuario y leída
 ```java
 @GetMapping("/usuario-leida/{usuarioId}")
-public ResponseEntity<List<Notificacion>> getByUsuarioLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) { ... }
+public ResponseEntity<List<Notificacion>> getByUsuarioLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) {
+  return ResponseEntity.ok(notificacionService.getByUsuarioAndLeida(usuarioId, leida));
+}
 ```
 
-## 6. Maneja las respuestas
-- Usa `ResponseEntity` para controlar el código de respuesta y el cuerpo.
-- Devuelve el objeto creado/actualizado o un mensaje de éxito.
-- Para eliminaciones, devuelve `ResponseEntity.noContent().build()`.
-- Ejemplo:
-```java
-return ResponseEntity.ok(notificacionService.create(request));
-```
-
-## 7. Valida la entrada
-- Usa `@Valid` en los parámetros de entrada para activar validaciones de Bean Validation.
-- Maneja excepciones con controladores globales si es necesario.
-
-## 8. Agrega endpoints personalizados
-- Si el Service tiene métodos adicionales (búsqueda por nombre, filtrado, etc), crea endpoints específicos para ellos.
-- Ejemplo:
+### READ por usuario y tipo
 ```java
 @GetMapping("/usuario-tipo/{usuarioId}")
-public ResponseEntity<List<Notificacion>> getByUsuarioTipo(@PathVariable Long usuarioId, @RequestParam Notificacion.Tipo tipo) { ... }
+public ResponseEntity<List<Notificacion>> getByUsuarioTipo(@PathVariable Long usuarioId, @RequestParam Notificacion.Tipo tipo) {
+  return ResponseEntity.ok(notificacionService.getByUsuarioAndTipo(usuarioId, tipo));
+}
 ```
 
-## 9. Documenta los endpoints
-- Agrega comentarios o usa Swagger/OpenAPI para documentar cada endpoint.
-- Ejemplo de comentario:
+### READ por usuario ordenado por fecha desc
 ```java
-// Obtiene notificaciones por usuario y estado de lectura
+@GetMapping("/usuario-fecha-desc/{usuarioId}")
+public ResponseEntity<List<Notificacion>> getByUsuarioOrderByFechaDesc(@PathVariable Long usuarioId) {
+  return ResponseEntity.ok(notificacionService.getByUsuarioOrderByFechaDesc(usuarioId));
+}
 ```
 
-## 10. Prueba el Controller
+### UPDATE
+```java
+// UPDATE
+@PutMapping("/{id}")
+public ResponseEntity<Notificacion> update(@PathVariable Long id, @Valid @RequestBody Notificacion request) {
+  return ResponseEntity.ok(notificacionService.update(id, request));
+}
+```
+
+### DELETE
+```java
+// DELETE
+@DeleteMapping("/{id}")
+public ResponseEntity<Void> delete(@PathVariable Long id) {
+  notificacionService.delete(id);
+  return ResponseEntity.noContent().build();
+}
+```
+
+## 5. Reglas para comentarios en el Controller
+- Solo se permite un comentario de documentación arriba de cada endpoint, indicando el tipo de operación (CREATE, READ, UPDATE, DELETE).
+- No se permiten comentarios dentro de la lógica interna de los métodos.
+
+## 6. Prueba el Controller
 - Usa Postman, Swagger UI o tests automáticos para verificar que los endpoints funcionan correctamente.
 - Prueba casos de éxito y de error (por ejemplo, id inexistente, validaciones fallidas).
 
@@ -93,12 +148,9 @@ public ResponseEntity<List<Notificacion>> getByUsuarioTipo(@PathVariable Long us
 
 **Resumen:**
 1. Revisa el Service y define los endpoints necesarios.
-2. Crea el Controller con la ruta base.
+2. Crea el Controller con la ruta base y anota cada endpoint como en el ejemplo.
 3. Inyecta el Service.
-4. Implementa los endpoints CRUD y personalizados.
-5. Usa correctamente `@PathVariable`, `@RequestParam`, `@RequestBody` y `@Valid`.
-6. Maneja las respuestas con `ResponseEntity`.
-7. Valida y documenta.
-8. Prueba todo.
+4. Implementa los endpoints CRUD y personalizados siguiendo la estructura y comentarios del ejemplo.
+5. Prueba todo.
 
 Este flujo sirve para cualquier entidad: Usuario, Empresa, Oferta, etc. Repite el patrón y adapta según la lógica de tu Service y los endpoints que necesites.
