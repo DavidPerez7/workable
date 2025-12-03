@@ -82,11 +82,7 @@ public class HabilidadService {
 
     // ===== UPDATE =====
     public Habilidad actualizarHabilidad(Long id, Habilidad habilidadActualizada, Long usuarioId) {
-        if (id == null) throw new IllegalArgumentException("ID requerido");
-        if (habilidadActualizada == null) throw new IllegalArgumentException("Habilidad actualizada requerida");
-        if (usuarioId == null) throw new IllegalArgumentException("UsuarioId requerido");
 
-        // Solo ADMIN puede actualizar (validado en controller)
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
