@@ -13,22 +13,35 @@
 
 ---
 
-## 🟡 Gestiones Independientes (POR IMPLEMENTAR)
+## 🟡 Entidades Independientes (POR IMPLEMENTAR ENDPOINTS)
 
-| Entidad            | Create | Get all | Get by ID | Update by ID | Desactivar | Delete by ID |
-|--------------------|:------:|:-------:|:---------:|:------------:|:----------:|:------------:|
-| **MODALIDAD**      |   ⏳   |   ⏳    |    ⏳     |     ⏳       |     ⏳      |     ⏳        |
-| **TIPO CONTRATO**  |   ⏳   |   ⏳    |    ⏳     |     ⏳       |     ⏳      |     ⏳        |
-| **BENEFICIO**      |   ⏳   |   ⏳    |    ⏳     |     ⏳       |     ⏳      |     ⏳        |
-| **EMPRESA CATEGORÍA** | ⏳ |   ⏳    |    ⏳     |     ⏳       |     ⏳      |     ⏳        |
+| Entidad            | Create | Get all | Get by ID | Get by nombre | Update by ID | Desactivar | Delete by ID |
+|--------------------|:------:|:-------:|:---------:|:-------------:|:------------:|:----------:|:------------:|
+| **MUNICIPIO**      |   ⏳   |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |
+| **HABILIDAD**      |   ⏳   |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |
+| **EMPRESA CATEGORÍA** | ⏳ |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |
 
 ---
 
-## � Gestiones Dependientes (POR IMPLEMENTAR)
+## 🟣 Enums (Ya definidos en modelos)
+
+| Enum                | Ubicación         | Valores                                          |
+|---------------------|-------------------|--------------------------------------------------|
+| **Modalidad**       | Oferta.java       | PRESENCIAL, REMOTO, HIBRIDO                     |
+| **TipoContrato**    | Oferta.java       | TIEMPO_COMPLETO, MEDIO_TIEMPO, TEMPORAL, etc.   |
+| **Beneficio**       | Oferta.java       | SEGUROSALUD, SEGUROVIDA, BONOS, etc.            |
+| **Departamento**    | Municipio.java    | BOGOTA_DC, ANTIOQUIA, VALLE_DEL_CAUCA, etc.     |
+| **TipoHabilidad**   | Habilidad.java    | TECNICA, IDIOMA, BLANDA                         |
+| **Rol**             | Usuario.java      | ASPIRANTE, RECLUTADOR, ADMINISTRADOR            |
+| **Category**        | Empresa.java      | TECNOLOGIA, SALUD, FINANZAS, etc.               |
+
+---
+
+## 🔵 Gestiones Dependientes (POR IMPLEMENTAR)
 
 | Entidad         | Create | Get all | Get by ID | Get by nombre | Update by ID | Desactivar | Delete by ID | Otros |
 |-----------------|:------:|:-------:|:---------:|:-------------:|:------------:|:----------:|:------------:|:------|
-| **USUARIO**     |  ⏳    |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        | Get by ID (dto estudio/experiencia) |
+| **USUARIO**     |  ✅    |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        | Get by ID (dto estudio/experiencia) |
 | **DATA ESTUDIO**|  ⏳    |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        | *Desactivar: modificar filtros |
 | **DATA EXPERIENCIA**|⏳  |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |      |
 | **EMPRESA**     |  ⏳    |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |      |
@@ -39,7 +52,7 @@
 
 ---
 
-## 🟣 Gestión Etapa de Contratación (POR IMPLEMENTAR)
+## � Gestión Etapa de Contratación (POR IMPLEMENTAR)
 
 | Acción |
 |--------|
