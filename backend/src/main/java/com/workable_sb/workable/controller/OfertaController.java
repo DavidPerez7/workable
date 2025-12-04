@@ -2,7 +2,10 @@
 package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Oferta;
+import com.workable_sb.workable.models.Postulacion;
+import com.workable_sb.workable.models.Postulacion.Estado;
 import com.workable_sb.workable.service.OfertaService;
+import com.workable_sb.workable.service.PostulacionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,9 @@ public class OfertaController {
 
     @Autowired
     private OfertaService ofertaService;
+
+    @Autowired
+    private PostulacionService postulacionService;
 
     // - CREATE
     @PostMapping
@@ -95,4 +101,132 @@ public class OfertaController {
         ofertaService.eliminarOferta(id, usuarioIdActual);
         return ResponseEntity.noContent().build();
     }
+
+    // ============================================
+    // RECRUITMENT STAGE - ETAPA DE CONTRATACIÓN
+    // ============================================
+
+    // STAGE 1: VER CANDIDATOS POSTULADOS A OFERTA
+    @GetMapping("/{ofertaId}/candidatos")
+    public ResponseEntity<List<Postulacion>> obtenerCandidatos(
+            @PathVariable Long ofertaId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.listarPorOferta(ofertaId, usuarioIdActual));
+    }
+
+    // STAGE 1: FILTRAR CANDIDATOS POR ESTADO
+    @GetMapping("/{ofertaId}/candidatos/estado")
+    public ResponseEntity<List<Postulacion>> obtenerCandidatosPorEstado(
+            @PathVariable Long ofertaId,
+            @RequestParam Estado estado,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.listarPorOfertaYEstado(ofertaId, estado, usuarioIdActual));
+    }
+
+    // STAGE 2: CAMBIAR ESTADO DEL CANDIDATO
+    @PutMapping("/{ofertaId}/candidatos/{postulacionId}/estado")
+    public ResponseEntity<Postulacion> cambiarEstadoCandidato(
+            @PathVariable Long ofertaId,
+            @PathVariable Long postulacionId,
+            @RequestParam Estado nuevoEstado,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.cambiarEstado(postulacionId, nuevoEstado, usuarioIdActual));
+    }
+
+    // STAGE 3: FILTRAR CANDIDATOS POR EXPERIENCIA Y EDUCACIÓN
+    @GetMapping("/{ofertaId}/candidatos/filtrar")
+    public ResponseEntity<List<Postulacion>> filtrarCandidatosPorCriterios(
+            @PathVariable Long ofertaId,
+            @RequestParam(required = false) String nivelEducativo,
+            @RequestParam(required = false) Integer aniosExperienciaMinimo,
+            @RequestParam(required = false) String cargoExperiencia,
+            @RequestParam(required = false) String municipio,
+            @RequestParam(required = false) String habilidad,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.filtrarCandidatosPorCriterios(ofertaId, nivelEducativo, aniosExperienciaMinimo, cargoExperiencia, municipio, habilidad, usuarioIdActual));
+    }
+
+    // STAGE 4: CLASIFICAR CANDIDATOS POR ETAPA DEL PROCESO
+    @GetMapping("/{ofertaId}/candidatos/etapa")
+    public ResponseEntity<?> obtenerCandidatosPorEtapa(
+            @PathVariable Long ofertaId,
+            @RequestParam Estado etapa,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.obtenerCandidatosPorEtapa(ofertaId, etapa, usuarioIdActual));
+    }
+
+    // STAGE 4: RESUMEN DE CANDIDATOS POR TODAS LAS ETAPAS
+    @GetMapping("/{ofertaId}/candidatos/resumen-etapas")
+    public ResponseEntity<?> obtenerResumenEtapas(
+            @PathVariable Long ofertaId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.obtenerResumenEtapas(ofertaId, usuarioIdActual));
+    }
+
+    // STAGE 4: ESTADÍSTICAS DE PROGRESIÓN DEL PROCESO
+    @GetMapping("/{ofertaId}/candidatos/estadisticas-proceso")
+    public ResponseEntity<?> obtenerEstadisticasProceso(
+            @PathVariable Long ofertaId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.obtenerEstadisticasProceso(ofertaId, usuarioIdActual));
+    }
+
+    // ============================================
+    // CAMBIAR ESTADO - ENDPOINTS ADICIONALES
+    // ============================================
+
+    // ENDPOINT 5: Obtener estados disponibles
+    @GetMapping("/{ofertaId}/candidatos/{postulacionId}/estados-disponibles")
+    public ResponseEntity<?> obtenerEstadosDisponibles(
+            @PathVariable Long ofertaId,
+            @PathVariable Long postulacionId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.obtenerEstadosDisponibles(postulacionId, usuarioIdActual));
+    }
+
+    // ENDPOINT 6: Historial de cambios
+    @GetMapping("/{ofertaId}/candidatos/{postulacionId}/historial-estados")
+    public ResponseEntity<?> obtenerHistorialEstados(
+            @PathVariable Long ofertaId,
+            @PathVariable Long postulacionId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.obtenerHistorialEstados(postulacionId, usuarioIdActual));
+    }
+
+    // ENDPOINT 7: Cambio en lote
+    @PutMapping("/{ofertaId}/candidatos/estado-lote")
+    public ResponseEntity<?> cambiarEstadoEnLote(
+            @PathVariable Long ofertaId,
+            @RequestBody java.util.Map<String, Object> request,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.cambiarEstadoEnLote(ofertaId, request, usuarioIdActual));
+    }
+
+    // ENDPOINT 8: Validar transición
+    @PostMapping("/{ofertaId}/candidatos/{postulacionId}/validar-estado")
+    public ResponseEntity<?> validarTransicionEstado(
+            @PathVariable Long ofertaId,
+            @PathVariable Long postulacionId,
+            @RequestBody java.util.Map<String, String> request,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.validarTransicionEstado(postulacionId, request, usuarioIdActual));
+    }
+
+    // ENDPOINT 9: Revertir estado
+    @PatchMapping("/{ofertaId}/candidatos/{postulacionId}/revertir-estado")
+    public ResponseEntity<?> revertirEstado(
+            @PathVariable Long ofertaId,
+            @PathVariable Long postulacionId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.revertirEstado(postulacionId, usuarioIdActual));
+    }
+
+    // ENDPOINT 10: Estadísticas de cambios
+    @GetMapping("/{ofertaId}/estadisticas-cambios-estado")
+    public ResponseEntity<?> obtenerEstadisticasCambiosEstado(
+            @PathVariable Long ofertaId,
+            @RequestParam Long usuarioIdActual) {
+        return ResponseEntity.ok(postulacionService.obtenerEstadisticasCambiosEstado(ofertaId, usuarioIdActual));
+    }
 }
+

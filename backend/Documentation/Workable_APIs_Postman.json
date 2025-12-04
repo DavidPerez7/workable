@@ -1,0 +1,617 @@
+{
+  "info": {
+    "_postman_id": "workable-apis",
+    "name": "Workable APIs",
+    "description": "Documentación completa de APIs Workable - Postulación, Notificación y Valoración",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "📮 POSTULACIÓN",
+      "item": [
+        {
+          "name": "1. Crear Postulación",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion?usuarioId=1&ofertaId=5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion"],
+              "query": [
+                {
+                  "key": "usuarioId",
+                  "value": "1"
+                },
+                {
+                  "key": "ofertaId",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Crea una nueva postulación para una oferta"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Postulación por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/1?usuarioIdActual=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "1"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtiene los detalles de una postulación específica"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar por Oferta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/oferta/5?usuarioIdActual=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "oferta", "5"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Obtiene todas las postulaciones de una oferta"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Listar por Usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/usuario/1?usuarioIdActual=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "usuario", "1"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtiene todas las postulaciones de un usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Listar por Oferta y Estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/oferta/5/estado?estado=ACEPTADA&usuarioIdActual=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "oferta", "5", "estado"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "ACEPTADA"
+                },
+                {
+                  "key": "usuarioIdActual",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Obtiene postulaciones filtradas por estado"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Listar por Usuario y Estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/usuario/1/estado?estado=PENDIENTE&usuarioIdActual=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "usuario", "1", "estado"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PENDIENTE"
+                },
+                {
+                  "key": "usuarioIdActual",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Obtiene postulaciones de usuario filtradas por estado"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Verificar si Usuario ya se Postuló",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/verificar?usuarioId=1&ofertaId=5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "verificar"],
+              "query": [
+                {
+                  "key": "usuarioId",
+                  "value": "1"
+                },
+                {
+                  "key": "ofertaId",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Verifica si un usuario ya se ha postulado a una oferta"
+          },
+          "response": []
+        },
+        {
+          "name": "8. Cambiar Estado",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/1/estado?nuevoEstado=ACEPTADA&usuarioIdActual=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "1", "estado"],
+              "query": [
+                {
+                  "key": "nuevoEstado",
+                  "value": "ACEPTADA"
+                },
+                {
+                  "key": "usuarioIdActual",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Cambia el estado de una postulación"
+          },
+          "response": []
+        },
+        {
+          "name": "9. Eliminar Postulación",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/postulacion/1?usuarioIdActual=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "postulacion", "1"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Elimina una postulación"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔔 NOTIFICACIÓN",
+      "item": [
+        {
+          "name": "1. Crear Notificación",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Nueva Oferta\",\n  \"descripcion\": \"Se ha publicado una nueva oferta que coincide con tu perfil\",\n  \"tipo\": \"NUEVA_OFERTA\",\n  \"leida\": false,\n  \"activa\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion?usuarioDestinoId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion"],
+              "query": [
+                {
+                  "key": "usuarioDestinoId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Crea una nueva notificación"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Notificación por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "1"]
+            },
+            "description": "Obtiene los detalles de una notificación"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar por Usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario", "1"]
+            },
+            "description": "Obtiene todas las notificaciones de un usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Listar por Usuario y Estado Lectura",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario-leida/1?leida=false",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario-leida", "1"],
+              "query": [
+                {
+                  "key": "leida",
+                  "value": "false"
+                }
+              ]
+            },
+            "description": "Obtiene notificaciones filtradas por estado de lectura"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Listar por Usuario y Tipo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario-tipo/1?tipo=CAMBIO_ESTADO",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario-tipo", "1"],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "CAMBIO_ESTADO"
+                }
+              ]
+            },
+            "description": "Obtiene notificaciones filtradas por tipo"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Listar Ordenadas por Fecha Desc",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario-fecha-desc/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario-fecha-desc", "1"]
+            },
+            "description": "Obtiene notificaciones ordenadas por fecha descendente"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Listar Activas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario/1/activas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario", "1", "activas"]
+            },
+            "description": "Obtiene notificaciones activas de un usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "8. Contar No Leídas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario/1/no-leidas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario", "1", "no-leidas"]
+            },
+            "description": "Obtiene la cantidad de notificaciones no leídas"
+          },
+          "response": []
+        },
+        {
+          "name": "9. Actualizar Notificación",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Nueva Oferta Actualizada\",\n  \"descripcion\": \"Se ha publicado una nueva oferta que coincide con tu perfil\",\n  \"tipo\": \"NUEVA_OFERTA\",\n  \"leida\": false,\n  \"activa\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "1"]
+            },
+            "description": "Actualiza una notificación"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Marcar como Leída",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/1/leida",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "1", "leida"]
+            },
+            "description": "Marca una notificación como leída"
+          },
+          "response": []
+        },
+        {
+          "name": "11. Marcar Todas como Leídas",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/usuario/1/leidas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "usuario", "1", "leidas"]
+            },
+            "description": "Marca todas las notificaciones de un usuario como leídas"
+          },
+          "response": []
+        },
+        {
+          "name": "12. Eliminar Notificación",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/notificacion/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "notificacion", "1"]
+            },
+            "description": "Elimina una notificación"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⭐ VALORACIÓN (FEEDBACK)",
+      "item": [
+        {
+          "name": "1. Crear Valoración",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": {\n    \"id\": 1\n  },\n  \"empresa\": {\n    \"id\": 5\n  },\n  \"oferta\": {\n    \"id\": 10\n  },\n  \"puntuacion\": 4.5,\n  \"comentario\": \"Excelente experiencia durante el proceso de selección\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/feedback",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback"]
+            },
+            "description": "Crea una nueva valoración"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Valoración por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "1"]
+            },
+            "description": "Obtiene los detalles de una valoración"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar por Empresa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/empresa/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "empresa", "5"]
+            },
+            "description": "Obtiene todas las valoraciones de una empresa"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Listar por Oferta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/oferta/10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "oferta", "10"]
+            },
+            "description": "Obtiene todas las valoraciones de una oferta"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Listar por Usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/usuario/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "usuario", "1"]
+            },
+            "description": "Obtiene todas las valoraciones realizadas por un usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Obtener por Usuario y Empresa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/usuario/1/empresa/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "usuario", "1", "empresa", "5"]
+            },
+            "description": "Obtiene la valoración de un usuario sobre una empresa específica"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Valoración",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": {\n    \"id\": 1\n  },\n  \"empresa\": {\n    \"id\": 5\n  },\n  \"oferta\": {\n    \"id\": 10\n  },\n  \"puntuacion\": 5.0,\n  \"comentario\": \"Excelente experiencia durante el proceso de selección. Muy recomendado.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "1"]
+            },
+            "description": "Actualiza una valoración existente"
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Valoración",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/feedback/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "feedback", "1"]
+            },
+            "description": "Elimina una valoración"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
