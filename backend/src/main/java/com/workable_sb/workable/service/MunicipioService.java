@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
 
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.MunicipioRepo;
@@ -14,6 +16,9 @@ public class MunicipioService {
 
     @Autowired
     private MunicipioRepo municipioRepo;
+    
+    @Autowired
+    private EntityManager entityManager;
 
     // CREATE
     public Municipio create(Municipio municipio) {
@@ -56,11 +61,32 @@ public class MunicipioService {
         return null;
     }
 
-    // DELETE
+    // DELETE - Elimina un municipio y actualiza las referencias a NULL
+    @Transactional
     public boolean delete(Long id) {
         if (municipioRepo.existsById(id)) {
-            municipioRepo.deleteById(id);
-            return true;
+            try {
+                // Primero actualizar todas las referencias a este municipio a NULL
+                entityManager.createNativeQuery("UPDATE usuario SET municipio_id = NULL WHERE municipio_id = ?1")
+                    .setParameter(1, id).executeUpdate();
+                entityManager.createNativeQuery("UPDATE oferta SET municipio_id = NULL WHERE municipio_id = ?1")
+                    .setParameter(1, id).executeUpdate();
+                entityManager.createNativeQuery("UPDATE empresa SET municipio_id = NULL WHERE municipio_id = ?1")
+                    .setParameter(1, id).executeUpdate();
+                entityManager.createNativeQuery("UPDATE estudio SET municipio_id = NULL WHERE municipio_id = ?1")
+                    .setParameter(1, id).executeUpdate();
+                entityManager.createNativeQuery("UPDATE experiencia SET municipio_id = NULL WHERE municipio_id = ?1")
+                    .setParameter(1, id).executeUpdate();
+                entityManager.createNativeQuery("UPDATE direccion SET municipio_id = NULL WHERE municipio_id = ?1")
+                    .setParameter(1, id).executeUpdate();
+                
+                // Ahora eliminar el municipio
+                municipioRepo.deleteById(id);
+                return true;
+            } catch (Exception e) {
+                System.out.println("Error al eliminar municipio: " + e.getMessage());
+                return false;
+            }
         }
         return false;
     }
