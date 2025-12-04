@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,11 +46,11 @@ public class Postulacion {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "oferta_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_postulacion"))
+	@JoinColumn(name = "oferta_id", nullable = false, referencedColumnName = "id")
 	private Oferta oferta;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_postulacion"))
+	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
 	private Usuario usuario;
 
 	@PrePersist

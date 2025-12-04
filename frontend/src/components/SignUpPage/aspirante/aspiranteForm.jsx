@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AspiranteForm.css";
+import { registrarAspirante } from "../../../api/aspirantesApi";
 
 const AspiranteForm = () => {
   const formRef = useRef(null);
@@ -35,20 +36,18 @@ const AspiranteForm = () => {
       apellido: data.apellido,
       correo: data.correo,
       telefono: data.telefono,
-      password: data.password,
+      clave: data.password,
       fechaNacimiento: data.fechaNacimiento,
-      rol: "ASPIRANTE",
       municipio: {
         id: Number(data.municipioId),
       },
     };
 
     try {
-      // Aquí deberías llamar a tu API para crear el aspirante
-      // const aspiranteCreado = await crearAspirante(aspiranteData);
-
-      console.log("Datos a enviar:", aspiranteData);
-      alert("Aspirante registrado con éxito");
+      const response = await registrarAspirante(aspiranteData);
+      console.log("Aspirante registrado:", response);
+      
+      alert("¡Registro exitoso! Ahora puedes iniciar sesión");
       formRef.current.reset();
       setAceptaTerminos(false);
 
@@ -58,10 +57,8 @@ const AspiranteForm = () => {
       console.error("Error al crear aspirante:", error);
       let mensajeError = "Error al registrar el aspirante";
 
-      if (error.response) {
-        mensajeError = error.response.data.message || mensajeError;
-      } else if (error.request) {
-        mensajeError = "No se pudo conectar con el servidor";
+      if (error.message) {
+        mensajeError = error.message;
       }
 
       alert(mensajeError);
@@ -185,10 +182,24 @@ const AspiranteForm = () => {
               </div>
             </div>
           </div>
+
+          {/* Términos y Condiciones */}
+          <div className="form-field checkbox-field">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={aceptaTerminos}
+                onChange={(e) => setAceptaTerminos(e.target.checked)}
+                required
+              />
+              <span>Acepto los términos y condiciones *</span>
+            </label>
+          </div>
+
+          <button type="submit" className="submit-button">
+            Crear Cuenta Aspirante
+          </button>
         </form>
-        <button type="submit" className="submit-button">
-          Crear Cuenta Aspirante
-        </button>
 
         <p className="login-link">
           ¿Ya tienes cuenta?{" "}

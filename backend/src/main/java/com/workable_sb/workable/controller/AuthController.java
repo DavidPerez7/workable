@@ -35,13 +35,17 @@ public class AuthController {
 
     // - CREATE (register aspirante)
     @PostMapping("/register-aspirante")
-    public ResponseEntity<?> registrarAspirante(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> registrarAspirante(@RequestBody Usuario request) {
         try {
-            if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
+            if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
-            Usuario usuarioCreado = usuarioService.createPublic(usuario);
+
+            // Forzar rol ASPIRANTE
+            request.setRol(Usuario.Rol.ASPIRANTE);
+            Usuario usuarioCreado = usuarioService.createPublic(request);
             return ResponseEntity.ok(usuarioCreado);
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
@@ -49,27 +53,17 @@ public class AuthController {
 
     // - CREATE (register reclutador)
     @PostMapping("/register-reclutador")
-    public ResponseEntity<?> registrarReclutador(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> registrarReclutador(@RequestBody Usuario request) {
         try {
-            if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
+            if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
-            Usuario usuarioCreado = usuarioService.createPublic(usuario);
-            return ResponseEntity.ok(usuarioCreado);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
-        }
-    }
 
-    // - CREATE (register admin)
-    @PostMapping("/register-admin")
-    public ResponseEntity<?> registrarAdmin(@RequestBody Usuario usuario) {
-        try {
-            if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
-            }
-            Usuario usuarioCreado = usuarioService.create(usuario);
+            // Forzar rol RECLUTADOR
+            request.setRol(Usuario.Rol.RECLUTADOR);
+            Usuario usuarioCreado = usuarioService.createPublic(request);
             return ResponseEntity.ok(usuarioCreado);
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
@@ -83,6 +77,12 @@ public class AuthController {
             if (usuario == null || !passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
                 return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
             }
+            
+            // Verificar que el usuario esté activo
+            if (!usuario.getIsActive()) {
+                return ResponseEntity.status(403).body(Map.of("error", "Usuario inactivo"));
+            }
+            
             String rolString = usuario.getRol().toString();
             String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
             

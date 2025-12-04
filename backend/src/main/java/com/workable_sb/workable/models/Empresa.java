@@ -14,7 +14,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -78,11 +77,11 @@ public class Empresa {
 
     // Reclutador que creó la empresa (owner/administrador principal)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reclutador_owner_id", foreignKey = @ForeignKey(name = "FK_empresa_owner"))
+    @JoinColumn(name = "reclutador_owner_id", referencedColumnName = "id")
     private Usuario reclutadorOwner;
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "empresa_categoria", joinColumns = @JoinColumn(name = "empresa_id"))
+    @CollectionTable(name = "empresa_categoria", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", length = 50)
     private Set<Category> categories = new HashSet<>();
@@ -121,7 +120,7 @@ public class Empresa {
     }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_empresa_municipio"))
+    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
     private Municipio municipio;
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -136,7 +135,7 @@ public class Empresa {
     // Relación unidireccional: La empresa conoce sus reclutadores
     // Se crea una columna empresa_id en la tabla usuario
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id", foreignKey = @ForeignKey(name = "FK_usuario_empresa"))
+    @JoinColumn(name = "empresa_id", referencedColumnName = "id")
     private List<Usuario> reclutadores = new ArrayList<>();
 
     @PrePersist
