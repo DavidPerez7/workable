@@ -81,7 +81,7 @@ public class Empresa {
     private Usuario reclutadorOwner;
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "empresa_categoria", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
+    @CollectionTable(name = "empresa_category_enum", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", length = 50)
     private Set<Category> categories = new HashSet<>();

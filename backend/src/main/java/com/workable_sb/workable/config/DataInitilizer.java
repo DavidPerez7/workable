@@ -5,11 +5,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.workable_sb.workable.models.Municipio;
-import com.workable_sb.workable.models.EmpresaCategoria;
 import com.workable_sb.workable.models.Habilidad;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.MunicipioRepo;
-import com.workable_sb.workable.repository.EmpresaCategoriaRepo;
 import com.workable_sb.workable.repository.HabilidadRepo;
 import com.workable_sb.workable.repository.UsuarioRepo;
 import java.time.LocalDate;
@@ -19,9 +17,6 @@ public class DataInitilizer implements CommandLineRunner {
 
     @Autowired
     private MunicipioRepo municipioRepo;
-
-    @Autowired
-    private EmpresaCategoriaRepo empresaCategoriaRepo;
 
     @Autowired
     private HabilidadRepo habilidadRepo;
@@ -35,7 +30,6 @@ public class DataInitilizer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         initializeMunicipios();
-        initializeEmpresaCategorias();
         initializeHabilidades();
         initializeAdminUser();
     }
@@ -56,25 +50,6 @@ public class DataInitilizer implements CommandLineRunner {
             municipioRepo.save(new Municipio(10L, "Pereira", Municipio.Departamento.RISARALDA));
 
             System.out.println("✅ 10 Municipios creados");
-        }
-    }
-
-    private void initializeEmpresaCategorias() {
-        if (empresaCategoriaRepo.count() == 0) {
-            System.out.println("🏢 Inicializando 10 Categorías de Empresa...");
-
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Tecnología", "Empresas del sector tecnológico", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Finanzas", "Empresas del sector financiero", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Salud", "Empresas del sector salud", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Educación", "Empresas del sector educativo", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Logística", "Empresas del sector logístico", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Retail", "Empresas del sector comercio", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Manufactura", "Empresas del sector manufactura", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Consultoría", "Empresas de consultoría empresarial", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Telecomunicaciones", "Empresas de telecomunicaciones", true));
-            empresaCategoriaRepo.save(new EmpresaCategoria(null, "Energía", "Empresas del sector energético", true));
-
-            System.out.println("✅ 10 Categorías de Empresa creadas");
         }
     }
 
