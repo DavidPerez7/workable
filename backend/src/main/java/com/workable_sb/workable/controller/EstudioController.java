@@ -19,7 +19,8 @@ public class EstudioController {
 
     // - CREATE
     @PostMapping
-    public ResponseEntity<Estudio> crearEstudio(@RequestBody Estudio estudio, @RequestParam Long usuarioId) {
+    public ResponseEntity<Estudio> crearEstudio(@RequestBody Estudio estudio) {
+        Long usuarioId = estudio.getUsuario().getId();
         return ResponseEntity.ok(estudioService.crearEstudio(estudio, usuarioId));
     }
 

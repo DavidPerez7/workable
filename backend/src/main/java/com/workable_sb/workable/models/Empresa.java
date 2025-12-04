@@ -23,6 +23,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -78,7 +79,7 @@ public class Empresa {
     private String codigoInvitacion;
 
     // Reclutador que creó la empresa (owner/administrador principal)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reclutador_owner_id", referencedColumnName = "id")
     private Usuario reclutadorOwner;
 
@@ -121,12 +122,13 @@ public class Empresa {
         OTRO
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Municipio municipio;
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Oferta> ofertas = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

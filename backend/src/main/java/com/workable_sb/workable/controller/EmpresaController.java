@@ -17,22 +17,6 @@ public class EmpresaController {
     @Autowired
     private EmpresaService empresaService;
 
-    // - READ by id
-    @GetMapping("/{id}")
-    public ResponseEntity<Empresa> obtenerPorId(@PathVariable Long id) {
-        return empresaService.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // - READ by nit
-    @GetMapping("/nit/{nit}")
-    public ResponseEntity<Empresa> obtenerPorNit(@PathVariable String nit) {
-        return empresaService.getByNit(nit)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
     // - READ all
     @GetMapping
     public ResponseEntity<List<Empresa>> listarTodas() {
@@ -49,6 +33,28 @@ public class EmpresaController {
     @GetMapping("/buscar")
     public ResponseEntity<List<Empresa>> buscarPorNombre(@RequestParam String nombre) {
         return ResponseEntity.ok(empresaService.getByNombre(nombre));
+    }
+
+    // - READ by nombre path
+    @GetMapping("/nombre/{nombre}")
+    public ResponseEntity<List<Empresa>> obtenerPorNombre(@PathVariable String nombre) {
+        return ResponseEntity.ok(empresaService.getByNombre(nombre));
+    }
+
+    // - READ by nit
+    @GetMapping("/nit/{nit}")
+    public ResponseEntity<Empresa> obtenerPorNit(@PathVariable String nit) {
+        return empresaService.getByNit(nit)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // - READ by id
+    @GetMapping("/{id}")
+    public ResponseEntity<Empresa> obtenerPorId(@PathVariable Long id) {
+        return empresaService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // - READ reclutadores

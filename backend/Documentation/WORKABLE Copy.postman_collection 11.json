@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "4828273a-fd0b-4f70-8de3-0cb201a51233",
-		"name": "WORKABLE",
+		"_postman_id": "7197c9bb-b9cc-4b06-b8a5-a4997982c096",
+		"name": "WORKABLE Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "49659444",
-		"_collection_link": "https://daviidap07-7531113.postman.co/workspace/WORKABLE~13562465-5e22-4ecd-ba24-2c757b60b048/collection/49659444-4828273a-fd0b-4f70-8de3-0cb201a51233?action=share&source=collection_link&creator=49659444"
+		"_collection_link": "https://daviidap07-7531113.postman.co/workspace/WORKABLE~13562465-5e22-4ecd-ba24-2c757b60b048/collection/49659444-7197c9bb-b9cc-4b06-b8a5-a4997982c096?action=share&source=collection_link&creator=49659444"
 	},
 	"item": [
 		{
@@ -200,10 +200,10 @@
 			"name": "Dependientes",
 			"item": [
 				{
-					"name": "Usuario (pendiente)",
+					"name": "Usuario (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -230,7 +230,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -258,7 +258,7 @@
 							"response": []
 						},
 						{
-							"name": "getByCorreo (pendiente)",
+							"name": "getByCorreo (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -273,21 +273,26 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/usuario/correo/admin@example.com",
+									"raw": "{{BASE_URL}}/usuario/correo?correo=admin@example.com",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"usuario",
-										"correo",
-										"admin@example.com"
+										"correo"
+									],
+									"query": [
+										{
+											"key": "correo",
+											"value": "admin@example.com"
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -308,7 +313,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nombre\": \"Juan\",\n    \"apellido\": \"Pérez\",\n    \"correo\": \"juan@example.com\",\n    \"telefono\": 3001234567,\n    \"fechaNacimiento\": \"1990-05-15\",\n    \"rol\": \"ASPIRANTE\",\n    \"municipio\": {\n        \"id\": 1\n    }\n}",
+									"raw": "{\n    \"nombre\": \"final_juan\",\n    \"apellido\": \"final_perez\",\n    \"correo\": \"juan@example.com\",\n    \"telefono\": \"3001234567\",\n    \"fechaNacimiento\": \"1990-05-15\",\n    \"password\": \"password123\",\n    \"rol\": \"ASPIRANTE\",\n    \"municipio\": {\n        \"id\": 1\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -328,7 +333,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -349,7 +354,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nombre\": \"Juan Carlos\",\n    \"apellido\": \"Pérez López\",\n    \"telefono\": 3001234568,\n    \"municipio\": {\n        \"id\": 1\n    }\n}",
+									"raw": "{\n    \"nombre\": \"Juan Carlos\",\n    \"apellido\": \"Pérez López\",\n    \"telefono\": \"3001234568\",\n    \"municipio\": {\n        \"id\": 1\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -357,20 +362,20 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/usuario/1",
+									"raw": "{{BASE_URL}}/usuario/2",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"usuarios",
-										"1"
+										"usuario",
+										"2"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -385,13 +390,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/usuario/1",
+									"raw": "{{BASE_URL}}/usuario/2",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"usuarios",
-										"1"
+										"usuario",
+										"2"
 									]
 								}
 							},
@@ -400,10 +405,10 @@
 					]
 				},
 				{
-					"name": "Estudio (pendiente)",
+					"name": "Estudio (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -430,7 +435,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -458,7 +463,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -479,7 +484,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nivelEducativo\": \"LICENCIATURA\",\n    \"institucion\": \"Universidad Nacional\",\n    \"carrera\": \"Ingeniería de Sistemas\",\n    \"estado\": \"COMPLETADO\",\n    \"fechaInicio\": \"2018-01-15\",\n    \"fechaFinalizacion\": \"2022-12-20\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
+									"raw": "{\n    \"titulo\": \"final_estudio\",\n    \"nivelEducativo\": \"LICENCIATURA\",\n    \"institucion\": \"Universidad Nacional\",\n    \"fechaInicio\": \"2015-01-15\",\n    \"fechaFin\": \"2019-06-30\",\n    \"enCurso\": false,\n    \"modalidad\": \"PRESENCIAL\",\n    \"descripcion\": \"Ingeniería en Sistemas completada exitosamente\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -499,7 +504,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -520,7 +525,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nivelEducativo\": \"POSTGRADO\",\n    \"institucion\": \"Universidad de los Andes\",\n    \"carrera\": \"Maestría en Ingeniería\",\n    \"estado\": \"EN_CURSO\",\n    \"fechaInicio\": \"2023-01-15\",\n    \"fechaFinalizacion\": \"2024-12-20\"\n}",
+									"raw": "{\n    \"titulo\": \"final_estudio\",\n    \"nivelEducativo\": \"MAESTRIA\",\n    \"institucion\": \"Universidad de los Andes\",\n    \"fechaInicio\": \"2023-01-15\",\n    \"fechaFin\": null,\n    \"enCurso\": true,\n    \"modalidad\": \"PRESENCIAL\",\n    \"descripcion\": \"Maestría en Ingeniería - En curso\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -528,20 +533,26 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/estudio/1",
+									"raw": "{{BASE_URL}}/estudio/12?usuarioIdActual=1",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"estudio",
-										"1"
+										"12"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -556,13 +567,19 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/estudio/1",
+									"raw": "{{BASE_URL}}/estudio/1?usuarioIdActual=1",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"estudio",
 										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
 									]
 								}
 							},
@@ -595,10 +612,10 @@
 					]
 				},
 				{
-					"name": "Experiencia (pendiente)",
+					"name": "Experiencia (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -625,7 +642,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -653,7 +670,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -674,7 +691,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"cargo\": \"Ingeniero de Sistemas\",\n    \"empresa\": \"Acme Corporation\",\n    \"descripcion\": \"Desarrollo de software\",\n    \"sector\": \"Tecnología\",\n    \"tipoContrato\": \"INDEFINIDO\",\n    \"salarioInicial\": 3000000,\n    \"salarioFinal\": 4500000,\n    \"fechaInicio\": \"2020-03-15\",\n    \"fechaFinalizacion\": \"2023-08-20\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
+									"raw": "{\n    \"cargo\": \"final_experiencia\",\n    \"empresa\": \"Acme Corporation\",\n    \"descripcion\": \"Desarrollo de software backend con Spring Boot\",\n    \"sector\": \"Tecnología\",\n    \"tipoContrato\": \"INDEFINIDO\",\n    \"salarioInicial\": 3000000,\n    \"salarioFinal\": 4500000,\n    \"fechaInicio\": \"2020-03-15\",\n    \"fechaFinalizacion\": \"2023-08-20\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -694,7 +711,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -715,7 +732,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"cargo\": \"Senior Ingeniero de Sistemas\",\n    \"empresa\": \"Acme Corporation\",\n    \"descripcion\": \"Líder técnico\",\n    \"sector\": \"Tecnología\",\n    \"tipoContrato\": \"INDEFINIDO\",\n    \"salarioInicial\": 4500000,\n    \"salarioFinal\": 6000000,\n    \"fechaInicio\": \"2020-03-15\",\n    \"fechaFinalizacion\": \"2023-08-20\"\n}",
+									"raw": "{\n    \"cargo\": \"final_experiencia\",\n    \"empresa\": \"Acme Corporation\",\n    \"descripcion\": \"Senior Developer - Líder técnico del proyecto\",\n    \"sector\": \"Tecnología\",\n    \"tipoContrato\": \"INDEFINIDO\",\n    \"salarioInicial\": 4500000,\n    \"salarioFinal\": 6000000,\n    \"fechaInicio\": \"2020-03-15\",\n    \"fechaFinalizacion\": \"2023-08-20\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -723,20 +740,26 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/experiencia/1",
+									"raw": "{{BASE_URL}}/experiencia/1?usuarioIdActual=1",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"experiencia",
 										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -766,10 +789,10 @@
 					]
 				},
 				{
-					"name": "Empresa (pendiente)",
+					"name": "Empresa (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -784,7 +807,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/empresa",
+									"raw": "{{BASE_URL}}/empresas",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -796,7 +819,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -811,7 +834,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/empresa/1",
+									"raw": "{{BASE_URL}}/empresas/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -824,7 +847,7 @@
 							"response": []
 						},
 						{
-							"name": "getByNombre (pendiente)",
+							"name": "getByNombre (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -839,7 +862,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/empresa/nombre/Acme",
+									"raw": "{{BASE_URL}}/empresas/nombre/Acme",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -853,7 +876,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -874,7 +897,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nombre\": \"Acme Corporation\",\n    \"nit\": \"123456789-0\",\n    \"telefono\": \"6015551234\",\n    \"correo\": \"contacto@acme.com\",\n    \"descripcion\": \"Empresa líder en soluciones tecnológicas\",\n    \"sitioWeb\": \"https://www.acme.com\",\n    \"numeroEmpleados\": 250,\n    \"sector\": \"Tecnología\",\n    \"direccion\": {\"id\": 1},\n    \"reclutador\": {\"id\": 1}\n}",
+									"raw": "{\n    \"nombre\": \"final_empresa\",\n    \"nit\": \"123456789-0\",\n    \"telefono\": \"6015551234\",\n    \"correo\": \"contacto@acme.com\",\n    \"descripcion\": \"Empresa líder en soluciones tecnológicas\",\n    \"sitioWeb\": \"https://www.acme.com\",\n    \"numeroEmpleados\": 250,\n    \"sector\": \"Tecnología\",\n    \"direccion\": {\"id\": 1},\n    \"reclutador\": {\"id\": 1}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -882,7 +905,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/empresa",
+									"raw": "{{BASE_URL}}/empresas",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -894,7 +917,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -915,7 +938,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nombre\": \"Acme Corporation Latam\",\n    \"telefono\": \"6015551235\",\n    \"correo\": \"contacto@acmelatam.com\",\n    \"descripcion\": \"Empresa líder en soluciones tecnológicas para Latinoamérica\",\n    \"sitioWeb\": \"https://www.acmelatam.com\",\n    \"numeroEmpleados\": 350,\n    \"sector\": \"Tecnología\"\n}",
+									"raw": "{\n    \"nombre\": \"final_empresa\",\n    \"telefono\": \"6015551235\",\n    \"correo\": \"contacto@acmelatam.com\",\n    \"descripcion\": \"Empresa líder en soluciones tecnológicas para Latinoamérica\",\n    \"sitioWeb\": \"https://www.acmelatam.com\",\n    \"numeroEmpleados\": 350,\n    \"sector\": \"Tecnología\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -923,7 +946,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/empresa/1",
+									"raw": "{{BASE_URL}}/empresas/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -936,7 +959,7 @@
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -951,7 +974,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/empresa/1",
+									"raw": "{{BASE_URL}}/empresas/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -966,10 +989,10 @@
 					]
 				},
 				{
-					"name": "Oferta (pendiente)",
+					"name": "Oferta (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -984,7 +1007,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/oferta",
+									"raw": "{{BASE_URL}}/ofertas",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -996,7 +1019,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1011,7 +1034,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/oferta/1",
+									"raw": "{{BASE_URL}}/ofertas/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1024,7 +1047,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1045,7 +1068,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"titulo\": \"Ingeniero de Sistemas Senior\",\n    \"descripcion\": \"Buscamos ingeniero con experiencia\",\n    \"requisitos\": \"5+ años de experiencia\",\n    \"salarioMinimo\": 4000000,\n    \"salarioMaximo\": 6000000,\n    \"estado\": \"ACTIVA\",\n    \"fechaPublicacion\": \"2024-12-04\",\n    \"fechaCierre\": \"2024-12-31\",\n    \"numeroVacantes\": 2,\n    \"empresa\": {\"id\": 1}\n}",
+									"raw": "{\n    \"titulo\": \"final_oferta\",\n    \"descripcion\": \"Buscamos ingeniero con experiencia en Spring Boot\",\n    \"requisitos\": \"5+ años de experiencia, conocimiento en Spring Boot\",\n    \"salarioMinimo\": 4000000,\n    \"salarioMaximo\": 6000000,\n    \"estado\": \"ACTIVA\",\n    \"fechaPublicacion\": \"2024-12-04\",\n    \"fechaCierre\": \"2024-12-31\",\n    \"numeroVacantes\": 2,\n    \"empresa\": {\"id\": 1}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1053,7 +1076,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/oferta",
+									"raw": "{{BASE_URL}}/ofertas",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1065,7 +1088,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1086,7 +1109,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"titulo\": \"Ingeniero de Sistemas Senior Plus\",\n    \"descripcion\": \"Actualizado\",\n    \"numeroVacantes\": 3\n}",
+									"raw": "{\n    \"titulo\": \"final_oferta\",\n    \"descripcion\": \"Senior Engineer - Backend\",\n    \"numeroVacantes\": 3\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1094,7 +1117,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/oferta/1",
+									"raw": "{{BASE_URL}}/ofertas/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1107,7 +1130,7 @@
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1122,7 +1145,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/oferta/1",
+									"raw": "{{BASE_URL}}/ofertas/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1161,10 +1184,10 @@
 					]
 				},
 				{
-					"name": "Postulación (pendiente)",
+					"name": "Hoja de Vida (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1179,7 +1202,184 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion",
+									"raw": "{{BASE_URL}}/hojas-de-vida",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"hojas-de-vida"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/hojas-de-vida/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"hojas-de-vida",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titulo\": \"final_hojadevida\",\n    \"resumenProfesional\": \"Ingeniero de Sistemas con 5+ años de experiencia en desarrollo backend\",\n    \"objetivo\": \"Busco oportunidades desafiantes en empresas de tecnología\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/hojas-de-vida",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"hojas-de-vida"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titulo\": \"final_hojadevida\",\n    \"resumenProfesional\": \"Ingeniero de Sistemas Senior con 7+ años de experiencia\",\n    \"objetivo\": \"Busco liderar equipos de desarrollo en grandes empresas\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/hojas-de-vida/1?usuarioIdActual=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"hojas-de-vida",
+										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/hojas-de-vida/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"hojas-de-vida",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Postulación (ok)",
+					"item": [
+						{
+							"name": "getAll (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/postulaciones",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1191,7 +1391,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1206,7 +1406,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion/1",
+									"raw": "{{BASE_URL}}/postulaciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1219,7 +1419,7 @@
 							"response": []
 						},
 						{
-							"name": "getByOferta (pendiente)",
+							"name": "getByOferta (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1234,7 +1434,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion/oferta/1",
+									"raw": "{{BASE_URL}}/postulaciones/oferta/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1248,7 +1448,7 @@
 							"response": []
 						},
 						{
-							"name": "getByUsuario (pendiente)",
+							"name": "getByUsuario (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1263,7 +1463,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion/usuario/1",
+									"raw": "{{BASE_URL}}/postulaciones/usuario/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1277,7 +1477,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1298,7 +1498,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"fechaPostulacion\": \"2024-12-04\",\n    \"estado\": \"PENDIENTE\",\n    \"usuario\": {\"id\": 1},\n    \"oferta\": {\"id\": 1}\n}",
+									"raw": "{\n    \"estado\": \"PENDIENTE\",\n    \"usuario\": {\"id\": 1},\n    \"oferta\": {\"id\": 1}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1306,7 +1506,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion",
+									"raw": "{{BASE_URL}}/postulaciones",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1318,7 +1518,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1339,7 +1539,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"estado\": \"ACEPTADA\"\n}",
+									"raw": "{\n    \"estado\": \"ACEPTADO\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1347,7 +1547,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion/1",
+									"raw": "{{BASE_URL}}/postulaciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1360,7 +1560,7 @@
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1375,7 +1575,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/postulacion/1",
+									"raw": "{{BASE_URL}}/postulaciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1414,10 +1614,10 @@
 					]
 				},
 				{
-					"name": "Notificaciones (pendiente)",
+					"name": "Notificaciones (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1432,7 +1632,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion",
+									"raw": "{{BASE_URL}}/notificaciones",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1444,7 +1644,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1459,7 +1659,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion/1",
+									"raw": "{{BASE_URL}}/notificaciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1472,7 +1672,7 @@
 							"response": []
 						},
 						{
-							"name": "getByUsuario (pendiente)",
+							"name": "getByUsuario (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1487,7 +1687,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion/usuario/1",
+									"raw": "{{BASE_URL}}/notificaciones/usuario/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1501,7 +1701,7 @@
 							"response": []
 						},
 						{
-							"name": "getNoLeidas (pendiente)",
+							"name": "getNoLeidas (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1516,7 +1716,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion/usuario/1/no-leidas",
+									"raw": "{{BASE_URL}}/notificaciones/usuario/1/no-leidas",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1531,7 +1731,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1552,7 +1752,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"titulo\": \"Nueva Notificación\",\n    \"descripcion\": \"Contenido de la notificación\",\n    \"tipo\": \"NUEVA_OFERTA\",\n    \"leida\": false,\n    \"activa\": true,\n    \"usuarioDestino\": {\"id\": 1}\n}",
+									"raw": "{\n    \"titulo\": \"final_notificacion\",\n    \"mensaje\": \"Contenido de la notificación\",\n    \"tipo\": \"POSTULACION\",\n    \"leida\": false,\n    \"usuario\": {\"id\": 1}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1560,7 +1760,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion",
+									"raw": "{{BASE_URL}}/notificaciones",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1572,7 +1772,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1601,7 +1801,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion/1",
+									"raw": "{{BASE_URL}}/notificaciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1614,7 +1814,7 @@
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1629,7 +1829,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/notificacion/1",
+									"raw": "{{BASE_URL}}/notificaciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1668,10 +1868,10 @@
 					]
 				},
 				{
-					"name": "Valoración (pendiente)",
+					"name": "Habilidad Usuario (ok)",
 					"item": [
 						{
-							"name": "getAll (pendiente)",
+							"name": "getAll (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1686,7 +1886,164 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/valoracion",
+									"raw": "{{BASE_URL}}/usuario/1/habilidades",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario",
+										"1",
+										"habilidades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"usuario\": {\"id\": 1},\n    \"habilidad\": {\"id\": 1},\n    \"nivelProficiencia\": \"AVANZADO\",\n    \"aniosExperiencia\": 5\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/1/habilidades",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario",
+										"1",
+										"habilidades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nivelProficiencia\": \"EXPERTO\",\n    \"aniosExperiencia\": 7\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/1/habilidades/1?usuarioIdActual=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario",
+										"1",
+										"habilidades",
+										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/1/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario",
+										"1",
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Valoración (ok)",
+					"item": [
+						{
+							"name": "getAll (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/valoraciones",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1698,7 +2055,7 @@
 							"response": []
 						},
 						{
-							"name": "getById (pendiente)",
+							"name": "getById (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1713,7 +2070,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/valoracion/1",
+									"raw": "{{BASE_URL}}/valoraciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1726,7 +2083,7 @@
 							"response": []
 						},
 						{
-							"name": "getByEmpresa (pendiente)",
+							"name": "getByEmpresa (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1741,7 +2098,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/valoracion/empresa/1",
+									"raw": "{{BASE_URL}}/valoraciones/empresa/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1755,7 +2112,7 @@
 							"response": []
 						},
 						{
-							"name": "create (pendiente)",
+							"name": "create (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1776,7 +2133,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"calificacion\": 4,\n    \"comentario\": \"Excelente experiencia laboral, ambiente muy agradable\",\n    \"recomendacion\": true,\n    \"usuario\": {\"id\": 1},\n    \"empresa\": {\"id\": 5},\n    \"oferta\": {\"id\": 10}\n}",
+									"raw": "{\n    \"titulo\": \"final_valoracion\",\n    \"puntuacion\": 4.5,\n    \"descripcion\": \"Excelente experiencia laboral, ambiente muy agradable\",\n    \"usuario\": {\"id\": 1},\n    \"empresa\": {\"id\": 5},\n    \"oferta\": {\"id\": 10}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1784,7 +2141,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/valoracion",
+									"raw": "{{BASE_URL}}/valoraciones",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1796,7 +2153,7 @@
 							"response": []
 						},
 						{
-							"name": "update (pendiente)",
+							"name": "update (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1817,7 +2174,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"calificacion\": 5,\n    \"comentario\": \"Actualizado - Excelente\",\n    \"recomendacion\": true\n}",
+									"raw": "{\n    \"puntuacion\": 5,\n    \"descripcion\": \"Actualizado - Excelente\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1825,7 +2182,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/valoracion/1",
+									"raw": "{{BASE_URL}}/valoraciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1838,7 +2195,7 @@
 							"response": []
 						},
 						{
-							"name": "delete (pendiente)",
+							"name": "delete (ok)",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -1853,7 +2210,7 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{BASE_URL}}/valoracion/1",
+									"raw": "{{BASE_URL}}/valoraciones/1",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -3638,7 +3995,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/notificacion?usuarioDestinoId=1",
+									"raw": "http://localhost:8080/api/notificacion?usuarioDestinoId=1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3680,7 +4037,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/notificacion/1",
+									"raw": "http://localhost:8080/api/notificacion/1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3701,7 +4058,7 @@
 								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/notificacion/1",
+									"raw": "http://localhost:8080/api/notificacion/1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3738,7 +4095,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/notificacion/1",
+									"raw": "http://localhost:8080/api/notificacion/1",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -3759,7 +4116,7 @@
 								"method": "PATCH",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/notificacion/usuario/1/leidas",
+									"raw": "http://localhost:8080/api/notificacion/usuario/1/leidas",
 									"protocol": "http",
 									"host": [
 										"localhost"
