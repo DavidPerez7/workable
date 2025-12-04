@@ -40,6 +40,8 @@ public class AuthController {
             if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
+            // Forzar rol ASPIRANTE
+            usuario.setRol(Usuario.Rol.ASPIRANTE);
             Usuario usuarioCreado = usuarioService.createPublic(usuario);
             return ResponseEntity.ok(usuarioCreado);
         } catch (Exception e) {
@@ -54,6 +56,8 @@ public class AuthController {
             if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
+            // Forzar rol RECLUTADOR
+            usuario.setRol(Usuario.Rol.RECLUTADOR);
             Usuario usuarioCreado = usuarioService.createPublic(usuario);
             return ResponseEntity.ok(usuarioCreado);
         } catch (Exception e) {
@@ -83,11 +87,19 @@ public class AuthController {
             if (usuario == null || !passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
                 return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
             }
+            
+            // Verificar que el usuario esté activo
+            if (!usuario.getIsActive()) {
+                return ResponseEntity.status(403).body(Map.of("error", "Usuario inactivo"));
+            }
+            
             String rolString = usuario.getRol().toString();
             String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
+            String refreshToken = jwtUtil.generateRefreshToken(usuario.getCorreo());
             
             LoginResponseDto response = new LoginResponseDto();
             response.setToken(token);
+            response.setRefreshToken(refreshToken);
             response.setRol(rolString);
             response.setUsuarioId(usuario.getId());
             response.setNombre(usuario.getNombre());

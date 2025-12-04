@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.exception.ResourceNotFoundException;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.Usuario;
@@ -59,15 +60,15 @@ public class EmpresaService {
 
         // Validar que el usuario existe
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", usuarioId));
 
         if (empresaRepository.existsByNit(request.getNit())) {
-            throw new RuntimeException("NIT already in use");
+            throw new IllegalArgumentException("El NIT ya está en uso");
         }
 
         if (request.getMunicipio() != null) {
             Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                .orElseThrow(() -> new RuntimeException("Municipio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Municipio", "id", request.getMunicipio().getId()));
             request.setMunicipio(municipio);
         }
 
@@ -77,11 +78,11 @@ public class EmpresaService {
     public Empresa createWithOwner(Empresa empresa, Usuario reclutadorOwner) {
 
         if (empresaRepository.existsByNit(empresa.getNit())) {
-            throw new RuntimeException("NIT already in use");
+            throw new IllegalArgumentException("El NIT ya está en uso");
         }
 
         if (usuarioRepository.findByCorreo(reclutadorOwner.getCorreo()).isPresent()) {
-            throw new RuntimeException("Correo already in use");
+            throw new IllegalArgumentException("El correo ya está en uso");
         }
 
         Usuario ownerGuardado = usuarioRepository.save(reclutadorOwner);

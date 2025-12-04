@@ -167,12 +167,4 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuarioRepo.delete(existingUsuario);
     }
-
-    private boolean puedeModificarUsuario(Usuario usuario, Long usuarioActualId) {
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-        
-        // Es ADMIN o es el mismo usuario
-        return usuarioActual.getRol() == Usuario.Rol.ADMIN || usuario.getId().equals(usuarioActualId);
-    }
 }

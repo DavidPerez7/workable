@@ -20,51 +20,51 @@ public class EmpresaController {
 
     // - READ by id
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Empresa>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(empresaService.getById(id));
+    public ResponseEntity<Empresa> obtenerPorId(@PathVariable Long id) {
+        return empresaService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // - READ by nit
     @GetMapping("/nit/{nit}")
-    public ResponseEntity<Optional<Empresa>> getByNit(@PathVariable String nit) {
-        return ResponseEntity.ok(empresaService.getByNit(nit));
+    public ResponseEntity<Empresa> obtenerPorNit(@PathVariable String nit) {
+        return empresaService.getByNit(nit)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // - READ all
     @GetMapping
-    public ResponseEntity<List<Empresa>> getAll() {
+    public ResponseEntity<List<Empresa>> listarTodas() {
         return ResponseEntity.ok(empresaService.getAll());
     }
 
     // - READ by isActive
     @GetMapping("/activas")
-    public ResponseEntity<List<Empresa>> getByIsActive(@RequestParam Boolean isActive) {
+    public ResponseEntity<List<Empresa>> listarActivas(@RequestParam Boolean isActive) {
         return ResponseEntity.ok(empresaService.getByIsActive(isActive));
     }
 
     // - READ by nombre
-    @GetMapping("/nombre")
-    public ResponseEntity<List<Empresa>> getByNombre(@RequestParam String nombre) {
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Empresa>> buscarPorNombre(@RequestParam String nombre) {
         return ResponseEntity.ok(empresaService.getByNombre(nombre));
     }
 
     // - READ reclutadores
     @GetMapping("/{empresaId}/reclutadores")
-    public ResponseEntity<List<Usuario>> getReclutadores(@PathVariable Long empresaId) {
+    public ResponseEntity<List<Usuario>> obtenerReclutadores(@PathVariable Long empresaId) {
         return ResponseEntity.ok(empresaService.getReclutadores(empresaId));
     }
 
-    // - CREATE
+    // - CREATE (solo para ADMIN)
     @PostMapping
-    public ResponseEntity<Empresa> create(@RequestBody Empresa empresa, @RequestParam Long usuarioId) {
+    public ResponseEntity<Empresa> crear(@RequestBody Empresa empresa, @RequestParam Long usuarioId) {
         return ResponseEntity.ok(empresaService.create(empresa, usuarioId));
     }
 
-    // - CREATE with owner
-    @PostMapping("/with-owner")
-    public ResponseEntity<Empresa> createWithOwner(@RequestBody Empresa empresa, @RequestBody Usuario reclutadorOwner) {
-        return ResponseEntity.ok(empresaService.createWithOwner(empresa, reclutadorOwner));
-    }
+    // - CREATE with owner (moved to AuthController as register-empresa-reclutador)
 
     // - CREATE add reclutador
     @PostMapping("/{empresaId}/reclutadores")
@@ -74,20 +74,20 @@ public class EmpresaController {
 
     // - UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Empresa> update(@PathVariable Long id, @RequestBody Empresa empresa, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<Empresa> actualizar(@PathVariable Long id, @RequestBody Empresa empresa, @RequestParam Long usuarioIdActual) {
         return ResponseEntity.ok(empresaService.update(id, empresa, usuarioIdActual));
     }
 
     // - DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
         empresaService.delete(id, usuarioIdActual);
         return ResponseEntity.noContent().build();
     }
 
     // - DELETE remove reclutador
     @DeleteMapping("/{empresaId}/reclutadores/{reclutadorId}")
-    public ResponseEntity<Void> removeReclutador(@PathVariable Long empresaId, @PathVariable Long reclutadorId, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<Void> removerReclutador(@PathVariable Long empresaId, @PathVariable Long reclutadorId, @RequestParam Long usuarioIdActual) {
         empresaService.removeReclutador(empresaId, reclutadorId, usuarioIdActual);
         return ResponseEntity.noContent().build();
     }
