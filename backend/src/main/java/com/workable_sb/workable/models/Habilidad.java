@@ -10,6 +10,8 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.workable_sb.workable.config.TipoHabilidadDeserializer;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +27,7 @@ public class Habilidad {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @JsonDeserialize(using = TipoHabilidadDeserializer.class)
     private TipoHabilidad tipo;
 
     public enum TipoHabilidad {

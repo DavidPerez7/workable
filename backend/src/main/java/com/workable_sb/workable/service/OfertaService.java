@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
 
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Oferta;
@@ -31,6 +32,9 @@ public class OfertaService {
 
     @Autowired
     private MunicipioRepo municipioRepo;
+
+    @Autowired
+    private EntityManager entityManager;
 
     // ===== CREATE =====
     public Oferta crearOferta(Oferta oferta, Long empresaId, Long reclutadorId) {
@@ -186,6 +190,15 @@ public class OfertaService {
 
         if (!puedeModificarOferta(existente, usuarioIdActual)) {
             throw new IllegalStateException("Solo el reclutador de la empresa o un administrador pueden eliminar esta oferta");
+        }
+
+        // Validar que no hay postulaciones activas
+        long postulacionesCount = (long) entityManager.createNativeQuery(
+            "SELECT COUNT(*) FROM postulacion WHERE oferta_id = ?1")
+            .setParameter(1, id).getSingleResult();
+        
+        if (postulacionesCount > 0) {
+            throw new IllegalStateException("No se puede eliminar una oferta con " + postulacionesCount + " postulaciones. Primero debe rechazar o aceptar todas las postulaciones.");
         }
 
         ofertaRepository.delete(existente);

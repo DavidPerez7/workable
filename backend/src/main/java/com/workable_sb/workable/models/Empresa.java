@@ -18,6 +18,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -81,7 +83,7 @@ public class Empresa {
     private Usuario reclutadorOwner;
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "empresa_categoria", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
+    @CollectionTable(name = "empresa_category_enum", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "categoria", length = 50)
     private Set<Category> categories = new HashSet<>();
@@ -119,8 +121,9 @@ public class Empresa {
         OTRO
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Municipio municipio;
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
