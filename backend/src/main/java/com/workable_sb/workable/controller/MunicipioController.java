@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,8 @@ public class MunicipioController {
     @Autowired
     private MunicipioService municipioService;
 
-    // CREATE
+    // CREATE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Municipio municipio) {
         try {
@@ -89,7 +91,8 @@ public class MunicipioController {
         }
     }
 
-    // UPDATE
+    // UPDATE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Municipio municipio) {
         try {
@@ -103,7 +106,8 @@ public class MunicipioController {
         }
     }
 
-    // DELETE
+    // DELETE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
@@ -116,4 +120,5 @@ public class MunicipioController {
             return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar municipio: " + e.getMessage()));
         }
     }
+
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,8 @@ public class EmpresaCategoriaController {
     @Autowired
     private EmpresaCategoriaService empresaCategoriaService;
 
-    // CREATE
+    // CREATE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody EmpresaCategoria empresaCategoria) {
         try {
@@ -86,7 +88,8 @@ public class EmpresaCategoriaController {
         }
     }
 
-    // UPDATE
+    // UPDATE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody EmpresaCategoria empresaCategoria) {
         try {
@@ -100,7 +103,8 @@ public class EmpresaCategoriaController {
         }
     }
 
-    // DESACTIVAR
+    // DESACTIVAR - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/desactivar")
     public ResponseEntity<?> desactivar(@PathVariable Long id) {
         try {
@@ -114,7 +118,8 @@ public class EmpresaCategoriaController {
         }
     }
 
-    // DELETE
+    // DELETE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,8 @@ public class HabilidadController {
     @Autowired
     private HabilidadRepo habilidadRepo;
 
-    // CREATE
+    // CREATE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Habilidad habilidad) {
         try {
@@ -104,7 +106,8 @@ public class HabilidadController {
         }
     }
 
-    // UPDATE
+    // UPDATE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Habilidad habilidad) {
         try {
@@ -124,7 +127,8 @@ public class HabilidadController {
         }
     }
 
-    // DESACTIVAR
+    // DESACTIVAR - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/desactivar")
     public ResponseEntity<?> desactivar(@PathVariable Long id) {
         try {
@@ -139,7 +143,8 @@ public class HabilidadController {
         }
     }
 
-    // DELETE
+    // DELETE - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {

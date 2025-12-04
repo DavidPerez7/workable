@@ -3,8 +3,8 @@
 		"_postman_id": "3866efb7-38ea-408a-8511-f59351c9ada3",
 		"name": "WORKABLE",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "49659444",
-		"_collection_link": "https://daviidap07-7531113.postman.co/workspace/13562465-5e22-4ecd-ba24-2c757b60b048/collection/49659444-3866efb7-38ea-408a-8511-f59351c9ada3?action=share&source=collection_link&creator=49659444"
+		"_exporter_id": "50562508",
+		"_collection_link": "https://daviidap07-7531113.postman.co/workspace/13562465-5e22-4ecd-ba24-2c757b60b048/collection/49659444-3866efb7-38ea-408a-8511-f59351c9ada3?action=share&source=collection_link&creator=50562508"
 	},
 	"item": [
 		{
@@ -1452,6 +1452,320 @@
 							},
 							"response": []
 						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Postulación",
+					"item": [
+						{
+							"name": "Listar Postulaciones por Oferta y Estado",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/oferta/:ofertaId/estado?estado=&usuarioIdActual=",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulacion",
+										"oferta",
+										":ofertaId",
+										"estado"
+									],
+									"query": [
+										{
+											"key": "estado",
+											"value": ""
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": ""
+										}
+									],
+									"variable": [
+										{
+											"key": "ofertaId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Postulaciones por Usuario",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/oferta/:ofertaId/estado?estado=&usuarioIdActual=",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulacion",
+										"oferta",
+										":ofertaId",
+										"estado"
+									],
+									"query": [
+										{
+											"key": "estado",
+											"value": ""
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": ""
+										}
+									],
+									"variable": [
+										{
+											"key": "ofertaId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Postulaciones por Oferta",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/oferta/:ofertaId?usuarioIdActual=",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulacion",
+										"oferta",
+										":ofertaId"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": ""
+										}
+									],
+									"variable": [
+										{
+											"key": "ofertaId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Postulación por ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/oferta/:ofertaId/estado?estado=&usuarioIdActual=",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulacion",
+										"oferta",
+										":ofertaId",
+										"estado"
+									],
+									"query": [
+										{
+											"key": "estado",
+											"value": ""
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": ""
+										}
+									],
+									"variable": [
+										{
+											"key": "ofertaId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crear Postulación",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{Token_ASPIRANTE}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}i/postulacion?usuarioId=&ofertaId=",
+									"host": [
+										"{{BASE_URL}}i"
+									],
+									"path": [
+										"postulacion"
+									],
+									"query": [
+										{
+											"key": "usuarioId",
+											"value": ""
+										},
+										{
+											"key": "ofertaId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verificar Postulacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/verificar?usuarioId=&ofertaId=",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulacion",
+										"verificar"
+									],
+									"query": [
+										{
+											"key": "usuarioId",
+											"value": ""
+										},
+										{
+											"key": "ofertaId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						}
 					]
 				}
 			],
@@ -1687,188 +2001,6 @@
 					]
 				},
 				{
-					"name": "Municipio",
-					"item": [
-						{
-							"name": "getAll",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "getAll activas",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/activas",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										"activas"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "getById",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/1",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "getByNombre",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/nombre/Bogot",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										"nombre",
-										"Bogot"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "create",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"id\":1,\"nombre\":\"Bogotá\",\"departamento\":\"BOGOTA_DC\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "update desactivar",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/1/desactivar",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										"1",
-										"desactivar"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "update",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\"nombre\":\"Bogotá D.C.\",\"departamento\":\"BOGOTA_DC\"}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://localhost:8080/api/municipios/1",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"api",
-										"municipios",
-										"1"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
 					"name": "Habilidad",
 					"item": [
 						{
@@ -1982,6 +2114,16 @@
 							"name": "create",
 							"request": {
 								"method": "POST",
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
 								"header": [
 									{
 										"key": "Content-Type",
@@ -2017,6 +2159,16 @@
 							"name": "update desactivar",
 							"request": {
 								"method": "PUT",
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
 								"header": [],
 								"url": {
 									"raw": "http://localhost:8080/api/habilidades/1/desactivar",
@@ -2039,6 +2191,16 @@
 							"name": "update",
 							"request": {
 								"method": "PUT",
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
 								"header": [
 									{
 										"key": "Content-Type",
@@ -2047,7 +2209,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\"nombre\":\"Java 21\",\"tipo\":\"TECNICA\"}",
+									"raw": "{\"nombre\":\"Java Spring\",\"tipo\":\"TECNICA\"}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2074,6 +2236,16 @@
 							"name": "delete",
 							"request": {
 								"method": "DELETE",
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
 								"header": [],
 								"url": {
 									"raw": "http://localhost:8080/api/habilidades/1",
@@ -2085,6 +2257,188 @@
 									"path": [
 										"api",
 										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Municipio",
+					"item": [
+						{
+							"name": "Obtener Municipios por Departamento",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/departamento/ANTIOQUIA",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
+										"departamento",
+										"ANTIOQUIA"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Buscar Municipios por Nombre",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/nombre/Bogot",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
+										"nombre",
+										"Bogot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Municipio por ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener todos los Municipios",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crear Municipio",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"id\":1,\"nombre\":\"Bogotá\",\"departamento\":\"BOGOTA_DC\"}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Municipio",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Municipio",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"nombre\":\"Bogotá D.C.\",\"departamento\":\"BOGOTA_DC\"}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/municipios/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"municipios",
 										"1"
 									]
 								}
