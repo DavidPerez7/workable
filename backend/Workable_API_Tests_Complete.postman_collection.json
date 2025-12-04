@@ -1,0 +1,647 @@
+{
+  "info": {
+    "name": "Workable - Backend API Tests",
+    "description": "Colección completa de pruebas CRUD del backend con control de roles\nADMIN: CRUD completo\nRECLUTADOR: CRU (sin DELETE)\nASPIRANTE: Read (solo lectura)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. USUARIOS",
+      "item": [
+        {
+          "name": "1.1 ADMIN - Crear Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"correo\": \"juan@test.com\",\n  \"telefono\": \"573104625832\",\n  \"password\": \"Pass123!\",\n  \"rol\": \"ASPIRANTE\",\n  \"fechaNacimiento\": \"1995-05-15\",\n  \"municipioId\": 1\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario"]
+            }
+          }
+        },
+        {
+          "name": "1.2 RECLUTADOR - Crear Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"María\",\n  \"apellido\": \"García\",\n  \"correo\": \"maria@test.com\",\n  \"telefono\": \"573104625833\",\n  \"password\": \"Pass123!\",\n  \"rol\": \"ASPIRANTE\",\n  \"fechaNacimiento\": \"1996-06-20\",\n  \"municipioId\": 1\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario"]
+            }
+          }
+        },
+        {
+          "name": "1.3 ADMIN - Listar Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario"]
+            }
+          }
+        },
+        {
+          "name": "1.4 ADMIN - Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "1.5 ADMIN - Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"JuanMod\",\n  \"apellido\": \"PérezMod\",\n  \"correo\": \"juan@test.com\",\n  \"telefono\": \"573104625832\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "1.6 ADMIN - Eliminar Usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "1.7 RECLUTADOR - Intentar Eliminar (403)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/usuario/2",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "usuario", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. EMPRESAS",
+      "item": [
+        {
+          "name": "2.1 ADMIN - Crear Empresa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tech Solutions\",\n  \"nit\": \"900123456\",\n  \"sector\": \"Tecnología\",\n  \"telefono\": \"6012345678\",\n  \"email\": \"info@tech.com\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/empresa",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "empresa"]
+            }
+          }
+        },
+        {
+          "name": "2.2 RECLUTADOR - Crear Empresa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Business Corp\",\n  \"nit\": \"900123457\",\n  \"sector\": \"Servicios\",\n  \"telefono\": \"6012345679\",\n  \"email\": \"info@business.com\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/empresa",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "empresa"]
+            }
+          }
+        },
+        {
+          "name": "2.3 ADMIN - Listar Empresas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/empresa",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "empresa"]
+            }
+          }
+        },
+        {
+          "name": "2.4 ADMIN - Actualizar Empresa",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tech Solutions Updated\",\n  \"sector\": \"Tecnología Avanzada\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/empresa/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "empresa", "1"]
+            }
+          }
+        },
+        {
+          "name": "2.5 ADMIN - Eliminar Empresa",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/empresa/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "empresa", "1"]
+            }
+          }
+        },
+        {
+          "name": "2.6 RECLUTADOR - Intentar Eliminar (403)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/empresa/2",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "empresa", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. OFERTAS",
+      "item": [
+        {
+          "name": "3.1 RECLUTADOR - Crear Oferta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Desarrollador Java Senior\",\n  \"descripcion\": \"Se requiere profesional con 5+ años de experiencia en Java, Spring Boot y microservicios.\",\n  \"salarioMin\": 3000000,\n  \"salarioMax\": 5000000,\n  \"experienciaRequerida\": \"5 años\",\n  \"empresaId\": 1\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/oferta",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "oferta"]
+            }
+          }
+        },
+        {
+          "name": "3.2 ADMIN - Listar Ofertas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/oferta",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "oferta"]
+            }
+          }
+        },
+        {
+          "name": "3.3 RECLUTADOR - Actualizar Oferta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Desarrollador Java Senior - ACTUALIZADO\",\n  \"salarioMin\": 3500000,\n  \"salarioMax\": 5500000\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/oferta/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "oferta", "1"]
+            }
+          }
+        },
+        {
+          "name": "3.4 RECLUTADOR - Intentar Eliminar (403)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/oferta/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "oferta", "1"]
+            }
+          }
+        },
+        {
+          "name": "3.5 ADMIN - Eliminar Oferta",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/oferta/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "oferta", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. CITACIONES",
+      "item": [
+        {
+          "name": "4.1 RECLUTADOR - Crear Citación",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"postulacionId\": 1,\n  \"reclutadorId\": 2,\n  \"fechaCitacion\": \"2025-12-20\",\n  \"hora\": \"10:00\",\n  \"linkMeet\": \"https://meet.google.com/abc-defg-hij\",\n  \"detalles\": \"Entrevista técnica con énfasis en arquitectura de microservicios\",\n  \"usuarioIdActual\": 2\n}"
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/citacion",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "citacion"]
+            }
+          }
+        },
+        {
+          "name": "4.2 RECLUTADOR - Enviar por WhatsApp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/citacion/1/enviar-whatsapp?usuarioIdActual=2",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "citacion", "1", "enviar-whatsapp"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.3 ADMIN - Listar Citaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/citacion/reclutador/2?usuarioIdActual=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "citacion", "reclutador", "2"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.4 RECLUTADOR - Cambiar Estado",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/citacion/1/estado?estado=CONFIRMADA&usuarioIdActual=2",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "citacion", "1", "estado"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "CONFIRMADA"
+                },
+                {
+                  "key": "usuarioIdActual",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.5 RECLUTADOR - Intentar Eliminar (403)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{RECLUTADOR_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/citacion/1?usuarioIdActual=2",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "citacion", "1"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.6 ADMIN - Eliminar Citación",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ADMIN_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/citacion/1?usuarioIdActual=1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "citacion", "1"],
+              "query": [
+                {
+                  "key": "usuarioIdActual",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. NOTIFICACIONES",
+      "item": [
+        {
+          "name": "5.1 ASPIRANTE - Ver Notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ASPIRANTE_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/notificacion/usuario/1",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "notificacion", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "5.2 ASPIRANTE - Contar No Leídas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ASPIRANTE_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/notificacion/usuario/1/no-leidas",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "notificacion", "usuario", "1", "no-leidas"]
+            }
+          }
+        },
+        {
+          "name": "5.3 ASPIRANTE - Marcar como Leída",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ASPIRANTE_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/notificacion/1/leida",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "notificacion", "1", "leida"]
+            }
+          }
+        },
+        {
+          "name": "5.4 ASPIRANTE - Marcar Todas como Leídas",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ASPIRANTE_TOKEN}}"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/notificacion/usuario/1/leidas",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "notificacion", "usuario", "1", "leidas"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "ADMIN_TOKEN",
+      "value": "eyJhbGciOiJIUzUxMiJ9...",
+      "type": "string"
+    },
+    {
+      "key": "RECLUTADOR_TOKEN",
+      "value": "eyJhbGciOiJIUzUxMiJ9...",
+      "type": "string"
+    },
+    {
+      "key": "ASPIRANTE_TOKEN",
+      "value": "eyJhbGciOiJIUzUxMiJ9...",
+      "type": "string"
+    }
+  ]
+}
