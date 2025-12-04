@@ -34,20 +34,22 @@ const LoginPage = () => {
       const data = await res.json();
       console.log("Login response:", data);
 
-      // Guardar el token JWT
+      // Guardar el token JWT y refreshToken
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("rol", data.rol);
+      localStorage.setItem("userId", data.usuarioId);
 
       // Redirigir según el rol del usuario
       switch (data.rol) {
         case "ASPIRANTE":
-          navigate("/aspirante/dashboard");
+          navigate("/Aspirante");
           break;
         case "RECLUTADOR":
-          navigate("/reclutador/dashboard");
+          navigate("/Reclutador");
           break;
         case "ADMIN":
-          navigate("/admin/dashboard");
+          navigate("/Administrador");
           break;
         default:
           navigate("/");
@@ -118,7 +120,7 @@ const LoginPage = () => {
                 className={`submit-button ${isLoading ? "loading" : ""}`}
                 disabled={isLoading}
               >
-                {isLoading ? "Iniciando sesión..." : "Registrarse"}
+                {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
               </button>
 
               <div className="form-footer">
