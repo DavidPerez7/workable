@@ -82,6 +82,7 @@ public class UsuarioService {
 
 
     // - UPDATE (PUBLICO: solo aspirantes/reclutadores, no puede modificar ADMIN)
+    // Actualización parcial: solo modifica los campos que se envían (no null)
     public Usuario updatePublic(Long id, Usuario request, Long usuarioActualId) {
         Usuario existingUsuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -94,22 +95,39 @@ public class UsuarioService {
         if (existingUsuario.getRol() == Usuario.Rol.ADMIN) {
             throw new IllegalStateException("No puedes modificar un usuario ADMIN");
         }
-        // Validar correo único (solo si cambió)
-        if (!existingUsuario.getCorreo().equals(request.getCorreo())) {
+        
+        // Actualización parcial: solo actualiza campos que no son null
+        if (request.getCorreo() != null && !request.getCorreo().equals(existingUsuario.getCorreo())) {
             if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 throw new RuntimeException("Correo already in use");
             }
             existingUsuario.setCorreo(request.getCorreo());
         }
-        existingUsuario.setNombre(request.getNombre());
-        existingUsuario.setApellido(request.getApellido());
-        existingUsuario.setTelefono(request.getTelefono());
-        existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
-        existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
+        
+        if (request.getNombre() != null) {
+            existingUsuario.setNombre(request.getNombre());
+        }
+        if (request.getApellido() != null) {
+            existingUsuario.setApellido(request.getApellido());
+        }
+        if (request.getTelefono() != null) {
+            existingUsuario.setTelefono(request.getTelefono());
+        }
+        if (request.getUrlFotoPerfil() != null) {
+            existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
+        }
+        if (request.getFechaNacimiento() != null) {
+            existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
+        }
+        // Descripción puede ser vacía, así que verificamos de forma especial
+        if (request.getDescripcion() != null) {
+            existingUsuario.setDescripcion(request.getDescripcion());
+        }
+        
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             existingUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        if (request.getMunicipio() != null) {
+        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
             Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
                     .orElseThrow(() -> new RuntimeException("Municipio not found"));
             existingUsuario.setMunicipio(municipio);
@@ -133,6 +151,7 @@ public class UsuarioService {
         existingUsuario.setTelefono(request.getTelefono());
         existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
         existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
+        existingUsuario.setDescripcion(request.getDescripcion());
         existingUsuario.setIsActive(request.getIsActive());
         existingUsuario.setRol(request.getRol());
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -66,7 +68,7 @@ public class Oferta {
 	@Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'ABIERTA'")
 	private EstadoOferta estado = EstadoOferta.ABIERTA;
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(
 		name = "oferta_requisitos",
 		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaRequisitos_oferta"))
@@ -74,7 +76,7 @@ public class Oferta {
 	@Column(name = "requisito", length = 100, nullable = false)
 	private Set<String> requisitos = new HashSet<>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_municipio"))
 	private Municipio municipio;
 
@@ -86,15 +88,17 @@ public class Oferta {
 	@Column(nullable = false, length = 30)
 	private TipoContrato tipoContrato;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_empresa"))
+	@JsonIgnoreProperties({"ofertas", "direccion", "empresaCategoria"})
 	private Empresa empresa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "reclutador_id", foreignKey = @ForeignKey(name = "FK_oferta_reclutador"))
+	@JsonIgnoreProperties({"password", "experiencias", "estudios", "habilidades"})
 	private Usuario reclutador;
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(
 		name = "oferta_beneficios",
 		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaBeneficios_oferta"))
@@ -103,7 +107,7 @@ public class Oferta {
 	@Column(name = "beneficio", length = 30, nullable = false)
 	private Set<Beneficio> beneficios = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name = "oferta_habilidad_requerida",
 		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_oferta")),
@@ -113,6 +117,7 @@ public class Oferta {
 
 
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties({"oferta"})
 	private Set<Postulacion> postulaciones = new HashSet<>();
 
 	private Float puntuacion = 0.0f;

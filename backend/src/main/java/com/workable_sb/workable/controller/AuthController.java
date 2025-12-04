@@ -37,14 +37,30 @@ public class AuthController {
     @PostMapping("/register-aspirante")
     public ResponseEntity<?> registrarAspirante(@RequestBody Usuario usuario) {
         try {
+            // Validar que el correo no esté registrado
             if (usuarioRepo.findByCorreo(usuario.getCorreo()).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
+            
+            // Validar que tenga municipio
+            if (usuario.getMunicipio() == null || usuario.getMunicipio().getId() == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Debe seleccionar un municipio"));
+            }
+            
             // Forzar rol ASPIRANTE
             usuario.setRol(Usuario.Rol.ASPIRANTE);
             Usuario usuarioCreado = usuarioService.createPublic(usuario);
-            return ResponseEntity.ok(usuarioCreado);
+            
+            // Retornar mensaje de éxito sin la contraseña
+            usuarioCreado.setPassword(null);
+            return ResponseEntity.ok(Map.of(
+                "message", "Aspirante registrado exitosamente",
+                "usuario", usuarioCreado
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
     }

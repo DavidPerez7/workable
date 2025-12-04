@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   User,
-  Mail,
   Phone,
   MapPin,
   Calendar,
-  Briefcase,
-  FileText,
   Save,
   X,
   AlertCircle,
@@ -18,11 +15,13 @@ import {
 import HeaderAspirant from "../../../../components/HeaderAspirant/HeaderAspirant";
 import Menu from "../../../../components/Menu/Menu";
 import Footer from "../../../../components/Footer/Footer";
+import { getUsuario, actualizarUsuario } from "../../../../api/usuarioAPI";
+import { getMunicipios } from "../../../../api/municipioAPI";
 import "./ActualizarPerfil.css";
 
 const ActualizarPerfil = () => {
   const navigate = useNavigate();
-  const idAspirante = localStorage.getItem("idAspirante");
+  const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
   // Estados del formulario
@@ -30,13 +29,9 @@ const ActualizarPerfil = () => {
     nombre: "",
     apellido: "",
     telefono: "",
-    ubicacion: "",
     fechaNacimiento: "",
-    cargo: "",
-    descripcion: "",
-    resumen: "",
     municipioId: "",
-    fotoPerfilUrl: ""
+    urlFotoPerfil: ""
   });
 
   const [originalData, setOriginalData] = useState({});
@@ -46,61 +41,25 @@ const ActualizarPerfil = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [hasChanges, setHasChanges] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
 
   // ============================================================
-  // RF03: Obtener datos actuales del perfil
-  // TODO: CONECTAR CON API - Por ahora usando datos de ejemplo
+  // Obtener datos actuales del perfil
   // ============================================================
   const cargarDatosPerfil = async () => {
     try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch(`http://localhost:8080/api/aspirante/${idAspirante}`, {
-      //   method: 'GET',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // if (!response.ok) throw new Error("Error al cargar perfil");
-      // const data = await response.json();
-
-      // ✅ DATOS DE EJEMPLO - Simula la respuesta del backend
-      const data = {
-        id: idAspirante || "1",
-        nom: "Juan Carlos",
-        ape: "Pérez González",
-        tel: "3001234567",
-        ubi: "Calle 123 #45-67",
-        feNa: "1995-06-15",
-        cargo: "Desarrollador Full Stack",
-        descripcion: "Desarrollador apasionado por crear soluciones tecnológicas inclusivas y accesibles.",
-        resumen: "5 años de experiencia en desarrollo web",
-        municipioId: 1,
-        nombreMunicipio: "Bogotá D.C",
-        fotoPerfilUrl: null
-      };
-
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const data = await getUsuario(userId);
 
       const formattedData = {
-        nombre: data.nom || "",
-        apellido: data.ape || "",
-        telefono: data.tel || "",
-        ubicacion: data.ubi || "",
-        fechaNacimiento: data.feNa || "",
-        cargo: data.cargo || "",
-        descripcion: data.descripcion || "",
-        resumen: data.resumen || "",
-        municipioId: data.municipioId || "",
-        fotoPerfilUrl: data.fotoPerfilUrl || ""
+        nombre: data.nombre || "",
+        apellido: data.apellido || "",
+        telefono: data.telefono || "",
+        fechaNacimiento: data.fechaNacimiento || "",
+        municipioId: data.municipio?.id || "",
+        urlFotoPerfil: data.urlFotoPerfil || ""
       };
 
       setFormData(formattedData);
       setOriginalData(formattedData);
-      setPreviewImage(data.fotoPerfilUrl);
       setLoading(false);
     } catch (err) {
       console.error("Error cargando perfil:", err);
@@ -111,35 +70,10 @@ const ActualizarPerfil = () => {
 
   // ============================================================
   // Cargar lista de municipios
-  // TODO: CONECTAR CON API - Por ahora usando datos de ejemplo
   // ============================================================
   const cargarMunicipios = async () => {
     try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch('http://localhost:8080/api/municipios', {
-      //   method: 'GET',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // if (!response.ok) throw new Error("Error al cargar municipios");
-      // const data = await response.json();
-
-      // ✅ DATOS DE EJEMPLO - Simula lista de municipios
-      const data = [
-        { id: 1, nombre: "BOGOTA D.C" },
-        { id: 2, nombre: "MEDELLIN" },
-        { id: 3, nombre: "BELLO" },
-        { id: 4, nombre: "ITAGUI" },
-        { id: 5, nombre: "ENVIGADO" },
-        { id: 6, nombre: "RIONEGRO" },
-        { id: 7, nombre: "CALI" },
-        { id: 8, nombre: "BARRANQUILLA" },
-        { id: 9, nombre: "BUCARAMANGA" }
-      ];
-
+      const data = await getMunicipios();
       setMunicipios(data);
     } catch (err) {
       console.error("Error cargando municipios:", err);
@@ -154,10 +88,13 @@ const ActualizarPerfil = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    const testId = idAspirante || "1";
+    if (!userId || !token) {
+      navigate("/Login");
+      return;
+    }
     cargarDatosPerfil();
     cargarMunicipios();
-  }, [idAspirante]);
+  }, []);
 
   // ============================================================
   // Manejar cambios en inputs
@@ -174,7 +111,6 @@ const ActualizarPerfil = () => {
 
   // ============================================================
   // Manejar cambio de imagen de perfil
-  // Validación: máximo 2 MB, formatos JPG/PNG
   // ============================================================
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -193,13 +129,13 @@ const ActualizarPerfil = () => {
       return;
     }
 
-    // Crear preview
+    // Por ahora solo guardamos la URL como string
+    // En producción, esto debería subirse a un servidor/cloud
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPreviewImage(reader.result);
       setFormData(prev => ({
         ...prev,
-        fotoPerfilUrl: reader.result
+        urlFotoPerfil: reader.result
       }));
     };
     reader.readAsDataURL(file);
@@ -207,13 +143,7 @@ const ActualizarPerfil = () => {
   };
 
   // ============================================================
-  // RF03: Actualizar perfil del aspirante
-  // Criterios de aceptación:
-  // - Puedo editar todos los campos excepto correo
-  // - Los cambios se guardan en base de datos
-  // - Se muestra mensaje de confirmación
-  // - Formulario sin límite de tiempo
-  // TODO: CONECTAR CON API - Por ahora simula actualización
+  // Actualizar perfil del aspirante
   // ============================================================
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -234,33 +164,24 @@ const ActualizarPerfil = () => {
       return;
     }
 
+    if (!formData.municipioId) {
+      setError("Debes seleccionar un municipio");
+      setSaving(false);
+      return;
+    }
+
     try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch(`http://localhost:8080/api/aspirante/${idAspirante}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     nom: formData.nombre,
-      //     ape: formData.apellido,
-      //     tel: formData.telefono,
-      //     ubi: formData.ubicacion,
-      //     feNa: formData.fechaNacimiento,
-      //     cargo: formData.cargo,
-      //     descripcion: formData.descripcion,
-      //     resumen: formData.resumen,
-      //     municipioId: formData.municipioId,
-      //     fotoPerfilUrl: formData.fotoPerfilUrl
-      //   })
-      // });
+      // Preparar datos para enviar
+      const updateData = {
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        telefono: formData.telefono || null,
+        fechaNacimiento: formData.fechaNacimiento || null,
+        municipio: { id: parseInt(formData.municipioId) },
+        urlFotoPerfil: formData.urlFotoPerfil || null
+      };
 
-      // if (!response.ok) throw new Error("Error al actualizar perfil");
-      // const updatedData = await response.json();
-
-      // ✅ SIMULACIÓN - Por ahora simula actualización exitosa
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await actualizarUsuario(userId, updateData);
 
       // Actualizar datos originales con los nuevos
       setOriginalData(formData);
@@ -269,7 +190,7 @@ const ActualizarPerfil = () => {
       // Scroll al inicio para ver el mensaje
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Opcional: redirigir después de 2 segundos
+      // Redirigir después de 2 segundos
       setTimeout(() => {
         navigate("/Aspirante/MiPerfil");
       }, 2000);
@@ -347,8 +268,8 @@ const ActualizarPerfil = () => {
               
               <div className="foto-container-APF">
                 <div className="foto-preview-APF">
-                  {previewImage ? (
-                    <img src={previewImage} alt="Vista previa" />
+                  {formData.urlFotoPerfil ? (
+                    <img src={formData.urlFotoPerfil} alt="Vista previa" />
                   ) : (
                     <User size={64} className="foto-placeholder-icon-APF" />
                   )}
@@ -430,24 +351,6 @@ const ActualizarPerfil = () => {
                     />
                   </div>
                 </div>
-
-                <div className="form-group-APF">
-                  <label htmlFor="cargo" className="form-label-APF">
-                    Cargo o Profesión
-                  </label>
-                  <div className="input-with-icon-APF">
-                    <Briefcase size={20} className="input-icon-APF" />
-                    <input
-                      type="text"
-                      id="cargo"
-                      name="cargo"
-                      value={formData.cargo}
-                      onChange={handleChange}
-                      className="form-input-APF"
-                      placeholder="Ej: Desarrollador Full Stack"
-                    />
-                  </div>
-                </div>
               </div>
             </section>
 
@@ -481,7 +384,7 @@ const ActualizarPerfil = () => {
 
                 <div className="form-group-APF">
                   <label htmlFor="municipioId" className="form-label-APF">
-                    Municipio
+                    Municipio <span className="required-APF">*</span>
                   </label>
                   <div className="input-with-icon-APF">
                     <MapPin size={20} className="input-icon-APF" />
@@ -491,6 +394,7 @@ const ActualizarPerfil = () => {
                       value={formData.municipioId}
                       onChange={handleChange}
                       className="form-select-APF"
+                      required
                     >
                       <option value="">Selecciona un municipio</option>
                       {municipios.map(municipio => (
@@ -501,70 +405,6 @@ const ActualizarPerfil = () => {
                     </select>
                   </div>
                 </div>
-
-                <div className="form-group-APF form-group-full-APF">
-                  <label htmlFor="ubicacion" className="form-label-APF">
-                    Dirección
-                  </label>
-                  <div className="input-with-icon-APF">
-                    <MapPin size={20} className="input-icon-APF" />
-                    <input
-                      type="text"
-                      id="ubicacion"
-                      name="ubicacion"
-                      value={formData.ubicacion}
-                      onChange={handleChange}
-                      className="form-input-APF"
-                      placeholder="Calle 123 #45-67"
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Información Profesional */}
-            <section className="section-form-APF">
-              <h2 className="section-title-APF">
-                <FileText size={24} />
-                Información Profesional
-              </h2>
-
-              <div className="form-group-APF">
-                <label htmlFor="resumen" className="form-label-APF">
-                  Resumen Profesional
-                </label>
-                <input
-                  type="text"
-                  id="resumen"
-                  name="resumen"
-                  value={formData.resumen}
-                  onChange={handleChange}
-                  className="form-input-APF"
-                  placeholder="Ej: 5 años de experiencia en desarrollo web"
-                  maxLength="100"
-                />
-                <span className="form-hint-APF">
-                  {formData.resumen.length}/100 caracteres
-                </span>
-              </div>
-
-              <div className="form-group-APF">
-                <label htmlFor="descripcion" className="form-label-APF">
-                  Descripción / Acerca de ti
-                </label>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={handleChange}
-                  className="form-textarea-APF"
-                  placeholder="Cuéntanos sobre tu experiencia, habilidades y objetivos profesionales..."
-                  rows="5"
-                  maxLength="500"
-                />
-                <span className="form-hint-APF">
-                  {formData.descripcion.length}/500 caracteres
-                </span>
               </div>
             </section>
 
@@ -582,12 +422,12 @@ const ActualizarPerfil = () => {
 
               <button
                 type="submit"
-                className="btn-submit-APF"
+                className="btn-save-APF"
                 disabled={saving || !hasChanges}
               >
                 {saving ? (
                   <>
-                    <Loader className="btn-spinner-APF" size={20} />
+                    <Loader size={20} className="spinner-APF" />
                     Guardando...
                   </>
                 ) : (
@@ -598,14 +438,6 @@ const ActualizarPerfil = () => {
                 )}
               </button>
             </div>
-
-            {/* Indicador de cambios */}
-            {hasChanges && !saving && (
-              <div className="changes-indicator-APF">
-                <AlertCircle size={18} />
-                Tienes cambios sin guardar
-              </div>
-            )}
           </form>
         </div>
       </main>

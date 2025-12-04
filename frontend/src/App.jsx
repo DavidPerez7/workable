@@ -34,6 +34,7 @@ import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOf
 import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
 import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil";
+import EliminarPerfil from "./pages/AspirantePage/MiPerfil/EliminarPerfil/EliminarPerfil";
 import NewReclutador from "./components/SignUpPage/reclutador/newreclutador/NewReclutador";
 
 function App() {
@@ -96,6 +97,7 @@ function App() {
           element={<MisPostulaciones />}
         />
         <Route path="/MiPerfil/VerPerfil" element={<VerPerfil />} />
+        <Route path="/MiPerfil/EliminarPerfil" element={<EliminarPerfil />} />
         <Route path="/SignUpPage/NewReclutador" element={<NewReclutador />} />
       </Routes>
     </Router>

@@ -31,6 +31,9 @@ public class Usuario {
     @Column(length = 500)
     private String urlFotoPerfil;
 
+    @Column(length = 1000)
+    private String descripcion;
+
     @Column(nullable = false)
     private LocalDate fechaNacimiento;
     private LocalDate fechaCreacion;
@@ -50,7 +53,7 @@ public class Usuario {
         ADSO
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
     private Municipio municipio;
 

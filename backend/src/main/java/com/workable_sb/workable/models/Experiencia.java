@@ -18,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,12 +43,13 @@ public class Experiencia {
 
   private LocalDate fechaFin;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_experiencia_municipio"))
   private Municipio municipio;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExperiencia_aspirante"))
+  @JsonIgnoreProperties({"experiencias", "estudios", "password"})
   private Usuario usuario;
 
   @Enumerated(EnumType.STRING)

@@ -716,3 +716,74 @@
     font-size: 1.5rem;
   }
 }
+
+/* ===========================
+   ESTADOS DE CARGA Y ERROR
+   =========================== */
+.loading-msg-AP {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+.error-msg-AP {
+  text-align: center;
+  padding: 3rem;
+  color: #ef4444;
+}
+
+.error-msg-AP button {
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.error-msg-AP button:hover {
+  background: #2563eb;
+}
+
+/* ===========================
+   BOTÓN YA POSTULADO
+   =========================== */
+.btn-apply-AP.already-applied {
+  background: #10b981;
+  cursor: default;
+}
+
+.btn-apply-AP.already-applied:hover {
+  background: #10b981;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-apply-AP:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   REQUISITOS Y BENEFICIOS
+   =========================== */
+.job-detail-requirements-AP,
+.job-detail-benefits-AP {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.job-detail-benefits-AP ul {
+  margin: 0.5rem 0 0 1.5rem;
+  padding: 0;
+}
+
+.job-detail-benefits-AP li {
+  margin-bottom: 0.5rem;
+  color: #475569;
+}

@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./AspirantePage.css";
 import HeaderAspirant from "../../components/HeaderAspirant/HeaderAspirant";
 import Footer from "../../components/Footer/Footer";
+import { getAllOfertas } from "../../api/ofertasAPI";
+import { crearPostulacion, verificarYaPostulado } from "../../api/postulacionAPI";
 
 const AspirantePage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [ofertas, setOfertas] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [postulando, setPostulando] = useState(false);
+  const [yaPostulado, setYaPostulado] = useState(false);
+
+  const userId = localStorage.getItem("userId");
 
   // ============================
   // RF14 — ESTADOS DE VALORACIÓN
@@ -30,50 +39,49 @@ const AspirantePage = () => {
   });
 
   // ============================================
-  // DATOS SIMULADOS
+  // OBTENER OFERTAS REALES DE LA API
   // ============================================
-  const allJobListings = [
-    {
-      id: 1,
-      name: "Desarrollador Frontend",
-      location: "Medellín, Antioquia",
-      timePosted: "Hace 11 minutos",
-      timepostuled: "Termina el 28-08-2025",
-      modalidad: "Presencial",
-      contrato: "Término Fijo",
-      empresa: "Nexabyte Solutions",
-      description:
-        "Estamos en la búsqueda de un desarrollador frontend con experiencia en React, CSS, JavaScript y HTML...",
-      salary: "2500000",
-      fulltime: "Tiempo Completo",
-    },
-    {
-      id: 2,
-      name: "Analista de Datos",
-      location: "Bogotá, Cundinamarca",
-      timePosted: "Hace 1 hora",
-      timepostuled: "Termina el 18-09-2025",
-      modalidad: "Remota",
-      contrato: "Término Indefinido",
-      empresa: "Codexia Tech Labs",
-      description: "Experto en SQL, Python y Power BI...",
-      salary: "3200000",
-      fulltime: "Tiempo Completo",
-    },
-    {
-      id: 3,
-      name: "Especialista QA",
-      location: "Cali, Valle",
-      timePosted: "Hace 2 días",
-      timepostuled: "Termina el 08-10-2025",
-      modalidad: "Presencial",
-      contrato: "Aprendiz",
-      empresa: "Lumitech Global",
-      description: "Pruebas de software, automatización, metodologías ágiles.",
-      salary: "1800000",
-      fulltime: "Tiempo Completo",
-    },
-  ];
+  useEffect(() => {
+    obtenerOfertas();
+  }, []);
+
+  const obtenerOfertas = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await getAllOfertas();
+      // Filtrar solo ofertas activas
+      const ofertasActivas = data.filter(o => o.isActive !== false);
+      setOfertas(ofertasActivas);
+      if (ofertasActivas.length > 0) {
+        setSelectedJob(ofertasActivas[0]);
+      }
+    } catch (err) {
+      console.error("Error al obtener ofertas:", err);
+      setError("No se pudieron cargar las ofertas");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ============================================
+  // VERIFICAR SI YA ESTÁ POSTULADO
+  // ============================================
+  useEffect(() => {
+    if (selectedJob && userId) {
+      verificarPostulacion();
+    }
+  }, [selectedJob, userId]);
+
+  const verificarPostulacion = async () => {
+    try {
+      const resultado = await verificarYaPostulado(userId, selectedJob.id);
+      setYaPostulado(resultado);
+    } catch (err) {
+      console.error("Error al verificar postulación:", err);
+      setYaPostulado(false);
+    }
+  };
 
   // ============================================
   // LECTURA DE PARÁMETROS DE LA URL
@@ -87,22 +95,30 @@ const AspirantePage = () => {
   // ============================================
   // FILTRADO COMPLETO
   // ============================================
-  let filteredJobListings = allJobListings.filter((job) => {
-    const matchCargo = filterCargo
-      ? job.name.toLowerCase().includes(filterCargo)
-      : true;
+  let filteredJobListings = ofertas.filter((job) => {
+    const titulo = job.titulo?.toLowerCase() || "";
+    const descripcion = job.descripcion?.toLowerCase() || "";
+    const ubicacion = job.municipio?.nombre?.toLowerCase() || "";
+    const empresa = job.empresa?.nombre?.toLowerCase() || "";
 
-    const matchCiudad = filterCiudad
-      ? job.location.toLowerCase().includes(filterCiudad)
-      : true;
+    const matchCargo = filterCargo ? titulo.includes(filterCargo) : true;
+    const matchCiudad = filterCiudad ? ubicacion.includes(filterCiudad) : true;
 
     const matchesGeneral =
-      job.name.toLowerCase().includes(generalQuery) ||
-      job.description.toLowerCase().includes(generalQuery) ||
-      job.location.toLowerCase().includes(generalQuery) ||
-      job.empresa.toLowerCase().includes(generalQuery);
+      titulo.includes(generalQuery) ||
+      descripcion.includes(generalQuery) ||
+      ubicacion.includes(generalQuery) ||
+      empresa.includes(generalQuery);
 
-    return matchCargo && matchCiudad && matchesGeneral;
+    // Filtros del sidebar
+    const matchModalidad = filters.modalidad
+      ? job.modalidad === filters.modalidad
+      : true;
+    const matchContrato = filters.contrato
+      ? job.tipoContrato === filters.contrato
+      : true;
+
+    return matchCargo && matchCiudad && matchesGeneral && matchModalidad && matchContrato;
   });
 
   // ============================================
@@ -110,50 +126,80 @@ const AspirantePage = () => {
   // ============================================
   if (filters.ordenar === "recientes") {
     filteredJobListings = filteredJobListings.sort((a, b) => {
-      const getMinutes = (timeString) => {
-        if (timeString.includes("minuto")) return parseInt(timeString) || 0;
-        if (timeString.includes("hora"))
-          return (parseInt(timeString) || 0) * 60;
-        if (timeString.includes("día"))
-          return (parseInt(timeString) || 0) * 1440;
-        return 999999;
-      };
-      return getMinutes(a.timePosted) - getMinutes(b.timePosted);
+      return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
     });
   }
 
   if (filters.ordenar === "salario") {
     filteredJobListings = filteredJobListings.sort(
-      (a, b) => Number(b.salary) - Number(a.salary)
+      (a, b) => Number(b.salario || 0) - Number(a.salario || 0)
     );
   }
 
   // ============================================
   // FORMATEAR SALARIO
   // ============================================
-  const formatSalary = (value) =>
-    new Intl.NumberFormat("es-CO", {
+  const formatSalary = (value) => {
+    if (!value) return "No especificado";
+    return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
     }).format(value);
+  };
 
   // ============================================
-  // SELECCIONAR AUTOMÁTICAMENTE LA PRIMERA OFERTA
+  // FORMATEAR FECHA
   // ============================================
-  useEffect(() => {
-    if (filteredJobListings.length > 0) {
-      setSelectedJob(filteredJobListings[0]);
-    } else {
-      setSelectedJob(null);
+  const formatFecha = (fecha) => {
+    if (!fecha) return "";
+    return new Date(fecha).toLocaleDateString("es-CO", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  };
+
+  // ============================================
+  // CALCULAR TIEMPO DESDE PUBLICACIÓN
+  // ============================================
+  const tiempoDesdePublicacion = (fecha) => {
+    if (!fecha) return "";
+    const ahora = new Date();
+    const publicacion = new Date(fecha);
+    const diff = Math.floor((ahora - publicacion) / 60000); // minutos
+    
+    if (diff < 60) return `Hace ${diff} minutos`;
+    if (diff < 1440) return `Hace ${Math.floor(diff / 60)} horas`;
+    return `Hace ${Math.floor(diff / 1440)} días`;
+  };
+
+  // ============================================
+  // POSTULARSE - API REAL
+  // ============================================
+  const handlePostularse = async (ofertaId) => {
+    if (!userId) {
+      alert("Debes iniciar sesión para postularte");
+      navigate("/Login");
+      return;
     }
-  }, [location.search]);
 
-  // ============================================
-  // POSTULARSE
-  // ============================================
-  const handlePostularse = (id) => {
-    alert(`Postulación exitosa a la oferta ${id} (simulación)`);
+    if (yaPostulado) {
+      alert("Ya te has postulado a esta oferta");
+      return;
+    }
+
+    setPostulando(true);
+    try {
+      await crearPostulacion(userId, ofertaId);
+      alert("¡Postulación exitosa!");
+      setYaPostulado(true);
+    } catch (err) {
+      console.error("Error al postularse:", err);
+      alert(err.message || "No se pudo completar la postulación");
+    } finally {
+      setPostulando(false);
+    }
   };
 
   // ============================================
@@ -249,9 +295,9 @@ const AspirantePage = () => {
               }
             >
               <option value="">Seleccionar</option>
-              <option value="Presencial">Presencial</option>
-              <option value="Remota">Remota</option>
-              <option value="Híbrida">Híbrida</option>
+              <option value="PRESENCIAL">Presencial</option>
+              <option value="REMOTO">Remoto</option>
+              <option value="HIBRIDO">Híbrido</option>
             </select>
           </div>
 
@@ -266,9 +312,11 @@ const AspirantePage = () => {
               }
             >
               <option value="">Seleccionar</option>
-              <option value="Término Fijo">Término Fijo</option>
-              <option value="Término Indefinido">Término Indefinido</option>
-              <option value="Aprendiz">Aprendiz</option>
+              <option value="TERMINO_FIJO">Término Fijo</option>
+              <option value="TERMINO_INDEFINIDO">Término Indefinido</option>
+              <option value="OBRA_LABOR">Obra Labor</option>
+              <option value="PRESTACION_SERVICIOS">Prestación de Servicios</option>
+              <option value="APRENDIZAJE">Aprendizaje</option>
             </select>
           </div>
         </aside>
@@ -286,6 +334,14 @@ const AspirantePage = () => {
             </p>
           </div>
 
+          {loading ? (
+            <p className="loading-msg-AP">Cargando ofertas...</p>
+          ) : error ? (
+            <div className="error-msg-AP">
+              <p>{error}</p>
+              <button onClick={obtenerOfertas}>Reintentar</button>
+            </div>
+          ) : (
           <section className="section-job-panels-AP">
             {/* LISTADO */}
             <section className="section-listings-panel-AP">
@@ -307,32 +363,38 @@ const AspirantePage = () => {
                       setComment("");
                       setRatingSuccess(false);
                       setHasRated(false);
+                      setYaPostulado(false);
                     }}
                   >
                     <div className="job-card-header-AP">
-                      <h3 className="job-card-title-AP">{job.name}</h3>
+                      <h3 className="job-card-title-AP">{job.titulo}</h3>
                       <span className="job-time-badge-AP">
-                        {job.timePosted}
+                        {tiempoDesdePublicacion(job.fechaCreacion)}
                       </span>
                     </div>
 
-                    <p className="job-company-AP">{job.empresa}</p>
-                    <p className="job-location-AP">{job.location}</p>
+                    <p className="job-company-AP">{job.empresa?.nombre || "Empresa"}</p>
+                    <p className="job-location-AP">
+                      {job.municipio?.nombre || "Ubicación"}
+                      {job.municipio?.departamento && `, ${job.municipio.departamento}`}
+                    </p>
 
                     <div className="job-tags-AP">
                       <span className="job-tag-AP tag-modalidad-AP">
-                        {job.modalidad}
+                        {job.modalidad?.replace(/_/g, " ") || "N/A"}
                       </span>
                       <span className="job-tag-AP tag-contrato-AP">
-                        {job.contrato}
+                        {job.tipoContrato?.replace(/_/g, " ") || "N/A"}
                       </span>
                     </div>
 
                     <div className="job-card-footer-AP">
                       <p className="job-salary-AP">
-                        {formatSalary(job.salary)}
+                        {formatSalary(job.salario)}
                       </p>
-                      <p className="job-deadline-AP">{job.timepostuled}</p>
+                      <p className="job-deadline-AP">
+                        {job.fechaLimite ? `Termina el ${formatFecha(job.fechaLimite)}` : ""}
+                      </p>
                     </div>
                   </article>
                 ))
@@ -346,34 +408,44 @@ const AspirantePage = () => {
                   <div className="job-detail-header-AP">
                     <div>
                       <h2 className="job-detail-title-AP">
-                        {selectedJob.name}
+                        {selectedJob.titulo}
                       </h2>
                       <p className="job-detail-company-AP">
-                        {selectedJob.empresa}
+                        {selectedJob.empresa?.nombre || "Empresa"}
                       </p>
                     </div>
                   </div>
 
                   <div className="job-detail-info-AP">
-                    <div className="info-item-AP">{selectedJob.location}</div>
-                    <div className="info-item-AP">{selectedJob.modalidad}</div>;
-                    <div className="info-item-AP">{selectedJob.contrato}</div>
-                    <div className="info-item-AP">{selectedJob.fulltime}</div>
+                    <div className="info-item-AP">
+                      {selectedJob.municipio?.nombre || "Ubicación"}
+                      {selectedJob.municipio?.departamento && `, ${selectedJob.municipio.departamento}`}
+                    </div>
+                    <div className="info-item-AP">
+                      {selectedJob.modalidad?.replace(/_/g, " ") || "N/A"}
+                    </div>
+                    <div className="info-item-AP">
+                      {selectedJob.tipoContrato?.replace(/_/g, " ") || "N/A"}
+                    </div>
+                    <div className="info-item-AP">
+                      {selectedJob.jornada?.replace(/_/g, " ") || "Tiempo Completo"}
+                    </div>
                   </div>
 
                   <div className="job-detail-salary-AP">
                     <span className="salary-label-AP">Salario: </span>
                     <span className="salary-value-AP">
-                      {formatSalary(selectedJob.salary)}
+                      {formatSalary(selectedJob.salario)}
                     </span>
                     <span className="salary-period-AP">/ mensual</span>
                   </div>
 
                   <button
-                    className="btn-apply-AP"
+                    className={`btn-apply-AP ${yaPostulado ? "already-applied" : ""}`}
                     onClick={() => handlePostularse(selectedJob.id)}
+                    disabled={postulando || yaPostulado}
                   >
-                    Postularme ahora
+                    {postulando ? "Postulando..." : yaPostulado ? "Ya postulado ✓" : "Postularme ahora"}
                   </button>
 
                   <div className="job-detail-description-AP">
@@ -381,12 +453,38 @@ const AspirantePage = () => {
                       Descripción del puesto
                     </h3>
                     <p className="description-text-AP">
-                      {selectedJob.description}
+                      {selectedJob.descripcion || "Sin descripción disponible"}
                     </p>
                   </div>
 
+                  {selectedJob.requisitos && selectedJob.requisitos.length > 0 && (
+                    <div className="job-detail-requirements-AP">
+                      <h3 className="description-title-AP">Requisitos</h3>
+                      <ul>
+                        {Array.from(selectedJob.requisitos).map((req, idx) => (
+                          <li key={idx}>{req}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {selectedJob.beneficios && selectedJob.beneficios.length > 0 && (
+                    <div className="job-detail-benefits-AP">
+                      <h3 className="description-title-AP">Beneficios</h3>
+                      <ul>
+                        {Array.from(selectedJob.beneficios).map((ben, idx) => (
+                          <li key={idx}>{ben.replace(/_/g, " ")}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <div className="job-detail-deadline-AP">
-                    <span>{selectedJob.timepostuled}</span>
+                    <span>
+                      {selectedJob.fechaLimite 
+                        ? `Fecha límite: ${formatFecha(selectedJob.fechaLimite)}`
+                        : "Sin fecha límite"}
+                    </span>
                   </div>
 
                   {/* VALORACIÓN RF14 */}
@@ -453,6 +551,7 @@ const AspirantePage = () => {
               )}
             </section>
           </section>
+          )}
         </div>
       </main>
 

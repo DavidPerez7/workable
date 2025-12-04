@@ -32,8 +32,11 @@ public class UsuarioController {
 
     // - READ by id
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Usuario>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(usuarioService.getById(id));
+    public ResponseEntity<Usuario> getById(@PathVariable Long id) {
+        Optional<Usuario> usuario = usuarioService.getById(id);
+        return usuario
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     // - READ by correo

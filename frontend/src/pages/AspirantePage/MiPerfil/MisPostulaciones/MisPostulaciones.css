@@ -151,12 +151,84 @@
 }
 
 /* ===========================
-   LOADING / EMPTY
+   LOADING / EMPTY / ERROR
    =========================== */
 .mp-loading,
-.mp-empty {
+.mp-empty,
+.mp-error {
   padding: 3rem;
   text-align: center;
   color: #64748b;
   font-size: 1.1rem;
+}
+
+.mp-empty button,
+.mp-error button {
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mp-empty button:hover,
+.mp-error button:hover {
+  background: #2563eb;
+}
+
+.mp-error {
+  color: #ef4444;
+}
+
+/* ===========================
+   ESTADO ACEPTADO
+   =========================== */
+.mp-status-accepted {
+  background: #10b981;
+}
+
+/* ===========================
+   ACCIONES CARD
+   =========================== */
+.mp-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.mp-btn-view {
+  padding: 0.6rem 1.2rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mp-btn-view:hover {
+  background: #2563eb;
+}
+
+.mp-btn-cancel {
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mp-btn-cancel:hover {
+  background: #ef4444;
+  color: white;
 }

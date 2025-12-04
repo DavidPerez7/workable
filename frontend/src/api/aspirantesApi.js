@@ -19,8 +19,8 @@ export const registrarAspirante = async (data) => {
   });
 
   if (!res.ok) {
-    const errData = await res.json().catch(() => ({ message: "Error al registrar" }));
-    throw new Error(errData.message || "Error al registrar aspirante");
+    const errData = await res.json().catch(() => ({ error: "Error al registrar" }));
+    throw new Error(errData.error || errData.message || "Error al registrar aspirante");
   }
   return res.json();
 };

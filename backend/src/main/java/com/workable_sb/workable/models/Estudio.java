@@ -17,6 +17,7 @@ import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -46,7 +47,7 @@ public class Estudio {
     @Column(length = 1000)
     private String descripcion;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_estudio_municipio"))
     private Municipio municipio;
 
@@ -75,8 +76,9 @@ public class Estudio {
         DOCTORADO
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn (name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoEstudio_usuario"))
+    @JsonIgnoreProperties({"experiencias", "estudios", "password"})
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING)

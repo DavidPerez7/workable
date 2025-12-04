@@ -56,13 +56,18 @@ public class SecurityConfig {
                 // Preflight CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 
-                // Búsqueda pública de empresas y ofertas
+                // Búsqueda pública de empresas, ofertas y municipios
                 .requestMatchers(HttpMethod.GET, "/api/empresa/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/oferta/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/aspirante/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/municipio/**").permitAll()
 
                 // ===== ADMIN - ACCESO COMPLETO =====
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                
+                // ===== USUARIO - Permitir que usuarios autenticados vean y actualicen su propio perfil =====
+                .requestMatchers(HttpMethod.GET, "/api/usuario/*").authenticated()
+                .requestMatchers("/api/usuario/public/**").authenticated()  // Endpoints públicos para usuarios autenticados
                 .requestMatchers("/api/usuario/**").hasRole("ADMIN")
 
                 // ===== EMPRESA - SOLO RECLUTADORES Y ADMIN =====
@@ -129,7 +134,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8080"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174", "http://localhost:8080"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

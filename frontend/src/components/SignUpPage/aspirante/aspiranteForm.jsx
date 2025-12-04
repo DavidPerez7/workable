@@ -1,12 +1,30 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AspiranteForm.css";
 import { registrarAspirante } from "../../../api/aspirantesApi";
+import { getMunicipios } from "../../../api/municipioAPI";
 
 const AspiranteForm = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [municipios, setMunicipios] = useState([]);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(true);
+
+  // Cargar municipios al montar el componente
+  useEffect(() => {
+    const cargarMunicipios = async () => {
+      try {
+        const data = await getMunicipios();
+        setMunicipios(data);
+      } catch (error) {
+        console.error("Error cargando municipios:", error);
+      } finally {
+        setLoadingMunicipios(false);
+      }
+    };
+    cargarMunicipios();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -30,18 +48,26 @@ const AspiranteForm = () => {
       return;
     }
 
+    // Validar municipio
+    if (!data.municipioId || data.municipioId === "") {
+      alert("Debes seleccionar un municipio");
+      return;
+    }
+
     // Preparar datos del aspirante basado en Usuario.java
     const aspiranteData = {
       nombre: data.nombre,
       apellido: data.apellido,
       correo: data.correo,
       telefono: data.telefono,
-      clave: data.password,
+      password: data.password,
       fechaNacimiento: data.fechaNacimiento,
       municipio: {
         id: Number(data.municipioId),
       },
     };
+
+    console.log("Datos a enviar:", aspiranteData);
 
     try {
       const response = await registrarAspirante(aspiranteData);
@@ -52,16 +78,10 @@ const AspiranteForm = () => {
       setAceptaTerminos(false);
 
       // Redirigir al login
-      navigate("/login");
+      navigate("/Login");
     } catch (error) {
       console.error("Error al crear aspirante:", error);
-      let mensajeError = "Error al registrar el aspirante";
-
-      if (error.message) {
-        mensajeError = error.message;
-      }
-
-      alert(mensajeError);
+      alert(error.message || "Error al registrar el aspirante");
     }
   };
 
@@ -143,17 +163,15 @@ const AspiranteForm = () => {
 
               <div className="form-field">
                 <label className="form-label">Municipio *</label>
-                <select name="municipioId" required className="form-input">
-                  <option value="">Selecciona tu municipio</option>
-                  <option value="1">Bogotá D.C.</option>
-                  <option value="2">Medellín</option>
-                  <option value="3">Bello</option>
-                  <option value="4">Itagüí</option>
-                  <option value="5">Envigado</option>
-                  <option value="6">Rionegro</option>
-                  <option value="7">Cali</option>
-                  <option value="8">Barranquilla</option>
-                  <option value="9">Bucaramanga</option>
+                <select name="municipioId" required className="form-input" disabled={loadingMunicipios}>
+                  <option value="">
+                    {loadingMunicipios ? "Cargando municipios..." : "Selecciona tu municipio"}
+                  </option>
+                  {municipios.map((municipio) => (
+                    <option key={municipio.id} value={municipio.id}>
+                      {municipio.nombre}
+                    </option>
+                  ))}
                 </select>
               </div>
 

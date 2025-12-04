@@ -1,0 +1,287 @@
+/* ===========================
+   CONTENEDOR PRINCIPAL
+   =========================== */
+.main-eliminar-EPF {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  padding: 2rem;
+}
+
+.container-eliminar-EPF {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(239, 68, 68, 0.15);
+  overflow: hidden;
+}
+
+/* ===========================
+   HEADER DE ADVERTENCIA
+   =========================== */
+.header-warning-EPF {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  padding: 2.5rem;
+  text-align: center;
+  color: white;
+}
+
+.warning-icon-EPF {
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.title-EPF {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle-EPF {
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+/* ===========================
+   CONTENEDOR DE PASOS
+   =========================== */
+.step-container-EPF {
+  padding: 2rem;
+}
+
+/* ===========================
+   CAJA DE ADVERTENCIA
+   =========================== */
+.warning-box-EPF {
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.warning-box-EPF h3 {
+  font-size: 1.2rem;
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.warning-box-EPF p {
+  color: #7f1d1d;
+  margin-bottom: 0.5rem;
+}
+
+.delete-list-EPF {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.delete-list-EPF li {
+  padding: 0.5rem 0;
+  color: #991b1b;
+  font-weight: 500;
+}
+
+.note-EPF {
+  background: #fef3c7;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #92400e;
+  margin-top: 1rem;
+}
+
+/* ===========================
+   SECCIÓN DE CONFIRMACIÓN
+   =========================== */
+.confirm-section-EPF {
+  margin-bottom: 2rem;
+}
+
+.form-label-EPF {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.8rem;
+}
+
+.form-input-EPF {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.form-input-EPF:focus {
+  outline: none;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.form-input-EPF::placeholder {
+  color: #9ca3af;
+}
+
+/* ===========================
+   SECCIÓN DE CONTRASEÑA
+   =========================== */
+.password-section-EPF {
+  margin-bottom: 2rem;
+}
+
+.password-section-EPF h3 {
+  font-size: 1.2rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.password-section-EPF > p {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.form-group-EPF {
+  margin-bottom: 1rem;
+}
+
+/* ===========================
+   MENSAJES DE ERROR
+   =========================== */
+.error-message-EPF {
+  color: #dc2626;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* ===========================
+   BOTONES DE ACCIÓN
+   =========================== */
+.actions-EPF {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-cancel-EPF,
+.btn-back-EPF {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: #f1f5f9;
+  color: #475569;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel-EPF:hover,
+.btn-back-EPF:hover {
+  background: #e2e8f0;
+}
+
+.btn-next-EPF {
+  padding: 0.8rem 2rem;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-next-EPF:hover:not(:disabled) {
+  background: #d97706;
+}
+
+.btn-next-EPF:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-delete-EPF {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 2rem;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-delete-EPF:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-delete-EPF:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===========================
+   SPINNER
+   =========================== */
+.spinner-EPF {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 640px) {
+  .main-eliminar-EPF {
+    padding: 1rem;
+  }
+
+  .header-warning-EPF {
+    padding: 1.5rem;
+  }
+
+  .title-EPF {
+    font-size: 1.5rem;
+  }
+
+  .step-container-EPF {
+    padding: 1.5rem;
+  }
+
+  .actions-EPF {
+    flex-direction: column;
+  }
+
+  .btn-cancel-EPF,
+  .btn-back-EPF,
+  .btn-next-EPF,
+  .btn-delete-EPF {
+    width: 100%;
+    justify-content: center;
+  }
+}
