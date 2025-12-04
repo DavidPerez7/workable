@@ -65,9 +65,14 @@ public class UsuarioService {
             throw new IllegalStateException("No se permite crear usuarios ADMIN desde el registro público");
         }
 
-        Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
+        // Municipio es opcional, solo validar si se proporciona
+        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
+            request.setMunicipio(municipio);
+        } else {
+            request.setMunicipio(null);
+        }
 
-        request.setMunicipio(municipio);
         request.setPassword(passwordEncoder.encode(request.getPassword()));
         return usuarioRepo.save(request);
     }

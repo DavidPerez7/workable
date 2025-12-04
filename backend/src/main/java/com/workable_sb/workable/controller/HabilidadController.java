@@ -143,16 +143,31 @@ public class HabilidadController {
         }
     }
 
+    // ACTIVAR - Solo administrador
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/activar")
+    public ResponseEntity<?> activar(@PathVariable Long id) {
+        try {
+            Habilidad habilidad = habilidadRepo.findById(id).orElse(null);
+            if (habilidad == null) {
+                return ResponseEntity.status(404).body(Map.of("error", "Habilidad no encontrada"));
+            }
+            habilidad.setIsActive(true);
+            return ResponseEntity.ok(Map.of("message", "Habilidad activada correctamente", "habilidad", habilidadRepo.save(habilidad)));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al activar habilidad: " + e.getMessage()));
+        }
+    }
+
     // DELETE - Solo administrador
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-            if (habilidadRepo.existsById(id)) {
-                habilidadRepo.deleteById(id);
-                return ResponseEntity.ok(Map.of("message", "Habilidad eliminada correctamente"));
-            }
-            return ResponseEntity.status(404).body(Map.of("error", "Habilidad no encontrada"));
+            habilidadService.eliminarHabilidad(id);
+            return ResponseEntity.ok(Map.of("message", "Habilidad eliminada correctamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar habilidad: " + e.getMessage()));
         }

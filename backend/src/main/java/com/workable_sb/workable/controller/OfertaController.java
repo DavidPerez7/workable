@@ -9,6 +9,7 @@ import com.workable_sb.workable.service.PostulacionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,8 @@ public class OfertaController {
     @Autowired
     private PostulacionService postulacionService;
 
-    // - CREATE
+    // - CREATE (solo reclutadores de la empresa)
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
     public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta, @RequestParam Long empresaId, @RequestParam Long reclutadorId) {
         return ResponseEntity.ok(ofertaService.crearOferta(oferta, empresaId, reclutadorId));
@@ -60,6 +62,7 @@ public class OfertaController {
     }
 
     // - READ by reclutador
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/reclutador/{reclutadorId}")
     public ResponseEntity<List<Oferta>> listarPorReclutador(@PathVariable Long reclutadorId) {
         return ResponseEntity.ok(ofertaService.listarPorReclutador(reclutadorId));
@@ -83,19 +86,22 @@ public class OfertaController {
         return ResponseEntity.ok(ofertaService.buscarPorTexto(texto));
     }
 
-    // - UPDATE
+    // - UPDATE (solo reclutadores de la empresa)
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Oferta> actualizarOferta(@PathVariable Long id, @RequestBody Oferta oferta, @RequestParam Long usuarioIdActual) {
         return ResponseEntity.ok(ofertaService.actualizarOferta(id, oferta, usuarioIdActual));
     }
 
-    // - PATCH cambiar estado
+    // - PATCH cambiar estado (solo reclutadores de la empresa)
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PatchMapping("/{id}/estado")
     public ResponseEntity<Oferta> cambiarEstado(@PathVariable Long id, @RequestParam Oferta.EstadoOferta estado, @RequestParam Long usuarioIdActual) {
         return ResponseEntity.ok(ofertaService.cambiarEstado(id, estado, usuarioIdActual));
     }
 
-    // - DELETE
+    // - DELETE (solo reclutadores de la empresa o ADMIN)
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
         ofertaService.eliminarOferta(id, usuarioIdActual);
@@ -107,6 +113,7 @@ public class OfertaController {
     // ============================================
 
     // STAGE 1: VER CANDIDATOS POSTULADOS A OFERTA
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos")
     public ResponseEntity<List<Postulacion>> obtenerCandidatos(
             @PathVariable Long ofertaId,
@@ -115,6 +122,7 @@ public class OfertaController {
     }
 
     // STAGE 1: FILTRAR CANDIDATOS POR ESTADO
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/estado")
     public ResponseEntity<List<Postulacion>> obtenerCandidatosPorEstado(
             @PathVariable Long ofertaId,
@@ -124,6 +132,7 @@ public class OfertaController {
     }
 
     // STAGE 2: CAMBIAR ESTADO DEL CANDIDATO
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{ofertaId}/candidatos/{postulacionId}/estado")
     public ResponseEntity<Postulacion> cambiarEstadoCandidato(
             @PathVariable Long ofertaId,
@@ -134,6 +143,7 @@ public class OfertaController {
     }
 
     // STAGE 3: FILTRAR CANDIDATOS POR EXPERIENCIA Y EDUCACIÓN
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/filtrar")
     public ResponseEntity<List<Postulacion>> filtrarCandidatosPorCriterios(
             @PathVariable Long ofertaId,
@@ -147,6 +157,7 @@ public class OfertaController {
     }
 
     // STAGE 4: CLASIFICAR CANDIDATOS POR ETAPA DEL PROCESO
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/etapa")
     public ResponseEntity<?> obtenerCandidatosPorEtapa(
             @PathVariable Long ofertaId,
@@ -156,6 +167,7 @@ public class OfertaController {
     }
 
     // STAGE 4: RESUMEN DE CANDIDATOS POR TODAS LAS ETAPAS
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/resumen-etapas")
     public ResponseEntity<?> obtenerResumenEtapas(
             @PathVariable Long ofertaId,
@@ -164,6 +176,7 @@ public class OfertaController {
     }
 
     // STAGE 4: ESTADÍSTICAS DE PROGRESIÓN DEL PROCESO
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/estadisticas-proceso")
     public ResponseEntity<?> obtenerEstadisticasProceso(
             @PathVariable Long ofertaId,
@@ -176,6 +189,7 @@ public class OfertaController {
     // ============================================
 
     // ENDPOINT 5: Obtener estados disponibles
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/{postulacionId}/estados-disponibles")
     public ResponseEntity<?> obtenerEstadosDisponibles(
             @PathVariable Long ofertaId,
@@ -185,6 +199,7 @@ public class OfertaController {
     }
 
     // ENDPOINT 6: Historial de cambios
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{ofertaId}/candidatos/{postulacionId}/historial-estados")
     public ResponseEntity<?> obtenerHistorialEstados(
             @PathVariable Long ofertaId,
@@ -194,6 +209,7 @@ public class OfertaController {
     }
 
     // ENDPOINT 7: Cambio en lote
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{ofertaId}/candidatos/estado-lote")
     public ResponseEntity<?> cambiarEstadoEnLote(
             @PathVariable Long ofertaId,
@@ -203,6 +219,7 @@ public class OfertaController {
     }
 
     // ENDPOINT 8: Validar transición
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping("/{ofertaId}/candidatos/{postulacionId}/validar-estado")
     public ResponseEntity<?> validarTransicionEstado(
             @PathVariable Long ofertaId,
@@ -213,6 +230,7 @@ public class OfertaController {
     }
 
     // ENDPOINT 9: Revertir estado
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PatchMapping("/{ofertaId}/candidatos/{postulacionId}/revertir-estado")
     public ResponseEntity<?> revertirEstado(
             @PathVariable Long ofertaId,

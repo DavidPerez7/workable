@@ -140,8 +140,9 @@ public class ExperienciaService {
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
-        // Es el dueño o es ADMIN
+        // Es el dueño, es ADMIN, o es RECLUTADOR
         return experiencia.getUsuario().getId().equals(usuarioId) || 
-               usuario.getRol() == Usuario.Rol.ADMIN;
+               usuario.getRol() == Usuario.Rol.ADMIN ||
+               usuario.getRol() == Usuario.Rol.RECLUTADOR;
     }
 }
