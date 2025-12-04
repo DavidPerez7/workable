@@ -7,35 +7,45 @@ import java.util.Set;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Getter
-@Setter
-@Table(name = "oferta")
 public class Oferta {
 	
 	public enum EstadoOferta {
 		ABIERTA, CERRADA, PAUSADA
 	}
 	
+	public enum Modalidad {
+		PRESENCIAL, REMOTO, HIBRIDO
+	}
+	
+	public enum TipoContrato {
+		TIEMPO_COMPLETO, MEDIO_TIEMPO, TEMPORAL, PRESTACION_SERVICIOS, PRACTICAS
+	}
+	
+	public enum Beneficio {
+		SEGURO_SALUD, SEGURO_VIDA, BONOS, AUXILIO_TRANSPORTE, AUXILIO_ALIMENTACION,
+		CAPACITACIONES, TELETRABAJO, HORARIO_FLEXIBLE, VACACIONES_ADICIONALES, GIMNASIO,
+		DIAS_COMPENSATORIOS, PLAN_CARRERA, DESCUENTOS_COMERCIALES, AUXILIO_EDUCATIVO, PRIMA_EXTRALEGAL
+	}
+	
+	public enum NivelExperiencia {
+		SIN_EXPERIENCIA, BASICO, INTERMEDIO, AVANZADO, EXPERTO
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	@Column(nullable = false, length = 255)
 	private String titulo;
 
-	@Column(nullable = false, length = 255)
+	@Column(nullable = false, columnDefinition = "TEXT")
 	private String descripcion;
-
-	@Column(nullable = false, length = 100)
-	private String ubicacion;
 
 	@Column(nullable = false)
 	private LocalDate fechaLimite;
@@ -44,6 +54,13 @@ public class Oferta {
 
 	@Column(nullable = false)
 	private Long salario;
+
+	@Column(nullable = false)
+	private Integer numeroVacantes = 1;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private NivelExperiencia nivelExperiencia;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'ABIERTA'")
@@ -61,35 +78,61 @@ public class Oferta {
 	@JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_municipio"))
 	private Municipio municipio;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "modalidad_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_modalidad"))
-	private OfertaModalidad modalidad;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private Modalidad modalidad;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "tipoContrato_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_tipoContrato"))
-	private OfertaTipoContrato tipoContrato;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 30)
+	private TipoContrato tipoContrato;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_empresa"))
 	private Empresa empresa;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reclutador_id", foreignKey = @ForeignKey(name = "FK_oferta_reclutador"))
-	private UsrReclutador reclutador;  // Quién creó la oferta (opcional para auditoría)
+	private Usuario reclutador;
+
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(
+		name = "oferta_beneficios",
+		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaBeneficios_oferta"))
+	)
+	@Enumerated(EnumType.STRING)
+	@Column(name = "beneficio", length = 30, nullable = false)
+	private Set<Beneficio> beneficios = new HashSet<>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "oferta_tiene_beneficio", 
-	joinColumns = @JoinColumn(name = "ofertaid", foreignKey = @ForeignKey(name = "FK_ofertaTieneBeneficio_oferta")),
-	inverseJoinColumns = @JoinColumn(name = "beneficioid", foreignKey = @ForeignKey(name = "FK_ofertaTieneBeneficio_beneficio")))
-	private Set<OfertaBeneficio> beneficios = new HashSet<>();
+	@JoinTable(
+		name = "oferta_habilidad_requerida",
+		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_oferta")),
+		inverseJoinColumns = @JoinColumn(name = "habilidad_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_habilidad"))
+	)
+	private Set<Habilidad> habilidadesRequeridas = new HashSet<>();
+
 
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
 	private Set<Postulacion> postulaciones = new HashSet<>();
 
+	private Float puntuacion = 0.0f;
+
 	@PrePersist
-	public void setFechaPublicacion() {
+	protected void onCreate() {
 		if (this.fechaPublicacion == null) {
 			this.fechaPublicacion = LocalDate.now();
+		}
+		validateFechas();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		validateFechas();
+	}
+
+	private void validateFechas() {
+		if (fechaLimite != null && fechaPublicacion != null && fechaLimite.isBefore(fechaPublicacion)) {
+			throw new IllegalStateException("La fecha límite debe ser posterior a la fecha de publicación");
 		}
 	}
 

@@ -8,7 +8,7 @@ function HeaderReclutador() {
   return (
     <header className="header-container-rc">
       <Link to='/' className="logo-container-rc">
-        <img src="https://i.postimg.cc/PrF6JqqC/WKB-LOGO-copia-removebg-preview.png" alt="workable logo" className='img-logo-wkb-rc'/>
+        <img src="https://i.ibb.co/gMwyTHb7/logotipo-workable.png" alt="workable logo" className='img-logo-wkb-rc'/>
       </Link>
 
       <button className="menu-toggle-rc"
@@ -26,7 +26,7 @@ function HeaderReclutador() {
       <div className={menuOpen ? 'user-profile-menu-rc show-rc' : 'user-profile-menu-rc'}>
         <div className="user-info-rc">
           <span className="username-text-rc">NombreReclutador</span>
-          <Link to='/Reclutador/EditarPerfil' className="avatar-placeholder-rc"></Link>
+          <Link to='/Reclutador/ReclutadorProfile' className="avatar-placeholder-rc"></Link>
         </div>
       </div>
     </header>

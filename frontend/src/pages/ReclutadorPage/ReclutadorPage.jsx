@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FaStar } from "react-icons/fa";
 import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador";
 import OfertaCard from "../../components/OfertaCard/ofertaCard";
+import VerPostulacionesRecibidas from "../../components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import "./ReclutadorPage.css";
 import { getAllOfertas } from "../../api/ofertasAPI";
 
 function ReclutadorPage() {
   const [ofertas, setOfertas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOfertas = async () => {
@@ -15,6 +18,8 @@ function ReclutadorPage() {
         setOfertas(data);
       } catch (error) {
         console.error("Error al obtener ofertas:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchOfertas();
@@ -23,110 +28,349 @@ function ReclutadorPage() {
   return (
     <>
       <HeaderReclutador />
-      <main className="main-reclutador-rc">
-        <div className="nav-panel-rc">
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador">Inicio</Link>
-            </span>
-          </div>
+      <main className="reclutador-main">
+        {/* Sidebar Navigation */}
+        <aside className="sidebar-nav">
+          <nav className="nav-list-sidebar">
+            
+            <Link to="/Reclutador" className="nav-item-sidebar active">
+              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Inicio</span>
+            </Link>
 
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 75 75 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0m-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233q.27.015.537.036c2.568.189 5.093.744 7.463 1.993zm-9 6.215v-4.13a95 95 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A61 61 0 0 1 4 10.065m-.657.975 1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68 68 0 0 0-1.722-.082z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador/reclutamiento">Reclutamiento</Link>
-            </span>
-          </div>
+            <Link to="/Reclutador/reclutamiento" className="nav-item-sidebar">
+              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+              <span>Reclutamiento</span>
+            </Link>
 
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor">
-              <path fillRule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-              <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1z"/>
-              <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador/GestigOferts">Gestionar ofertas</Link>
-            </span>
-          </div>
+            <Link to="/Reclutador/GestigOferts" className="nav-item-sidebar">
+              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Gestionar ofertas</span>
+            </Link>
 
-          <div className="nav-item-rc">
-            <svg className="icon-nav-rc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
-              <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52z"/>
-            </svg>
-            <span className="link-nav-rc">
-              <Link to="/Reclutador/Configuracion">Configuracion</Link>
-            </span>
-          </div>
-        </div>
+            {/* ⭐ NUEVO LINK: Registrar Empresa */}
+            <Link to="/Reclutador/RegistrarEmpresa" className="nav-item-sidebar">
+              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 21V7a2 2 0 0 1 2-2h3V3h4v2h3a2 2 0 0 1 2 2v14"></path>
+                <path d="M3 21h18"></path>
+                <path d="M9 11h1"></path>
+                <path d="M14 11h1"></path>
+                <path d="M9 15h1"></path>
+                <path d="M14 15h1"></path>
+              </svg>
+              <span>Registrar empresa</span>
+            </Link>
 
-        <div className="main-content-rc">
-          <div className="column-left-rc">
-            <div className="info-company-rc">
-              <div className="logo-company-rc">
-                <img src="https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png" alt="logo" className="img-logo-rc"/>
-              </div>
-              <div>
-                <h2 className="name-company-rc">Empresa genérica</h2>
-                <p className="user-admin-rc">Usuario administrador</p>
-              </div>
+            <Link to="/Reclutador/Configuracion" className="nav-item-sidebar">
+              <svg className="nav-icon" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m8.66-9l-5.2 3m-5.92 3l-5.2 3M1.34 9l5.2 3m5.92 3l5.2 3"></path>
+              </svg>
+              <span>Configuración</span>
+            </Link>
+
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <div className="content-wrapper">
+          <div className="content-grid">
+            {/* Left Column */}
+            <div className="column-left">
+
+              {/* Company Card */}
+              <Link to="/Reclutador/EnterprisePage" className="company-card-link">
+                <div className="company-card">
+                  <div className="company-avatar">
+                    <img
+                      src="https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png"
+                      alt="Logo empresa"
+                      className="company-logo-img"
+                    />
+                  </div>
+                  <div className="company-info">
+                    <h2 className="company-name">Empresa genérica</h2>
+                    <p className="company-role">Usuario administrador</p>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Recruitment Section */}
+              <section className="section-card">
+                <div className="section-header">
+                  <div className="section-title-group">
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                    <h3 className="section-title">Reclutamiento</h3>
+                  </div>
+                  <Link to="/Reclutador/GestigOferts" className="section-link">
+                    Gestionar avisos
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                </div>
+
+                <div className="ofertas-container">
+                  {loading ? (
+                    <div className="loading-state">
+                      <div className="spinner"></div>
+                      <p>Cargando ofertas...</p>
+                    </div>
+                  ) : ofertas.length > 0 ? (
+                    ofertas.slice(0, 3).map((oferta) => (
+                      <OfertaCard
+                        key={oferta.id}
+                        titulo={oferta.titulo || oferta.nom || "Sin título"}
+                        descripcion={oferta.descripcion || oferta.desc || "Sin descripción"}
+                        salario={oferta.salario || oferta.sueldo || 0}
+                        ubicacion={oferta.ubicacion || oferta.ubi || "No especificada"}
+                      />
+                    ))
+                  ) : (
+                    <div className="empty-state">
+                      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      </svg>
+                      <p className="empty-text">No hay ofertas disponibles</p>
+                      <p className="empty-subtext">Publica tu primera oferta para comenzar</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="button-container">
+                  <Link to="/Reclutador/Publicacion" className="btn-publish">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Publicar oferta
+                  </Link>
+                </div>
+              </section>
+
+              {/* Statistics Section */}
+              <section className="section-card">
+                <div className="section-header">
+                  <div className="section-title-group">
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                      <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <h3 className="section-title">Estadísticas</h3>
+                  </div>
+                  <Link to="/Reclutador/estadisticas" className="section-link">
+                    Ver más
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                </div>
+
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <div className="stat-icon blue-bg">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                    </div>
+                    <div className="stat-info">
+                      <p className="stat-value">248</p>
+                      <p className="stat-label">Total candidatos</p>
+                    </div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-icon green-bg">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                    <div className="stat-info">
+                      <p className="stat-value">42</p>
+                      <p className="stat-label">Contrataciones</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+
+              {/* NEW: Postulaciones Recibidas */}
+              <section className="section-card">
+                <div className="section-header">
+                  <div className="section-title-group">
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <h3 className="section-title">Postulaciones recibidas</h3>
+                  </div>
+
+                  <Link to="/Reclutador/VerPostulacionesRecibidas" className="section-link">
+                    Ver todas
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                </div>
+
+                <VerPostulacionesRecibidas />
+              </section>
+
+
             </div>
 
-            <div className="section-recruitment-rc">
-              <div className="header-section-rc">
-                <h3 className="title-section-rc">Reclutamiento</h3>
-                <span className="link-manage-rc">Gestionar avisos</span>
+            {/* Right Column */}
+            <div className="column-right">
+              <div className="banner-card">
+                <div className="banner-content">
+                  <h3 className="banner-title">Informacion de la empresa</h3>
+                  <p className="banner-text">
+                    <p>
+                      Descripcion:{" "}
+                      <span>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Deleniti dicta, saepe vitae numquam culpa qui? Beatae est
+                        ea quod asperiores voluptate. Pariatur delectus provident
+                        possimus ipsam dolores ad laboriosam quam?
+                      </span>
+                    </p>
+                    <p>Numero de trabajadores: <span>30</span></p>
+                    <div className="banner-puntuation">
+                      <p>Puntuacion: </p>
+                      <div className="banner-puntuation">
+                        <FaStar color="#ffffff" />
+                        <FaStar color="#ffffff" />
+                        <FaStar color="#ffffff" />
+                        <FaStar color="#ffffff" />
+                      </div>
+                    </div>
+                    <p>Fecha de creacion: <span>10/10/2020</span></p>
+                    <p>Email: <span>info@generico.com</span></p>
+                    <p>Telefono: <span>+123456789</span></p>
+                  </p>
+                </div>
               </div>
-              <div className="cards-recruitment-rc">
-                {ofertas.length > 0 ? (
-                  ofertas.map((oferta) => (
-                  <OfertaCard
-                  key={oferta.id}
-                  titulo={oferta.titulo || oferta.nom || "Sin título"}
-                  descripcion={oferta.descripcion || oferta.desc || "Sin descripción"}
-                  salario={oferta.salario || oferta.sueldo || 0}
-                  ubicacion={oferta.ubicacion || oferta.ubi || "No especificada"}
-                  />))
-  ) : (
-    <p>No hay ofertas disponibles</p>
-  )}
-</div>
 
+              <section className="section-card">
+                <div className="section-header">
+                  <div className="section-title-group">
+                    <svg
+                      className="section-icon"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <h3 className="section-title">Reviews</h3>
+                  </div>
+                  <Link to="/Reclutador/reviews" className="section-link">
+                    Ver todas
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </Link>
+                </div>
 
-              <div className="container-button-publish-rc">
-                <Link to="/Reclutador/Publicacion">
-                  <button className="button-publish-rc">Publicar oferta</button>
-                </Link>
-              </div>
-            </div>
+                <div className="reviews-container">
+                  <div className="review-item">
+                    <div className="review-header">
+                      <div className="review-avatar">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                      <div className="review-info">
+                        <p className="review-name">Juan Pérez</p>
+                        <div className="review-stars">⭐⭐⭐⭐⭐</div>
+                      </div>
+                    </div>
+                    <p className="review-text">
+                      Excelente proceso de selección, muy profesional y transparente.
+                    </p>
+                  </div>
 
-            <div className="section-statistics-rc">
-              <div className="header-statistics-rc">
-                <h3 className="title-section-rc">Estadística</h3>
-                <span className="link-more-rc">Ver más estadísticas</span>
-              </div>
-              <div className="graphs-statistics-rc">
-                <div className="card-graph-rc"></div>
-                <div className="card-graph-rc"></div>
-              </div>
-            </div>
-          </div>
+                  <div className="review-item">
+                    <div className="review-header">
+                      <div className="review-avatar">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                      <div className="review-info">
+                        <p className="review-name">María García</p>
+                        <div className="review-stars">⭐⭐⭐⭐</div>
+                      </div>
+                    </div>
+                    <p className="review-text">
+                      Gran ambiente laboral y oportunidades de crecimiento.
+                    </p>
+                  </div>
 
-          <div className="column-right-rc">
-            <div className="image-placeholder-rc"></div>
-            <div className="section-reviews-rc">
-              <div className="header-reviews-rc">
-                <h3 className="title-section-rc">Reviews</h3>
-                <span className="link-reviews-rc">Ver reviews</span>
-              </div>
-              <div className="container-reviews-rc">
-                {/* contenido de reviews */}
-              </div>
+                  <div className="empty-reviews">
+                    <p className="empty-reviews-text">No hay más reviews recientes</p>
+                  </div>
+                </div>
+              </section>
+
             </div>
           </div>
         </div>

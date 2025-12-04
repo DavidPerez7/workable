@@ -1,95 +1,227 @@
-.header-conta {
-  display:grid;
-  grid-template-columns:1fr 2fr 1fr;
-  align-items:center;
-  padding:0 40px;
-  height:4.4em;
-  background-color:#2541a0;
-  position:relative;
-  z-index:1;
+/* ========================================
+   HEADER BASE (estilo del Reclutador)
+======================================== */
+.header-container-asp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #1e6ff1 0%, #1d4ed8 100%);
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  font-family: "Inter", sans-serif;
 }
-.header-left {justify-self:start;}
-.header-center {display:flex;justify-content:left;align-items:center;}
-.header-right-container .perfil-section {
-  justify-self:end;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid #ddd;
-  border-radius:50px;
-  padding:1px 16px;
-  background:#fff;
-  box-shadow:0 0 5px rgba(0,0,0,0.1);
-  max-width:300px;
-  width:70%;
+
+.header-container-asp::before {
+  content: "";
+  position: absolute;
+  top: -250px;
+  width: 300px;
+  height: 300px;
+  margin-left: 1200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
 }
-.header-center .job-search-bar {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid #ddd;
-  border-radius:50px;
-  padding:1px 16px;
-  background:#fff;
-  box-shadow:0 0 5px rgba(0,0,0,0.1);
-  max-width:450px;
-  width:100%;
+
+/* ========================================
+   LOGO
+======================================== */
+.logo-container-asp {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
-.search-section {display:flex;align-items:center;}
-.search-section input.input-text {
-  height:9px;
-  border:none;
-  outline:none;
-  font-size:14px;
-  background:transparent;
-  margin-top:15px;
+
+.img-wkb-asp {
+  height: 50px;
+  width: auto;
 }
-.search-icon {color:#007bff;}
-.search-button {
-  background:#002f6c;
-  border:none;
-  border-radius:50%;
-  padding:6px;
-  cursor:pointer;
-  margin-left:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:background 0.3s;
+
+/* ========================================
+   MENÚ HAMBURGUESA
+======================================== */
+.menu-toggle-asp {
+  display: none;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: transparent;
 }
-.header-conta .divider {width:1px;height:24px;background:#ccc;margin:0 12px;}
-.name {color:#2541a0;}
-.name .n {
-  background-color:transparent;
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  border:1px solid grey;
+
+/* ========================================
+   BARRA DE BÚSQUEDA
+======================================== */
+.job-search-bar-asp {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-.search-seccion {display:flex;align-items:center;background-color:#fff;}
-.button-perfil {
-  background-color:transparent;
-  color:#0d1e53;
-  border:1px solid #fff;
-  padding:10px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:all 0.3s ease;
+
+.search-section-asp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-@media (max-width:1024px){
-  .header-conta{grid-template-columns:1fr 1fr;padding:0 20px;height:auto;}
-  .header-center .job-search-bar{max-width:350px;}
-  .header-right-container .perfil-section{width:100%;max-width:220px;}
+
+.search-icon-asp {
+  color: #2541a0;
+  font-size: 1.2rem;
 }
-@media (max-width:768px){
-  .header-conta{grid-template-columns:1fr;gap:12px;padding:12px 20px;text-align:center;}
-  .header-left,.header-center,.header-right-container{justify-content:center;display:flex;width:100%;}
-  .header-center .job-search-bar{width:100%;max-width:100%;flex-direction:row;}
-  .header-right-container .perfil-section{width:100%;max-width:100%;justify-content:center;}
+
+.input-text-asp {
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
 }
-@media (max-width:480px){
-  .header-conta{padding:10px;gap:8px;}
-  .search-section input.input-text{font-size:12px;margin-top:10px;width:100%;}
-  .button-perfil{padding:6px 10px;font-size:12px;}
-  .header-center .job-search-bar{padding:6px 12px;}
+
+.search-btn-asp {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-btn-asp:hover {
+  background: #1d4ed8;
+}
+
+.divider-asp {
+  width: 1px;
+  background: #cbd5e1;
+  height: 25px;
+}
+
+/* ========================================
+   PERFIL
+======================================== */
+.user-profile-menu-asp {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info-asp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.username-text-asp {
+  font-weight: 500;
+  font-size: 1em;
+}
+
+.avatar-placeholder-asp {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #f7fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #2541a0;
+}
+
+.button-perfil-asp {
+  padding: 0.5rem 1.2rem;
+  background: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: #1e3a8a;
+  transition: 0.2s ease;
+}
+
+.search-dropdown-asp {
+  position: absolute;
+  top: 95px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 650px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.dropdown-item-asp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item-asp:hover {
+  background: #f3f7ff;
+}
+
+.dropdown-icon-asp {
+  font-size: 20px;
+  color: #2563eb;
+}
+
+.dropdown-cargo-asp {
+  font-weight: 600;
+}
+
+.dropdown-ciudad-asp {
+  font-size: 14px;
+  color: #555;
+}
+
+.dropdown-no-results-asp {
+  text-align: center;
+  padding: 15px;
+  color: #777;
+  font-size: 14px;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 900px) {
+  .menu-toggle-asp {
+    display: block;
+  }
+
+  .job-search-bar-asp,
+  .user-profile-menu-asp {
+    display: none;
+    position: absolute;
+    top: 4.4em;
+    left: 0;
+    right: 0;
+    background: #1d4ed8;
+    padding: 1em 0;
+    flex-direction: column;
+    gap: 1em;
+    text-align: center;
+  }
+
+  .job-search-bar-asp.show-asp,
+  .user-profile-menu-asp.show-asp {
+    display: flex;
+  }
 }

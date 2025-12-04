@@ -1,69 +1,103 @@
-import React from 'react';
-import './Empresas.css';
-import { useNavigate } from 'react-router-dom';
-import Header from '../../../components/Header/Header';
-import Footer from '../../../components/Footer/Footer';
+import React from "react";
+import "./Empresas.css";
+import { useNavigate } from "react-router-dom";
+import Header from "../../../components/Header/Header";
+import Footer from "../../../components/Footer/Footer";
 
 function Empresas() {
   const navigate = useNavigate();
 
-  const Exit = () => {
-    navigate('/HomePage');
+  // Simulación de navegación (podrás conectar URLs reales)
+  const handleSelect = (nombre) => {
+    console.log("Seleccionaste:", nombre);
+    // navigate(`/empresas/${nombre.toLowerCase()}`);  <-- cuando tengas las rutas
   };
 
   return (
     <>
-    <Header />
+      <Header />
 
-        <main className="main-empresas">
-        <h1>Descubre las mejores empresas según su sector</h1>
+      <main className="main-empresas">
+        <h1 className="empresas-title">Descubre las mejores empresas según su sector</h1>
 
         <div className="empresas-forms">
+          
+          {/* ======================= */}
+          {/* EMPRESAS POR SECTOR */}
+          {/* ======================= */}
           <section className="form-section">
-            <h2>Empresas por sectores</h2>
+            <h2 className="form-title">Empresas por sectores</h2>
             <ul className="empresa-list">
-              <li>Tecnología <span>&rsaquo;</span></li>
-              <li>Salud <span>&rsaquo;</span></li>
-              <li>Educación <span>&rsaquo;</span></li>
-              <li>Finanzas <span>&rsaquo;</span></li>
-              <li>Logística <span>&rsaquo;</span></li>
-              <li>Alimentos <span>&rsaquo;</span></li>
-              <li>Entretenimiento <span>&rsaquo;</span></li>
-              <li>Automotriz <span>&rsaquo;</span></li>
+              {[
+                "Tecnología",
+                "Salud",
+                "Educación",
+                "Finanzas",
+                "Logística",
+                "Alimentos",
+                "Entretenimiento",
+                "Automotriz",
+              ].map((item) => (
+                <li key={item} onClick={() => handleSelect(item)}>
+                  {item}
+                  <span className="arrow-item">&rsaquo;</span>
+                </li>
+              ))}
             </ul>
           </section>
 
+          {/* ======================= */}
+          {/* EMPRESAS MÁS SEGUIDAS */}
+          {/* ======================= */}
           <section className="form-section">
-            <h2>Empresas con más seguidores</h2>
+            <h2 className="form-title">Empresas con más seguidores</h2>
             <ul className="empresa-list">
-              <li>Google <span>&rsaquo;</span></li>
-              <li>Microsoft <span>&rsaquo;</span></li>
-              <li>Amazon <span>&rsaquo;</span></li>
-              <li>Meta <span>&rsaquo;</span></li>
-              <li>Netflix <span>&rsaquo;</span></li>
-              <li>Tesla <span>&rsaquo;</span></li>
-              <li>Apple <span>&rsaquo;</span></li>
-              <li>IBM <span>&rsaquo;</span></li>
+              {[
+                "Google",
+                "Microsoft",
+                "Amazon",
+                "Meta",
+                "Netflix",
+                "Tesla",
+                "Apple",
+                "IBM",
+              ].map((item) => (
+                <li key={item} onClick={() => handleSelect(item)}>
+                  {item}
+                  <span className="arrow-item">&rsaquo;</span>
+                </li>
+              ))}
             </ul>
           </section>
 
+          {/* ======================= */}
+          {/* EMPRESAS RECIÉN EVALUADAS */}
+          {/* ======================= */}
           <section className="form-section">
-            <h2>Empresas recién evaluadas</h2>
+            <h2 className="form-title">Empresas recién evaluadas</h2>
             <ul className="empresa-list">
-              <li>Nubank <span>&rsaquo;</span></li>
-              <li>Rappi <span>&rsaquo;</span></li>
-              <li>Globant <span>&rsaquo;</span></li>
-              <li>Mercado Libre <span>&rsaquo;</span></li>
-              <li>Falabella <span>&rsaquo;</span></li>
-              <li>Sura <span>&rsaquo;</span></li>
-              <li>Bancolombia <span>&rsaquo;</span></li>
-              <li>Ecopetrol <span>&rsaquo;</span></li>
+              {[
+                "Nubank",
+                "Rappi",
+                "Globant",
+                "Mercado Libre",
+                "Falabella",
+                "Sura",
+                "Bancolombia",
+                "Ecopetrol",
+              ].map((item) => (
+                <li key={item} onClick={() => handleSelect(item)}>
+                  {item}
+                  <span className="arrow-item">&rsaquo;</span>
+                </li>
+              ))}
             </ul>
           </section>
+
         </div>
       </main>
-    
-    <Footer />
+
+      <Footer />
     </>
   );
 }

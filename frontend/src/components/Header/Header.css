@@ -1,106 +1,316 @@
+/* ==========================================
+   HEADER - MODERN TECH DESIGN
+   Paleta: Navy (#0F172A), Blue (#3B82F6), 
+   Amber (#F59E0B), Green (#10B981)
+   ========================================== */
+
 .header-container {
-	display: grid;
-	grid-template-columns: auto 1fr auto;
-	align-items: center;
-	padding: 0 40px;
-	height: 4.4em;
-	background-color:  #2541a0;
-	position: relative;
-	z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #1e6ff1 0%, #1d4ed8 100%);
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
 }
 
+.header-container::before {
+  content: "";
+  position: absolute;
+  top: -230px;
+  width: 300px;
+  height: 300px;
+  margin-left: 940px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Logo Container */
 .logo-container {
-	display: flex;
-	max-width: auto;
-	height: 100%;
-	align-items: center;
-	transition: transform 0.5s;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
 }
+
+.logo-container:hover {
+  transform: scale(1.02);
+}
+
 .img-wkb {
-	width: 10em;
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
+/* Menu Toggle Button (Mobile) */
 .menu-toggle {
-	display: none;
-	background: none;
-	border: none;
-	color: white;
-	font-size: 2rem;
-	cursor: pointer;
-	z-index: 2;
+  display: none;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
+.menu-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+}
+
+.menu-toggle:active {
+  transform: scale(0.98);
+}
+
+.menu-icon {
+  display: block;
+  line-height: 1;
+}
+
+/* Navigation List */
 .nav-list {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	gap: 50px;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
 }
 
-.nav-list.show {
-	flex-direction: column;
+.nav-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.nav-list a {
-	color: white;
-	text-decoration: none;
-	font-weight: 500;
-	transition: opacity 0.3s;
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6 0%, #f59e0b 100%);
+  transition: width 0.3s ease;
 }
 
-.nav-list a:hover {
-	opacity: 0.8;
+.nav-link:hover {
+  color: #ebf3ff;
 }
 
+.nav-link:hover::after {
+  width: 80%;
+}
+
+.nav-link.active {
+  color: #ebf3ff;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.nav-link.active::after {
+  width: 80%;
+}
+
+/* User Menu */
 .user-menu {
-	display: flex;
-	align-items: center;
-	gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.user-menu.show {
-	flex-direction: column;
+.btn-login,
+.btn-signup-header {
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.ls-link {
-	display: inline-block;
-	border-radius: 35px;
-	border: 2px solid white;
-	padding: 0.3em 1.4em;
-	background-color: transparent;
-	color: white;
-	font-weight: bold;
-	transition: background-color 0.5s, transform 0.5s;
+.btn-login {
+  color: white;
+  background: transparent;
+  border: 2px solid #3b82f6;
 }
 
-.ls-link:hover {
-	background-color: white;
-	color: #1f258b;
-	transform: scale(1.125);
+.btn-login:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
 
-@media (max-width: 900px) {
-	.menu-toggle {
-		display: block;
-		grid-column: 3;
-		justify-self: end;
-	}
+.btn-signup-header {
+  color: white;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
 
-	.nav-list,
-	.user-menu {
-		display: none;
-		position: absolute;
-		top: 4.4em;
-		left: 0;
-		right: 0;
-		background-color: #0f17a3;
-		padding: 1em 0;
-		gap: 1em;
-		text-align: center;
-	}
+.btn-signup-header:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
 
-	.nav-list.show,
-	.user-menu.show {
-		display: flex;
-	}
+.btn-signup-header,
+.btn-login:active {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
+
+@media (max-width: 968px) {
+  .header-container {
+    padding: 1rem 1.5rem;
+  }
+
+  .nav-list {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .menu-toggle {
+    display: block;
+    order: 3;
+  }
+
+  .nav-list {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    order: 4;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-top: 1rem;
+  }
+
+  .nav-list.show {
+    display: flex;
+    animation: slideDown 0.3s ease-in-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .nav-link::after {
+    display: none;
+  }
+
+  .user-menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    order: 5;
+    gap: 0.75rem;
+  }
+
+  .user-menu.show {
+    display: flex;
+    animation: slideDown 0.3s ease-in-out;
+  }
+
+  .btn-login,
+  .btn-signup-header {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .logo-container {
+    order: 1;
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0.75rem;
+  }
+
+  .img-wkb {
+    height: 40px;
+  }
+
+  .btn-login,
+  .btn-signup-header {
+    font-size: 0.95rem;
+    padding: 0.875rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+
+.btn-login:focus-visible,
+.btn-signup:focus-visible,
+.nav-link:focus-visible,
+.menu-toggle:focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  .header-container {
+    background: #0f172a;
+    border-bottom-color: #1e293b;
+  }
+
+  .nav-link {
+    color: #e2e8f0;
+  }
+
+  .nav-link:hover {
+    background: rgba(59, 130, 246, 0.15);
+  }
+
+  .nav-list.show {
+    background: #1e293b;
+  }
 }

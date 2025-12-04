@@ -1,143 +1,115 @@
-.container-main-PB {
-  padding: 2rem;
-  max-width: 1000px;
-  margin: auto;
-  background-color: #f7fafc;
-  color: #333333;
-}
-
-.title-page-PB {
-  text-align: center;
-  color: #1f1e1e;
-  font-size: 42px;
-  margin: 10px;
-}
-
-.section-card-PB {
-  background-color: #ffffff;
-  padding: 1.5rem 2rem;
-  margin-bottom: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.title-section-PB {
-  color: #333333;
-  margin-bottom: 1rem;
-}
-
-
-label {
-  display: block;
-  margin: 0.75rem 0 0.25rem;
-  font-weight: 500;
-  color: #222;
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  background-color: #fff;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.group-checkbox-PB,
-.group-radio-PB {
+/* --- GENERAL PAGE LAYOUT --- */
+.pb-container {
+  max-width: 900px;
+  margin: 40px auto;         /* Centra el contenido horizontalmente */
+  padding: 4rem 1rem;     /* Espaciado desde el header */
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 30px;     /* Centra el contenido internamente */
 }
 
-.warning-box-PB {
-  background-color: #f9f9f9;
-  border-left: 6px solid #ff6302;
-  padding: 1rem;
-  margin: 1rem 0;
+
+.pb-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #0F172A;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
-.fieldset-PB {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
+/* --- CARD SECTION --- */
+.pb-card {
+  width: 100%;
+  max-width: 800px;        
+  margin: 0 auto; 
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 2px solid #E2E8F0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.legend-PB {
-  font-weight: bold;
-  color: #2541a0;
+.pb-section-title {
+  font-size: 1.6rem;
+  color: #1E293B;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
-.text-info-PB {
-  font-size: 0.9rem;
-  color: #555;
+/* --- FIELD STYLE --- */
+.pb-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
 }
 
-.button-add-question-PB {
-  background-color: #ff6302;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
+.pb-field label {
+  font-size: 1.05rem;
+  color: #475569;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+/* --- INPUTS --- */
+.pb-input,
+.pb-select,
+.pb-textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 2px solid #CBD5E1;
+  background: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+/* Hover + Focus (según tu guía) */
+.pb-input:hover,
+.pb-select:hover,
+.pb-textarea:hover {
+  border-color: #3B82F6;
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+}
+
+.pb-input:focus,
+.pb-select:focus,
+.pb-textarea:focus {
+  border-color: #1D4ED8;
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
+  outline: 3px solid rgba(59, 130, 246, 0.4);
+}
+
+/* --- BUTTON PRIMARY --- */
+.pb-btn-primary {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  width: 100%;
+  padding: 1.1rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
-  margin-top: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
 }
 
-.button-add-question-PB:hover {
-  background-color: #db5400;
+/* Hover */
+.pb-btn-primary:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
-.text-questions-title-PB {
-  margin-top: 1rem;
-  color: #333333;
+/* Active */
+.pb-btn-primary:active {
+  transform: scale(0.97);
 }
 
-.button-submit-PB {
-  background-color: #ff6302;
-  color: #ffffff;
-  padding: 0.8rem 2rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  margin-top: 2rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button-submit-PB:hover {
-  background-color: #db5400;
-}
-
-
+/* Responsive */
 @media (max-width: 768px) {
-  .container-main-PB {
-    padding: 1rem;
-  }
-
-  .section-card-PB {
-    padding: 1rem;
-  }
-
-  .group-checkbox-PB,
-  .group-radio-PB {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .title-page-PB {
-    font-size: 32px;
+  .pb-card {
+    padding: 1.8rem;
   }
 }
