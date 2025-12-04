@@ -1,0 +1,758 @@
+{
+	"info": {
+		"_postman_id": "4828273a-fd0b-4f70-8de3-0cb201a51233",
+		"name": "WORKABLE Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49659444",
+		"_collection_link": "https://daviidap07-7531113.postman.co/workspace/WORKABLE~13562465-5e22-4ecd-ba24-2c757b60b048/collection/49659444-4828273a-fd0b-4f70-8de3-0cb201a51233?action=share&source=collection_link&creator=49659444"
+	},
+	"item": [
+		{
+			"name": "Auth (ok)",
+			"item": [
+				{
+					"name": "Login Admin (ok)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"correo\": \"admin@example.com\",\n\t\"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Reclutador (ok)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"correo\": \"reclutador@example.com\",\n\t\"password\": \"reclutador123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Aspirante (ok)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"correo\": \"aspirante@example.com\",\n\t\"password\": \"aspirante123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Reclutador (ok)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nombre\": \"Reclutador\",\n    \"apellido\":\"workable\",\n\t\"correo\": \"reclutador@example.com\",\n    \"telefono\": 3105836713,\n    \"fechaNacimiento\": \"2003-11-24\",\n\t\"password\": \"reclutador123\",\n\t\"rol\": \"RECLUTADOR\",\n\t\"municipio\": {\n\t\t\"id\": 3\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register-reclutador",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register-reclutador"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Aspirante (ok)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nombre\": \"Aspirante\",\n    \"apellido\":\"Workable\",\n\t\"correo\": \"aspirante@example.com\",\n    \"telefono\": 3105808371,\n    \"fechaNacimiento\": \"2001-07-24\",\n\t\"password\": \"aspirante123\",\n\t\"rol\": \"ASPIRANTE\",\n\t\"municipio\": {\n\t\t\"id\": 1\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register-aspirante",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register-aspirante"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Independientes (ok)",
+			"item": [
+				{
+					"name": "Habilidad (ok)",
+					"item": [
+						{
+							"name": "getAll (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAll activas (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/activas",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"activas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByNombre (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/nombre/Java",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"nombre",
+										"Java"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByTipo (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/tipo/TECNICA",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"tipo",
+										"TECNICA"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\":\"JavaKotlin\",\n    \"tipo\":\"TECNICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update desactivar (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1/desactivar",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1",
+										"desactivar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\":\"Java Spring\",\n    \"tipo\":\"TECNICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Municipio (ok)",
+					"item": [
+						{
+							"name": "getAll (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByDepartamento (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/departamento/ANTIOQUIA",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"departamento",
+										"ANTIOQUIA"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByNombre (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/nombre/Bogot",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"nombre",
+										"Bogot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":1,\n    \"nombre\":\"Bogotá\",\n    \"departamento\":\"BOGOTA_DC\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/municipios",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\":\"ITUNGA\",\n    \"departamento\":\"BOGOTA_DC\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/2",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8080/api"
+		},
+		{
+			"key": "Token_ASPIRANTE",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwicm9sIjoiQVNQSVJBTlRFIiwic3ViIjoianVhbnBlcmV6QGVtYWlsLmNvbSIsImlhdCI6MTc2NDgyODk2NywiZXhwIjoxNzY0ODY0OTY3fQ.WLnJTGgd61eTNr6cnNHZtU1eQaqKJivp3ojr2pfTvn8"
+		},
+		{
+			"key": "Token_ADMIN",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwicm9sIjoiQURNSU4iLCJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2NDg1NTU0MiwiZXhwIjoxNzY0ODkxNTQyfQ.6g43DOXtWKkAfPZv4mJhPL5UvaR_zG5fScFxUK8ieVE"
+		}
+	]
+}
