@@ -1,5 +1,5 @@
 const API_URL = "http://localhost:8080/api/aspirante";
-
+const AUTH_URL = "http://localhost:8080/api/auth";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -7,6 +7,22 @@ const getAuthHeaders = () => {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
   };
+};
+
+export const registrarAspirante = async (data) => {
+  const res = await fetch(`${AUTH_URL}/register-aspirante`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({ message: "Error al registrar" }));
+    throw new Error(errData.message || "Error al registrar aspirante");
+  }
+  return res.json();
 };
 
 export const buscarAspirantePorId = async (id) => {

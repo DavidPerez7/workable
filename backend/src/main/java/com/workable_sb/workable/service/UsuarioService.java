@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +23,7 @@ public class UsuarioService {
     private MunicipioRepo municipioRepo;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     // - READ
     public Optional<Usuario> getById(Long id) {
@@ -166,13 +166,5 @@ public class UsuarioService {
         Usuario existingUsuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         usuarioRepo.delete(existingUsuario);
-    }
-
-    private boolean puedeModificarUsuario(Usuario usuario, Long usuarioActualId) {
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-        
-        // Es ADMIN o es el mismo usuario
-        return usuarioActual.getRol() == Usuario.Rol.ADMIN || usuario.getId().equals(usuarioActualId);
     }
 }
