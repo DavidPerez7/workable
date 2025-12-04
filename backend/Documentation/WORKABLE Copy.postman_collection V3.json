@@ -2027,7 +2027,7 @@
 					"name": "Municipio",
 					"item": [
 						{
-							"name": "Obtener Municipios por Departamento",
+							"name": "getByDepartamento",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2056,7 +2056,7 @@
 							"response": []
 						},
 						{
-							"name": "Buscar Municipios por Nombre",
+							"name": "getByNombre",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2085,7 +2085,7 @@
 							"response": []
 						},
 						{
-							"name": "Obtener Municipio por ID",
+							"name": "getById",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2113,7 +2113,7 @@
 							"response": []
 						},
 						{
-							"name": "Obtener todos los Municipios",
+							"name": "getAll",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2140,7 +2140,7 @@
 							"response": []
 						},
 						{
-							"name": "Crear Municipio",
+							"name": "create",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2181,7 +2181,7 @@
 							"response": []
 						},
 						{
-							"name": "Eliminar Municipio",
+							"name": "delete",
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -2209,7 +2209,7 @@
 							"response": []
 						},
 						{
-							"name": "Actualizar Municipio",
+							"name": "update",
 							"request": {
 								"auth": {
 									"type": "bearer",
