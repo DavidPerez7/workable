@@ -48,7 +48,7 @@ public class Estudio {
     @Column(length = 1000)
     private String descripcion;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Municipio municipio;
@@ -72,13 +72,14 @@ public class Estudio {
         BACHILLERATO,
         TECNICO,
         TECNOLOGO,
+        LICENCIATURA,
         UNIVERSITARIO,
         ESPECIALIZACION,
         MAESTRIA,
         DOCTORADO
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
     private Usuario usuario;
 

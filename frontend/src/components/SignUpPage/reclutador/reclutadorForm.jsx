@@ -1,19 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useRef} from "react";
 import { useNavigate } from "react-router-dom";
+import { registrarReclutador } from "../../../api/authApi";
 import "./ReclutadorForm.css";
 
 const ReclutadorForm = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
-  const [compromisoInclusivo, setCompromisoInclusivo] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (!compromisoInclusivo) {
-      alert("Debes comprometerte con la inclusión laboral para continuar");
-      return;
-    }
 
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
@@ -62,36 +57,29 @@ const ReclutadorForm = () => {
     };
 
     try {
-      // =======================================================
-      //  🔗 PETICIÓN REAL A LA API (cuando la tengas lista):
-      //
-      //   const response = await axios.post(
-      //       "https://tu-api.com/reclutadores/registrar",
-      //       reclutadorData
-      //   );
-      //
-      //   if (response.status === 201) {
-      //       navigate("/login");
-      //   }
-      //
-      // =======================================================
+      // 🔗 PETICIÓN REAL A LA API USANDO AXIOS
+      const response = await registrarReclutador(reclutadorData);
 
-      console.log("Datos listos para API:", reclutadorData);
-      alert("Reclutador registrado con éxito");
+      // Si la petición es exitosa (201 Created)
+      console.log("Reclutador registrado con éxito:", response);
+      alert("¡Reclutador registrado con éxito! Redirigiendo a login...");
 
       formRef.current.reset();
-      setCompromisoInclusivo(false);
-      navigate("/login");
+      
+      // Redirigir a login después de 1 segundo
+      setTimeout(() => navigate("/login"), 1000);
 
     } catch (error) {
-      console.error("Error al registrar:", error);
+      console.error("Error al registrar reclutador:", error.message);
 
       let mensajeError = "Error al completar el registro";
 
       if (error.response) {
-        mensajeError = error.response.data.message || mensajeError;
-      } else if (error.request) {
-        mensajeError = "No se pudo conectar con el servidor";
+        mensajeError = error.response.data?.message || 
+                       error.response.data?.error || 
+                       mensajeError;
+      } else if (error.message) {
+        mensajeError = error.message;
       }
 
       alert(mensajeError);
@@ -106,7 +94,7 @@ const ReclutadorForm = () => {
         <div className="reclutador-form-header">
           <h1 className="reclutador-form-title">Registro de Reclutador</h1>
           <p className="reclutador-form-subtitle">
-            Únete a nuestra plataforma inclusiva.
+            Únete a nuestra plataforma de empleo.
           </p>
         </div>
 

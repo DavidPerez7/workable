@@ -39,15 +39,15 @@ public class Feedback {
 	private LocalDate fechaCreacion;
 	private Boolean isActive = true;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "empresa_id", referencedColumnName = "id")
 	private Empresa empresa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "oferta_id", referencedColumnName = "id")
 	private Oferta oferta;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
 	private Usuario usuario;
 

@@ -44,12 +44,12 @@ public class Experiencia {
 
   private LocalDate fechaFin;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
   @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
   @OnDelete(action = OnDeleteAction.SET_NULL)
   private Municipio municipio;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
   private Usuario usuario;
 
