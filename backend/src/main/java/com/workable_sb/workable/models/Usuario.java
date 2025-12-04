@@ -51,7 +51,7 @@ public class Usuario {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_municipio"))
+    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
     private Municipio municipio;
 
     @PrePersist

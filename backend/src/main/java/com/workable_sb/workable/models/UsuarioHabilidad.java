@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,11 +33,11 @@ public class UsuarioHabilidad {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuarioHabilidad_usuario"))
+    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
     private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "habilidad_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuarioHabilidad_habilidad"))
+    @JoinColumn(name = "habilidad_id", nullable = false, referencedColumnName = "id")
     private Habilidad habilidad;
 
     @Enumerated(EnumType.STRING)

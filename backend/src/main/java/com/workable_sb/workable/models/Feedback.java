@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,15 +40,15 @@ public class Feedback {
 	private Boolean isActive = true;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "empresa_id", foreignKey = @ForeignKey(name = "FK_empresa_feedback"))
+	@JoinColumn(name = "empresa_id", referencedColumnName = "id")
 	private Empresa empresa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_oferta_feedback"))
+	@JoinColumn(name = "oferta_id", referencedColumnName = "id")
 	private Oferta oferta;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_feedback"))
+	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
 	private Usuario usuario;
 
 	@PrePersist

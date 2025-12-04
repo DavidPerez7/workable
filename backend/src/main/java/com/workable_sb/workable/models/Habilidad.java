@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 public class Habilidad {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

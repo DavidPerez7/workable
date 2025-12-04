@@ -13,7 +13,6 @@ import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Enumerated;
@@ -43,11 +42,11 @@ public class Experiencia {
   private LocalDate fechaFin;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_experiencia_municipio"))
+  @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
   private Municipio municipio;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_datoExperiencia_aspirante"))
+  @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
   private Usuario usuario;
 
   @Enumerated(EnumType.STRING)
