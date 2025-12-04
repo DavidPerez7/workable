@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,9 +30,9 @@ public class Oferta {
 	}
 	
 	public enum Beneficio {
-		SEGURO_SALUD, SEGURO_VIDA, BONOS, AUXILIO_TRANSPORTE, AUXILIO_ALIMENTACION,
-		CAPACITACIONES, TELETRABAJO, HORARIO_FLEXIBLE, VACACIONES_ADICIONALES, GIMNASIO,
-		DIAS_COMPENSATORIOS, PLAN_CARRERA, DESCUENTOS_COMERCIALES, AUXILIO_EDUCATIVO, PRIMA_EXTRALEGAL
+		SEGUROSALUD, SEGUROVIDA, BONOS, AUXILIOTRANSPORTE, AUXILIOALIMENTACION,
+		CAPACITACIONES, TELETRABAJO, HORARIOFLEXIBLE, VACACIONESADICIONALES, GIMNASIO,
+		DIASCOMPENSATORIOS, PLANCARRERA, DESCUENTOSCOMERCIALESAUX, AUXILIOEDUCATIVO, PRIMAEXTRALEGAL
 	}
 	
 	public enum NivelExperiencia {
@@ -74,8 +76,9 @@ public class Oferta {
 	@Column(name = "requisito", length = 100, nullable = false)
 	private Set<String> requisitos = new HashSet<>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private Municipio municipio;
 
 	@Enumerated(EnumType.STRING)
