@@ -35,6 +35,7 @@ import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/Ve
 import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
 import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil";
 import NewReclutador from "./components/SignUpPage/reclutador/newreclutador/NewReclutador";
+import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEmpresa";
 
 function App() {
   return (
@@ -97,6 +98,7 @@ function App() {
         />
         <Route path="/MiPerfil/VerPerfil" element={<VerPerfil />} />
         <Route path="/SignUpPage/NewReclutador" element={<NewReclutador />} />
+        <Route path="/Reclutador/RegistrarEmpresa" element={<RegistrarEmpresa />} />
       </Routes>
     </Router>
   );
