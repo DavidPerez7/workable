@@ -34,6 +34,9 @@ public class CitacionService {
     
     @Autowired
     private WhatsAppService whatsAppService;
+
+    @Autowired
+    private NotificacionService notificacionService;
     
     // ===== CREAR CITACIÓN =====
     public Citacion crearCitacion(Long postulacionId, Long reclutadorId, LocalDate fechaCitacion, 
@@ -127,6 +130,15 @@ public class CitacionService {
             citacion.setEstado(Estado.PENDIENTE);
             citacionRepo.save(citacion);
             
+            // Crear alerta de notificación en la app
+            notificacionService.crearAlertaCitacion(
+                aspirante.getId(),
+                nombreOferta,
+                citacion.getFechaCitacion().toString(),
+                citacion.getHora(),
+                citacion.getId()
+            );
+            
             Map<String, Object> respuesta = new HashMap<>();
             respuesta.put("mensaje", "Citación enviada por WhatsApp exitosamente");
             respuesta.put("citacionId", citacion.getId());
@@ -211,6 +223,15 @@ public class CitacionService {
                 citacion.setMensajeEnviado(true);
                 citacionRepo.save(citacion);
                 mensajesEnviados.add(numeroWhatsApp);
+                
+                // Crear alerta de notificación
+                notificacionService.crearAlertaCitacion(
+                    aspirante.getId(),
+                    nombreOferta,
+                    fechaCitacion.toString(),
+                    hora,
+                    citacionGuardada.getId()
+                );
                 
             } catch (Exception e) {
                 errores.add("Error para postulación " + postulacionId + ": " + e.getMessage());
