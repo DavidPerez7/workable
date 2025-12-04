@@ -18,7 +18,7 @@ const ReclutadorForm = () => {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
 
-    // Validación de campos obligatorios
+    // === VALIDACIÓN DE CAMPOS OBLIGATORIOS (solo del reclutador) ===
     const camposRequeridos = [
       "nombre",
       "apellido",
@@ -28,24 +28,15 @@ const ReclutadorForm = () => {
       "confirmPassword",
       "fechaNacimiento",
       "municipioId",
-      "nombreEmpresa",
-      "ubicacion",
-      "nit",
-      "razonSocial",
-      "descripcionEmpresa",
-      "numeroTrabajadores",
-      "emailContacto",
-      "telefonoContacto",
     ];
 
     const camposFaltantes = camposRequeridos.filter((campo) => !data[campo]);
-
     if (camposFaltantes.length > 0) {
       alert("Todos los campos marcados con * son obligatorios");
       return;
     }
 
-    // Validación de contraseña
+    // === VALIDACIÓN DE CONTRASEÑA ===
     if (data.password.length < 8) {
       alert("La contraseña debe tener mínimo 8 caracteres");
       return;
@@ -56,7 +47,7 @@ const ReclutadorForm = () => {
       return;
     }
 
-    // Preparar datos del reclutador (Usuario)
+    // === OBJETO RECLUTADOR FINAL PARA API ===
     const reclutadorData = {
       nombre: data.nombre,
       apellido: data.apellido,
@@ -70,42 +61,31 @@ const ReclutadorForm = () => {
       },
     };
 
-    // Preparar datos de la empresa
-    const empresaData = {
-      nombre: data.nombreEmpresa,
-      nit: data.nit,
-      razonSocial: data.razonSocial,
-      descripcion: data.descripcionEmpresa,
-      numeroTrabajadores: Number(data.numeroTrabajadores),
-      emailContacto: data.emailContacto,
-      telefonoContacto: data.telefonoContacto,
-      ubicacion: data.ubicacion,
-      website: data.website || null,
-      categories: Array.from(formData.getAll("categories")),
-      municipio: {
-        id: Number(data.municipioId),
-      },
-      reclutadorOwner: reclutadorData,
-    };
-
-    const registroCompleto = {
-      reclutador: reclutadorData,
-      empresa: empresaData,
-    };
-
     try {
-      // Aquí deberías llamar a tu API que maneje el registro completo
-      // const respuesta = await registrarReclutadorConEmpresa(registroCompleto);
+      // =======================================================
+      //  🔗 PETICIÓN REAL A LA API (cuando la tengas lista):
+      //
+      //   const response = await axios.post(
+      //       "https://tu-api.com/reclutadores/registrar",
+      //       reclutadorData
+      //   );
+      //
+      //   if (response.status === 201) {
+      //       navigate("/login");
+      //   }
+      //
+      // =======================================================
 
-      console.log("Datos a enviar:", registroCompleto);
-      alert("Reclutador y empresa registrados con éxito");
+      console.log("Datos listos para API:", reclutadorData);
+      alert("Reclutador registrado con éxito");
+
       formRef.current.reset();
       setCompromisoInclusivo(false);
-
-      // Redirigir al login o dashboard del reclutador
       navigate("/login");
+
     } catch (error) {
       console.error("Error al registrar:", error);
+
       let mensajeError = "Error al completar el registro";
 
       if (error.response) {
@@ -121,15 +101,18 @@ const ReclutadorForm = () => {
   return (
     <div className="reclutador-form-container">
       <div className="reclutador-form-card">
+
+        {/* HEADER */}
         <div className="reclutador-form-header">
           <h1 className="reclutador-form-title">Registro de Reclutador</h1>
           <p className="reclutador-form-subtitle">
-            Únete a nuestra plataforma inclusiva y representa tu empresa
+            Únete a nuestra plataforma inclusiva.
           </p>
         </div>
 
+        {/* FORMULARIO */}
         <form onSubmit={handleSubmit} ref={formRef}>
-          {/* Sección: Datos del Reclutador */}
+
           <div className="form-section-personal-section">
             <h2 className="section-title-reclutador">Información Personal</h2>
 
@@ -141,6 +124,7 @@ const ReclutadorForm = () => {
                 required
                 className="form-input"
               />
+
               <input
                 type="text"
                 name="apellido"
@@ -148,6 +132,7 @@ const ReclutadorForm = () => {
                 required
                 className="form-input"
               />
+
               <input
                 type="email"
                 name="correo"
@@ -155,6 +140,7 @@ const ReclutadorForm = () => {
                 required
                 className="form-input"
               />
+
               <input
                 type="tel"
                 name="telefono"
@@ -163,13 +149,19 @@ const ReclutadorForm = () => {
                 pattern="[0-9]{10}"
                 className="form-input"
               />
+
               <input
                 type="date"
                 name="fechaNacimiento"
                 required
                 className="form-input"
               />
-              <select name="municipioId" required className="form-input">
+
+              <select
+                name="municipioId"
+                required
+                className="form-input"
+              >
                 <option value="">Selecciona municipio *</option>
                 <option value="1">Bogotá D.C.</option>
                 <option value="2">Medellín</option>
@@ -177,6 +169,7 @@ const ReclutadorForm = () => {
                 <option value="4">Barranquilla</option>
                 <option value="5">Cartagena</option>
               </select>
+
               <input
                 type="password"
                 name="password"
@@ -185,6 +178,7 @@ const ReclutadorForm = () => {
                 minLength="8"
                 className="form-input"
               />
+
               <input
                 type="password"
                 name="confirmPassword"
@@ -196,130 +190,31 @@ const ReclutadorForm = () => {
             </div>
           </div>
 
-          {/* Sección: Datos de la Empresa */}
-          <div className="form-section empresa-section">
-            <h2 className="section-title">Información de la Empresa</h2>
+          <button type="submit" className="submit-button">
+            Registrar Reclutador
+          </button>
 
-            <div className="form-grid">
-              <input
-                type="text"
-                name="nombreEmpresa"
-                placeholder="Nombre de la empresa *"
-                required
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="nit"
-                placeholder="NIT *"
-                required
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="razonSocial"
-                placeholder="Razón social *"
-                required
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="ubicacion"
-                placeholder="Ubicacion"
-                required
-                className="form-input"
-              />
-              <input
-                type="number"
-                name="numeroTrabajadores"
-                placeholder="Número de trabajadores *"
-                required
-                min="1"
-                className="form-input"
-              />
-              <input
-                type="email"
-                name="emailContacto"
-                placeholder="Email de contacto empresarial *"
-                required
-                className="form-input"
-              />
-              <input
-                type="tel"
-                name="telefonoContacto"
-                placeholder="Teléfono de contacto *"
-                required
-                pattern="[0-9]{10}"
-                className="form-input"
-              />
-              <input
-                type="url"
-                name="website"
-                placeholder="Sitio web (opcional)"
-                className="form-input"
-              />
-
-              <div className="full-width">
-                <textarea
-                  name="descripcionEmpresa"
-                  placeholder="Descripción de la empresa *"
-                  required
-                  rows="4"
-                  className="form-input form-textarea"
-                />
-              </div>
-
-              <div className="full-width">
-                <label className="categories-label">
-                  Categorías de la empresa (selecciona una o más) *
-                </label>
-                <div className="categories-grid">
-                  {[
-                    "TECNOLOGIA",
-                    "SOFTWARE",
-                    "SALUD",
-                    "EDUCACION",
-                    "FINANZAS",
-                    "CONSULTORIA",
-                    "MANUFACTURERA",
-                    "RETAIL",
-                    "MARKETING",
-                    "RECURSOS_HUMANOS",
-                  ].map((cat) => (
-                    <label key={cat} className="category-item">
-                      <input
-                        type="checkbox"
-                        name="categories"
-                        value={cat}
-                        className="category-checkbox"
-                      />
-                      <span className="category-label">
-                        {cat.replace(/_/g, " ")}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
         </form>
-        <button type="submit" className="submit-button">
-          Registrar Reclutador y Empresa
-        </button>
 
+        {/* LINK DE NUEVO RECLUTADOR (TOKEN + NIT) */}
         <p className="new-reclutador-link">
           ¿Deseas ser reclutador de una empresa?{" "}
-          <a href="/SignUpPage/NewReclutador" className="new-reclutador-anchor">
+          <a
+            href="/SignUpPage/NewReclutador"
+            className="new-reclutador-anchor"
+          >
             Regístrate aquí
           </a>
         </p>
 
+        {/* LINK LOGIN */}
         <p className="login-link">
           ¿Ya tienes cuenta?{" "}
           <a href="/login" className="login-anchor">
             Inicia sesión aquí
           </a>
         </p>
+
       </div>
     </div>
   );
