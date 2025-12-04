@@ -21,15 +21,6 @@
 | **HABILIDAD**      |   ✅   |   ✅    |    ✅     |     ✅        |     ✅       |     ✅      |     ✅        |
 | **EMPRESA CATEGORÍA** | ✅ |   ✅    |    ✅     |     ✅        |     ✅       |     ✅      |     ✅        |
 
-### 📦 Postman Collection Status
-
-| Sección            | Endpoints      | Estado        |
-|--------------------|:------:|:------:|
-| **Auth**           |   3/3  | ✅ COMPLETO  |
-| **Municipio**      |   8/8  | ✅ COMPLETO  |
-| **Habilidad**      |   9/9  | ✅ COMPLETO  |
-| **EmpresaCategoria**|  8/8  | ✅ COMPLETO  |
-
 ---
 
 ## 🟣 Enums (Ya definidos en modelos)
