@@ -217,16 +217,12 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/usuario/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/usuario/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"usuario",
-										""
+										"usuario"
 									]
 								}
 							},
@@ -256,16 +252,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/usuario/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/usuario/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"usuario",
-										""
+										"usuario"
 									]
 								}
 							},
@@ -286,17 +278,13 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/usuario/correo/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/usuario/correo/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
 										"usuario",
-										"correo",
-										""
+										"correo"
 									]
 								}
 							},
@@ -317,16 +305,12 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/usuario/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/usuario/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"usuario",
-										""
+										"usuario"
 									]
 								}
 							},
@@ -347,16 +331,12 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/usuario/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/usuario/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"usuario",
-										""
+										"usuario"
 									]
 								}
 							},
@@ -507,16 +487,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/estudio/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/estudio/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"estudio",
-										""
+										"estudio"
 									]
 								}
 							},
@@ -537,16 +513,12 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/estudio/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/estudio/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"estudio",
-										""
+										"estudio"
 									]
 								}
 							},
@@ -567,16 +539,12 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/estudio/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/estudio/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"estudio",
-										""
+										"estudio"
 									]
 								}
 							},
@@ -606,16 +574,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/estudio/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/estudio/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"estudio",
-										""
+										"estudio"
 									]
 								}
 							},
@@ -674,16 +638,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/experiencia/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/experiencia/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"experiencia",
-										""
+										"experiencia"
 									]
 								}
 							},
@@ -1089,16 +1049,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/empresa/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/empresa/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"empresa",
-										""
+										"empresa"
 									]
 								}
 							},
@@ -1119,16 +1075,12 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:8080/api/empresa/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/empresa/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"empresa",
-										""
+										"empresa"
 									]
 								}
 							},
@@ -1158,16 +1110,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/empresa/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/empresa/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"empresa",
-										""
+										"empresa"
 									]
 								}
 							},
@@ -1348,16 +1296,12 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/api/oferta/",
-									"protocol": "http",
+									"raw": "{{BASE_URL}}/oferta/",
 									"host": [
-										"localhost"
+										"{{BASE_URL}}"
 									],
-									"port": "8080",
 									"path": [
-										"api",
-										"oferta",
-										""
+										"oferta"
 									]
 								}
 							},
@@ -1570,23 +1514,7 @@
 										"postulacion",
 										"oferta",
 										":ofertaId",
-										"estado"
-									],
-									"query": [
-										{
-											"key": "estado",
-											"value": ""
-										},
-										{
-											"key": "usuarioIdActual",
-											"value": ""
-										}
-									],
-									"variable": [
-										{
-											"key": "ofertaId",
-											"value": ""
-										}
+										"estado?estado=&usuarioIdActual="
 									]
 								}
 							},
@@ -1615,23 +1543,7 @@
 										"postulacion",
 										"oferta",
 										":ofertaId",
-										"estado"
-									],
-									"query": [
-										{
-											"key": "estado",
-											"value": ""
-										},
-										{
-											"key": "usuarioIdActual",
-											"value": ""
-										}
-									],
-									"variable": [
-										{
-											"key": "ofertaId",
-											"value": ""
-										}
+										"estado?estado=&usuarioIdActual="
 									]
 								}
 							},
@@ -1659,19 +1571,7 @@
 									"path": [
 										"postulacion",
 										"oferta",
-										":ofertaId"
-									],
-									"query": [
-										{
-											"key": "usuarioIdActual",
-											"value": ""
-										}
-									],
-									"variable": [
-										{
-											"key": "ofertaId",
-											"value": ""
-										}
+										":ofertaId?usuarioIdActual="
 									]
 								}
 							},
@@ -1700,23 +1600,7 @@
 										"postulacion",
 										"oferta",
 										":ofertaId",
-										"estado"
-									],
-									"query": [
-										{
-											"key": "estado",
-											"value": ""
-										},
-										{
-											"key": "usuarioIdActual",
-											"value": ""
-										}
-									],
-									"variable": [
-										{
-											"key": "ofertaId",
-											"value": ""
-										}
+										"estado?estado=&usuarioIdActual="
 									]
 								}
 							},
@@ -1792,17 +1676,7 @@
 									],
 									"path": [
 										"postulacion",
-										"verificar"
-									],
-									"query": [
-										{
-											"key": "usuarioId",
-											"value": ""
-										},
-										{
-											"key": "ofertaId",
-											"value": ""
-										}
+										"verificar?usuarioId=&ofertaId="
 									]
 								}
 							},
@@ -1887,8 +1761,7 @@
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"habilidades",
-										""
+										"habilidades"
 									]
 								}
 							},
@@ -2043,8 +1916,7 @@
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"habilidades",
-										""
+										"habilidades"
 									]
 								}
 							},
@@ -2261,8 +2133,7 @@
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"municipios",
-										""
+										"municipios"
 									]
 								}
 							},
@@ -2303,8 +2174,7 @@
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"municipios",
-										""
+										"municipios"
 									]
 								}
 							},
@@ -2412,7 +2282,7 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "http://localhost:8080/api/auth"
+			"value": "http://localhost:8080/api"
 		},
 		{
 			"key": "Token_ASPIRANTE",
