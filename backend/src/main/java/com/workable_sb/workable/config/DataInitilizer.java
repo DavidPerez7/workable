@@ -98,4 +98,5 @@ public class DataInitilizer implements CommandLineRunner {
             System.out.println("   🔐 Contraseña: admin123");
         }
     }
+    // AGREGAR 10 REGISTROS POR CADA ENTIDAD
 }
