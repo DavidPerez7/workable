@@ -69,13 +69,13 @@ public class Oferta {
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(
 		name = "oferta_requisitos",
-		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaRequisitos_oferta"))
+		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
 	)
 	@Column(name = "requisito", length = 100, nullable = false)
 	private Set<String> requisitos = new HashSet<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_municipio"))
+	@JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
 	private Municipio municipio;
 
 	@Enumerated(EnumType.STRING)
@@ -87,17 +87,17 @@ public class Oferta {
 	private TipoContrato tipoContrato;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "FK_oferta_empresa"))
+	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
 	private Empresa empresa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "reclutador_id", foreignKey = @ForeignKey(name = "FK_oferta_reclutador"))
+	@JoinColumn(name = "reclutador_id", referencedColumnName = "id")
 	private Usuario reclutador;
 
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(
 		name = "oferta_beneficios",
-		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaBeneficios_oferta"))
+		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
 	)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "beneficio", length = 30, nullable = false)
@@ -106,8 +106,8 @@ public class Oferta {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 		name = "oferta_habilidad_requerida",
-		joinColumns = @JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_oferta")),
-		inverseJoinColumns = @JoinColumn(name = "habilidad_id", foreignKey = @ForeignKey(name = "FK_ofertaHabilidad_habilidad"))
+		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id"),
+		inverseJoinColumns = @JoinColumn(name = "habilidad_id", referencedColumnName = "id")
 	)
 	private Set<Habilidad> habilidadesRequeridas = new HashSet<>();
 

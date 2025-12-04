@@ -3,7 +3,6 @@ package com.workable_sb.workable.models;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,11 +39,11 @@ public class Direccion {
     private Boolean isPrincipal;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(name = "FK_direccion_empresa"))
+    @JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
     private Empresa empresa;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "municipio_id", nullable = false, foreignKey = @ForeignKey(name = "FK_direccion_municipio"))
+    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
     private Municipio municipio;
 
     @PrePersist

@@ -32,8 +32,8 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     public SecurityConfig(JwtFilter jwtFilter, 
-                         JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                         CustomUserDetailsService customUserDetailsService) {
+                        JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+                        CustomUserDetailsService customUserDetailsService) {
         this.jwtFilter = jwtFilter;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.customUserDetailsService = customUserDetailsService;

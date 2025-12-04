@@ -44,7 +44,7 @@ public class Notificacion {
     private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_notificacion_usuario"))
+    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
     private Usuario usuario;
 
     @PrePersist
