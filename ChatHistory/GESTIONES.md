@@ -13,13 +13,13 @@
 
 ---
 
-## 🟡 Entidades Independientes (POR IMPLEMENTAR ENDPOINTS)
+## 🟡 Entidades Independientes (ENDPOINTS LISTOS ✅)
 
 | Entidad            | Create | Get all | Get by ID | Get by nombre | Update by ID | Desactivar | Delete by ID |
 |--------------------|:------:|:-------:|:---------:|:-------------:|:------------:|:----------:|:------------:|
-| **MUNICIPIO**      |   ⏳   |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |
-| **HABILIDAD**      |   ⏳   |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |
-| **EMPRESA CATEGORÍA** | ⏳ |   ⏳    |    ⏳     |     ⏳        |     ⏳       |     ⏳      |     ⏳        |
+| **MUNICIPIO**      |   ✅   |   ✅    |    ✅     |     ✅        |     ✅       |     ⏳      |     ✅        |
+| **HABILIDAD**      |   ✅   |   ✅    |    ✅     |     ✅        |     ✅       |     ✅      |     ✅        |
+| **EMPRESA CATEGORÍA** | ✅ |   ✅    |    ✅     |     ✅        |     ✅       |     ✅      |     ✅        |
 
 ---
 
