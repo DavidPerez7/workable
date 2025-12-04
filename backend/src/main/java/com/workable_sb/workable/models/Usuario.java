@@ -3,6 +3,8 @@ package com.workable_sb.workable.models;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,6 +54,7 @@ public class Usuario {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Municipio municipio;
 
     @PrePersist

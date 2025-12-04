@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -76,6 +78,7 @@ public class Oferta {
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private Municipio municipio;
 
 	@Enumerated(EnumType.STRING)
