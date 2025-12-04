@@ -45,11 +45,11 @@ public class Postulacion {
 	ENTREVISTA_PROGRAMADA
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "oferta_id", nullable = false, referencedColumnName = "id")
 	private Oferta oferta;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
 	private Usuario usuario;
 

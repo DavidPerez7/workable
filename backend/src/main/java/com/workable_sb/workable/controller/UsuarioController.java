@@ -6,6 +6,7 @@ import com.workable_sb.workable.service.UsuarioService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,45 +26,58 @@ public class UsuarioController {
     }
 
     // - CREATE (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Usuario> create(@RequestBody Usuario usuario) {
         return ResponseEntity.ok(usuarioService.create(usuario));
     }
 
-    // - READ by id
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<Usuario>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(usuarioService.getById(id));
+    // - READ all
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
+    @GetMapping
+    public ResponseEntity<List<Usuario>> getAll() {
+        return ResponseEntity.ok(usuarioService.getAll());
     }
 
     // - READ by correo
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/correo")
     public ResponseEntity<Optional<Usuario>> getByCorreo(@RequestParam String correo) {
         return ResponseEntity.ok(usuarioService.getByCorreo(correo));
     }
 
     // - READ by nombre
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/nombre")
     public ResponseEntity<Optional<Usuario>> getByNombre(@RequestParam String nombre) {
         return ResponseEntity.ok(usuarioService.getByNombre(nombre));
     }
 
     // - READ by rol
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/rol")
     public ResponseEntity<List<Usuario>> getByRol(@RequestParam Usuario.Rol rol) {
         return ResponseEntity.ok(usuarioService.getByRol(rol));
     }
 
     // - READ by isActive
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/activos")
     public ResponseEntity<List<Usuario>> getByIsActive(@RequestParam Boolean isActive) {
         return ResponseEntity.ok(usuarioService.getByIsActive(isActive));
     }
 
     // - READ by municipio
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/municipio/{municipioId}")
     public ResponseEntity<List<Usuario>> getByMunicipio(@PathVariable Long municipioId) {
         return ResponseEntity.ok(usuarioService.getByMunicipio(municipioId));
+    }
+
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Usuario>> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.getById(id));
     }
 
     // - UPDATE (PUBLICO: solo aspirantes/reclutadores)
@@ -73,6 +87,7 @@ public class UsuarioController {
     }
 
     // - UPDATE (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario usuario) {
         return ResponseEntity.ok(usuarioService.update(id, usuario));
@@ -86,6 +101,7 @@ public class UsuarioController {
     }
 
     // - DELETE (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         usuarioService.delete(id);

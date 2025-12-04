@@ -26,6 +26,10 @@ public class UsuarioService {
     private PasswordEncoder passwordEncoder;
 
     // - READ
+    public List<Usuario> getAll() {
+        return usuarioRepo.findAll();
+    }
+
     public Optional<Usuario> getById(Long id) {
         return usuarioRepo.findById(id);
     }
@@ -73,7 +77,9 @@ public class UsuarioService {
             Municipio municipio = municipioRepo.findById(request.getMunicipio().getId()).orElseThrow(() -> new RuntimeException("Municipio not found"));
             request.setMunicipio(municipio);
         }
-        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
+            request.setPassword(passwordEncoder.encode("123456"));
+        } else {
             request.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         return usuarioRepo.save(request);
@@ -121,20 +127,22 @@ public class UsuarioService {
     public Usuario update(Long id, Usuario request) {
         Usuario existingUsuario = usuarioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        // Validar correo único (solo si cambió)
-        if (!existingUsuario.getCorreo().equals(request.getCorreo())) {
+        
+        // Solo actualizar correo si viene en el request y es diferente
+        if (request.getCorreo() != null && !existingUsuario.getCorreo().equals(request.getCorreo())) {
             if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 throw new RuntimeException("Correo already in use");
             }
             existingUsuario.setCorreo(request.getCorreo());
         }
-        existingUsuario.setNombre(request.getNombre());
-        existingUsuario.setApellido(request.getApellido());
-        existingUsuario.setTelefono(request.getTelefono());
-        existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
-        existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
-        existingUsuario.setIsActive(request.getIsActive());
-        existingUsuario.setRol(request.getRol());
+        
+        if (request.getNombre() != null) existingUsuario.setNombre(request.getNombre());
+        if (request.getApellido() != null) existingUsuario.setApellido(request.getApellido());
+        if (request.getTelefono() != null) existingUsuario.setTelefono(request.getTelefono());
+        if (request.getUrlFotoPerfil() != null) existingUsuario.setUrlFotoPerfil(request.getUrlFotoPerfil());
+        if (request.getFechaNacimiento() != null) existingUsuario.setFechaNacimiento(request.getFechaNacimiento());
+        if (request.getIsActive() != null) existingUsuario.setIsActive(request.getIsActive());
+        if (request.getRol() != null) existingUsuario.setRol(request.getRol());
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             existingUsuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }

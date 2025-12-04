@@ -76,7 +76,7 @@ public class Oferta {
 	@Column(name = "requisito", length = 100, nullable = false)
 	private Set<String> requisitos = new HashSet<>();
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
 	@OnDelete(action = OnDeleteAction.SET_NULL)
 	private Municipio municipio;
@@ -89,11 +89,11 @@ public class Oferta {
 	@Column(nullable = false, length = 30)
 	private TipoContrato tipoContrato;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
 	private Empresa empresa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "reclutador_id", referencedColumnName = "id")
 	private Usuario reclutador;
 
