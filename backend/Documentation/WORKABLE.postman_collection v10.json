@@ -1,0 +1,3822 @@
+{
+	"info": {
+		"_postman_id": "4828273a-fd0b-4f70-8de3-0cb201a51233",
+		"name": "WORKABLE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49659444",
+		"_collection_link": "https://daviidap07-7531113.postman.co/workspace/WORKABLE~13562465-5e22-4ecd-ba24-2c757b60b048/collection/49659444-4828273a-fd0b-4f70-8de3-0cb201a51233?action=share&source=collection_link&creator=49659444"
+	},
+	"item": [
+		{
+			"name": "Auth (ok)",
+			"item": [
+				{
+					"name": "Login Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"correo\": \"admin@example.com\",\n\t\"password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Reclutador",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"correo\": \"reclutador@example.com\",\n\t\"password\": \"reclutador123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Aspirante",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"correo\": \"aspirante@example.com\",\n\t\"password\": \"aspirante123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Reclutador",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nombre\": \"Reclutador\",\n    \"apellido\":\"workable\",\n\t\"correo\": \"reclutador@example.com\",\n    \"telefono\": 3105836713,\n    \"fechaNacimiento\": \"2003-11-24\",\n\t\"password\": \"reclutador123\",\n\t\"rol\": \"RECLUTADOR\",\n\t\"municipio\": {\n\t\t\"id\": 3\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register-reclutador",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register-reclutador"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Aspirante",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nombre\": \"Aspirante\",\n    \"apellido\":\"Workable\",\n\t\"correo\": \"aspirante@example.com\",\n    \"telefono\": 3105808371,\n    \"fechaNacimiento\": \"2001-07-24\",\n\t\"password\": \"aspirante123\",\n\t\"rol\": \"ASPIRANTE\",\n\t\"municipio\": {\n\t\t\"id\": 1\n\t}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/register-aspirante",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"auth",
+								"register-aspirante"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Dependientes",
+			"item": [
+				{
+					"name": "Usuario (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/usuario",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByCorreo (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/correo/admin@example.com",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario",
+										"correo",
+										"admin@example.com"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\": \"Juan\",\n    \"apellido\": \"Pérez\",\n    \"correo\": \"juan@example.com\",\n    \"telefono\": 3001234567,\n    \"fechaNacimiento\": \"1990-05-15\",\n    \"rol\": \"ASPIRANTE\",\n    \"municipio\": {\n        \"id\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/usuario",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\": \"Juan Carlos\",\n    \"apellido\": \"Pérez López\",\n    \"telefono\": 3001234568,\n    \"municipio\": {\n        \"id\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuarios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/usuario/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"usuarios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Estudio (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/estudio",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"estudio"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/estudio/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"estudio",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nivelEducativo\": \"LICENCIATURA\",\n    \"institucion\": \"Universidad Nacional\",\n    \"carrera\": \"Ingeniería de Sistemas\",\n    \"estado\": \"COMPLETADO\",\n    \"fechaInicio\": \"2018-01-15\",\n    \"fechaFinalizacion\": \"2022-12-20\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/estudio",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"estudio"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nivelEducativo\": \"POSTGRADO\",\n    \"institucion\": \"Universidad de los Andes\",\n    \"carrera\": \"Maestría en Ingeniería\",\n    \"estado\": \"EN_CURSO\",\n    \"fechaInicio\": \"2023-01-15\",\n    \"fechaFinalizacion\": \"2024-12-20\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/estudio/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"estudio",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/estudio/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"estudio",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Experiencia (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/experiencia",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"experiencia"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/experiencia/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"experiencia",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cargo\": \"Ingeniero de Sistemas\",\n    \"empresa\": \"Acme Corporation\",\n    \"descripcion\": \"Desarrollo de software\",\n    \"sector\": \"Tecnología\",\n    \"tipoContrato\": \"INDEFINIDO\",\n    \"salarioInicial\": 3000000,\n    \"salarioFinal\": 4500000,\n    \"fechaInicio\": \"2020-03-15\",\n    \"fechaFinalizacion\": \"2023-08-20\",\n    \"usuario\": {\n        \"id\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/experiencia",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"experiencia"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"cargo\": \"Senior Ingeniero de Sistemas\",\n    \"empresa\": \"Acme Corporation\",\n    \"descripcion\": \"Líder técnico\",\n    \"sector\": \"Tecnología\",\n    \"tipoContrato\": \"INDEFINIDO\",\n    \"salarioInicial\": 4500000,\n    \"salarioFinal\": 6000000,\n    \"fechaInicio\": \"2020-03-15\",\n    \"fechaFinalizacion\": \"2023-08-20\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/experiencia/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"experiencia",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/experiencia/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"experiencia",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Empresa (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/empresa",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"empresas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/empresa/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"empresas",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByNombre (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/empresa/nombre/Acme",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"empresas",
+										"nombre",
+										"Acme"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\": \"Acme Corporation\",\n    \"nit\": \"123456789-0\",\n    \"telefono\": \"6015551234\",\n    \"correo\": \"contacto@acme.com\",\n    \"descripcion\": \"Empresa líder en soluciones tecnológicas\",\n    \"sitioWeb\": \"https://www.acme.com\",\n    \"numeroEmpleados\": 250,\n    \"sector\": \"Tecnología\",\n    \"direccion\": {\"id\": 1},\n    \"reclutador\": {\"id\": 1}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/empresa",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"empresas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\": \"Acme Corporation Latam\",\n    \"telefono\": \"6015551235\",\n    \"correo\": \"contacto@acmelatam.com\",\n    \"descripcion\": \"Empresa líder en soluciones tecnológicas para Latinoamérica\",\n    \"sitioWeb\": \"https://www.acmelatam.com\",\n    \"numeroEmpleados\": 350,\n    \"sector\": \"Tecnología\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/empresa/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"empresas",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/empresa/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"empresas",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Oferta (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ofertas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ofertas",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titulo\": \"Ingeniero de Sistemas Senior\",\n    \"descripcion\": \"Buscamos ingeniero con experiencia\",\n    \"requisitos\": \"5+ años de experiencia\",\n    \"salarioMinimo\": 4000000,\n    \"salarioMaximo\": 6000000,\n    \"estado\": \"ACTIVA\",\n    \"fechaPublicacion\": \"2024-12-04\",\n    \"fechaCierre\": \"2024-12-31\",\n    \"numeroVacantes\": 2,\n    \"empresa\": {\"id\": 1}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/oferta",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ofertas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titulo\": \"Ingeniero de Sistemas Senior Plus\",\n    \"descripcion\": \"Actualizado\",\n    \"numeroVacantes\": 3\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ofertas",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"ofertas",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Postulación (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByOferta (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/oferta/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones",
+										"oferta",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByUsuario (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/usuario/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones",
+										"usuario",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fechaPostulacion\": \"2024-12-04\",\n    \"estado\": \"PENDIENTE\",\n    \"usuario\": {\"id\": 1},\n    \"oferta\": {\"id\": 1}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"estado\": \"ACEPTADA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/postulacion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"postulaciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Notificaciones (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByUsuario (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion/usuario/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones",
+										"usuario",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getNoLeidas (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion/usuario/1/no-leidas",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones",
+										"usuario",
+										"1",
+										"no-leidas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"titulo\": \"Nueva Notificación\",\n    \"descripcion\": \"Contenido de la notificación\",\n    \"tipo\": \"NUEVA_OFERTA\",\n    \"leida\": false,\n    \"activa\": true,\n    \"usuarioDestino\": {\"id\": 1}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"leida\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/notificacion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"notificaciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Valoración (pendiente)",
+					"item": [
+						{
+							"name": "getAll (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/valoracion",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"valoraciones"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/valoracion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"valoraciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByEmpresa (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/valoracion/empresa/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"valoraciones",
+										"empresa",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"calificacion\": 4,\n    \"comentario\": \"Excelente experiencia laboral, ambiente muy agradable\",\n    \"recomendacion\": true,\n    \"usuario\": {\"id\": 1},\n    \"empresa\": {\"id\": 5},\n    \"oferta\": {\"id\": 10}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/valoracion",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"valoraciones"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"calificacion\": 5,\n    \"comentario\": \"Actualizado - Excelente\",\n    \"recomendacion\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/valoracion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"valoraciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (pendiente)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/valoracion/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"valoraciones",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Independientes (ok)",
+			"item": [
+				{
+					"name": "Habilidad (ok)",
+					"item": [
+						{
+							"name": "getAll (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAll activas (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/activas",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"activas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByNombre (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/nombre/Java",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"nombre",
+										"Java"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByTipo (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/tipo/TECNICA",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"tipo",
+										"TECNICA"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\":\"JavaKotlin\",\n    \"tipo\":\"TECNICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update desactivar (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1/desactivar",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1",
+										"desactivar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\":\"Java Spring\",\n    \"tipo\":\"TECNICA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/habilidades/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"habilidades",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Municipio (ok)",
+					"item": [
+						{
+							"name": "getAll (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByDepartamento (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/departamento/ANTIOQUIA",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"departamento",
+										"ANTIOQUIA"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getByNombre (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/nombre/Bogot",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"nombre",
+										"Bogot"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getById (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":1,\n    \"nombre\":\"Bogotá\",\n    \"departamento\":\"BOGOTA_DC\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/municipios",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update (ok)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ADMIN}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nombre\":\"ITUNGA\",\n    \"departamento\":\"BOGOTA_DC\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/municipios/2",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"municipios",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Gestion etapa de contratacion",
+			"item": [
+				{
+					"name": "Ver candidatos postulados a una oferta",
+					"item": [
+						{
+							"name": "GetCandidatosPostuladosOferta",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/recruitment-stage/oferta/1/candidatos?usuarioIdActual=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"recruitment-stage",
+										"oferta",
+										"1",
+										"candidatos"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetCandidatosPorEstado",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/recruitment-stage/oferta/1/candidatos/estado?estado=PENDIENTE&usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"recruitment-stage",
+										"oferta",
+										"1",
+										"candidatos",
+										"estado"
+									],
+									"query": [
+										{
+											"key": "estado",
+											"value": "PENDIENTE"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cambiar estado del candidato",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/15/estado?nuevoEstado=ACEPTADA&usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"15",
+										"estado"
+									],
+									"query": [
+										{
+											"key": "nuevoEstado",
+											"value": "ACEPTADA"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Filtrar candidatos por experiencia y educacion",
+					"item": [
+						{
+							"name": "FiltrarPorCargo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/filtrar?cargoExperiencia=Desarrollador&usuarioIdActual=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"filtrar"
+									],
+									"query": [
+										{
+											"key": "cargoExperiencia",
+											"value": "Desarrollador"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FiltrarPorExperiencia",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/filtrar?aniosExperienciaMinimo=3&usuarioIdActual=1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"filtrar"
+									],
+									"query": [
+										{
+											"key": "aniosExperienciaMinimo",
+											"value": "3"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FiltrarPorNivelEducativo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/filtrar?nivelEducativo=UNIVERSITARIO&usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"filtrar"
+									],
+									"query": [
+										{
+											"key": "nivelEducativo",
+											"value": "UNIVERSITARIO"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "FiltrarCandidatosPorExperienciaYEducacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/api/oferta/1/candidatos/filtrar?nivelEducativo=UNIVERSITARIO&aniosExperienciaMinimo=3&cargoExperiencia=Desarrollador&habilidad=Java&usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"candidatos",
+										"filtrar"
+									],
+									"query": [
+										{
+											"key": "nivelEducativo",
+											"value": "UNIVERSITARIO"
+										},
+										{
+											"key": "aniosExperienciaMinimo",
+											"value": "3"
+										},
+										{
+											"key": "cargoExperiencia",
+											"value": "Desarrollador"
+										},
+										{
+											"key": "habilidad",
+											"value": "Java"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ObtenerCandidatosPorEtapa",
+					"item": [
+						{
+							"name": "GetCandidatosPorEtapaEspecifica",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}oferta/1/candidatos/etapa?etapa=PENDIENTE&usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}oferta"
+									],
+									"path": [
+										"1",
+										"candidatos",
+										"etapa"
+									],
+									"query": [
+										{
+											"key": "etapa",
+											"value": "PENDIENTE"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetResumenDeTodasLasEtapas",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/resumen-etapas?usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"resumen-etapas"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CambiarEstadoCandidato",
+					"item": [
+						{
+							"name": "PUTEstadoCandidatoAPendiente",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"estado\": \"PENDIENTE\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaid}/candidatos/{postulacionId}/estado",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaid}",
+										"candidatos",
+										"{postulacionId}",
+										"estado"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUTEstadoEntrevistaProgramada",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"estado\": \"ENTREVISTA_PROGRAMADA\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaId)/candidatos/{postulacionId}/estado",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaId)",
+										"candidatos",
+										"{postulacionId}",
+										"estado"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUTEstadoCandidatoAceptado",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"estado\": \"ACEPTADO\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaId}/candidatos/{postulacionId}/estado",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaId}",
+										"candidatos",
+										"{postulacionId}",
+										"estado"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUTEstadoRechazado",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"estado\": \"RECHAZADO\",\r\n\t\"motivo\": \"Experiencia insuficiente en el área específica\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaId}/candidatos/{postulacionId}/estado",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaId}",
+										"candidatos",
+										"{postulacionId}",
+										"estado"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GETCambiosDeEstadoParaUnaPostulacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/15/estados-disponibles?usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"15",
+										"estados-disponibles"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GETHistorialDeCambios",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/oferta/1/candidatos/15/historial-estados?usuarioIdActual=5",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"oferta",
+										"1",
+										"candidatos",
+										"15",
+										"historial-estados"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "ContactoConAspirantes",
+					"item": [
+						{
+							"name": "Enviar Mensaje a Aspirante",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaId}/candidatos/{postulacionId}/contacto",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaId}",
+										"candidatos",
+										"{postulacionId}",
+										"contacto"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GETMensajesPostulacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/candidatos/15/contactos?usuarioIdActual=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"candidatos",
+										"15",
+										"contactos"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GETContactoById",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/contactos/1?usuarioIdActual=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"contactos",
+										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetContactosByTipo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/contactos/tipo?tipo=EMAIL&usuarioIdActual=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"contactos",
+										"tipo"
+									],
+									"query": [
+										{
+											"key": "tipo",
+											"value": "EMAIL"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUTMensaje",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaId}/contactos/{contactoId}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaId}",
+										"contactos",
+										"{contactoId}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Enviar mensaje por SMS",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"mensaje\": \"Hola Juan, te confirmamos tu entrevista mañana a las 10:00 AM. Enlace: https://meet.google.com/abc\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{BASE_URL}/{ofertaId}/candidatos/{postulacionId}/contacto/sms",
+									"host": [
+										"{BASE_URL}"
+									],
+									"path": [
+										"{ofertaId}",
+										"candidatos",
+										"{postulacionId}",
+										"contacto",
+										"sms"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "AgendarEntrevistas",
+					"item": [
+						{
+							"name": "Agendar Entrevistas",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"fechaEntrevista\": \"2025-02-15T10:30:00\",\r\n\t\"tipoEntrevista\": \"VIDEOLLAMADA\",\r\n\t\"enlace\": \"https://meet.google.com/abc-defg-hij\",\r\n\t\"notas\": \"Entrevista técnica inicial con el candidato. Preparar preguntas sobre Spring Boot y bases de datos.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/{ofertaId}/candidatos/{postulacionId}/agendar-entrevista",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"{ofertaId}",
+										"candidatos",
+										"{postulacionId}",
+										"agendar-entrevista"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTodasLasEntrevistasDeUnaOferta",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/entrevistas?usuarioIdActual=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"entrevistas"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GETEntrevistaById",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "GET http://localhost:8080/api/oferta/1/entrevistas/1?usuarioIdActual=5",
+									"protocol": "GET http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"entrevistas",
+										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GETEntrevistasDeUnCandidato",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/candidatos/15/entrevistas?usuarioIdActual=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"candidatos",
+										"15",
+										"entrevistas"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancelar Entrevista",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/entrevistas/1?usuarioIdActual=5&motivo=Candidato+no+disponible",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"entrevistas",
+										"1"
+									],
+									"query": [
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										},
+										{
+											"key": "motivo",
+											"value": "Candidato+no+disponible"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cambiar estado entrevista",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Activa\":false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/oferta/1/entrevistas/1/estado?nuevoEstado=REALIZADA&usuarioIdActual=5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"oferta",
+										"1",
+										"entrevistas",
+										"1",
+										"estado"
+									],
+									"query": [
+										{
+											"key": "nuevoEstado",
+											"value": "REALIZADA"
+										},
+										{
+											"key": "usuarioIdActual",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Notificaciones",
+					"item": [
+						{
+							"name": "Crear Notificacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/notificacion?usuarioDestinoId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"notificacion"
+									],
+									"query": [
+										{
+											"key": "usuarioDestinoId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ObtenerNotificacionById",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/notificacion/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"notificacion",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Notificacion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/notificacion/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"notificacion",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Notificacion",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{Token_ASPIRANTE}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/notificacion/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"notificacion",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/notificacion/usuario/1/leidas",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"notificacion",
+										"usuario",
+										"1",
+										"leidas"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8080/api"
+		},
+		{
+			"key": "Token_ASPIRANTE",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwicm9sIjoiQVNQSVJBTlRFIiwic3ViIjoianVhbnBlcmV6QGVtYWlsLmNvbSIsImlhdCI6MTc2NDgyODk2NywiZXhwIjoxNzY0ODY0OTY3fQ.WLnJTGgd61eTNr6cnNHZtU1eQaqKJivp3ojr2pfTvn8"
+		},
+		{
+			"key": "Token_ADMIN",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwicm9sIjoiQURNSU4iLCJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc2NDg1NTU0MiwiZXhwIjoxNzY0ODkxNTQyfQ.6g43DOXtWKkAfPZv4mJhPL5UvaR_zG5fScFxUK8ieVE"
+		}
+	]
+}
