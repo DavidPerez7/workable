@@ -61,33 +61,63 @@ public class MunicipioService {
         return null;
     }
 
-    // DELETE - Elimina un municipio y actualiza las referencias a NULL
+    // DELETE - Elimina un municipio con validación de dependencias
     @Transactional
     public boolean delete(Long id) {
-        if (municipioRepo.existsById(id)) {
-            try {
-                // Primero actualizar todas las referencias a este municipio a NULL
-                entityManager.createNativeQuery("UPDATE usuario SET municipio_id = NULL WHERE municipio_id = ?1")
-                    .setParameter(1, id).executeUpdate();
-                entityManager.createNativeQuery("UPDATE oferta SET municipio_id = NULL WHERE municipio_id = ?1")
-                    .setParameter(1, id).executeUpdate();
-                entityManager.createNativeQuery("UPDATE empresa SET municipio_id = NULL WHERE municipio_id = ?1")
-                    .setParameter(1, id).executeUpdate();
-                entityManager.createNativeQuery("UPDATE estudio SET municipio_id = NULL WHERE municipio_id = ?1")
-                    .setParameter(1, id).executeUpdate();
-                entityManager.createNativeQuery("UPDATE experiencia SET municipio_id = NULL WHERE municipio_id = ?1")
-                    .setParameter(1, id).executeUpdate();
-                entityManager.createNativeQuery("UPDATE direccion SET municipio_id = NULL WHERE municipio_id = ?1")
-                    .setParameter(1, id).executeUpdate();
-                
-                // Ahora eliminar el municipio
-                municipioRepo.deleteById(id);
-                return true;
-            } catch (Exception e) {
-                System.out.println("Error al eliminar municipio: " + e.getMessage());
-                return false;
-            }
+        if (!municipioRepo.existsById(id)) {
+            return false;
         }
-        return false;
+        
+        try {
+            // Validar y obtener conteos de dependencias
+            long usuariosCount = (long) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM usuario WHERE municipio_id = ?1")
+                .setParameter(1, id).getSingleResult();
+            
+            long ofertasCount = (long) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM oferta WHERE municipio_id = ?1")
+                .setParameter(1, id).getSingleResult();
+            
+            long empresasCount = (long) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM empresa WHERE municipio_id = ?1")
+                .setParameter(1, id).getSingleResult();
+            
+            long estudiosCount = (long) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM estudio WHERE municipio_id = ?1")
+                .setParameter(1, id).getSingleResult();
+            
+            long experienciasCount = (long) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM experiencia WHERE municipio_id = ?1")
+                .setParameter(1, id).getSingleResult();
+            
+            long direccionesCount = (long) entityManager.createNativeQuery(
+                "SELECT COUNT(*) FROM direccion WHERE municipio_id = ?1")
+                .setParameter(1, id).getSingleResult();
+            
+            // Construir mensaje de error si hay dependencias
+            StringBuilder errorMsg = new StringBuilder();
+            if (usuariosCount > 0) errorMsg.append("Usuarios: ").append(usuariosCount).append(", ");
+            if (ofertasCount > 0) errorMsg.append("Ofertas: ").append(ofertasCount).append(", ");
+            if (empresasCount > 0) errorMsg.append("Empresas: ").append(empresasCount).append(", ");
+            if (estudiosCount > 0) errorMsg.append("Estudios: ").append(estudiosCount).append(", ");
+            if (experienciasCount > 0) errorMsg.append("Experiencias: ").append(experienciasCount).append(", ");
+            if (direccionesCount > 0) errorMsg.append("Direcciones: ").append(direccionesCount).append(", ");
+            
+            if (errorMsg.length() > 0) {
+                // Eliminar la última coma
+                errorMsg.setLength(errorMsg.length() - 2);
+                System.out.println("No se puede eliminar municipio: existen registros dependientes - " + errorMsg.toString());
+                throw new IllegalStateException("No se puede eliminar municipio: existen registros dependientes - " + errorMsg.toString());
+            }
+            
+            // Si no hay dependencias, eliminar el municipio
+            municipioRepo.deleteById(id);
+            return true;
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            System.out.println("Error al eliminar municipio: " + e.getMessage());
+            throw new RuntimeException("Error al eliminar municipio: " + e.getMessage(), e);
+        }
     }
 }

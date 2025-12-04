@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,8 +46,8 @@ public class Estudio {
     @Column(length = 1000)
     private String descripcion;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
     private Municipio municipio;
 
     @Enumerated(EnumType.STRING)

@@ -50,8 +50,8 @@ public class Usuario {
         ADSO
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
     private Municipio municipio;
 
     @PrePersist
