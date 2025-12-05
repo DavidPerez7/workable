@@ -57,6 +57,11 @@ public class UsuarioService {
 
     // - CREATE
     public Usuario createPublic(Usuario request) {
+        // Validación de contraseña requerida
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("La contraseña es requerida");
+        }
+        
         // Solo validación de correo único y municipio existente
         if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
             throw new RuntimeException("Correo already in use");

@@ -53,6 +53,18 @@ public class AuthController {
     public ResponseEntity<?> registrarAspirante(@RequestBody Usuario request) {
         try {
             log.info("Intentando registrar aspirante con correo: {}", request.getCorreo());
+            log.info("Password recibido: {}, Nombre: {}", request.getPassword() != null ? "SÍ" : "NO", request.getNombre());
+            
+            // Validar campos requeridos
+            if (request.getCorreo() == null || request.getCorreo().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El correo es requerido"));
+            }
+            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña es requerida"));
+            }
+            if (request.getNombre() == null || request.getNombre().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El nombre es requerido"));
+            }
             
             if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 log.warn("Intento de registro con correo existente: {}", request.getCorreo());
@@ -67,7 +79,7 @@ public class AuthController {
             return ResponseEntity.ok(usuarioCreado);
 
         } catch (Exception e) {
-            log.error("Error al registrar aspirante: {}", e.getMessage());
+            log.error("Error al registrar aspirante: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
     }
@@ -80,6 +92,18 @@ public class AuthController {
     public ResponseEntity<?> registrarReclutador(@RequestBody Usuario request) {
         try {
             log.info("Intentando registrar reclutador con correo: {}", request.getCorreo());
+            log.info("Password recibido: {}, Nombre: {}", request.getPassword() != null ? "SÍ" : "NO", request.getNombre());
+            
+            // Validar campos requeridos
+            if (request.getCorreo() == null || request.getCorreo().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El correo es requerido"));
+            }
+            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña es requerida"));
+            }
+            if (request.getNombre() == null || request.getNombre().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El nombre es requerido"));
+            }
             
             if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 log.warn("Intento de registro con correo existente: {}", request.getCorreo());
@@ -94,7 +118,7 @@ public class AuthController {
             return ResponseEntity.ok(usuarioCreado);
 
         } catch (Exception e) {
-            log.error("Error al registrar reclutador: {}", e.getMessage());
+            log.error("Error al registrar reclutador: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
     }
