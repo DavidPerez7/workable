@@ -2,26 +2,24 @@
    Container principal
 ================================ */
 .reclutador-form-container {
-  min-height: 100vh;
+  min-height: 70vh;
+  background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 1.5rem;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
-  background: #f5f7fa;
 }
 
 /* ================================
    Card del formulario
 ================================ */
 .reclutador-form-card {
-  background: white;
-  border-radius: 16px;
-  padding: 3rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  padding: 1.5rem;
   width: 100%;
-  max-width: 1100px; /* CORRECCIÓN IMPORTANTE */
+  max-width: 650px;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -34,7 +32,7 @@
 }
 
 .reclutador-form-title {
-  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 0.5rem;
@@ -59,24 +57,16 @@ form {
 /* ================================
    Secciones del formulario
 ================================ */
-.form-section-personal-section,
-.empresa-section,
-.compromiso-section {
-  margin-bottom: 2rem;
+.form-section {
+  margin-bottom: 1rem;
+  padding: 1rem;
   border-radius: 12px;
   border: 2px solid #e2e8f0;
+}
+
+.personal-section {
   background: #f8fafc;
-  padding: 20px;
-}
-
-.empresa-section {
-  background: #f0f9ff;
-  border-color: #bfdbfe;
-}
-
-.compromiso-section {
-  background: #fffbeb;
-  border-color: #fcd34d;
+  border-color: #e2e8f0;
 }
 
 /* ================================
@@ -99,32 +89,47 @@ form {
 ================================ */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
 }
 
 /* ================================
-   Inputs
+   Campos del formulario
 ================================ */
-.form-input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 2px solid #cbd5e1;
-  border-radius: 10px;
-  font-size: 1rem;
-  outline: none;
-  background: white;
-  color: #0f172a;
-  transition: all 0.3s ease;
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.form-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+.form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
 }
 
-.form-input::placeholder {
-  color: #94a3b8;
+/* ================================
+   Checkbox field
+================================ */
+.checkbox-field {
+  margin-top: 1rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #10b981;
 }
 
 .form-textarea {

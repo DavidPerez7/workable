@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/MainPage/HomePage";
 import SalaryPage from "./pages/SalaryPage/SalaryPage";
 import ProfessionalPage from "./pages/ProfessionalPage/ProfessionalPage";
-import LoginPage from "./components/LoginPage/LoginPage";
-import SignUpPage from "./components/SignUpPage/SignUpPage";
+import LoginPage from "./components/IniciarSesion/IniciarSesion";
+import SignUpPage from "./components/Registro/registro";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import ReclutadorPage from "./pages/ReclutadorPage/ReclutadorPage";
 import Articulo1 from "./pages/ProfessionalPage/Articulos/Articulo1/Articulo1";
@@ -28,13 +28,13 @@ import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
-import ReclutadorForm from "./components/SignUpPage/reclutador/ReclutadorForm";
+import ReclutadorForm from "./components/Registro/reclutadorForm/reclutadorForm";
 import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
 import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
 import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
 import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil";
-import NewReclutador from "./components/SignUpPage/reclutador/newreclutador/NewReclutador";
+import NewReclutador from "./components/Empresa/NewReclutador";
 import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEmpresa";
 
 function App() {

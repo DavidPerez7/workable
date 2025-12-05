@@ -1,12 +1,14 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./AspiranteForm.css";
-import { registrarAspirante } from "../../../api/aspirantesApi";
+import axios from "axios";
+import "./aspirante.css";
+import "../reclutadorForm/ReclutadorForm.css";
 
 const AspiranteForm = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -36,32 +38,27 @@ const AspiranteForm = () => {
       apellido: data.apellido,
       correo: data.correo,
       telefono: data.telefono,
-      clave: data.password,
+      password: data.password,
       fechaNacimiento: data.fechaNacimiento,
       municipio: {
         id: Number(data.municipioId),
       },
     };
 
+    setLoading(true);
     try {
-      const response = await registrarAspirante(aspiranteData);
-      console.log("Aspirante registrado:", response);
-      
+      const response = await axios.post("http://localhost:8080/api/auth/register-aspirante", aspiranteData);
+      console.log("Aspirante registrado:", response.data);
       alert("¡Registro exitoso! Ahora puedes iniciar sesión");
       formRef.current.reset();
       setAceptaTerminos(false);
-
-      // Redirigir al login
       navigate("/login");
     } catch (error) {
       console.error("Error al crear aspirante:", error);
-      let mensajeError = "Error al registrar el aspirante";
-
-      if (error.message) {
-        mensajeError = error.message;
-      }
-
+      const mensajeError = error.response?.data?.error || "Error al registrar el aspirante";
       alert(mensajeError);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,7 +75,7 @@ const AspiranteForm = () => {
         <form className="aspirante-form" onSubmit={handleSubmit} ref={formRef}>
           {/* Sección: Información Personal */}
           <div className="form-section personal-section">
-            <h2 className="section-title-aspirante">Información Personal</h2>
+            <h2 className="section-title-reclutador">Información Personal</h2>
 
             <div className="form-grid">
               <div className="form-field">
@@ -196,8 +193,8 @@ const AspiranteForm = () => {
             </label>
           </div>
 
-          <button type="submit" className="submit-button">
-            Crear Cuenta Aspirante
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? "Registrando..." : "Crear Cuenta Aspirante"}
           </button>
         </form>
 

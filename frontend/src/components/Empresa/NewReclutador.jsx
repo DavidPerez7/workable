@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../../../Header/Header";
+import Header from "../Header/Header";
 import "./NewReclutador.css";
 
 const NewReclutador = () => {

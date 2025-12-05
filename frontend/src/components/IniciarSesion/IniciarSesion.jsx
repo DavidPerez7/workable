@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
-import "./LoginPage.css";
+import "./IniciarSesion.css";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const LoginPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           correo,
-          clave: password,
+          password,
         }),
       });
 
