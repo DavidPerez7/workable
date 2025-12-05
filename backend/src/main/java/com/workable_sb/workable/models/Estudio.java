@@ -1,56 +1,62 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Data
+@Table(name = "estudio")
 public class Estudio {
+    
+    private static final Logger log = LoggerFactory.getLogger(Estudio.class);
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El título es obligatorio")
+    @Size(min = 2, max = 255, message = "El título debe tener entre 2 y 255 caracteres")
     @Column(nullable = false, length = 255)
     private String titulo;
 
+    @NotNull(message = "La fecha de inicio es obligatoria")
+    @PastOrPresent(message = "La fecha de inicio no puede ser futura")
     @Column(nullable = false)
     private LocalDate fechaInicio;
+    
     private LocalDate fechaFin;
 
     @Column(nullable = false)
     private Boolean enCurso = false;
 
-    @Column(nullable = false , length = 255)
+    @NotBlank(message = "La institución es obligatoria")
+    @Size(min = 2, max = 255, message = "La institución debe tener entre 2 y 255 caracteres")
+    @Column(nullable = false, length = 255)
     private String institucion;
 
+    @Size(max = 500, message = "La URL del certificado no puede exceder 500 caracteres")
     @Column(length = 500)
     private String certificadoUrl;
 
+    @Size(max = 1000, message = "La descripción no puede exceder 1000 caracteres")
     @Column(length = 1000)
     private String descripcion;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Municipio municipio;
 
     @Enumerated(EnumType.STRING)
@@ -63,6 +69,7 @@ public class Estudio {
         HIBRIDA
     }
 
+    @NotNull(message = "El nivel educativo es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private NivelEducativo nivelEducativo;
@@ -81,6 +88,7 @@ public class Estudio {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING)
@@ -101,5 +109,6 @@ public class Estudio {
         if (fechaFin != null && fechaFin.isBefore(fechaInicio)) {
             throw new IllegalStateException("La fecha de fin debe ser posterior a la fecha de inicio");
         }
+        log.debug("Estudio validado: {} en {}", titulo, institucion);
     }
 }

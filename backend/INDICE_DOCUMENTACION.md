@@ -233,6 +233,84 @@ MAIL_PASSWORD=tu-app-password-16-caracteres
 
 ---
 
+## 🔐 SEGURIDAD Y ROLES (NUEVO - 2025)
+
+### Análisis y Correcciones de RBAC
+```
+📄 ANALISIS_ROLES_Y_PERMISOS.md
+   └─ Identificación de 7 vulnerabilidades
+   └─ Análisis detallado de cada controlador
+   └─ Severidad: CRÍTICA x1, ALTA x3, MEDIA x3
+   └─ Ejemplo de código vulnerable
+   └─ Soluciones propuestas
+
+📄 CORRECCIONES_ROLES_APLICADAS.md
+   └─ Change log de todas las correcciones
+   └─ Antes y después del código
+   └─ Archivos modificados: 6 controladores
+   └─ Compilación: ✅ SUCCESS
+
+📄 REPORTE_FINAL_ROLES_Y_SEGURIDAD.md
+   └─ Resumen ejecutivo
+   └─ Matriz de permisos por rol
+   └─ Estado final de validación
+   └─ Recomendaciones
+
+📄 RESUMEN_CORRECCIONES.md
+   └─ Resumen ejecutivo completo
+   └─ Tabla de permisos ASPIRANTE/RECLUTADOR/ADMIN
+   └─ Próximos pasos
+
+📄 GUIA_PRUEBAS_ROLES.md (NEW)
+   └─ Ejemplos de cURL para cada rol
+   └─ 8 escenarios de prueba
+   └─ Resultados esperados
+   └─ Script bash para tests
+
+📄 verificar-roles.bat (NEW)
+   └─ Script Windows para verificación rápida
+   └─ Comprueba conectividad
+   └─ Test de endpoint público
+```
+
+### Vulnerabilidades Corregidas
+```
+❌ FeedbackController - SIN @PreAuthorize (CRÍTICA)
+   ✅ CORREGIDA: 7 métodos protegidos
+
+❌ EstudioController - RECLUTADOR podía crear (ALTA)
+   ✅ CORREGIDA: Solo ASPIRANTE + ADMIN
+
+❌ ExperienciaController - RECLUTADOR podía crear (ALTA)
+   ✅ CORREGIDA: Solo ASPIRANTE + ADMIN
+
+❌ HojaVidaController - Sin validación de propiedad (ALTA)
+   ✅ CORREGIDA: Agregado usuarioIdActual
+
+❌ EmpresaController - Sin endpoint público (MEDIA)
+   ✅ CORREGIDA: Agregado /api/empresa/publicas
+
+❌ SecurityConfig - Ruta no permitida (MEDIA)
+   ✅ CORREGIDA: Agregado permitAll()
+
+❌ Validación general - Falta ownership check (MEDIA)
+   ✅ CORREGIDA: Patrón consistente en todos
+```
+
+### Archivos Modificados
+```
+1. FeedbackController.java        [192 líneas] - Complete rewrite
+2. EstudioController.java          [142 líneas] - Role restriction
+3. ExperienciaController.java      [135 líneas] - Role restriction
+4. HojaVidaController.java         [192 líneas] - Added usuarioIdActual
+5. EmpresaController.java          [159 líneas] - New public endpoint
+6. SecurityConfig.java             [189 líneas] - Added permitAll()
+
+TOTAL: 6 archivos, 809 líneas, 7 vulnerabilidades corregidas
+```
+
+---
+
 ## 🎓 EJEMPLO DE USO RÁPIDO
 
 ### 1. Crear Citación
@@ -258,7 +336,7 @@ GET /api/citacion/1
 ?usuarioIdActual=5
 ```
 
-📖 Más ejemplos: Postman_Citacion_Ejemplos.md
+📖 Más ejemplos: Postman_Citacion_Ejemplos.md o GUIA_PRUEBAS_ROLES.md
 
 ---
 
@@ -332,6 +410,11 @@ R: Ver Citacion_Arquitectura.md (Validaciones)
 | Entender la arquitectura | Documentation/Citacion_Arquitectura.md |
 | Ver detalles técnicos | CITACION_IMPLEMENTACION.md |
 | Resumen completo | CITACION_RESUMEN_FINAL.md |
+| **ANALIZAR ROLES** | **ANALISIS_ROLES_Y_PERMISOS.md** |
+| **ENTENDER CORRECCIONES** | **CORRECCIONES_ROLES_APLICADAS.md** |
+| **VER REPORTE ROLES** | **REPORTE_FINAL_ROLES_Y_SEGURIDAD.md** |
+| **RESUMEN EJECUTIVO** | **RESUMEN_CORRECCIONES.md** |
+| **PROBAR ROLES** | **GUIA_PRUEBAS_ROLES.md** |
 
 ---
 

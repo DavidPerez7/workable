@@ -18,7 +18,13 @@ public class EmpresaController {
     @Autowired
     private EmpresaService empresaService;
 
-    // - READ all
+    // ===== ENDPOINT PÚBLICO - ASPIRANTES PUEDEN VER EMPRESAS =====
+    @GetMapping("/publicas")
+    public ResponseEntity<List<Empresa>> listarEmpresasPublicas() {
+        return ResponseEntity.ok(empresaService.getByIsActive(true));
+    }
+
+    // ===== ENDPOINTS PROTEGIDOS =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<Empresa>> listarTodas() {

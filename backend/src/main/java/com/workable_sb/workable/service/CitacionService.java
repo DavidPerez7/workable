@@ -31,12 +31,12 @@ public class CitacionService {
     
     @Autowired
     private UsuarioRepo usuarioRepo;
-    
-    @Autowired
-    private WhatsAppService whatsAppService;
 
     @Autowired
     private NotificacionService notificacionService;
+    
+    @Autowired(required = false)
+    private EmailService emailService;
     
     // ===== CREAR CITACIÓN =====
     public Citacion crearCitacion(Long postulacionId, Long reclutadorId, LocalDate fechaCitacion, 
@@ -80,8 +80,8 @@ public class CitacionService {
         return citacionRepo.save(citacion);
     }
     
-    // ===== ENVIAR CITACIÓN POR WHATSAPP =====
-    public Map<String, Object> enviarCitacionPorWhatsApp(Long citacionId, Long usuarioIdActual) {
+    // ===== ENVIAR CITACIÓN POR EMAIL =====
+    public Map<String, Object> enviarCitacionPorEmail(Long citacionId, Long usuarioIdActual) {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
         
@@ -103,7 +103,7 @@ public class CitacionService {
         Usuario aspirante = postulacion.getUsuario();
         String nombreOferta = postulacion.getOferta().getTitulo();
         
-        // Enviar por WhatsApp
+        // Enviar por Email
         try {
             // Preparar nombre del reclutador
             String nombreReclutador = "Reclutador del Sistema";
@@ -111,19 +111,19 @@ public class CitacionService {
                 nombreReclutador = citacion.getReclutador().getNombre() + " " + citacion.getReclutador().getApellido();
             }
             
-            // Obtener número de WhatsApp (usando correo como placeholder, debería estar en la BD)
-            String numeroWhatsApp = obtenerNumeroWhatsApp(aspirante.getId());
-            
-            whatsAppService.enviarCitacionWhatsApp(
-                numeroWhatsApp,
-                aspirante.getNombre() + " " + aspirante.getApellido(),
-                nombreOferta,
-                citacion.getFechaCitacion().toString(),
-                citacion.getHora(),
-                citacion.getLinkMeet(),
-                nombreReclutador,
-                citacion.getDetallesCitacion()
-            );
+            // Enviar email si el servicio está disponible
+            if (emailService != null) {
+                emailService.enviarCitacionEmail(
+                    aspirante.getCorreo(),
+                    aspirante.getNombre() + " " + aspirante.getApellido(),
+                    nombreOferta,
+                    citacion.getFechaCitacion().toString(),
+                    citacion.getHora(),
+                    citacion.getLinkMeet(),
+                    nombreReclutador,
+                    citacion.getDetallesCitacion()
+                );
+            }
             
             // Actualizar estado
             citacion.setMensajeEnviado(true);
@@ -140,10 +140,10 @@ public class CitacionService {
             );
             
             Map<String, Object> respuesta = new HashMap<>();
-            respuesta.put("mensaje", "Citación enviada por WhatsApp exitosamente");
+            respuesta.put("mensaje", "Citación enviada exitosamente");
             respuesta.put("citacionId", citacion.getId());
             respuesta.put("mensajeEnviado", true);
-            respuesta.put("numeroDestino", numeroWhatsApp);
+            respuesta.put("emailDestino", aspirante.getCorreo());
             
             return respuesta;
             
@@ -152,18 +152,16 @@ public class CitacionService {
         }
     }
     
-    private String obtenerNumeroWhatsApp(Long usuarioId) {
-        return usuarioRepo.findById(usuarioId)
-            .map(Usuario::getTelefono)
-            .filter(numero -> numero != null && !numero.isBlank())
-            .orElseThrow(() -> new RuntimeException("El usuario no tiene un número de WhatsApp registrado"));
+    // Método legado para compatibilidad - redirige a email
+    public Map<String, Object> enviarCitacionPorWhatsApp(Long citacionId, Long usuarioIdActual) {
+        return enviarCitacionPorEmail(citacionId, usuarioIdActual);
     }
     
     // ===== ENVIAR CITACIÓN A MÚLTIPLES CANDIDATOS =====
-    public Map<String, Object> enviarCitacionesMultiplesPorWhatsApp(List<Long> postulacionIds, Long reclutadorId, 
-                                                                   LocalDate fechaCitacion, String hora, 
-                                                                   String linkMeet, String detalles, 
-                                                                   Long usuarioIdActual) {
+    public Map<String, Object> enviarCitacionesMultiples(List<Long> postulacionIds, Long reclutadorId, 
+                                                          LocalDate fechaCitacion, String hora, 
+                                                          String linkMeet, String detalles, 
+                                                          Long usuarioIdActual) {
         // Validar permisos
         Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -179,7 +177,7 @@ public class CitacionService {
         }
         
         List<Citacion> citacionesCreadas = new ArrayList<>();
-        List<String> mensajesEnviados = new ArrayList<>();
+        List<String> notificacionesEnviadas = new ArrayList<>();
         List<String> errores = new ArrayList<>();
         
         Usuario reclutador = usuarioRepo.findById(reclutadorId)
@@ -204,25 +202,26 @@ public class CitacionService {
                 Citacion citacionGuardada = citacionRepo.save(citacion);
                 citacionesCreadas.add(citacionGuardada);
                 
-                // Enviar por WhatsApp
+                // Enviar por Email
                 Usuario aspirante = postulacion.getUsuario();
                 String nombreOferta = postulacion.getOferta().getTitulo();
-                String numeroWhatsApp = obtenerNumeroWhatsApp(aspirante.getId());
                 
-                whatsAppService.enviarCitacionWhatsApp(
-                    numeroWhatsApp,
-                    aspirante.getNombre() + " " + aspirante.getApellido(),
-                    nombreOferta,
-                    fechaCitacion.toString(),
-                    hora,
-                    linkMeet,
-                    reclutador.getNombre() + " " + reclutador.getApellido(),
-                    detalles
-                );
+                if (emailService != null) {
+                    emailService.enviarCitacionEmail(
+                        aspirante.getCorreo(),
+                        aspirante.getNombre() + " " + aspirante.getApellido(),
+                        nombreOferta,
+                        fechaCitacion.toString(),
+                        hora,
+                        linkMeet,
+                        reclutador.getNombre() + " " + reclutador.getApellido(),
+                        detalles
+                    );
+                }
                 
                 citacion.setMensajeEnviado(true);
                 citacionRepo.save(citacion);
-                mensajesEnviados.add(numeroWhatsApp);
+                notificacionesEnviadas.add(aspirante.getCorreo());
                 
                 // Crear alerta de notificación
                 notificacionService.crearAlertaCitacion(
@@ -240,12 +239,20 @@ public class CitacionService {
         
         Map<String, Object> respuesta = new HashMap<>();
         respuesta.put("citacionesCreadas", citacionesCreadas.size());
-        respuesta.put("mensajesEnviados", mensajesEnviados);
+        respuesta.put("notificacionesEnviadas", notificacionesEnviadas);
         respuesta.put("errores", errores);
         respuesta.put("total", postulacionIds.size());
         respuesta.put("exitosas", citacionesCreadas.size());
         
         return respuesta;
+    }
+    
+    // Método legado para compatibilidad
+    public Map<String, Object> enviarCitacionesMultiplesPorWhatsApp(List<Long> postulacionIds, Long reclutadorId, 
+                                                                   LocalDate fechaCitacion, String hora, 
+                                                                   String linkMeet, String detalles, 
+                                                                   Long usuarioIdActual) {
+        return enviarCitacionesMultiples(postulacionIds, reclutadorId, fechaCitacion, hora, linkMeet, detalles, usuarioIdActual);
     }
     
     // ===== OBTENER CITACIONES =====

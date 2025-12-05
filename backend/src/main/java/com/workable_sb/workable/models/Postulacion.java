@@ -2,22 +2,13 @@ package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +18,9 @@ import lombok.NoArgsConstructor;
 	@UniqueConstraint(name = "UK_usuario_oferta", columnNames = {"usuario_id", "oferta_id"})
 })
 public class Postulacion {
+	
+	private static final Logger log = LoggerFactory.getLogger(Postulacion.class);
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -39,24 +33,34 @@ public class Postulacion {
 	private Estado estado = Estado.PENDIENTE;
 
 	public enum Estado {
-	PENDIENTE,
-	RECHAZADO,
-	ACEPTADO,
-	ENTREVISTA_PROGRAMADA
+		PENDIENTE,
+		RECHAZADO,
+		ACEPTADO,
+		ENTREVISTA_PROGRAMADA
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "oferta_id", nullable = false, referencedColumnName = "id")
+	@JsonIgnoreProperties({"postulaciones", "habilidadesRequeridas", "requisitos", "beneficios", "hibernateLazyInitializer", "handler"})
 	private Oferta oferta;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+	@JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
 	private Usuario usuario;
 
 	@PrePersist
-	protected void onCreate(){
-	if (this.fechaCreacion == null) {
-		this.fechaCreacion = LocalDate.now();
+	protected void onCreate() {
+		if (this.fechaCreacion == null) {
+			this.fechaCreacion = LocalDate.now();
+		}
+		log.info("Postulación creada: Usuario {} a Oferta {}", 
+				this.usuario != null ? this.usuario.getId() : "N/A", 
+				this.oferta != null ? this.oferta.getId() : "N/A");
 	}
+	
+	@PreUpdate
+	protected void onUpdate() {
+		log.info("Postulación actualizada ID {}: nuevo estado {}", this.id, this.estado);
 	}
 }

@@ -22,8 +22,12 @@ public class HojaVidaController {
     // ===== CREATE =====
     @PreAuthorize("hasRole('ASPIRANTE')")
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida, @RequestParam Long usuarioId) {
+    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida, @RequestParam Long usuarioId, @RequestParam Long usuarioIdActual) {
         try {
+            // Validar que el usuario solo puede crear su propia hoja de vida
+            if (!usuarioId.equals(usuarioIdActual)) {
+                return ResponseEntity.status(403).body(Map.of("error", "No puedes crear hoja de vida para otro usuario"));
+            }
             HojaVida creada = hojaVidaService.crearHojaVida(hojaVida, usuarioId);
             return ResponseEntity.ok(creada);
         } catch (IllegalArgumentException e) {
