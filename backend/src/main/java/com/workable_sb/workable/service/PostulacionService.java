@@ -702,4 +702,168 @@ public class PostulacionService {
 		// ACEPTADO y RECHAZADO son estados finales
 		return false;
 	}
+
+	// ===== MÉTODOS PARA VER ASPIRANTES CON DETALLE =====
+	public Map<String, Object> obtenerDetalleAspirante(Long postulacionId, Long usuarioIdActual) {
+		Postulacion postulacion = postulacionRepo.findById(postulacionId)
+			.orElseThrow(() -> new RuntimeException("Postulación no encontrada"));
+
+		// Validar que el usuario actual es reclutador o admin de esa oferta
+		validarAccesoAOferta(postulacion.getOferta().getId(), usuarioIdActual);
+
+		Usuario aspirante = postulacion.getUsuario();
+
+		// Construir respuesta con todos los datos
+		Map<String, Object> respuesta = new HashMap<>();
+
+		// Datos de la postulación
+		respuesta.put("postulacionId", postulacion.getId());
+		respuesta.put("estado", postulacion.getEstado());
+		respuesta.put("fechaPostulacion", postulacion.getFechaCreacion());
+
+		// Datos del aspirante
+		Map<String, Object> aspiranteInfo = new HashMap<>();
+		aspiranteInfo.put("usuarioId", aspirante.getId());
+		aspiranteInfo.put("nombre", aspirante.getNombre());
+		aspiranteInfo.put("apellido", aspirante.getApellido());
+		aspiranteInfo.put("correo", aspirante.getCorreo());
+		aspiranteInfo.put("telefono", aspirante.getTelefono());
+		aspiranteInfo.put("fechaNacimiento", aspirante.getFechaNacimiento());
+		aspiranteInfo.put("municipio", aspirante.getMunicipio() != null ? aspirante.getMunicipio().getNombre() : null);
+		aspiranteInfo.put("fechaRegistro", aspirante.getFechaCreacion());
+		aspiranteInfo.put("urlFotoPerfil", aspirante.getUrlFotoPerfil());
+
+		respuesta.put("aspirante", aspiranteInfo);
+
+		// Estudios
+		List<Estudio> estudios = estudioRepo.findByUsuarioId(aspirante.getId());
+		respuesta.put("estudios", estudios);
+
+		// Experiencias
+		List<Experiencia> experiencias = experienciaRepo.findByUsuarioId(aspirante.getId());
+		respuesta.put("experiencias", experiencias);
+
+		// Habilidades
+		List<UsuarioHabilidad> habilidades = usuarioHabilidadRepo.findByUsuarioId(aspirante.getId());
+		respuesta.put("habilidades", habilidades);
+
+		return respuesta;
+	}
+
+	public List<Map<String, Object>> obtenerTodosLosAspirantes(Long ofertaId, Long usuarioIdActual) {
+		Oferta oferta = ofertaRepo.findById(ofertaId)
+			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+
+		// Validar permisos
+		validarAccesoAOferta(ofertaId, usuarioIdActual);
+
+		List<Postulacion> postulaciones = postulacionRepo.findByOfertaIdOrderByFechaCreacionDesc(ofertaId);
+
+		List<Map<String, Object>> aspirantes = new ArrayList<>();
+
+		for (Postulacion postulacion : postulaciones) {
+			Usuario aspirante = postulacion.getUsuario();
+
+			Map<String, Object> aspiranteInfo = new HashMap<>();
+			aspiranteInfo.put("postulacionId", postulacion.getId());
+			aspiranteInfo.put("estado", postulacion.getEstado());
+			aspiranteInfo.put("fechaPostulacion", postulacion.getFechaCreacion());
+
+			// Datos básicos
+			aspiranteInfo.put("usuarioId", aspirante.getId());
+			aspiranteInfo.put("nombre", aspirante.getNombre());
+			aspiranteInfo.put("apellido", aspirante.getApellido());
+			aspiranteInfo.put("correo", aspirante.getCorreo());
+			aspiranteInfo.put("telefono", aspirante.getTelefono());
+			aspiranteInfo.put("municipio", aspirante.getMunicipio() != null ? aspirante.getMunicipio().getNombre() : null);
+
+			// Contar educación y experiencia
+			long cantEstudios = estudioRepo.countByUsuarioId(aspirante.getId());
+			long cantExperiencias = experienciaRepo.countByUsuarioId(aspirante.getId());
+			long cantHabilidades = usuarioHabilidadRepo.countByUsuarioId(aspirante.getId());
+
+			aspiranteInfo.put("estudios", cantEstudios);
+			aspiranteInfo.put("experiencias", cantExperiencias);
+			aspiranteInfo.put("habilidades", cantHabilidades);
+
+			aspirantes.add(aspiranteInfo);
+		}
+
+		return aspirantes;
+	}
+
+	public List<Map<String, Object>> obtenerAspirantes(Long ofertaId, Long usuarioIdActual, String estado) {
+		Oferta oferta = ofertaRepo.findById(ofertaId)
+			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+
+		// Validar permisos
+		validarAccesoAOferta(ofertaId, usuarioIdActual);
+
+		List<Postulacion> postulaciones;
+
+		if (estado != null && !estado.isEmpty()) {
+			try {
+				Estado estadoEnum = Estado.valueOf(estado);
+				postulaciones = postulacionRepo.findByOfertaIdAndEstadoOrderByFechaCreacionDesc(ofertaId, estadoEnum);
+			} catch (IllegalArgumentException e) {
+				throw new RuntimeException("Estado inválido: " + estado);
+			}
+		} else {
+			postulaciones = postulacionRepo.findByOfertaIdOrderByFechaCreacionDesc(ofertaId);
+		}
+
+		List<Map<String, Object>> aspirantes = new ArrayList<>();
+
+		for (Postulacion postulacion : postulaciones) {
+			Usuario aspirante = postulacion.getUsuario();
+
+			Map<String, Object> aspiranteInfo = new HashMap<>();
+			aspiranteInfo.put("postulacionId", postulacion.getId());
+			aspiranteInfo.put("estado", postulacion.getEstado());
+			aspiranteInfo.put("fechaPostulacion", postulacion.getFechaCreacion());
+
+			// Datos básicos
+			aspiranteInfo.put("usuarioId", aspirante.getId());
+			aspiranteInfo.put("nombre", aspirante.getNombre());
+			aspiranteInfo.put("apellido", aspirante.getApellido());
+			aspiranteInfo.put("correo", aspirante.getCorreo());
+			aspiranteInfo.put("telefono", aspirante.getTelefono());
+			aspiranteInfo.put("municipio", aspirante.getMunicipio() != null ? aspirante.getMunicipio().getNombre() : null);
+
+			// Contar educación y experiencia
+			long cantEstudios = estudioRepo.countByUsuarioId(aspirante.getId());
+			long cantExperiencias = experienciaRepo.countByUsuarioId(aspirante.getId());
+			long cantHabilidades = usuarioHabilidadRepo.countByUsuarioId(aspirante.getId());
+
+			aspiranteInfo.put("estudios", cantEstudios);
+			aspiranteInfo.put("experiencias", cantExperiencias);
+			aspiranteInfo.put("habilidades", cantHabilidades);
+
+			aspirantes.add(aspiranteInfo);
+		}
+
+		return aspirantes;
+	}
+
+	private void validarAccesoAOferta(Long ofertaId, Long usuarioIdActual) {
+		Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
+			.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+		if (usuarioActual.getRol() == Usuario.Rol.ASPIRANTE || usuarioActual.getRol() == Usuario.Rol.ADSO) {
+			throw new RuntimeException("No tienes permisos para ver los aspirantes");
+		}
+
+		// Si es reclutador, validar que la oferta sea de su empresa
+		if (usuarioActual.getRol() == Usuario.Rol.RECLUTADOR) {
+			Oferta oferta = ofertaRepo.findById(ofertaId)
+				.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+
+			// Verificar que el reclutador pertenece a la empresa de la oferta
+			// El reclutador está asociado a la oferta a través de la empresa
+			boolean esReclutadorDeLaOferta = oferta.getEmpresa().getId() != null;
+			if (!esReclutadorDeLaOferta) {
+				throw new RuntimeException("No tienes permisos para ver los aspirantes de esta oferta");
+			}
+		}
+	}
 }

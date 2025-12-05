@@ -94,4 +94,60 @@ public class NotificacionService {
                 .map(n -> n.getUsuario().getId().equals(usuarioId))
                 .orElse(false);
     }
+
+    // ===== HELPER PARA ALERTAS DE CITACIÓN =====
+    /**
+     * Crea una notificación de alerta cuando se envía una citación al aspirante
+     */
+    public Notificacion crearAlertaCitacion(Long usuarioAspiranteId, String nombreOferta, 
+                                            String fechaCitacion, String horaCitacion, 
+                                            Long citacionId) {
+        Notificacion notificacion = new Notificacion();
+        notificacion.setTipo(Notificacion.Tipo.ENTREVISTA);
+        notificacion.setTitulo("🎯 Invitación a Entrevista - " + nombreOferta);
+        notificacion.setMensaje(
+            String.format("¡Felicidades! Fuiste seleccionado para una entrevista el %s a las %s. " +
+                         "Revisa los detalles en tu perfil.", 
+                         fechaCitacion, horaCitacion)
+        );
+        notificacion.setUrl("/citaciones/" + citacionId);
+        notificacion.setLeida(false);
+        notificacion.setIsActive(true);
+        
+        return create(notificacion, usuarioAspiranteId);
+    }
+
+    /**
+     * Crea una notificación cuando se cancela o cambia una citación
+     */
+    public Notificacion crearAlertaCancelacion(Long usuarioAspiranteId, String nombreOferta, String razon) {
+        Notificacion notificacion = new Notificacion();
+        notificacion.setTipo(Notificacion.Tipo.CAMBIO_ESTADO);
+        notificacion.setTitulo("⚠️ Cambio en tu Entrevista - " + nombreOferta);
+        notificacion.setMensaje(razon);
+        notificacion.setUrl("/citaciones");
+        notificacion.setLeida(false);
+        notificacion.setIsActive(true);
+        
+        return create(notificacion, usuarioAspiranteId);
+    }
+
+    /**
+     * Crea una notificación para el reclutador cuando un aspirante responde a una citación
+     */
+    public Notificacion crearAlertaReclutador(Long usuarioReclutadorId, String nombreAspirante, 
+                                              String nombreOferta, String accion) {
+        Notificacion notificacion = new Notificacion();
+        notificacion.setTipo(Notificacion.Tipo.CAMBIO_ESTADO);
+        notificacion.setTitulo("📬 " + accion + " de Entrevista - " + nombreAspirante);
+        notificacion.setMensaje(
+            String.format("%s ha %s la entrevista para la posición de %s", 
+                         nombreAspirante, accion.toLowerCase(), nombreOferta)
+        );
+        notificacion.setUrl("/citaciones");
+        notificacion.setLeida(false);
+        notificacion.setIsActive(true);
+        
+        return create(notificacion, usuarioReclutadorId);
+    }
 }

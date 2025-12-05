@@ -8,9 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Habilidad;
 import com.workable_sb.workable.models.Habilidad.TipoHabilidad;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.HabilidadRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.repository.UsuarioHabilidadRepo;
 
 @Service
 @Transactional
@@ -20,7 +19,7 @@ public class HabilidadService {
     private HabilidadRepo habilidadRepo;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private UsuarioHabilidadRepo usuarioHabilidadRepo;
 
     // ===== CREATE =====
     public Habilidad crearHabilidad(Habilidad habilidad, Long usuarioId) {
@@ -32,9 +31,6 @@ public class HabilidadService {
         if (habilidad.getTipo() == null) {
             throw new IllegalArgumentException("El tipo de habilidad es obligatorio");
         }
-
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Verificar que no exista otra habilidad con el mismo nombre
         if (habilidadRepo.existsByNombre(habilidad.getNombre())) {
@@ -83,9 +79,6 @@ public class HabilidadService {
     // ===== UPDATE =====
     public Habilidad actualizarHabilidad(Long id, Habilidad habilidadActualizada, Long usuarioId) {
 
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         Habilidad habilidadExistente = habilidadRepo.findById(id)
                 .filter(h -> h.getIsActive())
                 .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
@@ -112,6 +105,10 @@ public class HabilidadService {
         Habilidad habilidad = habilidadRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
 
+        // Eliminar todas las relaciones usuario-habilidad primero
+        usuarioHabilidadRepo.deleteAll(usuarioHabilidadRepo.findByHabilidadId(id));
+        
+        // Luego eliminar la habilidad
         habilidadRepo.delete(habilidad);
     }
 }

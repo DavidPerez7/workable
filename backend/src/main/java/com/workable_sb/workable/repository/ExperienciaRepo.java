@@ -18,4 +18,7 @@ public interface ExperienciaRepo extends JpaRepository<Experiencia, Long> {
     
     // Buscar experiencias ordenadas por fecha
     List<Experiencia> findByUsuarioIdOrderByFechaInicioDesc(Long usuarioId);
+    
+    // Contar experiencias por usuario
+    long countByUsuarioId(Long usuarioId);
 }

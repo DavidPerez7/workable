@@ -93,6 +93,26 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.update(id, usuario));
     }
 
+    // - DESACTIVAR (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/desactivar")
+    public ResponseEntity<Usuario> desactivar(@PathVariable Long id) {
+        Usuario usuario = usuarioService.getById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setIsActive(false);
+        return ResponseEntity.ok(usuarioService.update(id, usuario));
+    }
+
+    // - ACTIVAR (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/activar")
+    public ResponseEntity<Usuario> activar(@PathVariable Long id) {
+        Usuario usuario = usuarioService.getById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setIsActive(true);
+        return ResponseEntity.ok(usuarioService.update(id, usuario));
+    }
+
     // - DELETE (PUBLICO: solo aspirantes/reclutadores)
     @DeleteMapping("/public/{id}")
     public ResponseEntity<Void> deletePublic(@PathVariable Long id, @RequestParam Long usuarioActualId) {
@@ -100,7 +120,7 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    // - DELETE (ADMIN)
+    // - DELETE (ADMIN SOLAMENTE - reclutadores NO pueden eliminar usuarios)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
