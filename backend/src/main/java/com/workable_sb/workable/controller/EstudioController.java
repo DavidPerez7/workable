@@ -4,11 +4,17 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.service.EstudioService;
+import com.workable_sb.workable.security.JwtUtil;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -24,23 +30,46 @@ import java.util.Map;
 @RequestMapping("/api/estudio")
 public class EstudioController {
 
+    private static final Logger log = LoggerFactory.getLogger(EstudioController.class);
+
     @Autowired
     private EstudioService estudioService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // ===== CREATE - Solo ASPIRANTE y ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearEstudio(@RequestBody Estudio estudio, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> crearEstudio(@RequestBody Estudio estudio) {
         try {
+            // Obtener usuarioId y rol desde CustomUserDetails
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            
+            Long usuarioIdActual = null;
+            boolean isAdmin = false;
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+                usuarioIdActual = userDetails.getUsuarioId();
+                isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            }
+            
+            if (usuarioIdActual == null) {
+                log.error("No se pudo obtener usuarioId del token");
+                return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
+            }
+            
             Long usuarioId = estudio.getUsuario().getId();
             
-            // Validar que el usuario solo puede crear estudios para sí mismo (a menos que sea ADMIN)
-            if (!usuarioId.equals(usuarioIdActual)) {
+            // Validar que el usuario solo puede crear estudios para sí mismo (ADMIN puede crear para cualquiera)
+            if (!isAdmin && !usuarioId.equals(usuarioIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes crear estudios para otro usuario"));
             }
             
             return ResponseEntity.ok(estudioService.crearEstudio(estudio, usuarioId));
         } catch (Exception e) {
+            log.error("Error al crear estudio", e);
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear estudio: " + e.getMessage()));
         }
     }
@@ -83,16 +112,32 @@ public class EstudioController {
     // ===== UPDATE - Solo ASPIRANTE sus propios estudios o ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarEstudio(@PathVariable Long id, @RequestBody Estudio estudio, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> actualizarEstudio(@PathVariable Long id, @RequestBody Estudio estudio) {
         try {
+            // Obtener usuarioId y rol desde CustomUserDetails
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            
+            Long usuarioIdActual = null;
+            boolean isAdmin = false;
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+                usuarioIdActual = userDetails.getUsuarioId();
+                isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            }
+            
+            if (usuarioIdActual == null) {
+                return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
+            }
+            
             Estudio estudioExistente = estudioService.obtenerPorId(id);
             
-            // Validar ownership
-            if (!estudioExistente.getUsuario().getId().equals(usuarioIdActual)) {
+            // Validar ownership (ADMIN puede editar cualquier estudio)
+            if (!isAdmin && !estudioExistente.getUsuario().getId().equals(usuarioIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes editar estudios de otro usuario"));
             }
             
-            return ResponseEntity.ok(estudioService.actualizarEstudio(id, estudio, usuarioIdActual));
+            return ResponseEntity.ok(estudioService.actualizarEstudio(id, estudio, estudioExistente.getUsuario().getId()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar estudio: " + e.getMessage()));
         }
@@ -101,16 +146,32 @@ public class EstudioController {
     // ===== DELETE - Solo ASPIRANTE sus propios estudios o ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarEstudio(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> eliminarEstudio(@PathVariable Long id) {
         try {
+            // Obtener usuarioId y rol desde CustomUserDetails
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            
+            Long usuarioIdActual = null;
+            boolean isAdmin = false;
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+                usuarioIdActual = userDetails.getUsuarioId();
+                isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            }
+            
+            if (usuarioIdActual == null) {
+                return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
+            }
+            
             Estudio estudio = estudioService.obtenerPorId(id);
             
-            // Validar ownership
-            if (!estudio.getUsuario().getId().equals(usuarioIdActual)) {
+            // Validar ownership (ADMIN puede eliminar cualquier estudio)
+            if (!isAdmin && !estudio.getUsuario().getId().equals(usuarioIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes eliminar estudios de otro usuario"));
             }
             
-            estudioService.eliminarEstudio(id, usuarioIdActual);
+            estudioService.eliminarEstudio(id, estudio.getUsuario().getId());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar estudio: " + e.getMessage()));

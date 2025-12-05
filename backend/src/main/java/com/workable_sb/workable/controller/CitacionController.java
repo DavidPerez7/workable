@@ -62,7 +62,7 @@ public class CitacionController {
             @RequestParam(required = false) String detalles,
             @RequestParam Long usuarioIdActual) {
         try {
-            Map<String, Object> resultado = citacionService.enviarCitacionesMultiplesPorWhatsApp(
+            Map<String, Object> resultado = citacionService.enviarCitacionesMultiples(
                 postulacionIds, reclutadorId, fechaCitacion, hora, linkMeet, detalles, usuarioIdActual
             );
             return ResponseEntity.ok(resultado);
@@ -139,21 +139,21 @@ public class CitacionController {
         }
     }
     
-    // ===== ENVIAR WHATSAPP =====
+    // ===== ENVIAR POR EMAIL =====
     
-    // Enviar citación por WhatsApp
+    // Enviar citación por Email
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @PostMapping("/{citacionId}/enviar-whatsapp")
-    public ResponseEntity<?> enviarCitacionPorWhatsApp(
+    @PostMapping("/{citacionId}/enviar-email")
+    public ResponseEntity<?> enviarCitacionPorEmail(
             @PathVariable Long citacionId,
             @RequestParam Long usuarioIdActual) {
         try {
-            Map<String, Object> resultado = citacionService.enviarCitacionPorWhatsApp(citacionId, usuarioIdActual);
+            Map<String, Object> resultado = citacionService.enviarCitacionPorEmail(citacionId, usuarioIdActual);
             return ResponseEntity.ok(resultado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al enviar citación por WhatsApp: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error al enviar citación por email: " + e.getMessage()));
         }
     }
     

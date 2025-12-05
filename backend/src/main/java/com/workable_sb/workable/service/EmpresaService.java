@@ -58,7 +58,7 @@ public class EmpresaService {
     // ===== CREATE =====
     public Empresa create(Empresa request, Long usuarioId) {
 
-        // Validar que el usuario existe
+        // Validar usuario autenticado
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", usuarioId));
 
@@ -71,6 +71,10 @@ public class EmpresaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Municipio", "id", request.getMunicipio().getId()));
             request.setMunicipio(municipio);
         }
+
+        // Definir owner y agregar a reclutadores
+        request.setReclutadorOwner(usuario);
+        request.getReclutadores().add(usuario);
 
         return empresaRepository.save(request);
     }

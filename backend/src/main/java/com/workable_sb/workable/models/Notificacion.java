@@ -2,6 +2,8 @@ package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,8 +45,9 @@ public class Notificacion {
     private Boolean leida = false;
     private Boolean isActive = true;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Usuario usuario;
 
     @PrePersist

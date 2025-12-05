@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.service.EmpresaService;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 @RestController
 @RequestMapping("/api/empresa")
@@ -80,22 +82,22 @@ public class EmpresaController {
     // - CREATE (solo ADMIN)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Empresa> crear(@RequestBody Empresa empresa, @RequestParam Long usuarioId) {
-        return ResponseEntity.ok(empresaService.create(empresa, usuarioId));
+    public ResponseEntity<Empresa> crear(@RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(empresaService.create(empresa, user.getUsuarioId()));
     }
 
     // - CREATE add reclutador (solo owner o ADMIN)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping("/{empresaId}/reclutadores")
-    public ResponseEntity<Empresa> addReclutador(@PathVariable Long empresaId, @RequestBody Usuario nuevoReclutador, @RequestParam Long usuarioIdActual) {
-        return ResponseEntity.ok(empresaService.addReclutador(empresaId, nuevoReclutador, usuarioIdActual));
+    public ResponseEntity<Empresa> addReclutador(@PathVariable Long empresaId, @RequestBody Usuario nuevoReclutador, @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(empresaService.addReclutador(empresaId, nuevoReclutador, user.getUsuarioId()));
     }
 
     // - UPDATE (solo owner o ADMIN)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<Empresa> actualizar(@PathVariable Long id, @RequestBody Empresa empresa, @RequestParam Long usuarioIdActual) {
-        return ResponseEntity.ok(empresaService.update(id, empresa, usuarioIdActual));
+    public ResponseEntity<Empresa> actualizar(@PathVariable Long id, @RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(empresaService.update(id, empresa, user.getUsuarioId()));
     }
 
     // - DESACTIVAR (solo ADMIN)
@@ -121,31 +123,31 @@ public class EmpresaController {
     // - DELETE (solo ADMIN)
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
-        empresaService.delete(id, usuarioIdActual);
+    public ResponseEntity<Void> eliminar(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) {
+        empresaService.delete(id, user.getUsuarioId());
         return ResponseEntity.noContent().build();
     }
 
     // - DELETE remove reclutador (solo owner o ADMIN)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{empresaId}/reclutadores/{reclutadorId}")
-    public ResponseEntity<Void> removerReclutador(@PathVariable Long empresaId, @PathVariable Long reclutadorId, @RequestParam Long usuarioIdActual) {
-        empresaService.removeReclutador(empresaId, reclutadorId, usuarioIdActual);
+    public ResponseEntity<Void> removerReclutador(@PathVariable Long empresaId, @PathVariable Long reclutadorId, @AuthenticationPrincipal CustomUserDetails user) {
+        empresaService.removeReclutador(empresaId, reclutadorId, user.getUsuarioId());
         return ResponseEntity.noContent().build();
     }
 
     // - READ codigo invitacion
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{empresaId}/codigo-invitacion")
-    public ResponseEntity<String> getCodigoInvitacion(@PathVariable Long empresaId, @RequestParam Long usuarioIdActual) {
-        return ResponseEntity.ok(empresaService.getCodigoInvitacion(empresaId, usuarioIdActual));
+    public ResponseEntity<String> getCodigoInvitacion(@PathVariable Long empresaId, @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(empresaService.getCodigoInvitacion(empresaId, user.getUsuarioId()));
     }
 
     // - UPDATE regenerar codigo invitacion
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PatchMapping("/{empresaId}/regenerar-codigo")
-    public ResponseEntity<String> regenerarCodigoInvitacion(@PathVariable Long empresaId, @RequestParam Long usuarioIdActual) {
-        return ResponseEntity.ok(empresaService.regenerarCodigoInvitacion(empresaId, usuarioIdActual));
+    public ResponseEntity<String> regenerarCodigoInvitacion(@PathVariable Long empresaId, @AuthenticationPrincipal CustomUserDetails user) {
+        return ResponseEntity.ok(empresaService.regenerarCodigoInvitacion(empresaId, user.getUsuarioId()));
     }
 
     // - READ validar codigo invitacion

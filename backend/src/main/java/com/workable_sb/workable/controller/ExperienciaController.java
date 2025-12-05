@@ -9,7 +9,10 @@ import com.workable_sb.workable.service.ExperienciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import com.workable_sb.workable.security.CustomUserDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -31,13 +34,11 @@ public class ExperienciaController {
     // ===== CREATE - Solo ASPIRANTE y ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearExperiencia(@RequestBody Experiencia experiencia, @RequestParam Long usuarioId, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> crearExperiencia(@RequestBody Experiencia experiencia, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            // Validar que el usuario solo puede crear experiencias para sí mismo
-            if (!usuarioId.equals(usuarioIdActual)) {
-                return ResponseEntity.status(403).body(Map.of("error", "No puedes crear experiencias para otro usuario"));
-            }
-            return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, usuarioId));
+            Long usuarioIdActual = userDetails.getUsuarioId();
+            // Solo se permite que el usuario cree sus propias experiencias
+            return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, usuarioIdActual));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear experiencia: " + e.getMessage()));
         }
@@ -81,8 +82,9 @@ public class ExperienciaController {
     // ===== UPDATE - Solo ASPIRANTE sus propias experiencias o ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarExperiencia(@PathVariable Long id, @RequestBody Experiencia experiencia, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> actualizarExperiencia(@PathVariable Long id, @RequestBody Experiencia experiencia, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
+            Long usuarioIdActual = userDetails.getUsuarioId();
             Experiencia experienciaExistente = experienciaService.obtenerPorId(id);
             
             // Validar ownership
@@ -99,8 +101,9 @@ public class ExperienciaController {
     // ===== PATCH cambiar estado - Solo ASPIRANTE sus propias experiencias o ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam Experiencia.Estado estado, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam Experiencia.Estado estado, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
+            Long usuarioIdActual = userDetails.getUsuarioId();
             Experiencia experiencia = experienciaService.obtenerPorId(id);
             
             // Validar ownership
@@ -117,8 +120,9 @@ public class ExperienciaController {
     // ===== DELETE - Solo ASPIRANTE sus propias experiencias o ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarExperiencia(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> eliminarExperiencia(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
+            Long usuarioIdActual = userDetails.getUsuarioId();
             Experiencia experiencia = experienciaService.obtenerPorId(id);
             
             // Validar ownership

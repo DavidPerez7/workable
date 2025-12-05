@@ -84,10 +84,16 @@ public class JwtFilter extends OncePerRequestFilter {
                     authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
                 }
 
+                // Extraer usuarioId del token
+                Long usuarioId = jwtUtil.extractUsuarioId(jwt);
+
+                // Crear CustomUserDetails con usuarioId
+                CustomUserDetails userDetails = new CustomUserDetails(correo, "", authorities, usuarioId);
+
                 // Crear token de autenticación de Spring Security
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    new User(correo, "", authorities), 
-                    null, 
+                    userDetails, 
+                    null,
                     authorities
                 );
 

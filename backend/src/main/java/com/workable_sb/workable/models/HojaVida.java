@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,8 +45,9 @@ public class HojaVida {
     private LocalDate fechaCreacion;
     private LocalDate fechaActualizacion;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
     private Usuario usuario;
 

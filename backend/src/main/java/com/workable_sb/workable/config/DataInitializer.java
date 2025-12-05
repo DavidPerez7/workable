@@ -29,6 +29,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // Siempre asegurar que el usuario ADMIN exista y tenga la contraseña conocida
+        ensureAdminUser();
+
+        // Inicializar datos de prueba solo si la base de datos está vacía
         if (municipioRepo.count() == 0) {
             initializeMunicipios();
             initializeHabilidades();
@@ -42,7 +46,36 @@ public class DataInitializer implements CommandLineRunner {
             initializeUsuarioHabilidades();
             initializeFeedbacks();
             initializeNotificaciones();
-            System.out.println("✅ Base de datos inicializada con 10 registros por tabla");
+            System.out.println("Base de datos inicializada con 10 registros por tabla");
+        } else {
+            System.out.println("Base de datos ya contiene datos. Solo se verifico usuario ADMIN.");
+        }
+    }
+
+    private void ensureAdminUser() {
+        Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
+        Usuario admin = usuarioRepo.findByCorreo("admin@example.com").orElse(null);
+
+        if (admin == null) {
+            Usuario nuevo = new Usuario();
+            nuevo.setNombre("Admin");
+            nuevo.setApellido("Sistema");
+            nuevo.setCorreo("admin@example.com");
+            nuevo.setPassword(passwordEncoder.encode("admin123"));
+            nuevo.setTelefono("3001111111");
+            nuevo.setFechaNacimiento(LocalDate.of(1990, 1, 1));
+            nuevo.setRol(Usuario.Rol.ADMIN);
+            nuevo.setMunicipio(municipio);
+            nuevo.setIsActive(true);
+            usuarioRepo.save(nuevo);
+            System.out.println("Usuario ADMIN creado: admin@example.com / admin123");
+        } else {
+            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setRol(Usuario.Rol.ADMIN);
+            admin.setIsActive(true);
+            admin.setMunicipio(municipio);
+            usuarioRepo.save(admin);
+            System.out.println("Usuario ADMIN verificado/actualizado: admin@example.com / admin123");
         }
     }
 

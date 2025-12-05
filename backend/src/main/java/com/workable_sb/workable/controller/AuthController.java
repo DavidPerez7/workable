@@ -145,7 +145,7 @@ public class AuthController {
             }
             
             String rolString = usuario.getRol().toString();
-            String token = jwtUtil.generateToken(usuario.getCorreo(), rolString);
+            String token = jwtUtil.generateTokenWithUserId(usuario.getCorreo(), rolString, usuario.getId());
             String refreshToken = jwtUtil.generateRefreshToken(usuario.getCorreo());
             
             LoginResponseDto response = new LoginResponseDto();

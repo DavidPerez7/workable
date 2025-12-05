@@ -86,8 +86,9 @@ public class Estudio {
         DOCTORADO
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
     private Usuario usuario;
 

@@ -152,11 +152,6 @@ public class CitacionService {
         }
     }
     
-    // Método legado para compatibilidad - redirige a email
-    public Map<String, Object> enviarCitacionPorWhatsApp(Long citacionId, Long usuarioIdActual) {
-        return enviarCitacionPorEmail(citacionId, usuarioIdActual);
-    }
-    
     // ===== ENVIAR CITACIÓN A MÚLTIPLES CANDIDATOS =====
     public Map<String, Object> enviarCitacionesMultiples(List<Long> postulacionIds, Long reclutadorId, 
                                                           LocalDate fechaCitacion, String hora, 
@@ -245,14 +240,6 @@ public class CitacionService {
         respuesta.put("exitosas", citacionesCreadas.size());
         
         return respuesta;
-    }
-    
-    // Método legado para compatibilidad
-    public Map<String, Object> enviarCitacionesMultiplesPorWhatsApp(List<Long> postulacionIds, Long reclutadorId, 
-                                                                   LocalDate fechaCitacion, String hora, 
-                                                                   String linkMeet, String detalles, 
-                                                                   Long usuarioIdActual) {
-        return enviarCitacionesMultiples(postulacionIds, reclutadorId, fechaCitacion, hora, linkMeet, detalles, usuarioIdActual);
     }
     
     // ===== OBTENER CITACIONES =====

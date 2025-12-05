@@ -80,7 +80,7 @@ public class Empresa {
 
     // Reclutador que creó la empresa (owner/administrador principal)
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "reclutador_owner_id", referencedColumnName = "id")
+    @JoinColumn(name = "reclutador_owner_id", referencedColumnName = "id", nullable = true)
     private Usuario reclutadorOwner;
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
@@ -132,9 +132,11 @@ public class Empresa {
     private List<Oferta> ofertas = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Direccion> direcciones = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Feedback> feedbacks = new ArrayList<>();
 
     // Relación unidireccional: La empresa conoce sus reclutadores

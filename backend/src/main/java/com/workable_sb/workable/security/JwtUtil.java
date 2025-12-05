@@ -48,6 +48,15 @@ public class JwtUtil {
         return createToken(claims, correo, EXPIRATION_TIME);
     }
 
+    // Genera access token con ID de usuario
+    public String generateTokenWithUserId(String correo, String rol, Long usuarioId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("rol", rol);
+        claims.put("type", "access");
+        claims.put("usuarioId", usuarioId);
+        return createToken(claims, correo, EXPIRATION_TIME);
+    }
+
     public String generateRefreshToken(String correo) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("type", "refresh");
@@ -70,6 +79,10 @@ public class JwtUtil {
 
     public String extractCorreo(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Long extractUsuarioId(String token) {
+        return extractClaim(token, claims -> claims.get("usuarioId", Long.class));
     }
 
     public String extractTokenType(String token) {

@@ -3,6 +3,8 @@ package com.workable_sb.workable.models;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,8 +46,9 @@ public class Postulacion {
 	@JsonIgnoreProperties({"postulaciones", "habilidadesRequeridas", "requisitos", "beneficios", "hibernateLazyInitializer", "handler"})
 	private Oferta oferta;
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
 	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
 	private Usuario usuario;
 

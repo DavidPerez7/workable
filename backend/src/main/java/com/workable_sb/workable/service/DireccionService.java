@@ -36,6 +36,14 @@ public class DireccionService {
                 .orElseThrow(() -> new RuntimeException("Direccion no encontrada"));
     }
 
+    public Direccion obtenerPorId(Long id) {
+        return findById(id);
+    }
+
+    public List<Direccion> listarTodas() {
+        return direccionRepo.findAll();
+    }
+
     public List<Direccion> findAllByEmpresaId(Long empresaId) {
         if (!empresaRepository.existsById(empresaId)) {
             throw new RuntimeException("Empresa no encontrada");
@@ -76,6 +84,23 @@ public class DireccionService {
         return direccionRepo.save(request);
     }
 
+    public Direccion crear(Direccion direccion) {
+        if (direccion.getEmpresa() == null || direccion.getEmpresa().getId() == null) {
+            throw new RuntimeException("La empresa es obligatoria");
+        }
+        Empresa empresa = empresaRepository.findById(direccion.getEmpresa().getId())
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        direccion.setEmpresa(empresa);
+        
+        if (direccion.getMunicipio() != null && direccion.getMunicipio().getId() != null) {
+            Municipio municipio = municipioRepo.findById(direccion.getMunicipio().getId())
+                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+            direccion.setMunicipio(municipio);
+        }
+        
+        return direccionRepo.save(direccion);
+    }
+
     // ===== UPDATE =====
     public Direccion update(Long id, Direccion request, Long usuarioActualId) {
         Direccion existingDireccion = direccionRepo.findById(id)
@@ -100,6 +125,25 @@ public class DireccionService {
         return direccionRepo.save(existingDireccion);
     }
 
+    public Direccion actualizar(Long id, Direccion direccion) {
+        Direccion existente = direccionRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Direccion no encontrada"));
+
+        if (direccion.getNombre() != null) existente.setNombre(direccion.getNombre());
+        if (direccion.getDireccion() != null) existente.setDireccion(direccion.getDireccion());
+        if (direccion.getTelefono() != null) existente.setTelefono(direccion.getTelefono());
+        if (direccion.getCorreo() != null) existente.setCorreo(direccion.getCorreo());
+        if (direccion.getIsPrincipal() != null) existente.setIsPrincipal(direccion.getIsPrincipal());
+
+        if (direccion.getMunicipio() != null && direccion.getMunicipio().getId() != null) {
+            Municipio municipio = municipioRepo.findById(direccion.getMunicipio().getId())
+                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+            existente.setMunicipio(municipio);
+        }
+
+        return direccionRepo.save(existente);
+    }
+
     // ===== DELETE =====
     public void delete(Long id, Long usuarioActualId) {
         Direccion existingDireccion = direccionRepo.findById(id)
@@ -110,6 +154,12 @@ public class DireccionService {
         }
 
         direccionRepo.delete(existingDireccion);
+    }
+
+    public void eliminar(Long id) {
+        Direccion direccion = direccionRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Direccion no encontrada"));
+        direccionRepo.delete(direccion);
     }
 
     private boolean puedeModificarEmpresa(Empresa empresa, Long usuarioId) {

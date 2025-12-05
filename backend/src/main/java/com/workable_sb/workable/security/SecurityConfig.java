@@ -60,6 +60,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 
+                // ===== ADMIN - ACCESO TOTAL A TODO (DEBE IR PRIMERO) =====
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                
                 // Búsqueda pública de empresas, ofertas, municipios y habilidades
                 .requestMatchers(HttpMethod.GET, "/api/empresa/publicas").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/empresa/**").permitAll()
@@ -67,9 +70,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/municipio/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/habilidades/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/habilidades").permitAll()
-
-                // ===== ADMIN - ACCESO COMPLETO =====
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                 // ===== USUARIO - Gestión de perfiles =====
                 .requestMatchers(HttpMethod.POST, "/api/usuario/public").permitAll()
