@@ -1,10 +1,7 @@
-
-
 package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.service.EstudioService;
-import com.workable_sb.workable.security.JwtUtil;
 import com.workable_sb.workable.security.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador de Estudios - Formación académica del aspirante.
- * Roles permitidos:
- * - ASPIRANTE: Crear/editar/eliminar sus propios estudios
- * - RECLUTADOR: Solo lectura de estudios públicos
- * - ADMIN: Acceso completo
- */
 @RestController
 @RequestMapping("/api/estudio")
 public class EstudioController {
@@ -34,9 +24,6 @@ public class EstudioController {
 
     @Autowired
     private EstudioService estudioService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     // ===== CREATE - Solo ASPIRANTE y ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
