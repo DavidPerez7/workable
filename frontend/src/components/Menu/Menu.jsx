@@ -34,7 +34,7 @@ const Menu = () => {
                 </li>
                 <li className='selec'>
                 <div className='Icons'>
-                    <Link to='/MiPerfil/VerPerfil' className="link">
+                    <Link to='/MiPerfil/HojaDeVida' className="link">
                     <div className='Icon'>
                         <FileText></FileText>
                     </div>

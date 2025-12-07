@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getAspiranteById } from "../../../api/aspiranteAPI";
 import {
   FaUser,
   FaBriefcase,
@@ -23,128 +24,91 @@ import Footer from "../../../components/Footer/footer";
 import "./MiPerfil.css";
 
 const MiPerfil = () => {
-  const [aspirante, setAspirante] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deletePassword, setDeletePassword] = useState("");
-  const [deleteError, setDeleteError] = useState("");
-  const navigate = useNavigate();
+	const [aspirante, setAspirante] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState("");
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [deletePassword, setDeletePassword] = useState("");
+	const [deleteError, setDeleteError] = useState("");
+	const navigate = useNavigate();
 
-  const idAspirante = localStorage.getItem("idAspirante");
-  const token = localStorage.getItem("token");
+	const idAspirante = localStorage.getItem("idAspirante");
+	const token = localStorage.getItem("token");
 
-  // ============================================================
-  // RF03: Obtener datos del perfil del aspirante
-  // TODO: CONECTAR CON API - Por ahora usando datos de ejemplo
-  // ============================================================
-  const obtenerAspirante = async (id) => {
-    try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch(`http://localhost:8080/api/aspirante/${id}`, {
-      //   method: 'GET',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
 
-      // if (!response.ok) {
-      //   throw new Error("Error al obtener el perfil del aspirante");
-      // }
+const obtenerAspirante = async (userId) => {
+	setLoading(true);
+	setError(""); // limpiar errores previos
+	try {
+		if (!token) {
+			throw new Error("No se encontró token de autenticación");
+		}
+		const perfil = await getAspiranteById(userId, token);
+		setAspirante(perfil); // Actualizar estado con datos obtenidos
 
-      // const data = await response.json();
+	} catch (err) {
+		console.error("Error obteniendo aspirante:", err);
+		setError(err.message || "No se pudo cargar la información del perfil. Por favor, intenta de nuevo.");
+		if (err.message.includes("401")) {
+			// Token inválido o expirado
+			localStorage.clear();
+			navigate("/login");
+		}
 
-      // ✅ DATOS DE EJEMPLO - Simula la respuesta del backend
-      const data = {
-        id: id,
-        nom: "Juan Carlos",
-        ape: "Pérez González",
-        cargo: "Desarrollador Full Stack",
-        descripcion:
-          "Desarrollador apasionado por crear soluciones tecnológicas inclusivas y accesibles. Con experiencia en React, Node.js y bases de datos.",
-        numerDoc: "1020304050",
-        nombreTipDoc: "C.C",
-        nombreMunicipio: "Bogotá D.C",
-        nombreGenero: "Masculino",
-        tel: "3001234567",
-        ubi: "Calle 123 #45-67, Bogotá",
-        feNa: "1995-06-15",
-        nombreDiscapacidad: "Discapacidad Motriz",
-        fotoPerfilUrl: null, // Cambia a una URL válida si tienes imagen
-      };
+	} finally {
+		setLoading(false);
+	}
+};
 
-      // Simular delay de red
-      await new Promise((resolve) => setTimeout(resolve, 800));
+const handleEliminarCuenta = async () => {
+	if (!deletePassword || deletePassword.trim().length === 0) {
+		setDeleteError("Debes ingresar tu contraseña para confirmar");
+		return;
+	}
 
-      setAspirante(data);
-      setError("");
-    } catch (err) {
-      console.error("Error obteniendo perfil:", err);
-      setError("No se pudo cargar tu perfil. Por favor, intenta de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  };
+	try {
+		// ❌ COMENTADO - Llamada a API
+		// const response = await fetch(
+		//   `http://localhost:8080/api/aspirante/${idAspirante}`,
+		//   {
+		//     method: "DELETE",
+		//     headers: {
+		//       Authorization: `Bearer ${token}`,
+		//       "Content-Type": "application/json"
+		//     },
+		//     body: JSON.stringify({
+		//       clave: deletePassword // Verificación de contraseña
+		//     })
+		//   }
+		// );
 
-  // ============================================================
-  // RF04: Eliminar cuenta de aspirante
-  // Criterios de aceptación:
-  // - El sistema pide confirmación antes de eliminar
-  // - Se eliminan todos los datos asociados (postulaciones/perfil)
-  // - Requiere verificación con contraseña
-  // TODO: CONECTAR CON API - Por ahora simula la eliminación
-  // ============================================================
-  const handleEliminarCuenta = async () => {
-    // Validación de contraseña
-    if (!deletePassword || deletePassword.trim().length === 0) {
-      setDeleteError("Debes ingresar tu contraseña para confirmar");
-      return;
-    }
+		// if (!response.ok) {
+		//   if (response.status === 401) {
+		//     setDeleteError("Contraseña incorrecta");
+		//     return;
+		//   }
+		//   throw new Error("Error al eliminar la cuenta");
+		// }
 
-    try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch(
-      //   `http://localhost:8080/api/aspirante/${idAspirante}`,
-      //   {
-      //     method: "DELETE",
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //       "Content-Type": "application/json"
-      //     },
-      //     body: JSON.stringify({
-      //       clave: deletePassword // Verificación de contraseña
-      //     })
-      //   }
-      // );
+		// ✅ SIMULACIÓN - Por ahora simula validación de contraseña
+		// Para testing, acepta cualquier contraseña con más de 4 caracteres
+		if (deletePassword.length < 4) {
+		setDeleteError("Contraseña incorrecta");
+		return;
+		}
 
-      // if (!response.ok) {
-      //   if (response.status === 401) {
-      //     setDeleteError("Contraseña incorrecta");
-      //     return;
-      //   }
-      //   throw new Error("Error al eliminar la cuenta");
-      // }
+		// Simular delay de red
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // ✅ SIMULACIÓN - Por ahora simula validación de contraseña
-      // Para testing, acepta cualquier contraseña con más de 4 caracteres
-      if (deletePassword.length < 4) {
-        setDeleteError("Contraseña incorrecta");
-        return;
-      }
-
-      // Simular delay de red
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Éxito: limpiar localStorage y redirigir
-      alert("Tu cuenta ha sido eliminada exitosamente");
-      localStorage.clear();
-      navigate("/");
-    } catch (err) {
-      console.error("Error eliminando cuenta:", err);
-      setDeleteError("No se pudo eliminar la cuenta. Intenta de nuevo.");
-    }
-  };
+		// Éxito: limpiar localStorage y redirigir
+		alert("Tu cuenta ha sido eliminada exitosamente");
+		localStorage.clear();
+		navigate("/");
+	} catch (err) {
+		console.error("Error eliminando cuenta:", err);
+		setDeleteError("No se pudo eliminar la cuenta. Intenta de nuevo.");
+	}
+};
 
   // Cargar datos al montar el componente
   useEffect(() => {
@@ -343,7 +307,7 @@ const MiPerfil = () => {
                 <p>Revisa el estado de tus aplicaciones</p>
               </Link>
 
-              <Link to="/MiPerfil/VerPerfil" className="action-card-MPF">
+              <Link to="/MiPerfil/HojaDeVida" className="action-card-MPF">
                 <Eye size={32} className="action-icon" />
                 <h3>Ver Mi Hoja de Vida</h3>
                 <p>Mira cómo te ven los reclutadores</p>

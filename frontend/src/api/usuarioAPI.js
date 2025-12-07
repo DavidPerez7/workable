@@ -11,9 +11,9 @@ export const getUsuarios = async () => {
 	}
 }
 
-export const getUsuarioById = async (id) => {
+export const getUsuarioById = async (userId, token) => {
 	try {
-		const response = await axios.get(`${API_URL}/${id}`);
+		const response = await axios.get(`${API_URL}/${userId}`, {headers: {Authorization: `Bearer ${token}`}});
 		return response.data;
 	} catch (error) {
 		throw new Error("Error al obtener usuario");

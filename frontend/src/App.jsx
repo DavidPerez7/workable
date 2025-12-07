@@ -33,7 +33,7 @@ import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/Ac
 import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
 import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
-import VerPerfil from "./pages/AspirantePage/MiPerfil/VerPerfil/VerPerfil";
+import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 import NewReclutador from "./components/Empresa/NewReclutador";
 import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEmpresa";
 
@@ -96,7 +96,7 @@ function App() {
           path="/MiPerfil/MisPostulaciones"
           element={<MisPostulaciones />}
         />
-        <Route path="/MiPerfil/VerPerfil" element={<VerPerfil />} />
+        <Route path="/MiPerfil/HojaDeVida" element={<HojaDeVida />} />
         <Route path="/SignUpPage/NewReclutador" element={<NewReclutador />} />
         <Route path="/Reclutador/RegistrarEmpresa" element={<RegistrarEmpresa />} />
       </Routes>

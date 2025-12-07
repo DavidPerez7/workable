@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./VerPerfil.css";
+import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
 
-const VerPerfil = () => {
+const HojaDeVida = () => {
   const [perfil, setPerfil] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -307,4 +307,4 @@ const VerPerfil = () => {
   );
 };
 
-export default VerPerfil;
+export default HojaDeVida;
