@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import HeaderAspirant from "../../../../components/HeaderAspirant/HeaderAspirant";
+import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu"
 import "./MisPostulaciones.css";
 
@@ -101,7 +101,7 @@ const MisPostulaciones = () => {
 
   return (
     <>
-    <HeaderAspirant />
+    <Header isLoggedIn={true} userRole="ASPIRANTE" />
     <Menu />
     <div className="mispostulaciones-container-MP">
 

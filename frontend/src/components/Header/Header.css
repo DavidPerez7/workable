@@ -174,6 +174,159 @@
 }
 
 /* ==========================================
+   BARRA DE BÚSQUEDA (para aspirante)
+   ========================================== */
+
+.job-search-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-icon {
+  color: #2541a0;
+  font-size: 1.2rem;
+}
+
+.input-text {
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.search-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #1d4ed8;
+}
+
+.divider {
+  width: 1px;
+  background: #cbd5e1;
+  height: 25px;
+}
+
+/* ==========================================
+   DROPDOWN DE RESULTADOS
+   ========================================== */
+
+.search-dropdown {
+  position: absolute;
+  top: 95px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 650px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f3f7ff;
+}
+
+.dropdown-icon {
+  font-size: 20px;
+  color: #2563eb;
+}
+
+.dropdown-cargo {
+  font-weight: 600;
+}
+
+.dropdown-ciudad {
+  font-size: 14px;
+  color: #555;
+}
+
+.dropdown-no-results {
+  text-align: center;
+  padding: 15px;
+  color: #777;
+  font-size: 14px;
+}
+
+/* ==========================================
+   MENÚ DE PERFIL (para aspirante)
+   ========================================== */
+
+.user-profile-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.username-text {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.avatar-placeholder {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #f7fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #2541a0;
+}
+
+.button-perfil {
+  padding: 0.5rem 1.2rem;
+  background: white;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: #1e3a8a;
+  transition: 0.2s ease;
+}
+
+.button-perfil:hover {
+  background: #f3f4f6;
+}
+
+/* ==========================================
    RESPONSIVE DESIGN
    ========================================== */
 
@@ -260,6 +413,25 @@
   .logo-container {
     order: 1;
     flex: 1;
+  }
+
+  .job-search-bar,
+  .user-profile-menu {
+    display: none;
+    position: absolute;
+    top: 4.4rem;
+    left: 0;
+    right: 0;
+    background: #1d4ed8;
+    padding: 1rem 0;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .job-search-bar.show,
+  .user-profile-menu.show {
+    display: flex;
   }
 }
 

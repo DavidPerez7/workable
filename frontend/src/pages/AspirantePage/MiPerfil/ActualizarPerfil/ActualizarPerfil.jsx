@@ -15,7 +15,7 @@ CheckCircle,
 Camera,
 Loader
 } from "lucide-react";
-import HeaderAspirant from "../../../../components/HeaderAspirant/HeaderAspirant";
+import Header from "../../../../components/Header/Header";
 import footer from "../../../../components/Footer/footer";
 import "./ActualizarPerfil.css";
 
@@ -289,7 +289,7 @@ if (loading) {
 
 return (
 	<>
-	<HeaderAspirant />
+	<Header isLoggedIn={true} userRole="ASPIRANTE" />
 	<Menu />
 
 	<main className="main-actualizar-perfil-APF">

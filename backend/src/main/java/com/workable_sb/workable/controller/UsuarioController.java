@@ -74,6 +74,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getByMunicipio(municipioId));
     }
 
+    // - READ by id
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Usuario>> getById(@PathVariable Long id) {

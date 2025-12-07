@@ -17,7 +17,7 @@ import {
   Trash2,
   AlertCircle,
 } from "lucide-react";
-import HeaderAspirant from "../../../components/HeaderAspirant/HeaderAspirant";
+import Header from "../../../components/Header/Header";
 import Menu from "../../../components/Menu/Menu";
 import Footer from "../../../components/Footer/footer";
 import "./MiPerfil.css";
@@ -190,7 +190,7 @@ const MiPerfil = () => {
 
   return (
     <>
-      <HeaderAspirant />
+      <Header isLoggedIn={true} userRole="ASPIRANTE" />
       <Menu />
 
       <main className="main-perfil-MPF">

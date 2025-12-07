@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { registerReclutador } from "../../../api/authApi";
 import "./ReclutadorForm.css";
 
 const ReclutadorForm = () => {
@@ -65,8 +65,8 @@ const ReclutadorForm = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/register-reclutador", reclutadorData);
-      console.log("Reclutador registrado:", response.data);
+      const response = await registerReclutador(reclutadorData);
+      console.log("Reclutador registrado:", response);
       alert("¡Registro exitoso! Ahora puedes iniciar sesión");
       formRef.current.reset();
       setCompromisoInclusivo(false);

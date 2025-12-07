@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./AspirantePage.css";
-import HeaderAspirant from "../../components/HeaderAspirant/HeaderAspirant";
+import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/footer";
 
 const AspirantePage = () => {
@@ -179,7 +179,7 @@ const AspirantePage = () => {
   // ============================================
   return (
     <>
-      <HeaderAspirant />
+      <Header isLoggedIn={true} userRole="ASPIRANTE" />
 
       <main className="main-aspirant-page-AP">
         {/* SIDEBAR */}

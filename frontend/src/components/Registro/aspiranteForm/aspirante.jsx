@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { registerAspirante } from "../../../api/authApi";
 import "./aspirante.css";
 import "../reclutadorForm/ReclutadorForm.css";
 
@@ -47,8 +47,8 @@ const AspiranteForm = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/register-aspirante", aspiranteData);
-      console.log("Aspirante registrado:", response.data);
+      const response = await registerAspirante(aspiranteData);
+      console.log("Aspirante registrado:", response);
       alert("¡Registro exitoso! Ahora puedes iniciar sesión");
       formRef.current.reset();
       setAceptaTerminos(false);

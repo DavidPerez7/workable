@@ -5,7 +5,7 @@
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f9fafb 0%, #e5e7eb 100%);
+  background: linear-gradient(135deg, #eaecee 0%, #d6d8dc 100%);
   display: flex;
   gap: 2rem;
   padding: 2rem;
@@ -19,7 +19,7 @@
   flex-shrink: 0;
   background: white;
   border-radius: 16px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #9ca3af;
   padding: 2rem;
   height: fit-content;
   position: sticky;
@@ -33,7 +33,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 1px solid #9ca3af;
 }
 
 .filters-title-AP {
@@ -133,7 +133,7 @@
   background: white;
   padding: 2rem;
   border-radius: 16px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #9ca3af;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
@@ -167,7 +167,7 @@
 .section-listings-panel-AP {
   background: white;
   border-radius: 16px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #9ca3af;
   padding: 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   overflow-y: auto;
@@ -186,7 +186,7 @@
 .job-card-AP {
   padding: 1.8rem;
   background: white;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #9ca3af;
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -274,7 +274,7 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 1rem;
-  border-top: 2px solid #e5e7eb;
+  border-top: 1px solid #9ca3af;
 }
 
 .job-salary-AP {
@@ -296,7 +296,7 @@
 .section-details-panel-AP {
   background: white;
   border-radius: 16px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #9ca3af;
   padding: 2.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   overflow-y: auto;
@@ -314,7 +314,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 1px solid #9ca3af;
 }
 
 .job-detail-title-AP {

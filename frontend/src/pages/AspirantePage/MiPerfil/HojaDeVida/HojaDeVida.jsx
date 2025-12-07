@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./VerPerfil.css";
-import HeaderAspirant from "../../../../components/HeaderAspirant/HeaderAspirant";
+import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
 
 const VerPerfil = () => {
@@ -122,7 +122,7 @@ const VerPerfil = () => {
 
   return (
     <>
-      <HeaderAspirant />
+      <Header isLoggedIn={true} userRole="ASPIRANTE" />
       <Menu />
 
       <div className="perfil-container-PF">

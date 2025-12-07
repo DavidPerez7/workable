@@ -1,31 +1,42 @@
-const API_URL = "http://localhost:8080/api/auth"; 
+import axios from "axios";
 
-export const login = async (credenciales) => {
-  const res = await fetch(`${API_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(credenciales),
-  });
+const API_URL = "http://localhost:8080/api/auth";
 
-  if (!res.ok) throw new Error("Error al iniciar sesión");
 
-  const data = await res.json();
-
-  localStorage.setItem("token", data.token);
-  return data;
+export const login = async (LoginCredenciales) => {
+	try {
+		const response = await axios.post(`${API_URL}/login`, LoginCredenciales, {
+			headers: { "Content-Type": "application/json" },
+		});
+		localStorage.setItem("token", response.data.token);
+		return response.data;
+	} catch (error) {
+		throw new Error("Error al iniciar sesión");
+	}
 };
 
-export const registro = async (usuario) => {
-  const res = await fetch(`${API_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(usuario),
-  });
+export const registerAspirante = async (aspiranteData) => {
+	try {
+		const response = await axios.post(`${API_URL}/register-aspirante`, aspiranteData, {
+			headers: { "Content-Type": "application/json" },
+		});
+		return response.data;
+	} catch (error) {
+		throw new Error("Error al registrar aspirante");
+	}
+};
 
-  if (!res.ok) throw new Error("Error al registrar usuario");
-  return res.json();
+export const registerReclutador = async (reclutadorData) => {
+	try {
+		const response = await axios.post(`${API_URL}/register-reclutador`, reclutadorData, {
+			headers: { "Content-Type": "application/json" },
+		});
+		return response.data;
+	} catch (error) {
+		throw new Error("Error al registrar reclutador");
+	}
 };
 
 export const logout = () => {
-  localStorage.removeItem("token");
+	localStorage.removeItem("token");
 };
