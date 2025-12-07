@@ -2,45 +2,47 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/usuario"; //en singular
 
-export const getUsuarios = async () => {
+// este call api ya usa TOKENS
+// solo para ADMIN (son usuarios totales)
+export const getUsuarios = async (TOKEN) => {
 	try {
-		const response = await axios.get(API_URL);
+		const response = await axios.get(API_URL, {headers: {Authorization: `Bearer ${TOKEN}`}});
 		return response.data;
 	} catch (error) {
 		throw new Error("Error al obtener usuarios");
 	}
 }
 
-export const getUsuarioById = async (userId, token) => {
+export const getUsuarioById = async (userId, TOKEN) => {
 	try {
-		const response = await axios.get(`${API_URL}/${userId}`, {headers: {Authorization: `Bearer ${token}`}});
+		const response = await axios.get(`${API_URL}/${userId}`, {headers: {Authorization: `Bearer ${TOKEN}`}});
 		return response.data;
 	} catch (error) {
 		throw new Error("Error al obtener usuario");
 	}
 }
 
-export const createUsuario = async (usuarioData) => {
+export const createUsuario = async (usuarioData, TOKEN) => {
 	try {
-		const response = await axios.post(API_URL, usuarioData, {headers: {'Content-Type': 'application/json'}}); //
+		const response = await axios.post(API_URL, usuarioData, {headers: {Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json'}});
 		return response.data;
 	} catch (error) {
 		throw new Error("Error al crear usuario");
 	}
 }
 
-export const updateUsuario = async (id, usuarioData) => {
+export const updateUsuario = async (id, usuarioData, TOKEN) => {
 	try {
-		const response = await axios.put(`${API_URL}/${id}`, usuarioData, {headers: {"Content-Type": "application/json"}});
+		const response = await axios.put(`${API_URL}/${id}`, usuarioData, {headers: {Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"}});
 		return response.data
 	} catch (error) {
 		throw new Error("Error al actualizar usuario");
 	}
 }
 
-export const deleteUsuario = async (id) => {
+export const deletePublicUsuario = async (id, TOKEN) => {
 	try {
-		const response = await axios.delete(`${API_URL}/${id}`);
+		const response = await axios.delete(`${API_URL}/publicDelete/${id}`, {headers: {Authorization: `Bearer ${TOKEN}`}});
 		return response.data;
 	} catch (error) {
 		throw new Error("Error al eliminar usuario");

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -164,15 +166,21 @@ public class UsuarioService {
         return usuarioRepo.save(existingUsuario);
     }
 
-    // - DELETE (PUBLICO: solo aspirantes/reclutadores, no puede eliminar ADMIN)
-    public void deletePublic(Long id, Long usuarioActualId) {
-        Usuario existingUsuario = usuarioRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        // Solo el propio usuario puede eliminar
-        if (!existingUsuario.getId().equals(usuarioActualId)) {
+    // - DELETE PUBLICO: aspirantes/reclutadores
+    public void deletePublic(Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String correoAuth = auth.getName();
+        Usuario usuarioAuth = usuarioRepo.findByCorreo(correoAuth    ).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Long idAuth = usuarioAuth.getId(); // ID real del usuario autenticado
+
+        //Ahora validar que el ID a eliminar sea el mismo
+        if (!id.equals(idAuth)) {
             throw new IllegalStateException("Solo puedes eliminar tu propio usuario");
         }
-        // No se puede eliminar un usuario ADMIN
+
+        Usuario existingUsuario = usuarioRepo.findById(idAuth).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // validad que no sea ADMIN
         if (existingUsuario.getRol() == Usuario.Rol.ADMIN) {
             throw new IllegalStateException("No puedes eliminar un usuario ADMIN");
         }

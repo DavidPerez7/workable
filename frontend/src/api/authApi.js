@@ -9,6 +9,7 @@ export const login = async (LoginCredenciales) => {
 			headers: { "Content-Type": "application/json" },
 		});
 		localStorage.setItem("token", response.data.token);
+		localStorage.setItem("usuarioId", response.data.usuarioId);
 		return response.data;
 	} catch (error) {
 		throw new Error("Error al iniciar sesión");

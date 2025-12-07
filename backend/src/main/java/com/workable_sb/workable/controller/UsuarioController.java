@@ -114,10 +114,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.update(id, usuario));
     }
 
-    // - DELETE (PUBLICO: solo aspirantes/reclutadores)
-    @DeleteMapping("/public/{id}")
-    public ResponseEntity<Void> deletePublic(@PathVariable Long id, @RequestParam Long usuarioActualId) {
-        usuarioService.deletePublic(id, usuarioActualId);
+    // - DELETE PUBLICO: aspirantes/reclutadores
+    @DeleteMapping("/publicDelete/{id}")
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR')")
+    public ResponseEntity<Void> deletePublic(@PathVariable Long id) {
+        usuarioService.deletePublic(id);
         return ResponseEntity.noContent().build();
     }
 
