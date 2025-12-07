@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
 import "./ConfigPage.css";
 
 const ConfigPage = () => {

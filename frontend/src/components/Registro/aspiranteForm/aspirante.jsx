@@ -66,16 +66,12 @@ const AspiranteForm = () => {
     <div className="aspirante-form-container">
       <div className="aspirante-form-card">
         <div className="aspirante-form-header">
-          <h1 className="aspirante-form-title">Registro de Aspirante</h1>
-          <p className="aspirante-form-subtitle">
-            Crea tu cuenta y accede a ofertas laborales inclusivas
-          </p>
         </div>
 
         <form className="aspirante-form" onSubmit={handleSubmit} ref={formRef}>
           {/* Sección: Información Personal */}
           <div className="form-section personal-section">
-            <h2 className="section-title-reclutador">Información Personal</h2>
+            <h2 className="section-title-reclutador"><span style={{fontWeight: 'normal'}}>registro</span> <span style={{color: '#3b82f6'}}>Aspirante</span></h2>
 
             <div className="form-grid">
               <div className="form-field">

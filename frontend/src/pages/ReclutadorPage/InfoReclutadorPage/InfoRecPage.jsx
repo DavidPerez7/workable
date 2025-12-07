@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
 import "./InfoRecPage.css";
 
 const InfoRecPage = () => {

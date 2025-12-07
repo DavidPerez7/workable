@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderAdmin from '../../../components/HeaderAdmin/HeaderAdmin';
-import Footer from '../../../components/Footer/Footer';
+import Footer from '../../../components/Footer/footer';
 import './UsersManagePage.css';
 
 function UsersManagePage() {

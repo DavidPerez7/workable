@@ -2,7 +2,7 @@ import React from "react";
 import "./Empresas.css";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/Header/Header";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
 
 function Empresas() {
   const navigate = useNavigate();

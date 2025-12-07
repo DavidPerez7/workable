@@ -21,6 +21,7 @@
   width: 100%;
   max-width: 650px;
   animation: fadeIn 0.5s ease-out;
+  min-height: 400px;
 }
 
 /* ================================

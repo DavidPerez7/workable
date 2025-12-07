@@ -84,16 +84,12 @@ const ReclutadorForm = () => {
     <div className="reclutador-form-container">
       <div className="reclutador-form-card">
         <div className="reclutador-form-header">
-          <h1 className="reclutador-form-title">Registro de Reclutador</h1>
-          <p className="reclutador-form-subtitle">
-            Únete a nuestra plataforma inclusiva.
-          </p>
         </div>
 
         <form className="reclutador-form" onSubmit={handleSubmit} ref={formRef}>
           {/* Sección: Información Personal */}
           <div className="form-section personal-section">
-            <h2 className="section-title-reclutador">Información Personal</h2>
+            <h2 className="section-title-reclutador"><span style={{fontWeight: 'normal'}}>registro</span> <span style={{color: '#3b82f6'}}>Reclutador</span></h2>
 
             <div className="form-grid">
               <div className="form-field">

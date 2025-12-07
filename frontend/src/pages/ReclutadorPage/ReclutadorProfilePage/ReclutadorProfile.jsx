@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
 import "./ReclutadorProfile.css";
 
 function ReclutadorProfile() {

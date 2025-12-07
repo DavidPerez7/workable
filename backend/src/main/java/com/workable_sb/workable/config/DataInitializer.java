@@ -101,19 +101,6 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeUsuarios() {
-        // 1 ADMIN
-        Usuario admin = new Usuario();
-        admin.setNombre("Admin");
-        admin.setApellido("Sistema");
-        admin.setCorreo("admin@example.com");
-        admin.setPassword(passwordEncoder.encode("admin123"));
-        admin.setTelefono("3001111111");
-        admin.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-        admin.setRol(Usuario.Rol.ADMIN);
-        admin.setMunicipio(municipioRepo.findById(1L).orElse(null));
-        admin.setIsActive(true);
-        usuarioRepo.save(admin);
-
         // 4 ASPIRANTES
         for (int i = 1; i <= 4; i++) {
             Usuario aspirante = new Usuario();

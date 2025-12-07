@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { useState } from "react";
 import {HomeIcon, FileText, Send, Star} from 'lucide-react'
 import { Menu as MenuIcon, X } from "lucide-react";
-import '../Menu/menu.css';
+import '../Menu/Menu.css';
 
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(false);

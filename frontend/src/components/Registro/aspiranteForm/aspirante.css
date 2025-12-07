@@ -16,6 +16,7 @@
   max-width: 650px;
   background: transparent;
   padding: 1.5rem;
+  min-height: 400px;
 }
 
 /* Header del formulario */

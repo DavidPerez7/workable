@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./AspirantePage.css";
 import HeaderAspirant from "../../components/HeaderAspirant/HeaderAspirant";
-import Footer from "../../components/Footer/Footer";
+import Footer from "../../components/Footer/footer";
 
 const AspirantePage = () => {
   const location = useLocation();

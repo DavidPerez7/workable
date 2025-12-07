@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import HeaderAspirant from "../../../components/HeaderAspirant/HeaderAspirant";
 import Menu from "../../../components/Menu/Menu";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
 import "./MiPerfil.css";
 
 const MiPerfil = () => {
