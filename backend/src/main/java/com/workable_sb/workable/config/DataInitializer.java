@@ -38,23 +38,12 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Base de datos inicializada con municipios y habilidades");
         }
 
-        // SIEMPRE eliminar y recrear usuarios, empresas, ofertas y postulaciones
+        // SIEMPRE eliminar y recrear TODOS los datos
         recreateTestUsers();
         recreateEmpresas();
         recreateOfertas();
-
-        // Inicializar datos genéricos adicionales (mínimo 10 registros por tabla)
         initializeGenericData();
-
-        // Inicializar datos de prueba relacionados con los usuarios
-        if (estudioRepo.count() <= 10) {
-            initializeEstudios();
-            initializeExperiencias();
-            initializeUsuarioHabilidades();
-            initializeFeedbacks();
-            initializeNotificaciones();
-            System.out.println("Datos de estudios, experiencias y feedback inicializados");
-        }
+        recreateEducacionYExperiencia();
     }
 
     private void recreateTestUsers() {
@@ -480,6 +469,117 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
         System.out.println("✓ 20 Postulaciones genéricas creadas");
+    }
+
+    private void recreateEducacionYExperiencia() {
+        // Eliminar todos los datos relacionados con educación y experiencia
+        feedbackRepo.deleteAll();
+        notificacionRepo.deleteAll();
+        experienciaRepo.deleteAll();
+        estudioRepo.deleteAll();
+        usuarioHabilidadRepo.deleteAll();
+
+        // Obtener un aspirante genérico para asignar datos
+        Aspirante aspirante = aspiranteRepo.findByCorreo("carlos.garcia.aspirante@example.com").orElse(null);
+        
+        if (aspirante != null) {
+            // CREAR 10 ESTUDIOS
+            String[] titulos = {"Ingeniería en Sistemas", "Licenciatura en Informática", "Certificación AWS",
+                               "Diplomado en IA", "Especialización en Ciberseguridad", "Maestría en Ciencias de Datos",
+                               "Certificación Google Cloud", "Bootcamp Full Stack", "Diplomado en DevOps", "Curso de Python Avanzado"};
+            String[] instituciones = {"Universidad Nacional", "Universidad de los Andes", "AWS Academy", "Tech Institute",
+                                     "Cybersecurity Academy", "Data Science University", "Google Cloud Academy", "Code Academy",
+                                     "DevOps Institute", "Python Academy"};
+
+            for (int i = 0; i < 10; i++) {
+                Estudio estudio = new Estudio();
+                estudio.setTitulo(titulos[i]);
+                estudio.setInstitucion(instituciones[i]);
+                estudio.setFechaInicio(LocalDate.of(2015 + (i / 2), (i % 12) + 1, (i % 28) + 1));
+                estudio.setFechaFin(LocalDate.of(2020 + (i / 2), (i % 12) + 1, (i % 28) + 1));
+                estudio.setEnCurso(i == 9);
+                estudio.setNivelEducativo(Estudio.NivelEducativo.values()[i % Estudio.NivelEducativo.values().length]);
+                estudio.setEstadoEstudio(Estudio.EstadoEstudio.ACTIVO);
+                estudio.setAspirante(aspirante);
+                estudioRepo.save(estudio);
+            }
+            System.out.println("✓ 10 Estudios creados");
+
+            // CREAR 10 EXPERIENCIAS
+            String[] cargos = {"Desarrollador Junior", "Desarrollador Senior", "Ingeniero de Software", "Tech Lead",
+                              "Arquitecto de Soluciones", "DevOps Engineer", "Data Scientist", "Full Stack Developer",
+                              "QA Engineer", "Consultor Técnico"};
+            String[] empresas = {"StartUp XYZ", "Big Tech Corp", "Fintech Solutions", "Cloud Services Inc",
+                               "DataAnalytics Ltd", "WebDev Agency", "Mobile First Inc", "Security Systems", "AI Research Lab", "Global Solutions"};
+            String[] descripciones = {"Desarrollo de APIs REST con Spring Boot", "Implementación de microservicios",
+                                     "Diseño de arquitecturas escalables", "Liderazgo técnico del equipo", "Asesoría en soluciones cloud",
+                                     "Configuración de pipelines CI/CD", "Análisis predictivo con Machine Learning", "Desarrollo full stack MERN",
+                                     "Testing automatizado y calidad", "Consultoría en transformación digital"};
+
+            for (int i = 0; i < 10; i++) {
+                Experiencia experiencia = new Experiencia();
+                experiencia.setCargo(cargos[i]);
+                experiencia.setEmpresa(empresas[i]);
+                experiencia.setDescripcion(descripciones[i]);
+                experiencia.setFechaInicio(LocalDate.of(2018 + (i / 3), (i % 12) + 1, 1));
+                experiencia.setFechaFin(i == 9 ? null : LocalDate.of(2022 + (i / 3), (i % 12) + 1, 1));
+                experiencia.setAspirante(aspirante);
+                experienciaRepo.save(experiencia);
+            }
+            System.out.println("✓ 10 Experiencias creadas");
+
+            // CREAR 10 USUARIO HABILIDADES
+            for (int i = 1; i <= 10; i++) {
+                UsuarioHabilidad usuarioHabilidad = new UsuarioHabilidad();
+                Habilidad habilidad = habilidadRepo.findById((long) i).orElse(null);
+                if (habilidad != null) {
+                    usuarioHabilidad.setAspirante(aspirante);
+                    usuarioHabilidad.setHabilidad(habilidad);
+                    usuarioHabilidad.setNivel(UsuarioHabilidad.NivelDominio.values()[i % UsuarioHabilidad.NivelDominio.values().length]);
+                    usuarioHabilidadRepo.save(usuarioHabilidad);
+                }
+            }
+            System.out.println("✓ 10 Usuario Habilidades creadas");
+
+            // CREAR 10 FEEDBACKS
+            Empresa empresa = empresaRepo.findAll().stream()
+                .skip(10) // Saltar las 10 empresas de prueba
+                .findFirst()
+                .orElse(empresaRepo.findAll().stream().findFirst().orElse(null));
+            
+            if (empresa != null) {
+                String[] titulosFeedback = {"Buen desempeño", "Comunicación efectiva", "Problemas solucionados",
+                                           "Colaboración en equipo", "Iniciativa demostrada", "Puntualidad excelente",
+                                           "Calidad de trabajo", "Mejora continua", "Liderazgo destacado", "Adaptabilidad"};
+
+                for (int i = 0; i < 10; i++) {
+                    Feedback feedback = new Feedback();
+                    feedback.setTitulo(titulosFeedback[i]);
+                    feedback.setDescripcion("Evaluación " + (i + 1) + " sobre desempeño en proyectos");
+                    feedback.setPuntuacion((float) (3.0 + (i * 0.2)));
+                    feedback.setAspirante(aspirante);
+                    feedback.setEmpresa(empresa);
+                    feedbackRepo.save(feedback);
+                }
+                System.out.println("✓ 10 Feedbacks creados");
+            }
+
+            // CREAR 10 NOTIFICACIONES
+            String[] tiposNotificacion = {"Nueva Oferta", "Entrevista Programada", "Respuesta de Aplicación",
+                                         "Mensaje de Empresa", "Actualización de Perfil", "Recordatorio de Oferta",
+                                         "Postulación Exitosa", "Invitación a Evento", "Cambio de Estado", "Noticia Importante"};
+
+            for (int i = 0; i < 10; i++) {
+                Notificacion notificacion = new Notificacion();
+                notificacion.setTipo(Notificacion.Tipo.values()[i % Notificacion.Tipo.values().length]);
+                notificacion.setTitulo(tiposNotificacion[i]);
+                notificacion.setMensaje("Descripción de la notificación " + (i + 1));
+                notificacion.setFechaCreacion(LocalDate.now().minusDays(i));
+                notificacion.setAspirante(aspirante);
+                notificacionRepo.save(notificacion);
+            }
+            System.out.println("✓ 10 Notificaciones creadas");
+        }
     }
 
     private void initializeOfertas() {
