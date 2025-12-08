@@ -32,9 +32,6 @@ public class JwtUtil {
     
     @Value("${jwt.expiration:36000000}")
     private long EXPIRATION_TIME;
-    
-    @Value("${jwt.refresh-expiration:604800000}")
-    private long REFRESH_EXPIRATION_TIME;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
@@ -55,12 +52,6 @@ public class JwtUtil {
         claims.put("type", "access");
         claims.put("usuarioId", usuarioId);
         return createToken(claims, correo, EXPIRATION_TIME);
-    }
-
-    public String generateRefreshToken(String correo) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("type", "refresh");
-        return createToken(claims, correo, REFRESH_EXPIRATION_TIME);
     }
 
     private String createToken(Map<String, Object> claims, String subject, long expirationTime) {
@@ -108,15 +99,6 @@ public class JwtUtil {
         try {
             String type = extractTokenType(token);
             return "access".equals(type);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public boolean isRefreshToken(String token) {
-        try {
-            String type = extractTokenType(token);
-            return "refresh".equals(type);
         } catch (Exception e) {
             return false;
         }

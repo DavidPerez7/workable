@@ -159,11 +159,9 @@ public class AuthController {
                 
                 String rolString = "ADMIN";
                 String token = jwtUtil.generateTokenWithUserId(user.getCorreo(), rolString, user.getId());
-                String refreshToken = jwtUtil.generateRefreshToken(user.getCorreo());
                 
                 LoginResponseDto response = new LoginResponseDto();
                 response.setToken(token);
-                response.setRefreshToken(refreshToken);
                 response.setRol(rolString);
                 response.setUsuarioId(user.getId());
                 response.setNombre(user.getNombre());
@@ -190,11 +188,9 @@ public class AuthController {
                 
                 String rolString = "ASPIRANTE";
                 String token = jwtUtil.generateTokenWithUserId(user.getCorreo(), rolString, user.getId());
-                String refreshToken = jwtUtil.generateRefreshToken(user.getCorreo());
                 
                 LoginResponseDto response = new LoginResponseDto();
                 response.setToken(token);
-                response.setRefreshToken(refreshToken);
                 response.setRol(rolString);
                 response.setUsuarioId(user.getId());
                 response.setNombre(user.getNombre());
@@ -223,11 +219,9 @@ public class AuthController {
                 
                 String rolString = "RECLUTADOR";
                 String token = jwtUtil.generateTokenWithUserId(user.getCorreo(), rolString, user.getId());
-                String refreshToken = jwtUtil.generateRefreshToken(user.getCorreo());
                 
                 LoginResponseDto response = new LoginResponseDto();
                 response.setToken(token);
-                response.setRefreshToken(refreshToken);
                 response.setRol(rolString);
                 response.setUsuarioId(user.getId());
                 response.setNombre(user.getNombre());
@@ -283,52 +277,6 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Error al obtener usuario actual: {}", e.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener perfil: " + e.getMessage()));
-        }
-    }
-
-    /**
-     * Refresca el token de acceso usando el refresh token.
-     */
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
-        try {
-            String refreshToken = request.get("refreshToken");
-            if (refreshToken == null || refreshToken.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Refresh token requerido"));
-            }
-            
-            // Validar que sea un refresh token
-            if (jwtUtil.isAccessToken(refreshToken)) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Token inválido. Usa un refresh token"));
-            }
-            
-            String correo = jwtUtil.extractCorreo(refreshToken);
-            
-            // Intentar cargar como Aspirante
-            var aspirante = aspiranteRepo.findByCorreo(correo);
-            if (aspirante.isPresent()) {
-                String newAccessToken = jwtUtil.generateToken(correo, "ASPIRANTE");
-                return ResponseEntity.ok(Map.of(
-                    "token", newAccessToken,
-                    "rol", "ASPIRANTE"
-                ));
-            }
-            
-            // Intentar cargar como Reclutador
-            var reclutador = reclutadorRepo.findByCorreo(correo);
-            if (reclutador.isPresent()) {
-                String newAccessToken = jwtUtil.generateToken(correo, "RECLUTADOR");
-                return ResponseEntity.ok(Map.of(
-                    "token", newAccessToken,
-                    "rol", "RECLUTADOR"
-                ));
-            }
-            
-            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
-            
-        } catch (Exception e) {
-            log.error("Error al refrescar token: {}", e.getMessage());
-            return ResponseEntity.status(401).body(Map.of("error", "Error al refrescar token: " + e.getMessage()));
         }
     }
 }
