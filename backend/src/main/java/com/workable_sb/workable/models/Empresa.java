@@ -63,6 +63,12 @@ public class Empresa {
     @Column(length = 500)
     private String logoUrl;
 
+    @Column(nullable = false)
+    private List<String> redesSociales = new ArrayList<>();
+    
+    @Column(nullable = false)
+    private List<String> direcciones = new ArrayList<>();
+
     // Identificación legal/fiscal
     @Column(length = 50, unique = true)
     private String nit;
@@ -130,10 +136,6 @@ public class Empresa {
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Oferta> ofertas = new ArrayList<>();
-
-    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Direccion> direcciones = new ArrayList<>();
 
     @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore

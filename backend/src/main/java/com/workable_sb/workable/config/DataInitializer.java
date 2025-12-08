@@ -21,7 +21,6 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private ExperienciaRepo experienciaRepo;
     @Autowired private OfertaRepo ofertaRepo;
     @Autowired private PostulacionRepo postulacionRepo;
-    @Autowired private DireccionRepo direccionRepo;
     @Autowired private FeedbackRepo feedbackRepo;
     @Autowired private NotificacionRepo notificacionRepo;
     @Autowired private UsuarioHabilidadRepo usuarioHabilidadRepo;
@@ -38,7 +37,6 @@ public class DataInitializer implements CommandLineRunner {
             initializeHabilidades();
             initializeUsuarios();
             initializeEmpresas();
-            initializeDirecciones();
             initializeEstudios();
             initializeExperiencias();
             initializeOfertas();
@@ -143,22 +141,6 @@ public class DataInitializer implements CommandLineRunner {
             empresa.setTelefonoContacto("300555555" + i);
             empresa.setIsActive(true);
             empresaRepo.save(empresa);
-        }
-    }
-
-    private void initializeDirecciones() {
-        Empresa empresa = empresaRepo.findById(1L).orElse(null);
-        if (empresa != null) {
-            for (int i = 1; i <= 10; i++) {
-                Direccion direccion = new Direccion();
-                direccion.setNombre("Oficina " + i);
-                direccion.setDireccion("Calle " + i + " #" + (i * 10) + "-" + (i * 5));
-                direccion.setTelefono("300666666" + i);
-                direccion.setCorreo("oficina" + i + "@empresa.com");
-                direccion.setIsPrincipal(i == 1);
-                direccion.setEmpresa(empresa);
-                direccionRepo.save(direccion);
-            }
         }
     }
 
