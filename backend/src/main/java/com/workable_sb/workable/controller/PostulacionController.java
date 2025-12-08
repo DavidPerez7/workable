@@ -72,7 +72,7 @@ public class PostulacionController {
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<?> getByUsuario(@PathVariable Long usuarioId, @RequestParam Long usuarioIdActual) {
         try {
-            List<Postulacion> postulaciones = postulacionService.listarPorUsuario(usuarioId, usuarioIdActual);
+            List<Postulacion> postulaciones = postulacionService.listarPorAspirante(usuarioId, usuarioIdActual);
             return ResponseEntity.ok(postulaciones);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
@@ -104,7 +104,7 @@ public class PostulacionController {
     @GetMapping("/usuario/{usuarioId}/estado")
     public ResponseEntity<?> getByUsuarioYEstado(@PathVariable Long usuarioId, @RequestParam Estado estado, @RequestParam Long usuarioIdActual) {
         try {
-            List<Postulacion> postulaciones = postulacionService.listarPorUsuarioYEstado(usuarioId, estado, usuarioIdActual);
+            List<Postulacion> postulaciones = postulacionService.listarPorAspiranteYEstado(usuarioId, estado, usuarioIdActual);
             return ResponseEntity.ok(postulaciones);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
@@ -159,7 +159,7 @@ public class PostulacionController {
     @GetMapping("/mis-postulaciones")
     public ResponseEntity<?> miasPostulaciones(@RequestParam Long usuarioId) {
         try {
-            List<Postulacion> postulaciones = postulacionService.listarPorUsuario(usuarioId, usuarioId);
+            List<Postulacion> postulaciones = postulacionService.listarPorAspirante(usuarioId, usuarioId);
             return ResponseEntity.ok(postulaciones);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));

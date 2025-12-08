@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -14,14 +15,14 @@ import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Entity
+@Table(name = "aspirante")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
-@Table(name = "usuario")
-public class Usuario {
+public class Aspirante {
     
-    private static final Logger log = LoggerFactory.getLogger(Usuario.class);
+    private static final Logger log = LoggerFactory.getLogger(Aspirante.class);
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,13 +68,10 @@ public class Usuario {
     @NotNull(message = "El rol es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Rol rol;
+    private Rol rol = Rol.ASPIRANTE;
 
     public enum Rol {
-        ASPIRANTE,
-        RECLUTADOR,
-        ADMIN,
-        ADSO
+        ASPIRANTE
     }
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -81,6 +79,36 @@ public class Usuario {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Municipio municipio;
+
+    // Campos específicos de Aspirante
+    @Size(max = 1000, message = "La descripción no puede exceder 1000 caracteres")
+    @Column(length = 1000)
+    private String descripcion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Genero genero;
+
+    public enum Genero {
+        MASCULINO, FEMENINO, OTRO
+    }
+
+    @Size(max = 200, message = "La ubicación no puede exceder 200 caracteres")
+    @Column(length = 200)
+    private String ubicacion;
+
+    // Relaciones
+    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("aspirante")
+    private List<Estudio> estudios;
+
+    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("aspirante")
+    private List<Experiencia> experiencias;
+
+    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("aspirante")
+    private List<UsuarioHabilidad> habilidades;
 
     @PrePersist
     protected void onCreate() {
@@ -90,11 +118,14 @@ public class Usuario {
         if (this.isActive == null) {
             this.isActive = true;
         }
-        log.info("Usuario creado: {} {} con rol {}", this.nombre, this.apellido, this.rol);
+        if (this.rol == null) {
+            this.rol = Rol.ASPIRANTE;
+        }
+        log.info("Aspirante creado: {} {} con rol {}", this.nombre, this.apellido, this.rol);
     }
     
     @PreUpdate
     protected void onUpdate() {
-        log.info("Usuario actualizado: {} (ID: {})", this.correo, this.id);
+        log.info("Aspirante actualizado: {} (ID: {})", this.correo, this.id);
     }
 }

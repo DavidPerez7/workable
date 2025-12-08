@@ -36,9 +36,9 @@ public class ExperienciaController {
     @PostMapping
     public ResponseEntity<?> crearExperiencia(@RequestBody Experiencia experiencia, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            Long usuarioIdActual = userDetails.getUsuarioId();
+            Long aspiranteIdActual = userDetails.getUsuarioId();
             // Solo se permite que el usuario cree sus propias experiencias
-            return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, usuarioIdActual));
+            return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, aspiranteIdActual));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear experiencia: " + e.getMessage()));
         }
@@ -53,23 +53,23 @@ public class ExperienciaController {
 
     // ===== READ por usuario - Todos autenticados =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Experiencia>> obtenerExperienciasPorUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(experienciaService.obtenerExperienciasPorUsuario(usuarioId));
+    @GetMapping("/usuario/{aspiranteId}")
+    public ResponseEntity<List<Experiencia>> obtenerExperienciasPorUsuario(@PathVariable Long aspiranteId) {
+        return ResponseEntity.ok(experienciaService.obtenerExperienciasPorUsuario(aspiranteId));
     }
 
     // ===== READ activas por usuario - Todos autenticados =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}/activas")
-    public ResponseEntity<List<Experiencia>> obtenerExperienciasActivas(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(experienciaService.obtenerExperienciasActivas(usuarioId));
+    @GetMapping("/usuario/{aspiranteId}/activas")
+    public ResponseEntity<List<Experiencia>> obtenerExperienciasActivas(@PathVariable Long aspiranteId) {
+        return ResponseEntity.ok(experienciaService.obtenerExperienciasActivas(aspiranteId));
     }
 
     // ===== READ ordenadas por fecha - Todos autenticados =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}/ordenadas")
-    public ResponseEntity<List<Experiencia>> obtenerExperienciasOrdenadasPorFecha(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(experienciaService.obtenerExperienciasOrdenadasPorFecha(usuarioId));
+    @GetMapping("/usuario/{aspiranteId}/ordenadas")
+    public ResponseEntity<List<Experiencia>> obtenerExperienciasOrdenadasPorFecha(@PathVariable Long aspiranteId) {
+        return ResponseEntity.ok(experienciaService.obtenerExperienciasOrdenadasPorFecha(aspiranteId));
     }
 
     // ===== READ todas - ADMIN solamente =====
@@ -84,15 +84,15 @@ public class ExperienciaController {
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarExperiencia(@PathVariable Long id, @RequestBody Experiencia experiencia, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            Long usuarioIdActual = userDetails.getUsuarioId();
+            Long aspiranteIdActual = userDetails.getUsuarioId();
             Experiencia experienciaExistente = experienciaService.obtenerPorId(id);
             
             // Validar ownership
-            if (!experienciaExistente.getUsuario().getId().equals(usuarioIdActual)) {
+            if (!experienciaExistente.getAspirante().getId().equals(aspiranteIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes editar experiencias de otro usuario"));
             }
             
-            return ResponseEntity.ok(experienciaService.actualizarExperiencia(id, experiencia, usuarioIdActual));
+            return ResponseEntity.ok(experienciaService.actualizarExperiencia(id, experiencia, aspiranteIdActual));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar experiencia: " + e.getMessage()));
         }
@@ -103,15 +103,15 @@ public class ExperienciaController {
     @PatchMapping("/{id}/estado")
     public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestParam Experiencia.Estado estado, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            Long usuarioIdActual = userDetails.getUsuarioId();
+            Long aspiranteIdActual = userDetails.getUsuarioId();
             Experiencia experiencia = experienciaService.obtenerPorId(id);
             
             // Validar ownership
-            if (!experiencia.getUsuario().getId().equals(usuarioIdActual)) {
+            if (!experiencia.getAspirante().getId().equals(aspiranteIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes cambiar estado de experiencias de otro usuario"));
             }
             
-            return ResponseEntity.ok(experienciaService.cambiarEstado(id, estado, usuarioIdActual));
+            return ResponseEntity.ok(experienciaService.cambiarEstado(id, estado, aspiranteIdActual));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al cambiar estado: " + e.getMessage()));
         }
@@ -122,15 +122,15 @@ public class ExperienciaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarExperiencia(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            Long usuarioIdActual = userDetails.getUsuarioId();
+            Long aspiranteIdActual = userDetails.getUsuarioId();
             Experiencia experiencia = experienciaService.obtenerPorId(id);
             
             // Validar ownership
-            if (!experiencia.getUsuario().getId().equals(usuarioIdActual)) {
+            if (!experiencia.getAspirante().getId().equals(aspiranteIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes eliminar experiencias de otro usuario"));
             }
             
-            experienciaService.eliminarExperiencia(id, usuarioIdActual);
+            experienciaService.eliminarExperiencia(id, aspiranteIdActual);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar experiencia: " + e.getMessage()));

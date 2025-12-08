@@ -10,14 +10,14 @@ import com.workable_sb.workable.models.Estudio.NivelEducativo;
 
 @Repository
 public interface EstudioRepo extends JpaRepository<Estudio, Long> {
-    // Buscar estudios por usuario
-    List<Estudio> findByUsuarioId(Long usuarioId);
+    // Buscar estudios por aspirante
+    List<Estudio> findByAspiranteId(Long aspiranteId);
     
-    // Buscar estudios en curso de un usuario
-    List<Estudio> findByUsuarioIdAndEnCurso(Long usuarioId, Boolean enCurso);
+    // Buscar estudios en curso de un aspirante
+    List<Estudio> findByAspiranteIdAndEnCurso(Long aspiranteId, Boolean enCurso);
     
     // Buscar estudios por nivel educativo
-    List<Estudio> findByUsuarioIdAndNivelEducativo(Long usuarioId, NivelEducativo nivelEducativo);
+    List<Estudio> findByAspiranteIdAndNivelEducativo(Long aspiranteId, NivelEducativo nivelEducativo);
     
     // Contar estudios por usuario
     long countByUsuarioId(Long usuarioId);

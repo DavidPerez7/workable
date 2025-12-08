@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.workable_sb.workable.models.Aspirante;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 @Data
 @Entity
 @Table(name = "postulacion", uniqueConstraints = {
-	@UniqueConstraint(name = "UK_usuario_oferta", columnNames = {"usuario_id", "oferta_id"})
+	@UniqueConstraint(name = "UK_aspirante_oferta", columnNames = {"aspirante_id", "oferta_id"})
 })
 public class Postulacion {
 	
@@ -47,18 +48,18 @@ public class Postulacion {
 	private Oferta oferta;
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
-	private Usuario usuario;
+	private Aspirante aspirante;
 
 	@PrePersist
 	protected void onCreate() {
 		if (this.fechaCreacion == null) {
 			this.fechaCreacion = LocalDate.now();
 		}
-		log.info("Postulación creada: Usuario {} a Oferta {}", 
-				this.usuario != null ? this.usuario.getId() : "N/A", 
+		log.info("Postulación creada: Aspirante {} a Oferta {}", 
+				this.aspirante != null ? this.aspirante.getId() : "N/A", 
 				this.oferta != null ? this.oferta.getId() : "N/A");
 	}
 	

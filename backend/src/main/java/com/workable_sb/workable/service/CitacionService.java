@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workable_sb.workable.models.Citacion;
 import com.workable_sb.workable.models.Citacion.Estado;
 import com.workable_sb.workable.models.Postulacion;
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.CitacionRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
@@ -100,7 +101,7 @@ public class CitacionService {
         
         // Obtener datos del aspirante y oferta
         Postulacion postulacion = citacion.getPostulacion();
-        Usuario aspirante = postulacion.getUsuario();
+        Aspirante aspirante = postulacion.getAspirante();
         String nombreOferta = postulacion.getOferta().getTitulo();
         
         // Enviar por Email
@@ -198,7 +199,7 @@ public class CitacionService {
                 citacionesCreadas.add(citacionGuardada);
                 
                 // Enviar por Email
-                Usuario aspirante = postulacion.getUsuario();
+                Aspirante aspirante = postulacion.getAspirante();
                 String nombreOferta = postulacion.getOferta().getTitulo();
                 
                 if (emailService != null) {
@@ -253,7 +254,7 @@ public class CitacionService {
         
         // Admin puede ver todo, aspirante solo sus citaciones, reclutador solo sus citaciones
         if (usuarioActual.getRol() == Usuario.Rol.ASPIRANTE) {
-            if (!usuarioActual.getId().equals(citacion.getPostulacion().getUsuario().getId())) {
+            if (!usuarioActual.getId().equals(citacion.getPostulacion().getAspirante().getId())) {
                 throw new RuntimeException("No tienes permisos para ver esta citación");
             }
         } else if (usuarioActual.getRol() == Usuario.Rol.RECLUTADOR) {

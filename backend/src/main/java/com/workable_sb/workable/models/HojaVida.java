@@ -3,6 +3,7 @@ package com.workable_sb.workable.models;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.workable_sb.workable.models.Aspirante;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -46,10 +47,10 @@ public class HojaVida {
     private LocalDate fechaActualizacion;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
-    private Usuario usuario;
+    private Aspirante aspirante;
 
     @Size(max = 100, message = "El teléfono adicional no puede exceder 100 caracteres")
     @Column(length = 100)
@@ -114,7 +115,7 @@ public class HojaVida {
         if (this.esPublica == null) {
             this.esPublica = false;
         }
-        log.info("Hoja de vida creada: {} para usuario ID: {}", this.titulo, this.usuario != null ? this.usuario.getId() : "N/A");
+        log.info("Hoja de vida creada: {} para aspirante ID: {}", this.titulo, this.aspirante != null ? this.aspirante.getId() : "N/A");
     }
 
     @PreUpdate

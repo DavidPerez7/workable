@@ -47,14 +47,14 @@ public class EstudioController {
                 return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
             }
             
-            Long usuarioId = estudio.getUsuario().getId();
+            Long aspiranteId = estudio.getAspirante().getId();
             
             // Validar que el usuario solo puede crear estudios para sí mismo (ADMIN puede crear para cualquiera)
-            if (!isAdmin && !usuarioId.equals(usuarioIdActual)) {
+            if (!isAdmin && !aspiranteId.equals(usuarioIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes crear estudios para otro usuario"));
             }
             
-            return ResponseEntity.ok(estudioService.crearEstudio(estudio, usuarioId));
+            return ResponseEntity.ok(estudioService.crearEstudio(estudio, aspiranteId));
         } catch (Exception e) {
             log.error("Error al crear estudio", e);
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear estudio: " + e.getMessage()));
@@ -70,23 +70,23 @@ public class EstudioController {
 
     // ===== READ por usuario - Todos autenticados =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Estudio>> obtenerEstudiosPorUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(estudioService.obtenerEstudiosPorUsuario(usuarioId));
+    @GetMapping("/usuario/{aspiranteId}")
+    public ResponseEntity<List<Estudio>> obtenerEstudiosPorUsuario(@PathVariable Long aspiranteId) {
+        return ResponseEntity.ok(estudioService.obtenerEstudiosPorUsuario(aspiranteId));
     }
 
     // ===== READ en curso por usuario - Todos autenticados =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}/encurso")
-    public ResponseEntity<List<Estudio>> obtenerEstudiosEnCurso(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(estudioService.obtenerEstudiosEnCurso(usuarioId));
+    @GetMapping("/usuario/{aspiranteId}/encurso")
+    public ResponseEntity<List<Estudio>> obtenerEstudiosEnCurso(@PathVariable Long aspiranteId) {
+        return ResponseEntity.ok(estudioService.obtenerEstudiosEnCurso(aspiranteId));
     }
 
     // ===== READ por nivel educativo - Todos autenticados =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}/nivel")
-    public ResponseEntity<List<Estudio>> obtenerEstudiosPorNivel(@PathVariable Long usuarioId, @RequestParam Estudio.NivelEducativo nivel) {
-        return ResponseEntity.ok(estudioService.obtenerEstudiosPorNivel(usuarioId, nivel));
+    @GetMapping("/usuario/{aspiranteId}/nivel")
+    public ResponseEntity<List<Estudio>> obtenerEstudiosPorNivel(@PathVariable Long aspiranteId, @RequestParam Estudio.NivelEducativo nivel) {
+        return ResponseEntity.ok(estudioService.obtenerEstudiosPorNivel(aspiranteId, nivel));
     }
 
     // ===== READ todos - ADMIN solamente =====
@@ -120,11 +120,11 @@ public class EstudioController {
             Estudio estudioExistente = estudioService.obtenerPorId(id);
             
             // Validar ownership (ADMIN puede editar cualquier estudio)
-            if (!isAdmin && !estudioExistente.getUsuario().getId().equals(usuarioIdActual)) {
+            if (!isAdmin && !estudioExistente.getAspirante().getId().equals(usuarioIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes editar estudios de otro usuario"));
             }
             
-            return ResponseEntity.ok(estudioService.actualizarEstudio(id, estudio, estudioExistente.getUsuario().getId()));
+            return ResponseEntity.ok(estudioService.actualizarEstudio(id, estudio, estudioExistente.getAspirante().getId()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar estudio: " + e.getMessage()));
         }
@@ -154,11 +154,11 @@ public class EstudioController {
             Estudio estudio = estudioService.obtenerPorId(id);
             
             // Validar ownership (ADMIN puede eliminar cualquier estudio)
-            if (!isAdmin && !estudio.getUsuario().getId().equals(usuarioIdActual)) {
+            if (!isAdmin && !estudio.getAspirante().getId().equals(usuarioIdActual)) {
                 return ResponseEntity.status(403).body(Map.of("error", "No puedes eliminar estudios de otro usuario"));
             }
             
-            estudioService.eliminarEstudio(id, estudio.getUsuario().getId());
+            estudioService.eliminarEstudio(id, estudio.getAspirante().getId());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar estudio: " + e.getMessage()));

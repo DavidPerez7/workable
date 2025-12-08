@@ -16,6 +16,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private MunicipioRepo municipioRepo;
     @Autowired private HabilidadRepo habilidadRepo;
     @Autowired private UsuarioRepo usuarioRepo;
+    @Autowired private AspiranteRepo aspiranteRepo;
     @Autowired private EmpresaRepository empresaRepo;
     @Autowired private EstudioRepo estudioRepo;
     @Autowired private ExperienciaRepo experienciaRepo;
@@ -145,7 +146,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeEstudios() {
-        Usuario aspirante = usuarioRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
                 Estudio estudio = new Estudio();
@@ -156,14 +157,14 @@ public class DataInitializer implements CommandLineRunner {
                 estudio.setEnCurso(false);
                 estudio.setNivelEducativo(Estudio.NivelEducativo.UNIVERSITARIO);
                 estudio.setEstadoEstudio(Estudio.EstadoEstudio.ACTIVO);
-                estudio.setUsuario(aspirante);
+                estudio.setAspirante(aspirante);
                 estudioRepo.save(estudio);
             }
         }
     }
 
     private void initializeExperiencias() {
-        Usuario aspirante = usuarioRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
                 Experiencia experiencia = new Experiencia();
@@ -172,7 +173,7 @@ public class DataInitializer implements CommandLineRunner {
                 experiencia.setDescripcion("Descripción de la experiencia " + i);
                 experiencia.setFechaInicio(LocalDate.of(2015 + i, 1, 1));
                 experiencia.setFechaFin(LocalDate.of(2020 + i, 12, 31));
-                experiencia.setUsuario(aspirante);
+                experiencia.setAspirante(aspirante);
                 experienciaRepo.save(experiencia);
             }
         }
@@ -204,13 +205,13 @@ public class DataInitializer implements CommandLineRunner {
     private void initializePostulaciones() {
         if (true) {
             for (int i = 1; i <= 10; i++) {
-                Usuario aspirante = usuarioRepo.findByCorreo("aspirante" + (1 + i % 4) + "@example.com").orElse(null);
+                Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante" + (1 + i % 4) + "@example.com").orElse(null);
                 Oferta oferta = ofertaRepo.findById((long) (1 + i % 10)).orElse(null);
                 
                 if (aspirante != null && oferta != null) {
                     Postulacion postulacion = new Postulacion();
                     postulacion.setEstado(Postulacion.Estado.values()[i % Postulacion.Estado.values().length]);
-                    postulacion.setUsuario(aspirante);
+                    postulacion.setAspirante(aspirante);
                     postulacion.setOferta(oferta);
                     postulacionRepo.save(postulacion);
                 }
@@ -219,13 +220,13 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeUsuarioHabilidades() {
-        Usuario aspirante = usuarioRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
                 UsuarioHabilidad usuarioHabilidad = new UsuarioHabilidad();
                 Habilidad habilidad = habilidadRepo.findById((long) i).orElse(null);
                 if (habilidad != null) {
-                    usuarioHabilidad.setUsuario(aspirante);
+                    usuarioHabilidad.setAspirante(aspirante);
                     usuarioHabilidad.setHabilidad(habilidad);
                     usuarioHabilidad.setNivel(UsuarioHabilidad.NivelDominio.values()[i % UsuarioHabilidad.NivelDominio.values().length]);
                     usuarioHabilidadRepo.save(usuarioHabilidad);

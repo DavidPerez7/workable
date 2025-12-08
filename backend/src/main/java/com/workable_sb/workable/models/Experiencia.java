@@ -54,9 +54,9 @@ public class Experiencia {
     private Municipio municipio;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
-    private Usuario usuario;
+    private Aspirante aspirante;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)

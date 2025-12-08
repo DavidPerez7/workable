@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.workable_sb.workable.dto.HojaVidaCompletaDto;
 import com.workable_sb.workable.models.HojaVida;
 import com.workable_sb.workable.service.HojaVidaService;
 
@@ -56,8 +55,8 @@ public class HojaVidaController {
     @GetMapping("/{id}/completa")
     public ResponseEntity<?> obtenerCompleta(@PathVariable Long id) {
         try {
-            HojaVidaCompletaDto dto = hojaVidaService.obtenerHojaVidaCompleta(id);
-            return ResponseEntity.ok(dto);
+            HojaVida hojaVida = hojaVidaService.obtenerPorId(id);
+            return ResponseEntity.ok(hojaVida);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -70,8 +69,8 @@ public class HojaVidaController {
     @GetMapping("/usuario/{usuarioId}/completa")
     public ResponseEntity<?> obtenerCompletaPorUsuario(@PathVariable Long usuarioId) {
         try {
-            HojaVidaCompletaDto dto = hojaVidaService.obtenerHojaVidaCompletaPorUsuario(usuarioId);
-            return ResponseEntity.ok(dto);
+            HojaVida hojaVida = hojaVidaService.obtenerHojaVidaPorAspirante(usuarioId);
+            return ResponseEntity.ok(hojaVida);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -110,7 +109,7 @@ public class HojaVidaController {
     @GetMapping("/publicas/completas")
     public ResponseEntity<?> obtenerPublicasCompletas() {
         try {
-            List<HojaVidaCompletaDto> hojasVida = hojaVidaService.obtenerHojasVidaPublicasCompletas();
+            List<HojaVida> hojasVida = hojaVidaService.obtenerHojasVidaPublicas();
             return ResponseEntity.ok(hojasVida);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hojas de vida: " + e.getMessage()));

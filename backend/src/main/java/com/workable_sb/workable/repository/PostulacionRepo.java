@@ -15,17 +15,17 @@ public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
     // Buscar postulaciones por oferta
     List<Postulacion> findByOfertaId(Long ofertaId);
     
-    // Buscar postulaciones por usuario
-    List<Postulacion> findByUsuarioId(Long usuarioId);
+    // Buscar postulaciones por aspirante
+    List<Postulacion> findByAspiranteId(Long aspiranteId);
     
     // Buscar postulaciones por oferta y estado
     List<Postulacion> findByOfertaIdAndEstado(Long ofertaId, Estado estado);
     
-    // Buscar postulaciones por usuario y estado
-    List<Postulacion> findByUsuarioIdAndEstado(Long usuarioId, Estado estado);
+    // Buscar postulaciones por aspirante y estado
+    List<Postulacion> findByAspiranteIdAndEstado(Long aspiranteId, Estado estado);
     
-    // Buscar postulación específica de un usuario a una oferta
-    Optional<Postulacion> findByUsuarioIdAndOfertaId(Long usuarioId, Long ofertaId);
+    // Buscar postulación específica de un aspirante a una oferta
+    Optional<Postulacion> findByAspiranteIdAndOfertaId(Long aspiranteId, Long ofertaId);
     
     // Buscar postulaciones por oferta ordenadas por fecha
     List<Postulacion> findByOfertaIdOrderByFechaCreacionDesc(Long ofertaId);

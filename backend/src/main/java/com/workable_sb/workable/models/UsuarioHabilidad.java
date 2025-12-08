@@ -29,10 +29,10 @@ public class UsuarioHabilidad {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
-    private Usuario usuario;
+    private Aspirante aspirante;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "habilidad_id", nullable = false, referencedColumnName = "id")
@@ -62,8 +62,8 @@ public class UsuarioHabilidad {
         if (this.fechaAdquisicion == null) {
             this.fechaAdquisicion = LocalDate.now();
         }
-        log.info("UsuarioHabilidad creada: Usuario {} - Habilidad {}", 
-                this.usuario != null ? this.usuario.getId() : "N/A", 
+        log.info("UsuarioHabilidad creada: Aspirante {} - Habilidad {}", 
+                this.aspirante != null ? this.aspirante.getId() : "N/A", 
                 this.habilidad != null ? this.habilidad.getId() : "N/A");
     }
 }

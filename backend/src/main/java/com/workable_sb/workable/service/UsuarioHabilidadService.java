@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Habilidad;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.models.UsuarioHabilidad;
 import com.workable_sb.workable.models.UsuarioHabilidad.NivelDominio;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HabilidadRepo;
 import com.workable_sb.workable.repository.UsuarioHabilidadRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
 @Transactional
@@ -23,26 +23,23 @@ public class UsuarioHabilidadService {
     private UsuarioHabilidadRepo usuarioHabilidadRepo;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private AspiranteRepo aspiranteRepo;
 
     @Autowired
     private HabilidadRepo habilidadRepo;
 
     // ===== CREATE =====
-    public UsuarioHabilidad agregarHabilidad(Long usuarioId, Long habilidadId, 
-                                             NivelDominio nivel, Long usuarioActualId) {
+    public UsuarioHabilidad agregarHabilidad(Long aspiranteId, Long habilidadId, 
+                                             NivelDominio nivel, Long aspiranteActualId) {
 
-        // Validar permisos: solo el dueño o ADMIN pueden agregar
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-
-        if (!puedeModificarHabilidades(usuarioId, usuarioActual)) {
-            throw new RuntimeException("No tienes permiso para agregar habilidades a este usuario");
+        // Validar permisos: solo el dueño puede agregar
+        if (!aspiranteId.equals(aspiranteActualId)) {
+            throw new RuntimeException("No tienes permiso para agregar habilidades a este aspirante");
         }
 
-        // Validar que el usuario existe
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar que el aspirante existe
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
         // Validar que la habilidad existe y está activa
         Habilidad habilidad = habilidadRepo.findById(habilidadId)
@@ -50,12 +47,12 @@ public class UsuarioHabilidadService {
                 .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
 
         // Verificar que no exista ya esa combinación usuario-habilidad
-        if (usuarioHabilidadRepo.existsByUsuarioIdAndHabilidadId(usuarioId, habilidadId)) {
-            throw new IllegalArgumentException("El usuario ya tiene registrada esta habilidad");
+        if (usuarioHabilidadRepo.existsByAspiranteIdAndHabilidadId(aspiranteId, habilidadId)) {
+            throw new RuntimeException("El aspirante ya tiene esta habilidad");
         }
 
         UsuarioHabilidad usuarioHabilidad = new UsuarioHabilidad();
-        usuarioHabilidad.setUsuario(usuario);
+        usuarioHabilidad.setAspirante(aspirante);
         usuarioHabilidad.setHabilidad(habilidad);
         usuarioHabilidad.setNivel(nivel);
         usuarioHabilidad.setFechaAdquisicion(LocalDate.now());
@@ -72,42 +69,39 @@ public class UsuarioHabilidadService {
                 .orElseThrow(() -> new RuntimeException("UsuarioHabilidad no encontrado"));
     }
 
-    public List<UsuarioHabilidad> listarPorUsuario(Long usuarioId) {
+    public List<UsuarioHabilidad> listarPorUsuario(Long aspiranteId) {
 
-        // Validar que el usuario existe
-        if (!usuarioRepo.existsById(usuarioId)) {
-            throw new RuntimeException("Usuario no encontrado");
+        // Validar que el aspirante existe
+        if (!aspiranteRepo.existsById(aspiranteId)) {
+            throw new RuntimeException("Aspirante no encontrado");
         }
 
-        return usuarioHabilidadRepo.findByUsuarioId(usuarioId).stream()
+        return usuarioHabilidadRepo.findByAspiranteId(aspiranteId).stream()
                 .filter(UsuarioHabilidad::getIsActive)
                 .toList();
     }
 
-    public List<UsuarioHabilidad> listarPorUsuarioYNivel(Long usuarioId, NivelDominio nivel) {
+    public List<UsuarioHabilidad> listarPorUsuarioYNivel(Long aspiranteId, NivelDominio nivel) {
 
-        // Validar que el usuario existe
-        if (!usuarioRepo.existsById(usuarioId)) {
-            throw new RuntimeException("Usuario no encontrado");
+        // Validar que el aspirante existe
+        if (!aspiranteRepo.existsById(aspiranteId)) {
+            throw new RuntimeException("Aspirante no encontrado");
         }
 
-        return usuarioHabilidadRepo.findByUsuarioIdAndNivel(usuarioId, nivel).stream()
+        return usuarioHabilidadRepo.findByAspiranteIdAndNivel(aspiranteId, nivel).stream()
                 .filter(UsuarioHabilidad::getIsActive)
                 .toList();
     }
 
     // ===== UPDATE =====
-    public UsuarioHabilidad actualizarNivel(Long id, NivelDominio nuevoNivel, Long usuarioActualId) {
+    public UsuarioHabilidad actualizarNivel(Long id, NivelDominio nuevoNivel, Long aspiranteActualId) {
 
         UsuarioHabilidad usuarioHabilidad = usuarioHabilidadRepo.findById(id)
                 .filter(uh -> uh.getIsActive())
                 .orElseThrow(() -> new RuntimeException("UsuarioHabilidad no encontrado"));
 
-        // Validar permisos
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-
-        if (!puedeModificarHabilidades(usuarioHabilidad.getUsuario().getId(), usuarioActual)) {
+        // Validar permisos: solo el dueño
+        if (!usuarioHabilidad.getAspirante().getId().equals(aspiranteActualId)) {
             throw new RuntimeException("No tienes permiso para modificar esta habilidad");
         }
 
@@ -115,17 +109,14 @@ public class UsuarioHabilidadService {
         return usuarioHabilidadRepo.save(usuarioHabilidad);
     }
 
-    public UsuarioHabilidad actualizarFechaAdquisicion(Long id, LocalDate nuevaFecha, Long usuarioActualId) {
+    public UsuarioHabilidad actualizarFechaAdquisicion(Long id, LocalDate nuevaFecha, Long aspiranteActualId) {
 
         UsuarioHabilidad usuarioHabilidad = usuarioHabilidadRepo.findById(id)
                 .filter(uh -> uh.getIsActive())
                 .orElseThrow(() -> new RuntimeException("UsuarioHabilidad no encontrado"));
 
-        // Validar permisos
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-
-        if (!puedeModificarHabilidades(usuarioHabilidad.getUsuario().getId(), usuarioActual)) {
+        // Validar permisos: solo el dueño
+        if (!usuarioHabilidad.getAspirante().getId().equals(aspiranteActualId)) {
             throw new RuntimeException("No tienes permiso para modificar esta habilidad");
         }
 
@@ -139,27 +130,15 @@ public class UsuarioHabilidadService {
     }
 
     // ===== DELETE =====
-    public void eliminarHabilidad(Long id, Long usuarioActualId) {
+    public void eliminarHabilidad(Long id, Long aspiranteActualId) {
         UsuarioHabilidad usuarioHabilidad = usuarioHabilidadRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("UsuarioHabilidad no encontrado"));
 
-        Usuario usuarioActual = usuarioRepo.findById(usuarioActualId)
-                .orElseThrow(() -> new RuntimeException("Usuario actual no encontrado"));
-
-        if (!puedeModificarHabilidades(usuarioHabilidad.getUsuario().getId(), usuarioActual)) {
+        // Validar permisos: solo el dueño
+        if (!usuarioHabilidad.getAspirante().getId().equals(aspiranteActualId)) {
             throw new RuntimeException("No tienes permiso para eliminar esta habilidad");
         }
 
         usuarioHabilidadRepo.delete(usuarioHabilidad);
-    }
-
-    private boolean puedeModificarHabilidades(Long usuarioIdObjetivo, Usuario usuarioActual) {
-        // ADMIN puede modificar cualquier habilidad
-        if (usuarioActual.getRol() == Usuario.Rol.ADMIN) {
-            return true;
-        }
-
-        // El usuario solo puede modificar sus propias habilidades
-        return usuarioActual.getId().equals(usuarioIdObjetivo);
     }
 }

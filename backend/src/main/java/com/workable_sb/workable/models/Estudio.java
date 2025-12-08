@@ -87,10 +87,10 @@ public class Estudio {
     }
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
-    private Usuario usuario;
+    private Aspirante aspirante;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

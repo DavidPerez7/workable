@@ -6,17 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workable_sb.workable.dto.HojaVidaCompletaDto;
-import com.workable_sb.workable.models.Estudio;
-import com.workable_sb.workable.models.Experiencia;
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.HojaVida;
-import com.workable_sb.workable.models.Usuario;
-import com.workable_sb.workable.models.UsuarioHabilidad;
-import com.workable_sb.workable.repository.EstudioRepo;
-import com.workable_sb.workable.repository.ExperienciaRepo;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
-import com.workable_sb.workable.repository.UsuarioHabilidadRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
 @Transactional
@@ -26,34 +19,21 @@ public class HojaVidaService {
     private HojaVidaRepo hojaVidaRepo;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
-
-    @Autowired
-    private EstudioRepo estudioRepo;
-
-    @Autowired
-    private ExperienciaRepo experienciaRepo;
-
-    @Autowired
-    private UsuarioHabilidadRepo usuarioHabilidadRepo;
+    private AspiranteRepo aspiranteRepo;
 
     // ===== CREATE =====
-    public HojaVida crearHojaVida(HojaVida hojaVida, Long usuarioId) {
+    public HojaVida crearHojaVida(HojaVida hojaVida, Long aspiranteId) {
         
-        // Validar que el usuario existe y es aspirante
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        if (usuario.getRol() != Usuario.Rol.ASPIRANTE) {
-            throw new IllegalArgumentException("Solo los aspirantes pueden crear hojas de vida");
-        }
+        // Validar que el aspirante existe
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
         // Validar campos obligatorios
         if (hojaVida.getTitulo() == null || hojaVida.getTitulo().isEmpty()) {
             throw new IllegalArgumentException("El título es obligatorio");
         }
 
-        hojaVida.setUsuario(usuario);
+        hojaVida.setAspirante(aspirante);
         
         return hojaVidaRepo.save(hojaVida);
     }
@@ -64,56 +44,20 @@ public class HojaVidaService {
                 .orElseThrow(() -> new RuntimeException("Hoja de vida no encontrada"));
     }
 
-    public HojaVidaCompletaDto obtenerHojaVidaCompleta(Long hojaVidaId) {
-        HojaVida hojaVida = obtenerPorId(hojaVidaId);
-        return construirHojaVidaCompleta(hojaVida);
+    public HojaVida obtenerHojaVidaPorAspirante(Long aspiranteId) {
+        return hojaVidaRepo.findFirstByAspiranteIdAndIsActiveOrderByFechaCreacionDesc(aspiranteId, true)
+                .orElseThrow(() -> new RuntimeException("El aspirante no tiene hoja de vida activa"));
     }
 
-    public HojaVidaCompletaDto obtenerHojaVidaCompletaPorUsuario(Long usuarioId) {
-        HojaVida hojaVida = hojaVidaRepo.findFirstByUsuarioIdAndIsActiveOrderByFechaCreacionDesc(usuarioId, true)
-                .orElseThrow(() -> new RuntimeException("El usuario no tiene hoja de vida activa"));
-        return construirHojaVidaCompleta(hojaVida);
-    }
-
-    private HojaVidaCompletaDto construirHojaVidaCompleta(HojaVida hojaVida) {
-        Long usuarioId = hojaVida.getUsuario().getId();
-        
-        // Obtener estudios
-        List<Estudio> estudios = estudioRepo.findByUsuarioId(usuarioId);
-        
-        // Obtener experiencias
-        List<Experiencia> experiencias = experienciaRepo.findByUsuarioIdOrderByFechaInicioDesc(usuarioId);
-        
-        // Obtener habilidades
-        List<UsuarioHabilidad> habilidades = usuarioHabilidadRepo.findByUsuarioIdAndIsActive(usuarioId, true);
-        
-        // Crear DTO
-        HojaVidaCompletaDto dto = new HojaVidaCompletaDto();
-        dto.setHojaVida(hojaVida);
-        dto.setUsuario(HojaVidaCompletaDto.UsuarioBasicoDto.fromUsuario(hojaVida.getUsuario()));
-        dto.setEstudios(estudios);
-        dto.setExperiencias(experiencias);
-        dto.setHabilidades(habilidades);
-        
-        return dto;
-    }
-
-    public List<HojaVida> obtenerHojasVidaPorUsuario(Long usuarioId) {
-        if (!usuarioRepo.existsById(usuarioId)) {
-            throw new RuntimeException("Usuario no encontrado");
+    public List<HojaVida> obtenerHojasVidaPorUsuario(Long aspiranteId) {
+        if (!aspiranteRepo.existsById(aspiranteId)) {
+            throw new RuntimeException("Aspirante no encontrado");
         }
-        return hojaVidaRepo.findByUsuarioId(usuarioId);
+        return hojaVidaRepo.findByAspiranteId(aspiranteId);
     }
 
     public List<HojaVida> obtenerHojasVidaPublicas() {
         return hojaVidaRepo.findByEsPublicaAndIsActive(true, true);
-    }
-
-    public List<HojaVidaCompletaDto> obtenerHojasVidaPublicasCompletas() {
-        List<HojaVida> hojasVida = obtenerHojasVidaPublicas();
-        return hojasVida.stream()
-                .map(this::construirHojaVidaCompleta)
-                .toList();
     }
 
     public List<HojaVida> buscarPorTitulo(String titulo) {
@@ -121,12 +65,12 @@ public class HojaVidaService {
     }
 
     // ===== UPDATE =====
-    public HojaVida actualizarHojaVida(Long id, HojaVida hojaVidaActualizada, Long usuarioIdActual) {
+    public HojaVida actualizarHojaVida(Long id, HojaVida hojaVidaActualizada, Long aspiranteIdActual) {
         HojaVida existente = obtenerPorId(id);
 
-        // Validar que el usuario actual es el dueño o ADMIN
-        if (!puedeModificarHojaVida(existente, usuarioIdActual)) {
-            throw new IllegalStateException("Solo el dueño o un administrador pueden actualizar esta hoja de vida");
+        // Validar que el aspirante actual es el dueño
+        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
+            throw new IllegalStateException("Solo el dueño puede actualizar esta hoja de vida");
         }
 
         // Actualizar campos
@@ -182,10 +126,10 @@ public class HojaVidaService {
         return hojaVidaRepo.save(existente);
     }
 
-    public HojaVida cambiarVisibilidad(Long id, Boolean esPublica, Long usuarioIdActual) {
+    public HojaVida cambiarVisibilidad(Long id, Boolean esPublica, Long aspiranteIdActual) {
         HojaVida existente = obtenerPorId(id);
 
-        if (!puedeModificarHojaVida(existente, usuarioIdActual)) {
+        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
             throw new IllegalStateException("Solo el dueño puede cambiar la visibilidad");
         }
 
@@ -194,20 +138,20 @@ public class HojaVidaService {
     }
 
     // ===== DELETE =====
-    public void eliminarHojaVida(Long id, Long usuarioIdActual) {
+    public void eliminarHojaVida(Long id, Long aspiranteIdActual) {
         HojaVida existente = obtenerPorId(id);
 
-        if (!puedeModificarHojaVida(existente, usuarioIdActual)) {
-            throw new IllegalStateException("Solo el dueño, reclutador o administrador pueden eliminar esta hoja de vida");
+        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
+            throw new IllegalStateException("Solo el dueño puede eliminar esta hoja de vida");
         }
 
         hojaVidaRepo.delete(existente);
     }
 
-    public void desactivarHojaVida(Long id, Long usuarioIdActual) {
+    public void desactivarHojaVida(Long id, Long aspiranteIdActual) {
         HojaVida existente = obtenerPorId(id);
 
-        if (!puedeModificarHojaVida(existente, usuarioIdActual)) {
+        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
             throw new IllegalStateException("Solo el dueño puede desactivar esta hoja de vida");
         }
 
@@ -216,13 +160,8 @@ public class HojaVidaService {
     }
 
     // ===== MÉTODOS AUXILIARES =====
-    private boolean puedeModificarHojaVida(HojaVida hojaVida, Long usuarioId) {
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Es el dueño, es ADMIN, o es RECLUTADOR
-        return hojaVida.getUsuario().getId().equals(usuarioId) || 
-               usuario.getRol() == Usuario.Rol.ADMIN ||
-               usuario.getRol() == Usuario.Rol.RECLUTADOR;
+    private boolean puedeModificarHojaVida(HojaVida hojaVida, Long aspiranteId) {
+        // Es el dueño
+        return hojaVida.getAspirante().getId().equals(aspiranteId);
     }
 }
