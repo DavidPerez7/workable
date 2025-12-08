@@ -34,12 +34,13 @@ public class DataInitializer implements CommandLineRunner {
         if (municipioRepo.count() == 0) {
             initializeMunicipios();
             initializeHabilidades();
-            initializeEmpresas();
-            System.out.println("Base de datos inicializada con municipios, habilidades y empresas");
+            System.out.println("Base de datos inicializada con municipios y habilidades");
         }
 
-        // SIEMPRE eliminar y recrear los usuarios de prueba para asegurar que existan
+        // SIEMPRE eliminar y recrear usuarios, empresas, ofertas y postulaciones
         recreateTestUsers();
+        recreateEmpresas();
+        recreateOfertas();
 
         // Inicializar datos de prueba relacionados con los usuarios
         if (estudioRepo.count() == 0) {
@@ -49,13 +50,6 @@ public class DataInitializer implements CommandLineRunner {
             initializeFeedbacks();
             initializeNotificaciones();
             System.out.println("Datos de estudios, experiencias y feedback inicializados");
-        }
-
-        // Inicializar ofertas y postulaciones solo si están vacías
-        if (ofertaRepo.count() == 0) {
-            initializeOfertas();
-            initializePostulaciones();
-            System.out.println("Ofertas y postulaciones inicializadas");
         }
     }
 
@@ -163,7 +157,7 @@ public class DataInitializer implements CommandLineRunner {
             {"Colombina", "Dulces y chocolates", "Cali", "890900251", "contacto@colombina.com", "6022345678"},
             {"ISA", "Infraestructura energética", "Medellín", "890900738", "contacto@isa.com.co", "6042345680"},
             {"Nutresa", "Alimentos procesados", "Medellín", "890900840", "contacto@nutresa.com.co", "6042345681"},
-            {"Éxito", "Cadena de supermercados", "Medellín", "890900608", "contacto@exito.com", "6042345682"}
+            {"Éxito", "Cadena de supermercados", "Medellín", "890900609", "contacto@exito.com", "6042345682"}
         };
 
         for (int i = 0; i < empresasData.length; i++) {
@@ -178,6 +172,41 @@ public class DataInitializer implements CommandLineRunner {
             empresa.setIsActive(true);
             empresaRepo.save(empresa);
         }
+    }
+
+    private void recreateEmpresas() {
+        // Eliminar y recrear todas las empresas
+        postulacionRepo.deleteAll();
+        ofertaRepo.deleteAll();
+        empresaRepo.deleteAll();
+
+        // 10 EMPRESAS con nombres reales de Colombia
+        String[][] empresasData = {
+            {"Bancolombia", "Banco líder en Colombia", "Bogotá", "860002964", "contacto@bancolombia.com.co", "6013078000"},
+            {"Ecopetrol", "Empresa petrolera estatal", "Bogotá", "899999063", "contacto@ecopetrol.com.co", "6012345678"},
+            {"Grupo Aval", "Holding financiero", "Bogotá", "860034313", "contacto@grupoaval.com", "6012345679"},
+            {"Cementos Argos", "Empresa cementera", "Medellín", "890900286", "contacto@argos.com.co", "6042345678"},
+            {"Postobón", "Empresa de bebidas", "Medellín", "890900608", "contacto@postobon.com.co", "6042345679"},
+            {"Alpina", "Productos lácteos y alimentos", "Bogotá", "860002738", "contacto@alpina.com.co", "6012345680"},
+            {"Colombina", "Dulces y chocolates", "Cali", "890900251", "contacto@colombina.com", "6022345678"},
+            {"ISA", "Infraestructura energética", "Medellín", "890900738", "contacto@isa.com.co", "6042345680"},
+            {"Nutresa", "Alimentos procesados", "Medellín", "890900840", "contacto@nutresa.com.co", "6042345681"},
+            {"Éxito", "Cadena de supermercados", "Medellín", "890900609", "contacto@exito.com", "6042345682"}
+        };
+
+        for (int i = 0; i < empresasData.length; i++) {
+            Empresa empresa = new Empresa();
+            empresa.setNombre(empresasData[i][0]);
+            empresa.setNit(empresasData[i][3]);
+            empresa.setDescripcion(empresasData[i][1]);
+            empresa.setNumeroTrabajadores(1000 + (i * 500));
+            empresa.setEmailContacto(empresasData[i][4]);
+            empresa.setTelefonoContacto(empresasData[i][5]);
+            empresa.setMunicipio(municipioRepo.findByNombre(empresasData[i][2]).orElse(null));
+            empresa.setIsActive(true);
+            empresaRepo.save(empresa);
+        }
+        System.out.println("✓ Empresas recreadas: 10 empresas disponibles");
     }
 
     private void initializeEstudios() {
@@ -220,6 +249,98 @@ public class DataInitializer implements CommandLineRunner {
                 experienciaRepo.save(experiencia);
             }
         }
+    }
+
+    private void recreateOfertas() {
+        // Eliminar postulaciones primero (tienen FK a ofertas)
+        postulacionRepo.deleteAll();
+        ofertaRepo.deleteAll();
+
+        // Crear ofertas para diferentes empresas de manera más clara
+        String[] titulos = {
+            "Desarrollador Backend Java",
+            "Analista de Datos",
+            "Desarrollador Frontend React",
+            "Ingeniero DevOps",
+            "Arquitecto de Software",
+            "Tester QA Automation",
+            "Product Manager",
+            "Analista de Seguridad",
+            "Desarrollador Mobile",
+            "Scrum Master"
+        };
+
+        String[] descripciones = {
+            "Desarrollo de microservicios con Spring Boot y bases de datos relacionales",
+            "Análisis de datos empresariales con Python y SQL",
+            "Desarrollo de interfaces de usuario modernas con React y TypeScript",
+            "Implementación de pipelines CI/CD y gestión de infraestructura cloud",
+            "Diseño de arquitecturas escalables y microservicios",
+            "Automatización de pruebas con Selenium y desarrollo de frameworks de testing",
+            "Gestión de productos digitales y coordinación con equipos de desarrollo",
+            "Evaluación y mejora de la seguridad de sistemas informáticos",
+            "Desarrollo de aplicaciones móviles nativas iOS y Android",
+            "Facilitación de ceremonias ágiles y coaching de equipos"
+        };
+
+        Long[] empresaIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L};
+        Long[] salarios = {4500000L, 3800000L, 4200000L, 5500000L, 6500000L, 3500000L, 4800000L, 5200000L, 4600000L, 4300000L};
+        Integer[] numeroVacantes = {2, 1, 3, 1, 1, 2, 1, 1, 2, 1};
+        Oferta.NivelExperiencia[] niveles = {
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.INTERMEDIO,
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.AVANZADO,
+            Oferta.NivelExperiencia.EXPERTO,
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.INTERMEDIO,
+            Oferta.NivelExperiencia.INTERMEDIO,
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.INTERMEDIO
+        };
+        Oferta.Modalidad[] modalidades = {
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.HIBRIDO,
+            Oferta.Modalidad.REMOTO,
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.HIBRIDO,
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.HIBRIDO,
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.REMOTO,
+            Oferta.Modalidad.HIBRIDO
+        };
+        Oferta.TipoContrato[] tiposContrato = {
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO
+        };
+
+        for (int i = 0; i < titulos.length; i++) {
+            Empresa empresa = empresaRepo.findById(empresaIds[i]).orElse(null);
+            if (empresa != null) {
+                Oferta oferta = new Oferta();
+                oferta.setTitulo(titulos[i]);
+                oferta.setDescripcion(descripciones[i]);
+                oferta.setFechaPublicacion(LocalDate.now().minusDays(i + 1));
+                oferta.setFechaLimite(LocalDate.now().plusDays(30 - i));
+                oferta.setSalario(salarios[i]);
+                oferta.setNumeroVacantes(numeroVacantes[i]);
+                oferta.setNivelExperiencia(niveles[i]);
+                oferta.setModalidad(modalidades[i]);
+                oferta.setTipoContrato(tiposContrato[i]);
+                oferta.setEmpresa(empresa);
+                ofertaRepo.save(oferta);
+            }
+        }
+        System.out.println("✓ Ofertas recreadas: 10 ofertas disponibles");
     }
 
     private void initializeOfertas() {
@@ -305,24 +426,6 @@ public class DataInitializer implements CommandLineRunner {
                 oferta.setTipoContrato(tiposContrato[i]);
                 oferta.setEmpresa(empresa);
                 ofertaRepo.save(oferta);
-            }
-        }
-    }
-
-    private void initializePostulaciones() {
-        // Crear postulaciones con aspirantes reales
-        String[] aspirantesCorreos = {"juan.perez@example.com", "maria.garcia@example.com", "carlos.rodriguez@example.com", "ana.martinez@example.com"};
-
-        for (int i = 0; i < 10; i++) {
-            Aspirante aspirante = aspiranteRepo.findByCorreo(aspirantesCorreos[i % aspirantesCorreos.length]).orElse(null);
-            Oferta oferta = ofertaRepo.findById((long) (1 + i % 10)).orElse(null);
-
-            if (aspirante != null && oferta != null) {
-                Postulacion postulacion = new Postulacion();
-                postulacion.setEstado(Postulacion.Estado.values()[i % Postulacion.Estado.values().length]);
-                postulacion.setAspirante(aspirante);
-                postulacion.setOferta(oferta);
-                postulacionRepo.save(postulacion);
             }
         }
     }
