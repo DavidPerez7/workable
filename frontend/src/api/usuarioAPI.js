@@ -15,9 +15,12 @@ export const getUsuarios = async (TOKEN) => {
 
 export const getUsuarioById = async (userId, TOKEN) => {
 	try {
-		const response = await axios.get(`${API_URL}/${userId}`, {headers: {Authorization: `Bearer ${TOKEN}`}});
+		const response = await axios.get(`${API_URL}/public/${userId}`, {headers: {Authorization: `Bearer ${TOKEN}`}});
 		return response.data;
 	} catch (error) {
+		if (error.response?.status === 404) {
+			throw new Error("Usuario no encontrado");
+		}
 		throw new Error("Error al obtener usuario");
 	}
 }

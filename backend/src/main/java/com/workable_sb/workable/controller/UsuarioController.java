@@ -74,11 +74,17 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getByMunicipio(municipioId));
     }
 
-    // - READ by id
+    // - READ PUBLIC by id
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<Usuario>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(usuarioService.getById(id));
+    @GetMapping("/public/{id}")
+    public ResponseEntity<?> getByIdPublic(@PathVariable Long id) {
+        Optional<Usuario> optional = usuarioService.getById(id);
+        
+        if (optional.isPresent()) {
+            return ResponseEntity.ok(optional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // - UPDATE (PUBLICO: solo aspirantes/reclutadores)

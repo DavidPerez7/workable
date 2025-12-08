@@ -25,7 +25,7 @@ import Footer from "../../../components/Footer/footer";
 import "./MiPerfil.css";
 
 const MiPerfil = () => {
-	const [aspirante, setAspirante] = useState(null);
+	const [usuario, setUsuario] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -45,11 +45,12 @@ const MiPerfil = () => {
 			if (!TOKEN) {
 				throw new Error("No se encontró token de autenticación");
 			}
-			const perfil = await getUsuarioById(usuarioId, TOKEN);
-			setAspirante(perfil); // Actualizar estado con datos obtenidos
+			const usuario = await getUsuarioById(usuarioId, TOKEN);
+			console.log("Usuario obtenido:", usuario);
+			setUsuario(usuario); // Actualizar estado con datos obtenidos
 
 		} catch (err) {
-			console.error("Error obteniendo aspirante:", err);
+			console.error("Error obteniendo usuario:", err);
 			setError(err.message || "No se pudo cargar la información del perfil. Por favor, intenta de nuevo.");
 			if (err.message.includes("401")) {
 				// Token inválido o expirado
@@ -115,7 +116,7 @@ const MiPerfil = () => {
 		);
 	}
 
-	if (error && !aspirante) {
+	if (error && !usuario) {
 		return (
 			<div className="error-container">
 			<AlertCircle size={48} className="error-icon" />
@@ -141,10 +142,10 @@ const MiPerfil = () => {
 			{/* Encabezado del Perfil */}
 			<section className="profile-header-MPF">
 			<div className="profile-pic-MPF">
-				{aspirante?.fotoPerfilUrl ? (
+				{usuario?.urlFotoPerfil ? (
 				<img
-					src={aspirante.fotoPerfilUrl}
-					alt={`${aspirante.nom} ${aspirante.ape}`}
+					src={usuario.urlFotoPerfil}
+					alt={`${usuario.nombre} ${usuario.apellido}`}
 					onError={(e) => {
 					e.target.style.display = "none";
 					e.target.nextSibling.style.display = "flex";
@@ -158,11 +159,8 @@ const MiPerfil = () => {
 
 			<div className="profile-info-MPF">
 				<h1 className="profile-name-MPF">
-				{aspirante?.nom} {aspirante?.ape}
+				{usuario?.nombre} {usuario?.apellido}
 				</h1>
-				<p className="profile-cargo-MPF">
-				{aspirante?.cargo || "Buscando oportunidades laborales"}
-				</p>
 				<div className="profile-status-MPF">
 				<CheckCircle size={20} className="icon-check" />
 				<span>Perfil activo</span>
@@ -170,102 +168,24 @@ const MiPerfil = () => {
 			</div>
 			</section>
 
-			{/* Resumen del Perfil */}
-			{aspirante?.descripcion && (
-			<section className="profile-summary-MPF">
-				<h2>Acerca de mí</h2>
-				<p>{aspirante.descripcion}</p>
-			</section>
-			)}
-
-			<div className="profile-grid-MPF">
-			{/* Información Personal */}
-			<section className="card-info-MPF">
-				<h2 className="card-title-MPF">
-				<FaUser className="icon-title" />
-				Información Personal
-				</h2>
-
-				<div className="info-list-MPF">
-				<div className="info-item-MPF">
-					<FaIdCard className="info-icon" />
-					<div>
-					<span className="info-label">Documento</span>
-					<span className="info-value">
-						{aspirante?.nombreTipDoc || "N/A"}{" "}
-						{aspirante?.numerDoc || ""}
-					</span>
-					</div>
-				</div>
-
-				<div className="info-item-MPF">
-					<FaUser className="info-icon" />
-					<div>
-					<span className="info-label">Género</span>
-					<span className="info-value">
-						{aspirante?.nombreGenero || "N/A"}
-					</span>
-					</div>
-				</div>
-
-				<div className="info-item-MPF">
-					<FaCalendar className="info-icon" />
-					<div>
-					<span className="info-label">Fecha de Nacimiento</span>
-					<span className="info-value">
-						{aspirante?.feNa
-						? new Date(aspirante.feNa).toLocaleDateString("es-CO", {
-							year: "numeric",
-							month: "long",
-							day: "numeric",
-							})
-						: "N/A"}
-					</span>
-					</div>
-				</div>
-				</div>
-			</section>
-
-			{/* Información de Contacto */}
+			{/* Información Básica */}
 			<section className="card-info-MPF">
 				<h2 className="card-title-MPF">
 				<FaPhone className="icon-title" />
 				Información de Contacto
 				</h2>
-
 				<div className="info-list-MPF">
 				<div className="info-item-MPF">
 					<FaPhone className="info-icon" />
 					<div>
 					<span className="info-label">Teléfono</span>
 					<span className="info-value">
-						{aspirante?.tel || "No registrado"}
+						{usuario?.telefono || "No registrado"}
 					</span>
 					</div>
 				</div>
-
-				<div className="info-item-MPF">
-					<FaMapMarkerAlt className="info-icon" />
-					<div>
-					<span className="info-label">Municipio</span>
-					<span className="info-value">
-						{aspirante?.nombreMunicipio || "No especificado"}
-					</span>
-					</div>
-				</div>
-
-				{aspirante?.ubi && (
-					<div className="info-item-MPF">
-					<FaMapMarkerAlt className="info-icon" />
-					<div>
-						<span className="info-label">Ubicación</span>
-						<span className="info-value">{aspirante.ubi}</span>
-					</div>
-					</div>
-				)}
 				</div>
 			</section>
-			</div>
 
 			{/* Acciones Rápidas */}
 			<section className="quick-actions-MPF">

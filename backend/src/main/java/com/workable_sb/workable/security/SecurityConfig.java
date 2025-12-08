@@ -73,6 +73,7 @@ public class SecurityConfig {
 
                 // ===== USUARIO - Gestión de perfiles =====
                 .requestMatchers(HttpMethod.POST, "/api/usuario/public").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/usuario/public/**").hasAnyRole("ASPIRANTE", "RECLUTADOR", "ADMIN", "ADSO")
                 .requestMatchers(HttpMethod.PUT, "/api/usuario/public/**").hasAnyRole("ASPIRANTE", "RECLUTADOR")
                 .requestMatchers(HttpMethod.DELETE, "/api/usuario/public/**").hasAnyRole("ASPIRANTE", "RECLUTADOR")
                 .requestMatchers("/api/usuario/**").hasRole("ADMIN")

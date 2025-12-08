@@ -5,6 +5,7 @@ const API_URL = "http://localhost:8080/api/auth";
 
 export const login = async (LoginCredenciales) => {
 	try {
+		localStorage.clear();
 		const response = await axios.post(`${API_URL}/login`, LoginCredenciales, {
 			headers: { "Content-Type": "application/json" },
 		});
