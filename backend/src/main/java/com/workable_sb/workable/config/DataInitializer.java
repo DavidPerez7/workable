@@ -128,8 +128,8 @@ public class DataInitializer implements CommandLineRunner {
         var admin = administradorRepo.findByCorreo("admin@example.com");
         if (admin.isEmpty()) {
             Administrador nuevo = new Administrador();
-            nuevo.setNombre("Admin");
-            nuevo.setApellido("Sistema");
+            nuevo.setNombre("Sistema");
+            nuevo.setApellido("Administrador");
             nuevo.setCorreo("admin@example.com");
             nuevo.setPassword(passwordEncoder.encode("admin123"));
             nuevo.setIsActive(true);
@@ -145,49 +145,49 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // ===== 1 ASPIRANTE POR DEFECTO =====
-        var aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com");
+        var aspirante = aspiranteRepo.findByCorreo("aspirante@example.com");
         if (aspirante.isEmpty()) {
             Aspirante nuevo = new Aspirante();
-            nuevo.setNombre("Juan");
-            nuevo.setApellido("Pérez");
-            nuevo.setCorreo("juan.perez@example.com");
+            nuevo.setNombre("Aspirante");
+            nuevo.setApellido("Prueba");
+            nuevo.setCorreo("aspirante@example.com");
             nuevo.setPassword(passwordEncoder.encode("pass123"));
-            nuevo.setTelefono("3001111111");
-            nuevo.setFechaNacimiento(LocalDate.of(1995, 1, 15));
+            nuevo.setTelefono("3105555555");
+            nuevo.setFechaNacimiento(LocalDate.of(2000, 6, 15));
             nuevo.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
             nuevo.setIsActive(true);
             aspiranteRepo.save(nuevo);
-            System.out.println("✓ Usuario ASPIRANTE creado: juan.perez@example.com / pass123");
+            System.out.println("✓ Usuario ASPIRANTE creado: aspirante@example.com / pass123");
         } else {
             // Restaurar si fue eliminado
             Aspirante existing = aspirante.get();
             existing.setPassword(passwordEncoder.encode("pass123"));
             existing.setIsActive(true);
             aspiranteRepo.save(existing);
-            System.out.println("✓ Usuario ASPIRANTE verificado/actualizado: juan.perez@example.com / pass123");
+            System.out.println("✓ Usuario ASPIRANTE verificado/actualizado: aspirante@example.com / pass123");
         }
 
         // ===== 1 RECLUTADOR POR DEFECTO =====
-        var reclutador = reclutadorRepo.findByCorreo("luis.fernandez@example.com");
+        var reclutador = reclutadorRepo.findByCorreo("reclutador@example.com");
         if (reclutador.isEmpty()) {
             Reclutador nuevo = new Reclutador();
-            nuevo.setNombre("Luis");
-            nuevo.setApellido("Fernández");
-            nuevo.setCorreo("luis.fernandez@example.com");
+            nuevo.setNombre("Reclutador");
+            nuevo.setApellido("Prueba");
+            nuevo.setCorreo("reclutador@example.com");
             nuevo.setPassword(passwordEncoder.encode("pass123"));
-            nuevo.setTelefono("3002222221");
-            nuevo.setFechaNacimiento(LocalDate.of(1988, 3, 20));
+            nuevo.setTelefono("3105555556");
+            nuevo.setFechaNacimiento(LocalDate.of(1990, 9, 20));
             nuevo.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
             nuevo.setIsActive(true);
             reclutadorRepo.save(nuevo);
-            System.out.println("✓ Usuario RECLUTADOR creado: luis.fernandez@example.com / pass123");
+            System.out.println("✓ Usuario RECLUTADOR creado: reclutador@example.com / pass123");
         } else {
             // Restaurar si fue eliminado
             Reclutador existing = reclutador.get();
             existing.setPassword(passwordEncoder.encode("pass123"));
             existing.setIsActive(true);
             reclutadorRepo.save(existing);
-            System.out.println("✓ Usuario RECLUTADOR verificado/actualizado: luis.fernandez@example.com / pass123");
+            System.out.println("✓ Usuario RECLUTADOR verificado/actualizado: reclutador@example.com / pass123");
         }
     }
 
