@@ -9,6 +9,7 @@ import com.workable_sb.workable.models.*;
 import com.workable_sb.workable.repository.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -348,7 +349,28 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeGenericData() {
-        // Crear 10 aspirantes genéricos adicionales
+        // ELIMINAR todos los registros genéricos primero
+        feedbackRepo.deleteAll();
+        notificacionRepo.deleteAll();
+        experienciaRepo.deleteAll();
+        estudioRepo.deleteAll();
+        usuarioHabilidadRepo.deleteAll();
+        postulacionRepo.deleteAll();
+        ofertaRepo.deleteAll();
+        
+        // Eliminar reclutadores y aspirantes genéricos (mantiene los de prueba que fueron creados antes)
+        // Solo eliminar los que no sean los usuarios de prueba
+        List<Aspirante> aspirantesGenericosAEliminar = aspiranteRepo.findAll().stream()
+            .filter(a -> !a.getCorreo().equals("aspirante@example.com"))
+            .collect(java.util.stream.Collectors.toList());
+        aspiranteRepo.deleteAll(aspirantesGenericosAEliminar);
+        
+        List<Reclutador> reclutadoresGenericosAEliminar = reclutadorRepo.findAll().stream()
+            .filter(r -> !r.getCorreo().equals("reclutador@example.com"))
+            .collect(java.util.stream.Collectors.toList());
+        reclutadorRepo.deleteAll(reclutadoresGenericosAEliminar);
+
+        // CREAR 10 aspirantes genéricos adicionales
         String[] nombresAspirantes = {"Carlos", "María", "Juan", "Ana", "Luis", "Laura", "Pablo", "Sofia", "Diego", "Valentina"};
         String[] apellidosAspirantes = {"García", "Rodríguez", "Martínez", "López", "González", "Fernández", "Pérez", "Sánchez", "Torres", "Rivera"};
         Aspirante.Genero[] generos = {Aspirante.Genero.MASCULINO, Aspirante.Genero.FEMENINO, Aspirante.Genero.MASCULINO, 
@@ -359,7 +381,10 @@ public class DataInitializer implements CommandLineRunner {
             Aspirante aspirante = new Aspirante();
             aspirante.setNombre(nombresAspirantes[i]);
             aspirante.setApellido(apellidosAspirantes[i]);
-            aspirante.setCorreo("aspirante" + (i + 1) + "@example.com");
+            // Correo genérico con nombre y apellido
+            String emailBase = (nombresAspirantes[i].toLowerCase() + "." + apellidosAspirantes[i].toLowerCase())
+                .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u");
+            aspirante.setCorreo(emailBase + ".aspirante@example.com");
             aspirante.setPassword(passwordEncoder.encode("pass123"));
             aspirante.setTelefono("310" + (5000000 + i * 100000));
             aspirante.setFechaNacimiento(LocalDate.of(1995 + (i % 10), (i % 12) + 1, (i % 28) + 1));
@@ -370,7 +395,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         System.out.println("✓ 10 Aspirantes genéricos creados");
 
-        // Crear 10 reclutadores genéricos adicionales
+        // CREAR 10 reclutadores genéricos adicionales
         String[] nombresReclutadores = {"Roberto", "Patricia", "Fernando", "Gloria", "Manuel", "Isabel", "Ricardo", "Mariana", "Andrés", "Camila"};
         String[] apellidosReclutadores = {"Salazar", "Díaz", "Castro", "Vargas", "Moreno", "Mendoza", "Herrera", "Cabrera", "Guerrero", "Navarro"};
 
@@ -378,7 +403,10 @@ public class DataInitializer implements CommandLineRunner {
             Reclutador reclutador = new Reclutador();
             reclutador.setNombre(nombresReclutadores[i]);
             reclutador.setApellido(apellidosReclutadores[i]);
-            reclutador.setCorreo("reclutador" + (i + 1) + "@example.com");
+            // Correo genérico con nombre y apellido
+            String emailBase = (nombresReclutadores[i].toLowerCase() + "." + apellidosReclutadores[i].toLowerCase())
+                .replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u");
+            reclutador.setCorreo(emailBase + ".reclutador@example.com");
             reclutador.setPassword(passwordEncoder.encode("pass123"));
             reclutador.setTelefono("311" + (5000000 + i * 100000));
             reclutador.setFechaNacimiento(LocalDate.of(1990 + (i % 10), (i % 12) + 1, (i % 28) + 1));
@@ -388,7 +416,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         System.out.println("✓ 10 Reclutadores genéricos creados");
 
-        // Crear 10 empresas genéricas adicionales
+        // CREAR 10 empresas genéricas adicionales
         String[] nombresEmpresas = {"TechSolutions", "DataInnovate", "CloudWorks", "DevPro", "FinTech Global",
                                      "CreativeHub", "GreenEnergy", "HealthTech", "LogisticNet", "SecureData"};
         String[] descripciones = {"Soluciones tecnológicas avanzadas", "Análisis de datos e inteligencia artificial",
@@ -402,7 +430,7 @@ public class DataInitializer implements CommandLineRunner {
             empresa.setNit("900" + (100000 + i * 1000) + "001");
             empresa.setDescripcion(descripciones[i]);
             empresa.setNumeroTrabajadores(50 + (i * 100));
-            empresa.setEmailContacto("contacto" + (i + 1) + "@example.com");
+            empresa.setEmailContacto(nombresEmpresas[i].toLowerCase() + "@example.com");
             empresa.setTelefonoContacto("601" + (2000000 + i * 100000));
             empresa.setMunicipio(municipioRepo.findAll().get(i % 20));
             empresa.setIsActive(true);
@@ -410,7 +438,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         System.out.println("✓ 10 Empresas genéricas creadas");
 
-        // Crear 10 ofertas adicionales para las nuevas empresas
+        // CREAR 10 ofertas adicionales para las nuevas empresas
         String[] titulosOfertas = {"Desarrollador Full Stack", "Especialista en IA", "Ingeniero de Datos",
                                     "Líder Técnico", "Especialista en Nube", "Investigador en Machine Learning",
                                     "Desarrollador Python", "Experto en Ciberseguridad", "Gestor de Proyectos", "Consultor Senior"};
@@ -435,7 +463,7 @@ public class DataInitializer implements CommandLineRunner {
         }
         System.out.println("✓ 10 Ofertas genéricas adicionales creadas");
 
-        // Crear 20 postulaciones entre los nuevos aspirantes y ofertas
+        // CREAR 20 postulaciones entre los nuevos aspirantes y ofertas
         long ofertaCount = ofertaRepo.count();
         long aspiranteCount = aspiranteRepo.count();
 
