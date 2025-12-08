@@ -42,8 +42,11 @@ public class DataInitializer implements CommandLineRunner {
         recreateEmpresas();
         recreateOfertas();
 
+        // Inicializar datos genéricos adicionales (mínimo 10 registros por tabla)
+        initializeGenericData();
+
         // Inicializar datos de prueba relacionados con los usuarios
-        if (estudioRepo.count() == 0) {
+        if (estudioRepo.count() <= 10) {
             initializeEstudios();
             initializeExperiencias();
             initializeUsuarioHabilidades();
@@ -342,6 +345,113 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
         System.out.println("✓ Ofertas recreadas: 10 ofertas disponibles");
+    }
+
+    private void initializeGenericData() {
+        // Crear 10 aspirantes genéricos adicionales
+        String[] nombresAspirantes = {"Carlos", "María", "Juan", "Ana", "Luis", "Laura", "Pablo", "Sofia", "Diego", "Valentina"};
+        String[] apellidosAspirantes = {"García", "Rodríguez", "Martínez", "López", "González", "Fernández", "Pérez", "Sánchez", "Torres", "Rivera"};
+        Aspirante.Genero[] generos = {Aspirante.Genero.MASCULINO, Aspirante.Genero.FEMENINO, Aspirante.Genero.MASCULINO, 
+                                       Aspirante.Genero.FEMENINO, Aspirante.Genero.MASCULINO, Aspirante.Genero.FEMENINO,
+                                       Aspirante.Genero.MASCULINO, Aspirante.Genero.FEMENINO, Aspirante.Genero.MASCULINO, Aspirante.Genero.FEMENINO};
+
+        for (int i = 0; i < 10; i++) {
+            Aspirante aspirante = new Aspirante();
+            aspirante.setNombre(nombresAspirantes[i]);
+            aspirante.setApellido(apellidosAspirantes[i]);
+            aspirante.setCorreo("aspirante" + (i + 1) + "@example.com");
+            aspirante.setPassword(passwordEncoder.encode("pass123"));
+            aspirante.setTelefono("310" + (5000000 + i * 100000));
+            aspirante.setFechaNacimiento(LocalDate.of(1995 + (i % 10), (i % 12) + 1, (i % 28) + 1));
+            aspirante.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
+            aspirante.setGenero(generos[i]);
+            aspirante.setIsActive(true);
+            aspiranteRepo.save(aspirante);
+        }
+        System.out.println("✓ 10 Aspirantes genéricos creados");
+
+        // Crear 10 reclutadores genéricos adicionales
+        String[] nombresReclutadores = {"Roberto", "Patricia", "Fernando", "Gloria", "Manuel", "Isabel", "Ricardo", "Mariana", "Andrés", "Camila"};
+        String[] apellidosReclutadores = {"Salazar", "Díaz", "Castro", "Vargas", "Moreno", "Mendoza", "Herrera", "Cabrera", "Guerrero", "Navarro"};
+
+        for (int i = 0; i < 10; i++) {
+            Reclutador reclutador = new Reclutador();
+            reclutador.setNombre(nombresReclutadores[i]);
+            reclutador.setApellido(apellidosReclutadores[i]);
+            reclutador.setCorreo("reclutador" + (i + 1) + "@example.com");
+            reclutador.setPassword(passwordEncoder.encode("pass123"));
+            reclutador.setTelefono("311" + (5000000 + i * 100000));
+            reclutador.setFechaNacimiento(LocalDate.of(1990 + (i % 10), (i % 12) + 1, (i % 28) + 1));
+            reclutador.setMunicipio(municipioRepo.findByNombre("Medellín").orElse(null));
+            reclutador.setIsActive(true);
+            reclutadorRepo.save(reclutador);
+        }
+        System.out.println("✓ 10 Reclutadores genéricos creados");
+
+        // Crear 10 empresas genéricas adicionales
+        String[] nombresEmpresas = {"TechSolutions", "DataInnovate", "CloudWorks", "DevPro", "FinTech Global",
+                                     "CreativeHub", "GreenEnergy", "HealthTech", "LogisticNet", "SecureData"};
+        String[] descripciones = {"Soluciones tecnológicas avanzadas", "Análisis de datos e inteligencia artificial",
+                                   "Servicios en la nube escalables", "Desarrollo de software profesional", "Finanzas digitales",
+                                   "Agencia creativa especializada", "Energías renovables", "Tecnología sanitaria", 
+                                   "Logística e importación", "Ciberseguridad"};
+
+        for (int i = 0; i < 10; i++) {
+            Empresa empresa = new Empresa();
+            empresa.setNombre(nombresEmpresas[i]);
+            empresa.setNit("900" + (100000 + i * 1000) + "001");
+            empresa.setDescripcion(descripciones[i]);
+            empresa.setNumeroTrabajadores(50 + (i * 100));
+            empresa.setEmailContacto("contacto" + (i + 1) + "@example.com");
+            empresa.setTelefonoContacto("601" + (2000000 + i * 100000));
+            empresa.setMunicipio(municipioRepo.findAll().get(i % 20));
+            empresa.setIsActive(true);
+            empresaRepo.save(empresa);
+        }
+        System.out.println("✓ 10 Empresas genéricas creadas");
+
+        // Crear 10 ofertas adicionales para las nuevas empresas
+        String[] titulosOfertas = {"Desarrollador Full Stack", "Especialista en IA", "Ingeniero de Datos",
+                                    "Líder Técnico", "Especialista en Nube", "Investigador en Machine Learning",
+                                    "Desarrollador Python", "Experto en Ciberseguridad", "Gestor de Proyectos", "Consultor Senior"};
+
+        long empresaCount = empresaRepo.count();
+        for (int i = 0; i < 10; i++) {
+            Empresa empresa = empresaRepo.findById(empresaCount - 9 + i).orElse(null);
+            if (empresa != null) {
+                Oferta oferta = new Oferta();
+                oferta.setTitulo(titulosOfertas[i]);
+                oferta.setDescripcion("Posición desafiante en " + empresa.getNombre());
+                oferta.setFechaPublicacion(LocalDate.now().minusDays(5 + i));
+                oferta.setFechaLimite(LocalDate.now().plusDays(25 - i));
+                oferta.setSalario(3500000L + (i * 300000L));
+                oferta.setNumeroVacantes(1 + (i % 3));
+                oferta.setNivelExperiencia(Oferta.NivelExperiencia.values()[i % 4]);
+                oferta.setModalidad(Oferta.Modalidad.values()[i % 3]);
+                oferta.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
+                oferta.setEmpresa(empresa);
+                ofertaRepo.save(oferta);
+            }
+        }
+        System.out.println("✓ 10 Ofertas genéricas adicionales creadas");
+
+        // Crear 20 postulaciones entre los nuevos aspirantes y ofertas
+        long ofertaCount = ofertaRepo.count();
+        long aspiranteCount = aspiranteRepo.count();
+
+        for (int i = 0; i < 20; i++) {
+            Aspirante aspirante = aspiranteRepo.findById(aspiranteCount - 9 + (i % 10)).orElse(null);
+            Oferta oferta = ofertaRepo.findById(ofertaCount - 9 + (i % 10)).orElse(null);
+
+            if (aspirante != null && oferta != null) {
+                Postulacion postulacion = new Postulacion();
+                postulacion.setEstado(Postulacion.Estado.values()[i % Postulacion.Estado.values().length]);
+                postulacion.setAspirante(aspirante);
+                postulacion.setOferta(oferta);
+                postulacionRepo.save(postulacion);
+            }
+        }
+        System.out.println("✓ 20 Postulaciones genéricas creadas");
     }
 
     private void initializeOfertas() {
