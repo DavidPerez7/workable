@@ -30,7 +30,7 @@ public class OfertaController {
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
     public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta, @AuthenticationPrincipal CustomUserDetails user) {
-        return ResponseEntity.ok(ofertaService.crearOferta(oferta, oferta.getEmpresa().getId(), user.getUsuarioId()));
+        return ResponseEntity.ok(ofertaService.crearOferta(oferta, oferta.getEmpresa().getId()));
     }
 
     // - READ by id

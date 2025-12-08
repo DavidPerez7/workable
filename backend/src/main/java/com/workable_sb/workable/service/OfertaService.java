@@ -11,11 +11,9 @@ import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.EstadoOferta;
 import com.workable_sb.workable.models.Oferta.Modalidad;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
 @Transactional

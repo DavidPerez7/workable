@@ -87,7 +87,7 @@ public class Empresa {
     // Reclutador que creó la empresa (owner/administrador principal)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reclutador_owner_id", referencedColumnName = "id", nullable = true)
-    private Usuario reclutadorOwner;
+    private Reclutador reclutadorOwner;
 
     @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "empresa_category_enum", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
@@ -142,10 +142,10 @@ public class Empresa {
     private List<Feedback> feedbacks = new ArrayList<>();
 
     // Relación unidireccional: La empresa conoce sus reclutadores
-    // Se crea una columna empresa_id en la tabla usuario
+    // Se crea una columna empresa_id en la tabla reclutador
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", referencedColumnName = "id")
-    private List<Usuario> reclutadores = new ArrayList<>();
+    private List<Reclutador> reclutadores = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {

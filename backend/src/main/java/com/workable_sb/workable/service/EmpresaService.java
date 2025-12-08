@@ -10,10 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workable_sb.workable.exception.ResourceNotFoundException;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
 @Transactional

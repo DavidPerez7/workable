@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -14,14 +15,14 @@ import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Entity
+@Table(name = "administrador")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
-@Table(name = "usuario")
-public class Usuario {
+public class Administrador {
     
-    private static final Logger log = LoggerFactory.getLogger(Usuario.class);
+    private static final Logger log = LoggerFactory.getLogger(Administrador.class);
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,16 +47,14 @@ public class Usuario {
     @Column(length = 20)
     private String telefono;
 
-    @Size(max = 500, message = "La URL de la foto no puede exceder 500 caracteres")
-    @Column(length = 500)
-    private String urlFotoPerfil;
-
     @NotNull(message = "La fecha de nacimiento es obligatoria")
     @Past(message = "La fecha de nacimiento debe ser una fecha pasada")
     @Column(nullable = false)
     private LocalDate fechaNacimiento;
     
     private LocalDate fechaCreacion;
+    
+    private LocalDateTime ultimoAcceso;
     
     private Boolean isActive;
 
@@ -67,13 +66,10 @@ public class Usuario {
     @NotNull(message = "El rol es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Rol rol;
+    private Rol rol = Rol.ADMIN;
 
     public enum Rol {
-        ASPIRANTE,
-        RECLUTADOR,
-        ADMIN,
-        ADSO
+        ADMIN
     }
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -90,11 +86,14 @@ public class Usuario {
         if (this.isActive == null) {
             this.isActive = true;
         }
-        log.info("Usuario creado: {} {} con rol {}", this.nombre, this.apellido, this.rol);
+        if (this.rol == null) {
+            this.rol = Rol.ADMIN;
+        }
+        log.info("Administrador creado: {} {} con rol {}", this.nombre, this.apellido, this.rol);
     }
     
     @PreUpdate
     protected void onUpdate() {
-        log.info("Usuario actualizado: {} (ID: {})", this.correo, this.id);
+        log.info("Administrador actualizado: {} (ID: {})", this.correo, this.id);
     }
 }

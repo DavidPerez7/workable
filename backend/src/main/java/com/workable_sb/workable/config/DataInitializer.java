@@ -15,8 +15,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired private MunicipioRepo municipioRepo;
     @Autowired private HabilidadRepo habilidadRepo;
-    @Autowired private UsuarioRepo usuarioRepo;
     @Autowired private AspiranteRepo aspiranteRepo;
+    @Autowired private ReclutadorRepo reclutadorRepo;
+    @Autowired private AdministradorRepo administradorRepo;
     @Autowired private EmpresaRepository empresaRepo;
     @Autowired private EstudioRepo estudioRepo;
     @Autowired private ExperienciaRepo experienciaRepo;
@@ -53,28 +54,27 @@ public class DataInitializer implements CommandLineRunner {
 
     private void ensureAdminUser() {
         Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
-        Usuario admin = usuarioRepo.findByCorreo("admin@example.com").orElse(null);
+        var admin = administradorRepo.findByCorreo("admin@example.com");
 
-        if (admin == null) {
-            Usuario nuevo = new Usuario();
+        if (admin.isEmpty()) {
+            Administrador nuevo = new Administrador();
             nuevo.setNombre("Admin");
             nuevo.setApellido("Sistema");
             nuevo.setCorreo("admin@example.com");
             nuevo.setPassword(passwordEncoder.encode("admin123"));
             nuevo.setTelefono("3001111111");
             nuevo.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-            nuevo.setRol(Usuario.Rol.ADMIN);
             nuevo.setMunicipio(municipio);
             nuevo.setIsActive(true);
-            usuarioRepo.save(nuevo);
-            System.out.println("Usuario ADMIN creado: admin@example.com / admin123");
+            administradorRepo.save(nuevo);
+            System.out.println("Usuario ADMINISTRADOR creado: admin@example.com / admin123");
         } else {
-            admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRol(Usuario.Rol.ADMIN);
-            admin.setIsActive(true);
-            admin.setMunicipio(municipio);
-            usuarioRepo.save(admin);
-            System.out.println("Usuario ADMIN verificado/actualizado: admin@example.com / admin123");
+            Administrador existente = admin.get();
+            existente.setPassword(passwordEncoder.encode("admin123"));
+            existente.setIsActive(true);
+            existente.setMunicipio(municipio);
+            administradorRepo.save(existente);
+            System.out.println("Usuario ADMINISTRADOR verificado/actualizado: admin@example.com / admin123");
         }
     }
 
@@ -102,32 +102,31 @@ public class DataInitializer implements CommandLineRunner {
     private void initializeUsuarios() {
         // 4 ASPIRANTES
         for (int i = 1; i <= 4; i++) {
-            Usuario aspirante = new Usuario();
+            Aspirante aspirante = new Aspirante();
             aspirante.setNombre("Aspirante " + i);
             aspirante.setApellido("Apellido " + i);
             aspirante.setCorreo("aspirante" + i + "@example.com");
             aspirante.setPassword(passwordEncoder.encode("pass123"));
             aspirante.setTelefono("300111111" + i);
             aspirante.setFechaNacimiento(LocalDate.of(1995 + i, 1, 1));
-            aspirante.setRol(Usuario.Rol.ASPIRANTE);
             aspirante.setMunicipio(municipioRepo.findById((long) (1 + i % 10)).orElse(null));
             aspirante.setIsActive(true);
-            usuarioRepo.save(aspirante);
+            aspiranteRepo.save(aspirante);
         }
 
         // 5 RECLUTADORES
         for (int i = 1; i <= 5; i++) {
-            Usuario reclutador = new Usuario();
+            Reclutador reclutador = new Reclutador();
             reclutador.setNombre("Reclutador " + i);
             reclutador.setApellido("Apellido " + i);
             reclutador.setCorreo("reclutador" + i + "@example.com");
             reclutador.setPassword(passwordEncoder.encode("pass123"));
             reclutador.setTelefono("300222222" + i);
             reclutador.setFechaNacimiento(LocalDate.of(1988 + i, 1, 1));
-            reclutador.setRol(Usuario.Rol.RECLUTADOR);
             reclutador.setMunicipio(municipioRepo.findById((long) (1 + i % 10)).orElse(null));
             reclutador.setIsActive(true);
-            usuarioRepo.save(reclutador);
+            // Nota: La empresa se puede asignar después si es necesario
+            reclutadorRepo.save(reclutador);
         }
     }
 
@@ -181,9 +180,8 @@ public class DataInitializer implements CommandLineRunner {
 
     private void initializeOfertas() {
         Empresa empresa = empresaRepo.findById(1L).orElse(null);
-        Usuario reclutador = usuarioRepo.findByCorreo("reclutador1@example.com").orElse(null);
         
-        if (empresa != null && reclutador != null) {
+        if (empresa != null) {
             for (int i = 1; i <= 10; i++) {
                 Oferta oferta = new Oferta();
                 oferta.setTitulo("Oferta " + i);
@@ -196,7 +194,6 @@ public class DataInitializer implements CommandLineRunner {
                 oferta.setModalidad(Oferta.Modalidad.values()[i % Oferta.Modalidad.values().length]);
                 oferta.setTipoContrato(Oferta.TipoContrato.values()[i % Oferta.TipoContrato.values().length]);
                 oferta.setEmpresa(empresa);
-                oferta.setReclutador(reclutador);
                 ofertaRepo.save(oferta);
             }
         }
@@ -236,7 +233,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeFeedbacks() {
-        Usuario aspirante = usuarioRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
         Empresa empresa = empresaRepo.findById(1L).orElse(null);
         
         if (aspirante != null && empresa != null) {
@@ -245,7 +242,7 @@ public class DataInitializer implements CommandLineRunner {
                 feedback.setTitulo("Feedback " + i);
                 feedback.setDescripcion("Descripción del feedback " + i);
                 feedback.setPuntuacion((float) (i % 5 + 1));
-                feedback.setUsuario(aspirante);
+                feedback.setAspirante(aspirante);
                 feedback.setEmpresa(empresa);
                 feedbackRepo.save(feedback);
             }
@@ -253,7 +250,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeNotificaciones() {
-        Usuario aspirante = usuarioRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
         
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
@@ -262,7 +259,7 @@ public class DataInitializer implements CommandLineRunner {
                 notificacion.setTitulo("Notificación " + i);
                 notificacion.setMensaje("Descripción de la notificación " + i);
                 notificacion.setFechaCreacion(LocalDate.now().minusDays(i));
-                notificacion.setUsuario(aspirante);
+                notificacion.setAspirante(aspirante);
                 notificacionRepo.save(notificacion);
             }
         }

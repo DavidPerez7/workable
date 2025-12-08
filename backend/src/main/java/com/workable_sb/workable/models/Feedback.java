@@ -51,9 +51,9 @@ public class Feedback {
 	private Oferta oferta;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+	@JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Usuario usuario;
+	private Aspirante aspirante;
 
 	@PrePersist
 	@PreUpdate

@@ -70,7 +70,7 @@ public class PostulacionController {
     // READ by usuario (aspirante puede ver sus postulaciones, reclutador/admin las de otros)
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<?> getByUsuario(@PathVariable Long usuarioId, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> getByAspirante(@PathVariable Long usuarioId, @RequestParam Long usuarioIdActual) {
         try {
             List<Postulacion> postulaciones = postulacionService.listarPorAspirante(usuarioId, usuarioIdActual);
             return ResponseEntity.ok(postulaciones);

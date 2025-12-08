@@ -27,7 +27,7 @@ public class Citacion {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reclutador_id", nullable = true, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    private Usuario reclutador;
+    private Reclutador reclutador;
 
     @Column(nullable = false)
     private LocalDate fechaCitacion;

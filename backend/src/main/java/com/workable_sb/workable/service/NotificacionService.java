@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Notificacion;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.repository.NotificacionRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.repository.AspiranteRepo;
 
 @Service
 @Transactional
@@ -18,13 +18,13 @@ public class NotificacionService {
     private NotificacionRepo notificacionRepo;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private AspiranteRepo aspiranteRepo;
 
     // ===== CREATE =====
-    public Notificacion create(Notificacion request, Long usuarioDestinoId) {
-        Usuario usuario = usuarioRepo.findById(usuarioDestinoId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        request.setUsuario(usuario);
+    public Notificacion create(Notificacion request, Long aspiranteDestinoId) {
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteDestinoId)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+        request.setAspirante(aspirante);
         return notificacionRepo.save(request);
     }
 
@@ -34,30 +34,30 @@ public class NotificacionService {
                 .orElseThrow(() -> new RuntimeException("Notificacion no encontrada"));
     }
 
-    public List<Notificacion> getByUsuario(Long usuarioId) {
-        return notificacionRepo.findByUsuarioId(usuarioId);
+    public List<Notificacion> getByAspirante(Long aspiranteId) {
+        return notificacionRepo.findByAspiranteId(aspiranteId);
     }
 
-    public List<Notificacion> getByUsuarioAndLeida(Long usuarioId, Boolean leida) {
-        return notificacionRepo.findByUsuarioIdAndLeida(usuarioId, leida);
+    public List<Notificacion> getByAspiranteAndLeida(Long aspiranteId, Boolean leida) {
+        return notificacionRepo.findByAspiranteIdAndLeida(aspiranteId, leida);
     }
 
-    public List<Notificacion> getByUsuarioAndTipo(Long usuarioId, Notificacion.Tipo tipo) {
-        return notificacionRepo.findByUsuarioIdAndTipo(usuarioId, tipo);
+    public List<Notificacion> getByAspiranteAndTipo(Long aspiranteId, Notificacion.Tipo tipo) {
+        return notificacionRepo.findByAspiranteIdAndTipo(aspiranteId, tipo);
     }
 
-    public List<Notificacion> getByUsuarioOrderByFechaDesc(Long usuarioId) {
-        return notificacionRepo.findByUsuarioIdOrderByFechaCreacionDesc(usuarioId);
+    public List<Notificacion> getByAspiranteOrderByFechaDesc(Long aspiranteId) {
+        return notificacionRepo.findByAspiranteIdOrderByFechaCreacionDesc(aspiranteId);
     }
 
-    public List<Notificacion> getActivasByUsuario(Long usuarioId) {
-        return notificacionRepo.findByUsuarioId(usuarioId).stream()
+    public List<Notificacion> getActivasByAspirante(Long aspiranteId) {
+        return notificacionRepo.findByAspiranteId(aspiranteId).stream()
                 .filter(n -> n.getIsActive())
                 .toList();
     }
 
-    public Long contarNoLeidas(Long usuarioId) {
-        return notificacionRepo.countByUsuarioIdAndLeida(usuarioId, false);
+    public Long contarNoLeidas(Long aspiranteId) {
+        return notificacionRepo.countByAspiranteIdAndLeida(aspiranteId, false);
     }
 
     // ===== UPDATE =====
@@ -67,8 +67,8 @@ public class NotificacionService {
         return notificacionRepo.save(notificacion);
     }
 
-    public void marcarTodasComoLeidas(Long usuarioId) {
-        List<Notificacion> noLeidas = notificacionRepo.findByUsuarioIdAndLeida(usuarioId, false);
+    public void marcarTodasComoLeidas(Long aspiranteId) {
+        List<Notificacion> noLeidas = notificacionRepo.findByAspiranteIdAndLeida(aspiranteId, false);
         noLeidas.forEach(n -> n.setLeida(true));
         notificacionRepo.saveAll(noLeidas);
     }
@@ -89,9 +89,9 @@ public class NotificacionService {
     }
 
     // ===== MÉTODO AUXILIAR PARA @PreAuthorize =====
-    public boolean esOwner(Long notificacionId, Long usuarioId) {
+    public boolean esOwner(Long notificacionId, Long aspiranteId) {
         return notificacionRepo.findById(notificacionId)
-                .map(n -> n.getUsuario().getId().equals(usuarioId))
+                .map(n -> n.getAspirante().getId().equals(aspiranteId))
                 .orElse(false);
     }
 
@@ -99,7 +99,7 @@ public class NotificacionService {
     /**
      * Crea una notificación de alerta cuando se envía una citación al aspirante
      */
-    public Notificacion crearAlertaCitacion(Long usuarioAspiranteId, String nombreOferta, 
+    public Notificacion crearAlertaCitacion(Long aspiranteId, String nombreOferta, 
                                             String fechaCitacion, String horaCitacion, 
                                             Long citacionId) {
         Notificacion notificacion = new Notificacion();
@@ -114,7 +114,7 @@ public class NotificacionService {
         notificacion.setLeida(false);
         notificacion.setIsActive(true);
         
-        return create(notificacion, usuarioAspiranteId);
+        return create(notificacion, aspiranteId);
     }
 
     /**

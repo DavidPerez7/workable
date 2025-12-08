@@ -32,7 +32,7 @@ public class FeedbackController {
 	public ResponseEntity<Feedback> create(@RequestBody Feedback request, @RequestParam Long usuarioIdActual) {
 		try {
 			// Validar que es el usuario actual
-			if (!request.getUsuario().getId().equals(usuarioIdActual)) {
+			if (!request.getAspirante().getId().equals(usuarioIdActual)) {
 				return ResponseEntity.status(403).body(null);
 			}
 			return ResponseEntity.ok(feedbackService.create(request));
@@ -65,13 +65,13 @@ public class FeedbackController {
 	// ===== READ by usuario - Solo el usuario o ADMIN =====
 	@PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
 	@GetMapping("/usuario/{usuarioId}")
-	public ResponseEntity<?> getByUsuario(@PathVariable Long usuarioId, @RequestParam Long usuarioIdActual) {
+	public ResponseEntity<?> getByAspirante(@PathVariable Long usuarioId, @RequestParam Long usuarioIdActual) {
 		try {
 			// Si es ASPIRANTE, solo puede ver su propio feedback
 			if (!usuarioId.equals(usuarioIdActual)) {
 				return ResponseEntity.status(403).body(Map.of("error", "No tienes permisos para ver feedback de otro usuario"));
 			}
-			return ResponseEntity.ok(feedbackService.getByUsuario(usuarioId));
+			return ResponseEntity.ok(feedbackService.getByAspirante(usuarioId));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
 		}
@@ -80,12 +80,12 @@ public class FeedbackController {
 	// ===== READ by usuario and empresa - Solo el usuario o ADMIN =====
 	@PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
 	@GetMapping("/usuario/{usuarioId}/empresa/{empresaId}")
-	public ResponseEntity<?> getByUsuarioAndEmpresa(@PathVariable Long usuarioId, @PathVariable Long empresaId, @RequestParam Long usuarioIdActual) {
+	public ResponseEntity<?> getByAspiranteAndEmpresa(@PathVariable Long usuarioId, @PathVariable Long empresaId, @RequestParam Long usuarioIdActual) {
 		try {
 			if (!usuarioId.equals(usuarioIdActual)) {
 				return ResponseEntity.status(403).body(Map.of("error", "No tienes permisos"));
 			}
-			return ResponseEntity.ok(feedbackService.getByUsuarioAndEmpresa(usuarioId, empresaId));
+			return ResponseEntity.ok(feedbackService.getByAspiranteAndEmpresa(usuarioId, empresaId));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
 		}
@@ -97,7 +97,7 @@ public class FeedbackController {
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Feedback request, @RequestParam Long usuarioIdActual) {
 		try {
 			Feedback feedback = feedbackService.getById(id);
-			if (!feedback.getUsuario().getId().equals(usuarioIdActual)) {
+			if (!feedback.getAspirante().getId().equals(usuarioIdActual)) {
 				return ResponseEntity.status(403).body(Map.of("error", "No puedes editar feedback de otro usuario"));
 			}
 			return ResponseEntity.ok(feedbackService.update(id, request));
@@ -112,7 +112,7 @@ public class FeedbackController {
 	public ResponseEntity<?> delete(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
 		try {
 			Feedback feedback = feedbackService.getById(id);
-			if (!feedback.getUsuario().getId().equals(usuarioIdActual)) {
+			if (!feedback.getAspirante().getId().equals(usuarioIdActual)) {
 				return ResponseEntity.status(403).body(Map.of("error", "No puedes eliminar feedback de otro usuario"));
 			}
 			feedbackService.delete(id);

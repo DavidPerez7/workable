@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.LoginRequestDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
-import com.workable_sb.workable.models.Usuario;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.models.Reclutador;
+import com.workable_sb.workable.repository.AspiranteRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
 import com.workable_sb.workable.security.JwtUtil;
-import com.workable_sb.workable.service.UsuarioService;
+import com.workable_sb.workable.service.AspiranteService;
+import com.workable_sb.workable.service.ReclutadorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Controlador de autenticación para registro y login de usuarios.
  * Endpoints públicos que no requieren JWT.
+ * Soporta registro de Aspirantes y Reclutadores.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -34,10 +38,16 @@ public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
-    private UsuarioService usuarioService;
+    private AspiranteService aspiranteService;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private ReclutadorService reclutadorService;
+
+    @Autowired
+    private AspiranteRepo aspiranteRepo;
+
+    @Autowired
+    private ReclutadorRepo reclutadorRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,7 +60,7 @@ public class AuthController {
      * Endpoint público.
      */
     @PostMapping("/register-aspirante")
-    public ResponseEntity<?> registrarAspirante(@RequestBody Usuario request) {
+    public ResponseEntity<?> registrarAspirante(@RequestBody Aspirante request) {
         try {
             log.info("Intentando registrar aspirante con correo: {}", request.getCorreo());
             log.info("Password recibido: {}, Nombre: {}", request.getPassword() != null ? "SÍ" : "NO", request.getNombre());
@@ -66,17 +76,15 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(Map.of("error", "El nombre es requerido"));
             }
             
-            if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
+            if (aspiranteRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 log.warn("Intento de registro con correo existente: {}", request.getCorreo());
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
 
-            // Forzar rol ASPIRANTE
-            request.setRol(Usuario.Rol.ASPIRANTE);
-            Usuario usuarioCreado = usuarioService.createPublic(request);
+            Aspirante aspiranteCreado = aspiranteService.createPublic(request);
             
-            log.info("Aspirante registrado exitosamente: {} {}", usuarioCreado.getNombre(), usuarioCreado.getApellido());
-            return ResponseEntity.ok(usuarioCreado);
+            log.info("Aspirante registrado exitosamente: {} {}", aspiranteCreado.getNombre(), aspiranteCreado.getApellido());
+            return ResponseEntity.ok(aspiranteCreado);
 
         } catch (Exception e) {
             log.error("Error al registrar aspirante: {}", e.getMessage(), e);
@@ -89,7 +97,7 @@ public class AuthController {
      * Endpoint público.
      */
     @PostMapping("/register-reclutador")
-    public ResponseEntity<?> registrarReclutador(@RequestBody Usuario request) {
+    public ResponseEntity<?> registrarReclutador(@RequestBody Reclutador request) {
         try {
             log.info("Intentando registrar reclutador con correo: {}", request.getCorreo());
             log.info("Password recibido: {}, Nombre: {}", request.getPassword() != null ? "SÍ" : "NO", request.getNombre());
@@ -105,17 +113,15 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(Map.of("error", "El nombre es requerido"));
             }
             
-            if (usuarioRepo.findByCorreo(request.getCorreo()).isPresent()) {
+            if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 log.warn("Intento de registro con correo existente: {}", request.getCorreo());
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
 
-            // Forzar rol RECLUTADOR
-            request.setRol(Usuario.Rol.RECLUTADOR);
-            Usuario usuarioCreado = usuarioService.createPublic(request);
+            Reclutador reclutadorCreado = reclutadorService.createPublic(request);
             
-            log.info("Reclutador registrado exitosamente: {} {}", usuarioCreado.getNombre(), usuarioCreado.getApellido());
-            return ResponseEntity.ok(usuarioCreado);
+            log.info("Reclutador registrado exitosamente: {} {}", reclutadorCreado.getNombre(), reclutadorCreado.getApellido());
+            return ResponseEntity.ok(reclutadorCreado);
 
         } catch (Exception e) {
             log.error("Error al registrar reclutador: {}", e.getMessage(), e);
@@ -124,7 +130,7 @@ public class AuthController {
     }
 
     /**
-     * Autentica un usuario y devuelve un token JWT.
+     * Autentica un usuario (Aspirante o Reclutador) y devuelve un token JWT.
      * Endpoint público.
      */
     @PostMapping("/login")
@@ -132,33 +138,68 @@ public class AuthController {
         try {
             log.info("Intento de login: {}", loginRequest.getCorreo());
             
-            Usuario usuario = usuarioRepo.findByCorreo(loginRequest.getCorreo()).orElse(null);
-            if (usuario == null || !passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
-                log.warn("Login fallido para: {}", loginRequest.getCorreo());
-                return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
+            // Intentar cargar como Aspirante primero
+            var aspirante = aspiranteRepo.findByCorreo(loginRequest.getCorreo());
+            if (aspirante.isPresent()) {
+                Aspirante user = aspirante.get();
+                if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                    log.warn("Login fallido para aspirante: {}", loginRequest.getCorreo());
+                    return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
+                }
+                if (!user.getIsActive()) {
+                    log.warn("Aspirante inactivo intenta login: {}", loginRequest.getCorreo());
+                    return ResponseEntity.status(403).body(Map.of("error", "Usuario inactivo"));
+                }
+                
+                String rolString = "ASPIRANTE";
+                String token = jwtUtil.generateTokenWithUserId(user.getCorreo(), rolString, user.getId());
+                String refreshToken = jwtUtil.generateRefreshToken(user.getCorreo());
+                
+                LoginResponseDto response = new LoginResponseDto();
+                response.setToken(token);
+                response.setRefreshToken(refreshToken);
+                response.setRol(rolString);
+                response.setUsuarioId(user.getId());
+                response.setNombre(user.getNombre());
+                response.setApellido(user.getApellido());
+                response.setCorreo(user.getCorreo());
+                
+                log.info("Login exitoso para aspirante: {} (ID: {})", user.getCorreo(), user.getId());
+                return ResponseEntity.ok(response);
             }
             
-            // Verificar que el usuario esté activo
-            if (!usuario.getIsActive()) {
-                log.warn("Usuario inactivo intenta login: {}", loginRequest.getCorreo());
-                return ResponseEntity.status(403).body(Map.of("error", "Usuario inactivo"));
+            // Intentar cargar como Reclutador
+            var reclutador = reclutadorRepo.findByCorreo(loginRequest.getCorreo());
+            if (reclutador.isPresent()) {
+                Reclutador user = reclutador.get();
+                if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                    log.warn("Login fallido para reclutador: {}", loginRequest.getCorreo());
+                    return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
+                }
+                if (!user.getIsActive()) {
+                    log.warn("Reclutador inactivo intenta login: {}", loginRequest.getCorreo());
+                    return ResponseEntity.status(403).body(Map.of("error", "Usuario inactivo"));
+                }
+                
+                String rolString = "RECLUTADOR";
+                String token = jwtUtil.generateTokenWithUserId(user.getCorreo(), rolString, user.getId());
+                String refreshToken = jwtUtil.generateRefreshToken(user.getCorreo());
+                
+                LoginResponseDto response = new LoginResponseDto();
+                response.setToken(token);
+                response.setRefreshToken(refreshToken);
+                response.setRol(rolString);
+                response.setUsuarioId(user.getId());
+                response.setNombre(user.getNombre());
+                response.setApellido(user.getApellido());
+                response.setCorreo(user.getCorreo());
+                
+                log.info("Login exitoso para reclutador: {} (ID: {})", user.getCorreo(), user.getId());
+                return ResponseEntity.ok(response);
             }
             
-            String rolString = usuario.getRol().toString();
-            String token = jwtUtil.generateTokenWithUserId(usuario.getCorreo(), rolString, usuario.getId());
-            String refreshToken = jwtUtil.generateRefreshToken(usuario.getCorreo());
-            
-            LoginResponseDto response = new LoginResponseDto();
-            response.setToken(token);
-            response.setRefreshToken(refreshToken);
-            response.setRol(rolString);
-            response.setUsuarioId(usuario.getId());
-            response.setNombre(usuario.getNombre());
-            response.setApellido(usuario.getApellido());
-            response.setCorreo(usuario.getCorreo());
-            
-            log.info("Login exitoso para usuario: {} (ID: {})", usuario.getCorreo(), usuario.getId());
-            return ResponseEntity.ok(response);
+            log.warn("Login fallido: usuario no encontrado: {}", loginRequest.getCorreo());
+            return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
             
         } catch (Exception e) {
             log.error("Error en login: {}", e.getMessage());
@@ -169,6 +210,7 @@ public class AuthController {
     /**
      * Obtiene el perfil del usuario autenticado actualmente.
      * Requiere JWT válido.
+     * Soporta Aspirantes y Reclutadores.
      */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
@@ -179,13 +221,24 @@ public class AuthController {
             }
             
             String correo = authentication.getName();
-            Usuario usuario = usuarioRepo.findByCorreo(correo)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             
-            // No devolver la contraseña
-            usuario.setPassword(null);
+            // Intentar cargar como Aspirante
+            var aspirante = aspiranteRepo.findByCorreo(correo);
+            if (aspirante.isPresent()) {
+                Aspirante user = aspirante.get();
+                user.setPassword(null);
+                return ResponseEntity.ok(user);
+            }
             
-            return ResponseEntity.ok(usuario);
+            // Intentar cargar como Reclutador
+            var reclutador = reclutadorRepo.findByCorreo(correo);
+            if (reclutador.isPresent()) {
+                Reclutador user = reclutador.get();
+                user.setPassword(null);
+                return ResponseEntity.ok(user);
+            }
+            
+            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
             
         } catch (Exception e) {
             log.error("Error al obtener usuario actual: {}", e.getMessage());
@@ -210,16 +263,28 @@ public class AuthController {
             }
             
             String correo = jwtUtil.extractCorreo(refreshToken);
-            Usuario usuario = usuarioRepo.findByCorreo(correo)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             
-            // Generar nuevo access token
-            String newAccessToken = jwtUtil.generateToken(correo, usuario.getRol().toString());
+            // Intentar cargar como Aspirante
+            var aspirante = aspiranteRepo.findByCorreo(correo);
+            if (aspirante.isPresent()) {
+                String newAccessToken = jwtUtil.generateToken(correo, "ASPIRANTE");
+                return ResponseEntity.ok(Map.of(
+                    "token", newAccessToken,
+                    "rol", "ASPIRANTE"
+                ));
+            }
             
-            return ResponseEntity.ok(Map.of(
-                "token", newAccessToken,
-                "rol", usuario.getRol().toString()
-            ));
+            // Intentar cargar como Reclutador
+            var reclutador = reclutadorRepo.findByCorreo(correo);
+            if (reclutador.isPresent()) {
+                String newAccessToken = jwtUtil.generateToken(correo, "RECLUTADOR");
+                return ResponseEntity.ok(Map.of(
+                    "token", newAccessToken,
+                    "rol", "RECLUTADOR"
+                ));
+            }
+            
+            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
             
         } catch (Exception e) {
             log.error("Error al refrescar token: {}", e.getMessage());

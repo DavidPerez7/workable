@@ -93,10 +93,6 @@ public class Oferta {
 	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
 	private Empresa empresa;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "reclutador_id", referencedColumnName = "id")
-	private Usuario reclutador;
-
 	@ElementCollection(fetch = FetchType.LAZY)
 	@CollectionTable(
 		name = "oferta_beneficios",

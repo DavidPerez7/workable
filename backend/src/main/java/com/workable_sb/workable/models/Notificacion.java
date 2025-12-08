@@ -46,9 +46,9 @@ public class Notificacion {
     private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Usuario usuario;
+    private Aspirante aspirante;
 
     @PrePersist
     protected void onCreate() {
@@ -57,3 +57,4 @@ public class Notificacion {
         }
     }
 }
+

@@ -15,10 +15,8 @@ import com.workable_sb.workable.models.Citacion;
 import com.workable_sb.workable.models.Citacion.Estado;
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.models.Aspirante;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.CitacionRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
 @Transactional

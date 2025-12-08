@@ -30,32 +30,32 @@ public class NotificacionController {
 
     // - READ by usuario
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Notificacion>> getByUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(notificacionService.getByUsuario(usuarioId));
+    public ResponseEntity<List<Notificacion>> getByAspirante(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(notificacionService.getByAspirante(usuarioId));
     }
 
     // - READ by usuario and leida
     @GetMapping("/usuario-leida/{usuarioId}")
-    public ResponseEntity<List<Notificacion>> getByUsuarioAndLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) {
-        return ResponseEntity.ok(notificacionService.getByUsuarioAndLeida(usuarioId, leida));
+    public ResponseEntity<List<Notificacion>> getByAspiranteAndLeida(@PathVariable Long usuarioId, @RequestParam Boolean leida) {
+        return ResponseEntity.ok(notificacionService.getByAspiranteAndLeida(usuarioId, leida));
     }
 
     // - READ by usuario and tipo
     @GetMapping("/usuario-tipo/{usuarioId}")
-    public ResponseEntity<List<Notificacion>> getByUsuarioAndTipo(@PathVariable Long usuarioId, @RequestParam Notificacion.Tipo tipo) {
-        return ResponseEntity.ok(notificacionService.getByUsuarioAndTipo(usuarioId, tipo));
+    public ResponseEntity<List<Notificacion>> getByAspiranteAndTipo(@PathVariable Long usuarioId, @RequestParam Notificacion.Tipo tipo) {
+        return ResponseEntity.ok(notificacionService.getByAspiranteAndTipo(usuarioId, tipo));
     }
 
     // - READ by usuario order by fecha desc
     @GetMapping("/usuario-fecha-desc/{usuarioId}")
-    public ResponseEntity<List<Notificacion>> getByUsuarioOrderByFechaDesc(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(notificacionService.getByUsuarioOrderByFechaDesc(usuarioId));
+    public ResponseEntity<List<Notificacion>> getByAspiranteOrderByFechaDesc(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(notificacionService.getByAspiranteOrderByFechaDesc(usuarioId));
     }
 
     // - READ activas by usuario
     @GetMapping("/usuario/{usuarioId}/activas")
-    public ResponseEntity<List<Notificacion>> getActivasByUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(notificacionService.getActivasByUsuario(usuarioId));
+    public ResponseEntity<List<Notificacion>> getActivasByAspirante(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(notificacionService.getActivasByAspirante(usuarioId));
     }
 
     // - READ contar no leidas

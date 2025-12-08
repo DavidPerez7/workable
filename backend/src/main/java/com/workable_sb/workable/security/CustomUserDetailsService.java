@@ -9,54 +9,71 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.workable_sb.workable.models.Usuario;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.models.Reclutador;
+import com.workable_sb.workable.repository.AspiranteRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Servicio personalizado para cargar detalles del usuario durante la autenticación.
- * Integra el modelo Usuario con Spring Security.
+ * Integra los modelos Aspirante y Reclutador con Spring Security.
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private AspiranteRepo aspiranteRepo;
+
+    @Autowired
+    private ReclutadorRepo reclutadorRepo;
 
     @Override
     public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepo.findByCorreo(correo)
-            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + correo));
+        // Intentar cargar como Aspirante
+        Optional<Aspirante> aspirante = aspiranteRepo.findByCorreo(correo);
+        if (aspirante.isPresent()) {
+            Aspirante user = aspirante.get();
+            return buildUserDetails(user.getCorreo(), user.getPassword(), user.getIsActive(), "ASPIRANTE");
+        }
 
+        // Intentar cargar como Reclutador
+        Optional<Reclutador> reclutador = reclutadorRepo.findByCorreo(correo);
+        if (reclutador.isPresent()) {
+            Reclutador user = reclutador.get();
+            return buildUserDetails(user.getCorreo(), user.getPassword(), user.getIsActive(), "RECLUTADOR");
+        }
+
+        // Si no encuentra ninguno, lanzar excepción
+        throw new UsernameNotFoundException("Usuario no encontrado con correo: " + correo);
+    }
+
+    /**
+     * Método auxiliar para construir UserDetails
+     */
+    private UserDetails buildUserDetails(String correo, String password, Boolean isActive, String rol) {
         // Verificar si el usuario está activo
-        if (!usuario.getIsActive()) {
+        if (isActive == null || !isActive) {
             throw new UsernameNotFoundException("Usuario inactivo: " + correo);
         }
 
         // Crear lista de autoridades (roles)
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + rol));
 
         // Retornar UserDetails de Spring Security
         return new User(
-            usuario.getCorreo(),
-            usuario.getPassword(),
-            usuario.getIsActive(),
-            true, // accountNonExpired
-            true, // credentialsNonExpired
-            true, // accountNonLocked
+            correo,
+            password,
+            true,  // enabled
+            true,  // accountNonExpired
+            true,  // credentialsNonExpired
+            true,  // accountNonLocked
             authorities
         );
     }
-
-    /**
-     * Obtener el usuario completo desde la base de datos por correo.
-     * Útil para operaciones adicionales después de la autenticación.
-     */
-    public Usuario getUsuarioByCorreo(String correo) {
-        return usuarioRepo.findByCorreo(correo)
-            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + correo));
-    }
 }
+

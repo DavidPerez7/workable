@@ -9,7 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.workable_sb.workable.models.Empresa;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.service.EmpresaService;
 import com.workable_sb.workable.security.CustomUserDetails;
 
