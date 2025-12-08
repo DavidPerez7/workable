@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.workable_sb.workable.dto.LoginRequestDto;
 import com.workable_sb.workable.dto.LoginResponseDto;
+import com.workable_sb.workable.models.Administrador;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Reclutador;
+import com.workable_sb.workable.repository.AdministradorRepo;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.ReclutadorRepo;
 import com.workable_sb.workable.security.JwtUtil;
@@ -48,6 +50,9 @@ public class AuthController {
 
     @Autowired
     private ReclutadorRepo reclutadorRepo;
+
+    @Autowired
+    private AdministradorRepo administradorRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -138,7 +143,38 @@ public class AuthController {
         try {
             log.info("Intento de login: {}", loginRequest.getCorreo());
             
-            // Intentar cargar como Aspirante primero
+            // Intentar cargar como Administrador primero
+            var administrador = administradorRepo.findByCorreo(loginRequest.getCorreo());
+            if (administrador.isPresent()) {
+                Administrador user = administrador.get();
+                log.debug("Administrador encontrado: {}", user.getCorreo());
+                if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                    log.warn("Login fallido para administrador: {} - contraseña no coincide", loginRequest.getCorreo());
+                    return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
+                }
+                if (!user.getIsActive()) {
+                    log.warn("Administrador inactivo intenta login: {}", loginRequest.getCorreo());
+                    return ResponseEntity.status(403).body(Map.of("error", "Usuario inactivo"));
+                }
+                
+                String rolString = "ADMIN";
+                String token = jwtUtil.generateTokenWithUserId(user.getCorreo(), rolString, user.getId());
+                String refreshToken = jwtUtil.generateRefreshToken(user.getCorreo());
+                
+                LoginResponseDto response = new LoginResponseDto();
+                response.setToken(token);
+                response.setRefreshToken(refreshToken);
+                response.setRol(rolString);
+                response.setUsuarioId(user.getId());
+                response.setNombre(user.getNombre());
+                response.setApellido(user.getApellido());
+                response.setCorreo(user.getCorreo());
+                
+                log.info("Login exitoso para administrador: {} (ID: {})", user.getCorreo(), user.getId());
+                return ResponseEntity.ok(response);
+            }
+            
+            // Intentar cargar como Aspirante
             var aspirante = aspiranteRepo.findByCorreo(loginRequest.getCorreo());
             if (aspirante.isPresent()) {
                 Aspirante user = aspirante.get();

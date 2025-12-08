@@ -124,47 +124,70 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeUsuarios() {
-        // 4 ASPIRANTES con nombres reales
-        String[][] aspirantesData = {
-            {"Juan", "Pérez", "juan.perez@example.com", "Bogotá"},
-            {"María", "García", "maria.garcia@example.com", "Medellín"},
-            {"Carlos", "Rodríguez", "carlos.rodriguez@example.com", "Cali"},
-            {"Ana", "Martínez", "ana.martinez@example.com", "Barranquilla"}
-        };
-
-        for (int i = 0; i < aspirantesData.length; i++) {
-            Aspirante aspirante = new Aspirante();
-            aspirante.setNombre(aspirantesData[i][0]);
-            aspirante.setApellido(aspirantesData[i][1]);
-            aspirante.setCorreo(aspirantesData[i][2]);
-            aspirante.setPassword(passwordEncoder.encode("pass123"));
-            aspirante.setTelefono("300111111" + (i + 1));
-            aspirante.setFechaNacimiento(LocalDate.of(1995 + i, 1 + i, 15));
-            aspirante.setMunicipio(municipioRepo.findByNombre(aspirantesData[i][3]).orElse(null));
-            aspirante.setIsActive(true);
-            aspiranteRepo.save(aspirante);
+        // ===== USUARIO ADMINISTRADOR (único) =====
+        var admin = administradorRepo.findByCorreo("admin@example.com");
+        if (admin.isEmpty()) {
+            Administrador nuevo = new Administrador();
+            nuevo.setNombre("Admin");
+            nuevo.setApellido("Sistema");
+            nuevo.setCorreo("admin@example.com");
+            nuevo.setPassword(passwordEncoder.encode("admin123"));
+            nuevo.setIsActive(true);
+            administradorRepo.save(nuevo);
+            System.out.println("✓ Usuario ADMINISTRADOR creado: admin@example.com / admin123");
+        } else {
+            // Actualizar si existe para asegurar contraseña correcta
+            Administrador existing = admin.get();
+            existing.setPassword(passwordEncoder.encode("admin123"));
+            existing.setIsActive(true);
+            administradorRepo.save(existing);
+            System.out.println("✓ Usuario ADMINISTRADOR verificado/actualizado: admin@example.com / admin123");
         }
 
-        // 5 RECLUTADORES con nombres reales
-        String[][] reclutadoresData = {
-            {"Luis", "Fernández", "luis.fernandez@example.com", "Bogotá"},
-            {"Carmen", "López", "carmen.lopez@example.com", "Medellín"},
-            {"Miguel", "González", "miguel.gonzalez@example.com", "Cali"},
-            {"Isabel", "Hernández", "isabel.hernandez@example.com", "Cartagena"},
-            {"David", "Jiménez", "david.jimenez@example.com", "Bucaramanga"}
-        };
+        // ===== 1 ASPIRANTE POR DEFECTO =====
+        var aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com");
+        if (aspirante.isEmpty()) {
+            Aspirante nuevo = new Aspirante();
+            nuevo.setNombre("Juan");
+            nuevo.setApellido("Pérez");
+            nuevo.setCorreo("juan.perez@example.com");
+            nuevo.setPassword(passwordEncoder.encode("pass123"));
+            nuevo.setTelefono("3001111111");
+            nuevo.setFechaNacimiento(LocalDate.of(1995, 1, 15));
+            nuevo.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
+            nuevo.setIsActive(true);
+            aspiranteRepo.save(nuevo);
+            System.out.println("✓ Usuario ASPIRANTE creado: juan.perez@example.com / pass123");
+        } else {
+            // Restaurar si fue eliminado
+            Aspirante existing = aspirante.get();
+            existing.setPassword(passwordEncoder.encode("pass123"));
+            existing.setIsActive(true);
+            aspiranteRepo.save(existing);
+            System.out.println("✓ Usuario ASPIRANTE verificado/actualizado: juan.perez@example.com / pass123");
+        }
 
-        for (int i = 0; i < reclutadoresData.length; i++) {
-            Reclutador reclutador = new Reclutador();
-            reclutador.setNombre(reclutadoresData[i][0]);
-            reclutador.setApellido(reclutadoresData[i][1]);
-            reclutador.setCorreo(reclutadoresData[i][2]);
-            reclutador.setPassword(passwordEncoder.encode("pass123"));
-            reclutador.setTelefono("300222222" + (i + 1));
-            reclutador.setFechaNacimiento(LocalDate.of(1988 + i, 3 + i, 20));
-            reclutador.setMunicipio(municipioRepo.findByNombre(reclutadoresData[i][3]).orElse(null));
-            reclutador.setIsActive(true);
-            reclutadorRepo.save(reclutador);
+        // ===== 1 RECLUTADOR POR DEFECTO =====
+        var reclutador = reclutadorRepo.findByCorreo("luis.fernandez@example.com");
+        if (reclutador.isEmpty()) {
+            Reclutador nuevo = new Reclutador();
+            nuevo.setNombre("Luis");
+            nuevo.setApellido("Fernández");
+            nuevo.setCorreo("luis.fernandez@example.com");
+            nuevo.setPassword(passwordEncoder.encode("pass123"));
+            nuevo.setTelefono("3002222221");
+            nuevo.setFechaNacimiento(LocalDate.of(1988, 3, 20));
+            nuevo.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
+            nuevo.setIsActive(true);
+            reclutadorRepo.save(nuevo);
+            System.out.println("✓ Usuario RECLUTADOR creado: luis.fernandez@example.com / pass123");
+        } else {
+            // Restaurar si fue eliminado
+            Reclutador existing = reclutador.get();
+            existing.setPassword(passwordEncoder.encode("pass123"));
+            existing.setIsActive(true);
+            reclutadorRepo.save(existing);
+            System.out.println("✓ Usuario RECLUTADOR verificado/actualizado: luis.fernandez@example.com / pass123");
         }
     }
 
