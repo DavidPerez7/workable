@@ -14,6 +14,7 @@ import com.workable_sb.workable.models.Oferta.Modalidad;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
 
 @Service
 @Transactional
@@ -26,7 +27,7 @@ public class OfertaService {
     private EmpresaRepository empresaRepository;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private ReclutadorRepo usuarioRepo;
 
     @Autowired
     private MunicipioRepo municipioRepo;
@@ -63,17 +64,17 @@ public class OfertaService {
         // Validar que la empresa existe
         Empresa empresa = empresaRepository.findById(empresaId)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        Usuario reclutador = usuarioRepo.findById(reclutadorId)
+
+        // Validar que el reclutador existe y pertenece a la empresa (regla de negocio)
+        usuarioRepo.findById(reclutadorId)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
 
-        // Validar que el reclutador pertenece a la empresa (regla de negocio, excepto ADMIN)
-        if (reclutador.getRol() == Usuario.Rol.RECLUTADOR) {
-            boolean perteneceAEmpresa = empresa.getReclutadores().stream()
-                    .anyMatch(r -> r.getId().equals(reclutadorId));
-            
-            if (!perteneceAEmpresa) {
-                throw new IllegalStateException("El reclutador no pertenece a la empresa");
-            }
+        // Validar que el reclutador pertenece a la empresa (regla de negocio)
+        boolean perteneceAEmpresa = empresa.getReclutadores().stream()
+                .anyMatch(r -> r.getId().equals(reclutadorId));
+        
+        if (!perteneceAEmpresa) {
+            throw new IllegalStateException("El reclutador no pertenece a la empresa");
         }
 
         // Validar municipio
@@ -82,9 +83,8 @@ public class OfertaService {
                     .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
         }
 
-        // Asignar empresa y reclutador
+        // Asignar empresa
         oferta.setEmpresa(empresa);
-        oferta.setReclutador(reclutador);
 
         return ofertaRepository.save(oferta);
     }
@@ -115,10 +115,17 @@ public class OfertaService {
     }
 
     public List<Oferta> listarPorReclutador(Long reclutadorId) {
-        if (!usuarioRepo.existsById(reclutadorId)) {
-            throw new RuntimeException("Reclutador no encontrado");
+        // Obtener el reclutador
+        com.workable_sb.workable.models.Reclutador reclutador = usuarioRepo.findById(reclutadorId)
+                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
+        
+        // Obtener la empresa del reclutador
+        if (reclutador.getEmpresa() == null) {
+            return List.of(); // Retornar lista vacía si el reclutador no tiene empresa
         }
-        return ofertaRepository.findByReclutadorId(reclutadorId);
+        
+        // Retornar las ofertas de la empresa del reclutador
+        return ofertaRepository.findByEmpresaId(reclutador.getEmpresa().getId());
     }
 
     public List<Oferta> listarPorMunicipio(Long municipioId) {
@@ -203,20 +210,12 @@ public class OfertaService {
     }
 
     private boolean puedeModificarOferta(Oferta oferta, Long usuarioId) {
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Es ADMIN
-        if (usuario.getRol() == Usuario.Rol.ADMIN) {
-            return true;
-        }
+        // Validar que el reclutador existe
+        usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
         // Es reclutador de la empresa
-        if (usuario.getRol() == Usuario.Rol.RECLUTADOR) {
-            return oferta.getEmpresa().getReclutadores().stream()
-                    .anyMatch(r -> r.getId().equals(usuarioId));
-        }
-        
-        return false;
+        return oferta.getEmpresa().getReclutadores().stream()
+                .anyMatch(r -> r.getId().equals(usuarioId));
     }
 }

@@ -19,6 +19,6 @@ public interface EstudioRepo extends JpaRepository<Estudio, Long> {
     // Buscar estudios por nivel educativo
     List<Estudio> findByAspiranteIdAndNivelEducativo(Long aspiranteId, NivelEducativo nivelEducativo);
     
-    // Contar estudios por usuario
-    long countByUsuarioId(Long usuarioId);
+    // Contar estudios por aspirante
+    long countByAspiranteId(Long aspiranteId);
 }

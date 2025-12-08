@@ -90,11 +90,7 @@ public class Reclutador {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Empresa empresa;
 
-    // Relaciones con Ofertas y Citaciones
-    @OneToMany(mappedBy = "reclutador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("reclutador")
-    private List<Oferta> ofertas;
-
+    // Relaciones con Citaciones
     @OneToMany(mappedBy = "reclutador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("reclutador")
     private List<Citacion> citaciones;

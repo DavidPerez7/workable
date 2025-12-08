@@ -71,9 +71,16 @@ public class AspiranteController {
         return ResponseEntity.ok(aspiranteService.updatePublic(id, aspirante, aspiranteActualId));
     }
 
+    // - UPDATE Mi Perfil (para aspirantes editando su propio perfil - PROTEGIDO)
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @PutMapping("/{id}")
+    public ResponseEntity<Aspirante> updateMiPerfil(@PathVariable Long id, @RequestBody Aspirante aspirante) {
+        return ResponseEntity.ok(aspiranteService.updateMiPerfil(id, aspirante));
+    }
+
     // - UPDATE (ADMIN)
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/admin")
     public ResponseEntity<Aspirante> update(@PathVariable Long id, @RequestBody Aspirante aspirante) {
         return ResponseEntity.ok(aspiranteService.update(id, aspirante));
     }

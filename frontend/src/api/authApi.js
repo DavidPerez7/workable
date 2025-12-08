@@ -11,9 +11,12 @@ export const login = async (LoginCredenciales) => {
 		});
 		localStorage.setItem("token", response.data.token);
 		localStorage.setItem("usuarioId", response.data.usuarioId);
+		localStorage.setItem("rol", response.data.rol);
 		return response.data;
 	} catch (error) {
-		throw new Error("Error al iniciar sesión");
+		console.error("Error de login details:", error.response?.data || error.message);
+		const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "Error al iniciar sesión";
+		throw new Error(errorMessage);
 	}
 };
 
@@ -24,7 +27,9 @@ export const registerAspirante = async (aspiranteData) => {
 		});
 		return response.data;
 	} catch (error) {
-		throw new Error("Error al registrar aspirante");
+		console.error("Error de registro aspirante details:", error.response?.data || error.message);
+		const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "Error al registrar aspirante";
+		throw new Error(errorMessage);
 	}
 };
 
@@ -35,7 +40,9 @@ export const registerReclutador = async (reclutadorData) => {
 		});
 		return response.data;
 	} catch (error) {
-		throw new Error("Error al registrar reclutador");
+		console.error("Error de registro reclutador details:", error.response?.data || error.message);
+		const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "Error al registrar reclutador";
+		throw new Error(errorMessage);
 	}
 };
 

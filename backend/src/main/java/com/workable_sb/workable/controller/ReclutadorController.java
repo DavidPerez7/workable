@@ -45,6 +45,20 @@ public class ReclutadorController {
         }
     }
 
+    // READ PUBLIC by id (para perfil)
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @GetMapping("/public/{id}")
+    public ResponseEntity<?> obtenerReclutadorPublic(@PathVariable Long id) {
+        try {
+            Reclutador reclutador = reclutadorService.obtenerPorId(id);
+            return ResponseEntity.ok(reclutador);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutador: " + e.getMessage()));
+        }
+    }
+
     // Obtener por correo
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/correo/{correo}")

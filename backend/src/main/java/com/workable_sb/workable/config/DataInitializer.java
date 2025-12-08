@@ -79,11 +79,35 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeMunicipios() {
-        for (int i = 1; i <= 10; i++) {
+        // Municipios reales de Colombia con IDs reales
+        Object[][] municipiosData = {
+            {1L, "Bogotá", Municipio.Departamento.BOGOTA_DC},
+            {2L, "Medellín", Municipio.Departamento.ANTIOQUIA},
+            {3L, "Cali", Municipio.Departamento.VALLE_DEL_CAUCA},
+            {4L, "Barranquilla", Municipio.Departamento.ATLANTICO},
+            {5L, "Cartagena", Municipio.Departamento.BOLIVAR},
+            {6L, "Cúcuta", Municipio.Departamento.NORTE_DE_SANTANDER},
+            {7L, "Bucaramanga", Municipio.Departamento.SANTANDER},
+            {8L, "Pereira", Municipio.Departamento.RISARALDA},
+            {9L, "Santa Marta", Municipio.Departamento.MAGDALENA},
+            {10L, "Ibagué", Municipio.Departamento.TOLIMA},
+            {11L, "Pasto", Municipio.Departamento.NARINO},
+            {12L, "Manizales", Municipio.Departamento.CALDAS},
+            {13L, "Neiva", Municipio.Departamento.HUILA},
+            {14L, "Popayán", Municipio.Departamento.CAUCA},
+            {15L, "Armenia", Municipio.Departamento.QUINDIO},
+            {16L, "Villavicencio", Municipio.Departamento.META},
+            {17L, "Sincelejo", Municipio.Departamento.SUCRE},
+            {18L, "Valledupar", Municipio.Departamento.CESAR},
+            {19L, "Montería", Municipio.Departamento.CORDOBA},
+            {20L, "Tunja", Municipio.Departamento.BOYACA}
+        };
+
+        for (Object[] data : municipiosData) {
             Municipio municipio = new Municipio();
-            municipio.setId((long) i);
-            municipio.setNombre("Municipio " + i);
-            municipio.setDepartamento(Municipio.Departamento.values()[i % Municipio.Departamento.values().length]);
+            municipio.setId((Long) data[0]);
+            municipio.setNombre((String) data[1]);
+            municipio.setDepartamento((Municipio.Departamento) data[2]);
             municipioRepo.save(municipio);
         }
     }
@@ -100,52 +124,81 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeUsuarios() {
-        // 4 ASPIRANTES
-        for (int i = 1; i <= 4; i++) {
+        // 4 ASPIRANTES con nombres reales
+        String[][] aspirantesData = {
+            {"Juan", "Pérez", "juan.perez@example.com", "Bogotá"},
+            {"María", "García", "maria.garcia@example.com", "Medellín"},
+            {"Carlos", "Rodríguez", "carlos.rodriguez@example.com", "Cali"},
+            {"Ana", "Martínez", "ana.martinez@example.com", "Barranquilla"}
+        };
+
+        for (int i = 0; i < aspirantesData.length; i++) {
             Aspirante aspirante = new Aspirante();
-            aspirante.setNombre("Aspirante " + i);
-            aspirante.setApellido("Apellido " + i);
-            aspirante.setCorreo("aspirante" + i + "@example.com");
+            aspirante.setNombre(aspirantesData[i][0]);
+            aspirante.setApellido(aspirantesData[i][1]);
+            aspirante.setCorreo(aspirantesData[i][2]);
             aspirante.setPassword(passwordEncoder.encode("pass123"));
-            aspirante.setTelefono("300111111" + i);
-            aspirante.setFechaNacimiento(LocalDate.of(1995 + i, 1, 1));
-            aspirante.setMunicipio(municipioRepo.findById((long) (1 + i % 10)).orElse(null));
+            aspirante.setTelefono("300111111" + (i + 1));
+            aspirante.setFechaNacimiento(LocalDate.of(1995 + i, 1 + i, 15));
+            aspirante.setMunicipio(municipioRepo.findByNombre(aspirantesData[i][3]).orElse(null));
             aspirante.setIsActive(true);
             aspiranteRepo.save(aspirante);
         }
 
-        // 5 RECLUTADORES
-        for (int i = 1; i <= 5; i++) {
+        // 5 RECLUTADORES con nombres reales
+        String[][] reclutadoresData = {
+            {"Luis", "Fernández", "luis.fernandez@example.com", "Bogotá"},
+            {"Carmen", "López", "carmen.lopez@example.com", "Medellín"},
+            {"Miguel", "González", "miguel.gonzalez@example.com", "Cali"},
+            {"Isabel", "Hernández", "isabel.hernandez@example.com", "Cartagena"},
+            {"David", "Jiménez", "david.jimenez@example.com", "Bucaramanga"}
+        };
+
+        for (int i = 0; i < reclutadoresData.length; i++) {
             Reclutador reclutador = new Reclutador();
-            reclutador.setNombre("Reclutador " + i);
-            reclutador.setApellido("Apellido " + i);
-            reclutador.setCorreo("reclutador" + i + "@example.com");
+            reclutador.setNombre(reclutadoresData[i][0]);
+            reclutador.setApellido(reclutadoresData[i][1]);
+            reclutador.setCorreo(reclutadoresData[i][2]);
             reclutador.setPassword(passwordEncoder.encode("pass123"));
-            reclutador.setTelefono("300222222" + i);
-            reclutador.setFechaNacimiento(LocalDate.of(1988 + i, 1, 1));
-            reclutador.setMunicipio(municipioRepo.findById((long) (1 + i % 10)).orElse(null));
+            reclutador.setTelefono("300222222" + (i + 1));
+            reclutador.setFechaNacimiento(LocalDate.of(1988 + i, 3 + i, 20));
+            reclutador.setMunicipio(municipioRepo.findByNombre(reclutadoresData[i][3]).orElse(null));
             reclutador.setIsActive(true);
-            // Nota: La empresa se puede asignar después si es necesario
             reclutadorRepo.save(reclutador);
         }
     }
 
     private void initializeEmpresas() {
-        for (int i = 1; i <= 10; i++) {
+        // 10 EMPRESAS con nombres reales de Colombia
+        String[][] empresasData = {
+            {"Bancolombia", "Banco líder en Colombia", "Bogotá", "860002964", "contacto@bancolombia.com.co", "6013078000"},
+            {"Ecopetrol", "Empresa petrolera estatal", "Bogotá", "899999063", "contacto@ecopetrol.com.co", "6012345678"},
+            {"Grupo Aval", "Holding financiero", "Bogotá", "860034313", "contacto@grupoaval.com", "6012345679"},
+            {"Cementos Argos", "Empresa cementera", "Medellín", "890900286", "contacto@argos.com.co", "6042345678"},
+            {"Postobón", "Empresa de bebidas", "Medellín", "890900608", "contacto@postobon.com.co", "6042345679"},
+            {"Alpina", "Productos lácteos y alimentos", "Bogotá", "860002738", "contacto@alpina.com.co", "6012345680"},
+            {"Colombina", "Dulces y chocolates", "Cali", "890900251", "contacto@colombina.com", "6022345678"},
+            {"ISA", "Infraestructura energética", "Medellín", "890900738", "contacto@isa.com.co", "6042345680"},
+            {"Nutresa", "Alimentos procesados", "Medellín", "890900840", "contacto@nutresa.com.co", "6042345681"},
+            {"Éxito", "Cadena de supermercados", "Medellín", "890900608", "contacto@exito.com", "6042345682"}
+        };
+
+        for (int i = 0; i < empresasData.length; i++) {
             Empresa empresa = new Empresa();
-            empresa.setNombre("Empresa " + i);
-            empresa.setNit("1234567890" + i);
-            empresa.setDescripcion("Descripción de la empresa " + i);
-            empresa.setNumeroTrabajadores(10 + i * 5);
-            empresa.setEmailContacto("contacto" + i + "@empresa.com");
-            empresa.setTelefonoContacto("300555555" + i);
+            empresa.setNombre(empresasData[i][0]);
+            empresa.setNit(empresasData[i][3]);
+            empresa.setDescripcion(empresasData[i][1]);
+            empresa.setNumeroTrabajadores(1000 + (i * 500)); // Números realistas de empleados
+            empresa.setEmailContacto(empresasData[i][4]);
+            empresa.setTelefonoContacto(empresasData[i][5]);
+            empresa.setMunicipio(municipioRepo.findByNombre(empresasData[i][2]).orElse(null));
             empresa.setIsActive(true);
             empresaRepo.save(empresa);
         }
     }
 
     private void initializeEstudios() {
-        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com").orElse(null);
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
                 Estudio estudio = new Estudio();
@@ -163,15 +216,23 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeExperiencias() {
-        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com").orElse(null);
         if (aspirante != null) {
-            for (int i = 1; i <= 10; i++) {
+            String[][] experienciasData = {
+                {"Desarrollador Java", "Tech Solutions S.A.", "Desarrollo de aplicaciones web con Spring Boot"},
+                {"Analista de Sistemas", "DataCorp Ltda.", "Análisis y diseño de sistemas empresariales"},
+                {"Programador Full Stack", "WebDev Company", "Desarrollo frontend con React y backend con Node.js"},
+                {"Ingeniero de Software", "SoftTech SAS", "Mantenimiento y evolución de sistemas legacy"},
+                {"Consultor TI", "IT Consulting Group", "Implementación de soluciones tecnológicas"}
+            };
+
+            for (int i = 0; i < experienciasData.length; i++) {
                 Experiencia experiencia = new Experiencia();
-                experiencia.setCargo("Cargo " + i);
-                experiencia.setEmpresa("Empresa Trabajo " + i);
-                experiencia.setDescripcion("Descripción de la experiencia " + i);
-                experiencia.setFechaInicio(LocalDate.of(2015 + i, 1, 1));
-                experiencia.setFechaFin(LocalDate.of(2020 + i, 12, 31));
+                experiencia.setCargo(experienciasData[i][0]);
+                experiencia.setEmpresa(experienciasData[i][1]);
+                experiencia.setDescripcion(experienciasData[i][2]);
+                experiencia.setFechaInicio(LocalDate.of(2018 + i, 1, 1));
+                experiencia.setFechaFin(i < 4 ? LocalDate.of(2022 + i, 12, 31) : null); // Una experiencia actual
                 experiencia.setAspirante(aspirante);
                 experienciaRepo.save(experiencia);
             }
@@ -179,20 +240,86 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeOfertas() {
-        Empresa empresa = empresaRepo.findById(1L).orElse(null);
-        
-        if (empresa != null) {
-            for (int i = 1; i <= 10; i++) {
+        // Crear ofertas para diferentes empresas de manera más clara
+        String[] titulos = {
+            "Desarrollador Backend Java",
+            "Analista de Datos",
+            "Desarrollador Frontend React",
+            "Ingeniero DevOps",
+            "Arquitecto de Software",
+            "Tester QA Automation",
+            "Product Manager",
+            "Analista de Seguridad",
+            "Desarrollador Mobile",
+            "Scrum Master"
+        };
+
+        String[] descripciones = {
+            "Desarrollo de microservicios con Spring Boot y bases de datos relacionales",
+            "Análisis de datos empresariales con Python y SQL",
+            "Desarrollo de interfaces de usuario modernas con React y TypeScript",
+            "Implementación de pipelines CI/CD y gestión de infraestructura cloud",
+            "Diseño de arquitecturas escalables y microservicios",
+            "Automatización de pruebas con Selenium y desarrollo de frameworks de testing",
+            "Gestión de productos digitales y coordinación con equipos de desarrollo",
+            "Evaluación y mejora de la seguridad de sistemas informáticos",
+            "Desarrollo de aplicaciones móviles nativas iOS y Android",
+            "Facilitación de ceremonias ágiles y coaching de equipos"
+        };
+
+        Long[] empresaIds = {1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L};
+        Long[] salarios = {4500000L, 3800000L, 4200000L, 5500000L, 6500000L, 3500000L, 4800000L, 5200000L, 4600000L, 4300000L};
+        Integer[] numeroVacantes = {2, 1, 3, 1, 1, 2, 1, 1, 2, 1};
+        Oferta.NivelExperiencia[] niveles = {
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.INTERMEDIO,
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.AVANZADO,
+            Oferta.NivelExperiencia.EXPERTO,
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.INTERMEDIO,
+            Oferta.NivelExperiencia.INTERMEDIO,
+            Oferta.NivelExperiencia.BASICO,
+            Oferta.NivelExperiencia.INTERMEDIO
+        };
+        Oferta.Modalidad[] modalidades = {
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.HIBRIDO,
+            Oferta.Modalidad.REMOTO,
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.HIBRIDO,
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.HIBRIDO,
+            Oferta.Modalidad.PRESENCIAL,
+            Oferta.Modalidad.REMOTO,
+            Oferta.Modalidad.HIBRIDO
+        };
+        Oferta.TipoContrato[] tiposContrato = {
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO,
+            Oferta.TipoContrato.TIEMPO_COMPLETO
+        };
+
+        for (int i = 0; i < titulos.length; i++) {
+            Empresa empresa = empresaRepo.findById(empresaIds[i]).orElse(null);
+            if (empresa != null) {
                 Oferta oferta = new Oferta();
-                oferta.setTitulo("Oferta " + i);
-                oferta.setDescripcion("Descripción detallada de la oferta " + i);
-                oferta.setFechaPublicacion(LocalDate.now().minusDays(i));
+                oferta.setTitulo(titulos[i]);
+                oferta.setDescripcion(descripciones[i]);
+                oferta.setFechaPublicacion(LocalDate.now().minusDays(i + 1));
                 oferta.setFechaLimite(LocalDate.now().plusDays(30 - i));
-                oferta.setSalario(2000000L + (i * 100000));
-                oferta.setNumeroVacantes(1 + i % 5);
-                oferta.setNivelExperiencia(Oferta.NivelExperiencia.values()[i % Oferta.NivelExperiencia.values().length]);
-                oferta.setModalidad(Oferta.Modalidad.values()[i % Oferta.Modalidad.values().length]);
-                oferta.setTipoContrato(Oferta.TipoContrato.values()[i % Oferta.TipoContrato.values().length]);
+                oferta.setSalario(salarios[i]);
+                oferta.setNumeroVacantes(numeroVacantes[i]);
+                oferta.setNivelExperiencia(niveles[i]);
+                oferta.setModalidad(modalidades[i]);
+                oferta.setTipoContrato(tiposContrato[i]);
                 oferta.setEmpresa(empresa);
                 ofertaRepo.save(oferta);
             }
@@ -200,24 +327,25 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializePostulaciones() {
-        if (true) {
-            for (int i = 1; i <= 10; i++) {
-                Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante" + (1 + i % 4) + "@example.com").orElse(null);
-                Oferta oferta = ofertaRepo.findById((long) (1 + i % 10)).orElse(null);
-                
-                if (aspirante != null && oferta != null) {
-                    Postulacion postulacion = new Postulacion();
-                    postulacion.setEstado(Postulacion.Estado.values()[i % Postulacion.Estado.values().length]);
-                    postulacion.setAspirante(aspirante);
-                    postulacion.setOferta(oferta);
-                    postulacionRepo.save(postulacion);
-                }
+        // Crear postulaciones con aspirantes reales
+        String[] aspirantesCorreos = {"juan.perez@example.com", "maria.garcia@example.com", "carlos.rodriguez@example.com", "ana.martinez@example.com"};
+
+        for (int i = 0; i < 10; i++) {
+            Aspirante aspirante = aspiranteRepo.findByCorreo(aspirantesCorreos[i % aspirantesCorreos.length]).orElse(null);
+            Oferta oferta = ofertaRepo.findById((long) (1 + i % 10)).orElse(null);
+
+            if (aspirante != null && oferta != null) {
+                Postulacion postulacion = new Postulacion();
+                postulacion.setEstado(Postulacion.Estado.values()[i % Postulacion.Estado.values().length]);
+                postulacion.setAspirante(aspirante);
+                postulacion.setOferta(oferta);
+                postulacionRepo.save(postulacion);
             }
         }
     }
 
     private void initializeUsuarioHabilidades() {
-        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com").orElse(null);
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
                 UsuarioHabilidad usuarioHabilidad = new UsuarioHabilidad();
@@ -233,9 +361,9 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeFeedbacks() {
-        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
+        Aspirante aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com").orElse(null);
         Empresa empresa = empresaRepo.findById(1L).orElse(null);
-        
+
         if (aspirante != null && empresa != null) {
             for (int i = 1; i <= 10; i++) {
                 Feedback feedback = new Feedback();
@@ -250,8 +378,8 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeNotificaciones() {
-        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante1@example.com").orElse(null);
-        
+        Aspirante aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com").orElse(null);
+
         if (aspirante != null) {
             for (int i = 1; i <= 10; i++) {
                 Notificacion notificacion = new Notificacion();

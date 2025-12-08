@@ -15,8 +15,11 @@ import com.workable_sb.workable.models.Citacion;
 import com.workable_sb.workable.models.Citacion.Estado;
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.models.Reclutador;
 import com.workable_sb.workable.repository.CitacionRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
+import com.workable_sb.workable.repository.AspiranteRepo;
 
 @Service
 @Transactional
@@ -29,7 +32,10 @@ public class CitacionService {
     private PostulacionRepo postulacionRepo;
     
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private ReclutadorRepo reclutadorRepo;
+    
+    @Autowired
+    private AspiranteRepo aspiranteRepo;
 
     @Autowired
     private NotificacionService notificacionService;
@@ -40,27 +46,21 @@ public class CitacionService {
     // ===== CREAR CITACIÓN =====
     public Citacion crearCitacion(Long postulacionId, Long reclutadorId, LocalDate fechaCitacion, 
                                   String hora, String linkMeet, String detalles, 
-                                  Long usuarioIdActual) {
+                                  Long reclutadorIdActual) {
         // Validar que el postulación existe
         Postulacion postulacion = postulacionRepo.findById(postulacionId)
             .orElseThrow(() -> new RuntimeException("Postulación no encontrada"));
         
         // Validar que el reclutador existe
-        Usuario reclutador = usuarioRepo.findById(reclutadorId)
+        Reclutador reclutador = reclutadorRepo.findById(reclutadorId)
             .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Validar que el usuario actual es reclutador o admin
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar que el reclutador actual existe
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        if (usuarioActual.getRol() != Usuario.Rol.RECLUTADOR && 
-            usuarioActual.getRol() != Usuario.Rol.ADMIN) {
-            throw new RuntimeException("No tienes permisos para crear citaciones");
-        }
-        
-        // Si es reclutador, validar que sea el mismo
-        if (usuarioActual.getRol() == Usuario.Rol.RECLUTADOR && 
-            !usuarioActual.getId().equals(reclutadorId)) {
+        // El reclutador solo puede crear citaciones para sí mismo
+        if (!reclutadorActual.getId().equals(reclutadorId)) {
             throw new RuntimeException("No puedes crear citaciones para otros reclutadores");
         }
         
@@ -80,20 +80,19 @@ public class CitacionService {
     }
     
     // ===== ENVIAR CITACIÓN POR EMAIL =====
-    public Map<String, Object> enviarCitacionPorEmail(Long citacionId, Long usuarioIdActual) {
+    public Map<String, Object> enviarCitacionPorEmail(Long citacionId, Long reclutadorIdActual) {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
         
         // Validar permisos
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Permitir si es ADMIN o si es el reclutador asignado
-        boolean esAdmin = usuarioActual.getRol() == Usuario.Rol.ADMIN;
+        // El reclutador asignado es el único que puede enviar
         boolean esReclutadorAsignado = citacion.getReclutador() != null && 
-                                       usuarioActual.getId().equals(citacion.getReclutador().getId());
+                                       reclutadorActual.getId().equals(citacion.getReclutador().getId());
         
-        if (!esAdmin && !esReclutadorAsignado) {
+        if (!esReclutadorAsignado) {
             throw new RuntimeException("No tienes permisos para enviar esta citación");
         }
         
@@ -155,18 +154,12 @@ public class CitacionService {
     public Map<String, Object> enviarCitacionesMultiples(List<Long> postulacionIds, Long reclutadorId, 
                                                           LocalDate fechaCitacion, String hora, 
                                                           String linkMeet, String detalles, 
-                                                          Long usuarioIdActual) {
+                                                          Long reclutadorIdActual) {
         // Validar permisos
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        if (usuarioActual.getRol() != Usuario.Rol.RECLUTADOR && 
-            usuarioActual.getRol() != Usuario.Rol.ADMIN) {
-            throw new RuntimeException("No tienes permisos para crear citaciones");
-        }
-        
-        if (usuarioActual.getRol() == Usuario.Rol.RECLUTADOR && 
-            !usuarioActual.getId().equals(reclutadorId)) {
+        if (!reclutadorActual.getId().equals(reclutadorId)) {
             throw new RuntimeException("No puedes crear citaciones para otros reclutadores");
         }
         
@@ -174,7 +167,7 @@ public class CitacionService {
         List<String> notificacionesEnviadas = new ArrayList<>();
         List<String> errores = new ArrayList<>();
         
-        Usuario reclutador = usuarioRepo.findById(reclutadorId)
+        Reclutador reclutador = reclutadorRepo.findById(reclutadorId)
             .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
         for (Long postulacionId : postulacionIds) {
@@ -242,76 +235,63 @@ public class CitacionService {
     }
     
     // ===== OBTENER CITACIONES =====
-    public Citacion obtenerCitacion(Long citacionId, Long usuarioIdActual) {
+    public Citacion obtenerCitacion(Long citacionId, Long reclutadorIdActual) {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
         
-        // Validar permisos
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar permisos - reclutador solo sus citaciones
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Admin puede ver todo, aspirante solo sus citaciones, reclutador solo sus citaciones
-        if (usuarioActual.getRol() == Usuario.Rol.ASPIRANTE) {
-            if (!usuarioActual.getId().equals(citacion.getPostulacion().getAspirante().getId())) {
-                throw new RuntimeException("No tienes permisos para ver esta citación");
-            }
-        } else if (usuarioActual.getRol() == Usuario.Rol.RECLUTADOR) {
-            if (!usuarioActual.getId().equals(citacion.getReclutador().getId())) {
-                throw new RuntimeException("No tienes permisos para ver esta citación");
-            }
+        if (citacion.getReclutador() == null || !reclutadorActual.getId().equals(citacion.getReclutador().getId())) {
+            throw new RuntimeException("No tienes permisos para ver esta citación");
         }
         
         return citacion;
     }
     
-    public List<Citacion> obtenerCitacionesDelReclutador(Long reclutadorId, Long usuarioIdActual) {
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public List<Citacion> obtenerCitacionesDelReclutador(Long reclutadorId, Long reclutadorIdActual) {
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Admin o el mismo reclutador
-        if (usuarioActual.getRol() == Usuario.Rol.RECLUTADOR && 
-            !usuarioActual.getId().equals(reclutadorId)) {
+        // El reclutador solo puede ver sus propias citaciones
+        if (!reclutadorActual.getId().equals(reclutadorId)) {
             throw new RuntimeException("No tienes permisos para ver citaciones de otros reclutadores");
         }
         
         return citacionRepo.findByReclutadorIdOrderByFechaCitacionDesc(reclutadorId);
     }
     
-    public List<Citacion> obtenerCitacionesDelAspirante(Long usuarioId, Long usuarioIdActual) {
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public List<Citacion> obtenerCitacionesDelAspirante(Long aspiranteId, Long aspiranteIdActual) {
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteIdActual)
+            .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
         
         // El aspirante solo puede ver sus propias citaciones
-        if (usuarioActual.getRol() == Usuario.Rol.ASPIRANTE && 
-            !usuarioActual.getId().equals(usuarioId)) {
+        if (!aspirante.getId().equals(aspiranteId)) {
             throw new RuntimeException("No tienes permisos para ver citaciones de otros usuarios");
         }
         
-        return citacionRepo.findByPostulacionUsuarioId(usuarioId);
+        return citacionRepo.findByPostulacionAspiranteId(aspiranteId);
     }
     
-    public List<Citacion> obtenerCitacionesDeOferta(Long ofertaId, Long usuarioIdActual) {
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        if (usuarioActual.getRol() == Usuario.Rol.ASPIRANTE) {
-            throw new RuntimeException("No tienes permisos para ver citaciones de ofertas");
-        }
+    public List<Citacion> obtenerCitacionesDeOferta(Long ofertaId, Long reclutadorIdActual) {
+        // Solo reclutadores pueden ver citaciones de ofertas
+        Reclutador reclutador = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
         return citacionRepo.findByPostulacionOfertaId(ofertaId);
     }
     
     // ===== CAMBIAR ESTADO =====
-    public Citacion cambiarEstadoCitacion(Long citacionId, String nuevoEstado, Long usuarioIdActual) {
+    public Citacion cambiarEstadoCitacion(Long citacionId, String nuevoEstado, Long reclutadorIdActual) {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
         
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Solo el reclutador o admin pueden cambiar estado
-        if (!usuarioActual.getId().equals(citacion.getReclutador().getId()) && 
-            usuarioActual.getRol() != Usuario.Rol.ADMIN) {
+        // Solo el reclutador puede cambiar estado
+        if (!reclutadorActual.getId().equals(citacion.getReclutador().getId())) {
             throw new RuntimeException("No tienes permisos para cambiar el estado de esta citación");
         }
         
@@ -325,16 +305,15 @@ public class CitacionService {
     }
     
     // ===== ELIMINAR CITACIÓN =====
-    public void eliminarCitacion(Long citacionId, Long usuarioIdActual) {
+    public void eliminarCitacion(Long citacionId, Long reclutadorIdActual) {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
         
-        Usuario usuarioActual = usuarioRepo.findById(usuarioIdActual)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Solo el reclutador o admin pueden eliminar
-        if (!usuarioActual.getId().equals(citacion.getReclutador().getId()) && 
-            usuarioActual.getRol() != Usuario.Rol.ADMIN) {
+        // Solo el reclutador puede eliminar
+        if (!reclutadorActual.getId().equals(citacion.getReclutador().getId())) {
             throw new RuntimeException("No tienes permisos para eliminar esta citación");
         }
         

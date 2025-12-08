@@ -142,8 +142,9 @@ public class AuthController {
             var aspirante = aspiranteRepo.findByCorreo(loginRequest.getCorreo());
             if (aspirante.isPresent()) {
                 Aspirante user = aspirante.get();
+                log.debug("Aspirante encontrado: {}, contraseña hasheada: {}", user.getCorreo(), user.getPassword() != null ? "SÍ" : "NO");
                 if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                    log.warn("Login fallido para aspirante: {}", loginRequest.getCorreo());
+                    log.warn("Login fallido para aspirante: {} - contraseña no coincide", loginRequest.getCorreo());
                     return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
                 }
                 if (!user.getIsActive()) {
@@ -172,8 +173,11 @@ public class AuthController {
             var reclutador = reclutadorRepo.findByCorreo(loginRequest.getCorreo());
             if (reclutador.isPresent()) {
                 Reclutador user = reclutador.get();
+                log.debug("Reclutador encontrado: {}, contraseña hasheada: {}", user.getCorreo(), user.getPassword() != null ? "SÍ" : "NO");
+                log.debug("Contraseña en BD (primeros 20 caracteres): {}", user.getPassword() != null && user.getPassword().length() > 20 ? user.getPassword().substring(0, 20) : user.getPassword());
+                
                 if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                    log.warn("Login fallido para reclutador: {}", loginRequest.getCorreo());
+                    log.warn("Login fallido para reclutador: {} - contraseña no coincide", loginRequest.getCorreo());
                     return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
                 }
                 if (!user.getIsActive()) {
@@ -202,7 +206,7 @@ public class AuthController {
             return ResponseEntity.status(401).body(Map.of("error", "Usuario o contraseña incorrectos"));
             
         } catch (Exception e) {
-            log.error("Error en login: {}", e.getMessage());
+            log.error("Error en login: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(Map.of("error", "Error del sistema: " + e.getMessage()));
         }
     }

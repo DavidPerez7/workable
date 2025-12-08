@@ -34,8 +34,8 @@ public interface CitacionRepo extends JpaRepository<Citacion, Long> {
     // Buscar citaciones en una fecha específica
     List<Citacion> findByFechaCitacion(LocalDate fecha);
     
-    // Buscar citaciones de un usuario aspirante (a través de postulación)
-    List<Citacion> findByPostulacionUsuarioId(Long usuarioId);
+    // Buscar citaciones de un aspirante (a través de postulación)
+    List<Citacion> findByPostulacionAspiranteId(Long aspiranteId);
     
     // Verificar si ya existe una citación para una postulación
     Optional<Citacion> findByPostulacionIdAndEstadoNot(Long postulacionId, Estado estado);

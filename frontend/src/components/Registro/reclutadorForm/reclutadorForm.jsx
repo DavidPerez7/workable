@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerReclutador } from "../../../api/authApi";
+import { getMunicipios } from "../../../api/municipioAPI";
 import "./ReclutadorForm.css";
 
 const ReclutadorForm = () => {
@@ -8,6 +9,24 @@ const ReclutadorForm = () => {
   const navigate = useNavigate();
   const [compromisoInclusivo, setCompromisoInclusivo] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [municipios, setMunicipios] = useState([]);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(true);
+
+  useEffect(() => {
+    const cargarMunicipios = async () => {
+      try {
+        const municipiosData = await getMunicipios();
+        setMunicipios(municipiosData);
+      } catch (error) {
+        console.error("Error cargando municipios:", error);
+        alert("Error al cargar la lista de municipios. Por favor, recarga la página.");
+      } finally {
+        setLoadingMunicipios(false);
+      }
+    };
+
+    cargarMunicipios();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -154,17 +173,15 @@ const ReclutadorForm = () => {
 
               <div className="form-field">
                 <label className="form-label">Municipio *</label>
-                <select name="municipioId" required className="form-input">
-                  <option value="">Selecciona tu municipio</option>
-                  <option value="1">Bogotá D.C.</option>
-                  <option value="2">Medellín</option>
-                  <option value="3">Bello</option>
-                  <option value="4">Itagüí</option>
-                  <option value="5">Envigado</option>
-                  <option value="6">Rionegro</option>
-                  <option value="7">Cali</option>
-                  <option value="8">Barranquilla</option>
-                  <option value="9">Bucaramanga</option>
+                <select name="municipioId" required className="form-input" disabled={loadingMunicipios}>
+                  <option value="">
+                    {loadingMunicipios ? "Cargando municipios..." : "Selecciona tu municipio"}
+                  </option>
+                  {municipios.map((municipio) => (
+                    <option key={municipio.id} value={municipio.id}>
+                      {municipio.nombre}
+                    </option>
+                  ))}
                 </select>
               </div>
 

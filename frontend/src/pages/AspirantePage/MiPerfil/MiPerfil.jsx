@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getUsuarioById } from "../../../api/usuarioAPI";
 import { deletePublicUsuario } from "../../../api/usuarioAPI";
+import { getMunicipios } from "../../../api/municipioAPI";
 import {
   FaUser,
   FaBriefcase,
@@ -14,10 +15,12 @@ import {
 import {
   CheckCircle,
   Eye,
-  Settings,
   Rocket,
   Trash2,
   AlertCircle,
+  Edit2,
+  Save,
+  X,
 } from "lucide-react";
 import Header from "../../../components/Header/Header";
 import Menu from "../../../components/Menu/Menu";
@@ -31,12 +34,18 @@ const MiPerfil = () => {
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [deletePassword, setDeletePassword] = useState("");
 	const [deleteError, setDeleteError] = useState("");
+	const [editingField, setEditingField] = useState(null);
+	const [editValues, setEditValues] = useState({});
+	const [savingField, setSavingField] = useState(null);
+	const [municipios, setMunicipios] = useState([]);
+	const [loadingMunicipios, setLoadingMunicipios] = useState(true);
 	const navigate = useNavigate();
 
 	// getPerfil, token ya implementado
 	const getUsuario = async () => {
 		const TOKEN = localStorage.getItem("token");
 		const usuarioId = localStorage.getItem("usuarioId");
+		const rol = localStorage.getItem("rol"); // Obtener el rol del usuario
 		setLoading(true);
 		setError(""); // limpiar errores previos
 
@@ -45,7 +54,7 @@ const MiPerfil = () => {
 			if (!TOKEN) {
 				throw new Error("No se encontró token de autenticación");
 			}
-			const usuario = await getUsuarioById(usuarioId, TOKEN);
+			const usuario = await getUsuarioById(usuarioId, TOKEN, rol);
 			console.log("Usuario obtenido:", usuario);
 			setUsuario(usuario); // Actualizar estado con datos obtenidos
 
@@ -71,9 +80,10 @@ const MiPerfil = () => {
 		}
 		const TOKEN = localStorage.getItem("token");
 		const usuarioId = localStorage.getItem("usuarioId");
+		const rol = localStorage.getItem("rol");
 
 		try { 
-			const response = await deletePublicUsuario(usuarioId, TOKEN)
+			const response = await deletePublicUsuario(usuarioId, TOKEN, rol)
 
 			//Verificar si la respuesta indica éxito
 			if (response.status === 200 || response.status === 204) {
@@ -100,6 +110,107 @@ const MiPerfil = () => {
 			} else {
 				setDeleteError("Error al eliminar la cuenta. Por favor, intenta de nuevo.");
 			}
+		}
+	};
+
+	// Función para cargar municipios
+	const cargarMunicipios = async () => {
+		try {
+			setLoadingMunicipios(true);
+			const municipiosData = await getMunicipios();
+			setMunicipios(municipiosData);
+		} catch (error) {
+			console.error("Error cargando municipios:", error);
+		} finally {
+			setLoadingMunicipios(false);
+		}
+	};
+
+	// Funciones para editar campos
+	const startEditing = (field, value) => {
+		setEditingField(field);
+		if (field === 'municipio') {
+			// Para municipio, guardamos el ID del municipio actual
+			const currentMunicipioId = usuario?.municipio?.id;
+			setEditValues({ ...editValues, municipio: currentMunicipioId || "" });
+		} else {
+			setEditValues({ ...editValues, [field]: value || "" });
+		}
+	};
+
+	const cancelEditing = () => {
+		setEditingField(null);
+		setEditValues({});
+	};
+
+	// Cargar municipios al montar el componente
+	useEffect(() => {
+		cargarMunicipios();
+	}, []);
+
+	const saveField = async (field) => {
+		const TOKEN = localStorage.getItem("token");
+		const usuarioId = localStorage.getItem("usuarioId");
+		const rol = localStorage.getItem("rol");
+		
+		setSavingField(field);
+		
+		try {
+			let updateData;
+			
+			if (field === 'municipio') {
+				// Para municipio, enviar el ID del municipio seleccionado
+				const selectedMunicipio = municipios.find(m => m.id === parseInt(editValues[field]));
+				updateData = {
+					municipio: {
+						id: parseInt(editValues[field])
+					}
+				};
+			} else {
+				updateData = {
+					[field]: editValues[field]
+				};
+			}
+			
+			// Llamar a API para actualizar
+			const endpoint = rol === "ASPIRANTE" 
+				? `http://localhost:8080/api/aspirante/${usuarioId}` 
+				: `http://localhost:8080/api/reclutador/${usuarioId}`;
+			
+			const response = await fetch(endpoint, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${TOKEN}`
+				},
+				body: JSON.stringify(updateData)
+			});
+
+			if (response.ok) {
+				// Actualizar el estado local
+				if (field === 'municipio') {
+					const selectedMunicipio = municipios.find(m => m.id === parseInt(editValues[field]));
+					setUsuario({
+						...usuario,
+						municipio: selectedMunicipio
+					});
+				} else {
+					setUsuario({
+						...usuario,
+						[field]: editValues[field]
+					});
+				}
+				setEditingField(null);
+				setEditValues({});
+				alert("Campo actualizado exitosamente");
+			} else {
+				throw new Error("Error al actualizar el campo");
+			}
+		} catch (err) {
+			console.error("Error actualizando campo:", err);
+			alert("Error al actualizar. Por favor, intenta de nuevo.");
+		} finally {
+			setSavingField(null);
 		}
 	};
 
@@ -158,48 +269,480 @@ const MiPerfil = () => {
 			</div>
 
 			<div className="profile-info-MPF">
-				<h1 className="profile-name-MPF">
-				{usuario?.nombre} {usuario?.apellido}
-				</h1>
+				<div className="profile-name-section-MPF">
+					{editingField === 'nombre' || editingField === 'apellido' ? (
+						<div className="edit-name-section-MPF">
+							<input
+								type="text"
+								placeholder="Nombre"
+								value={editValues.nombre !== undefined ? editValues.nombre : usuario?.nombre || ''}
+								onChange={(e) => setEditValues({...editValues, nombre: e.target.value})}
+								className="info-input-MPF edit-name-input-MPF"
+							/>
+							<input
+								type="text"
+								placeholder="Apellido"
+								value={editValues.apellido !== undefined ? editValues.apellido : usuario?.apellido || ''}
+								onChange={(e) => setEditValues({...editValues, apellido: e.target.value})}
+								className="info-input-MPF edit-name-input-MPF"
+							/>
+							<div className="edit-actions-MPF">
+								<button
+									onClick={() => {
+										saveField('nombre');
+										saveField('apellido');
+									}}
+									className="btn-edit-save-MPF"
+									disabled={savingField === 'nombre' || savingField === 'apellido'}
+								>
+									<Save size={16} />
+								</button>
+								<button
+									onClick={cancelEditing}
+									className="btn-edit-cancel-MPF"
+								>
+									<X size={16} />
+								</button>
+							</div>
+						</div>
+					) : (
+						<div className="profile-name-display-MPF">
+							<h1 className="profile-name-MPF">
+								{usuario?.nombre} {usuario?.apellido}
+							</h1>
+							<button
+								onClick={() => startEditing('nombre', usuario?.nombre)}
+								className="btn-edit-MPF btn-edit-name-MPF"
+								title="Editar nombre"
+							>
+								<Edit2 size={18} />
+							</button>
+						</div>
+					)}
+				</div>
 				<div className="profile-status-MPF">
-				<CheckCircle size={20} className="icon-check" />
-				<span>Perfil activo</span>
+					<CheckCircle size={20} className="icon-check" />
+					<span>Perfil activo</span>
 				</div>
 			</div>
 			</section>
 
-			{/* Información Básica */}
-			<section className="card-info-MPF">
-				<h2 className="card-title-MPF">
-				<FaPhone className="icon-title" />
-				Información de Contacto
-				</h2>
-				<div className="info-list-MPF">
-				<div className="info-item-MPF">
-					<FaPhone className="info-icon" />
-					<div>
-					<span className="info-label">Teléfono</span>
-					<span className="info-value">
-						{usuario?.telefono || "No registrado"}
-					</span>
+			{/* Grid de Información en Tarjetas */}
+			<div className="profile-grid-MPF">
+				{/* Tarjeta: Información de Contacto */}
+				<section className="card-info-MPF">
+					<div className="card-header-MPF">
+						<FaPhone className="card-icon" />
+						<h2 className="card-title-MPF">Información de Contacto</h2>
 					</div>
-				</div>
-				</div>
-			</section>
+					<div className="info-list-MPF">
+						{/* Correo Electrónico */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Correo Electrónico</label>
+									{editingField === 'correo' ? (
+										<input
+											type="email"
+											value={editValues.correo}
+											onChange={(e) => setEditValues({...editValues, correo: e.target.value})}
+											className="info-input-MPF"
+										/>
+									) : (
+										<p className="info-value">{usuario?.correo || "No registrado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'correo' ? (
+										<>
+											<button
+												onClick={() => saveField('correo')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'correo'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('correo', usuario?.correo)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+
+						{/* Teléfono */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Teléfono</label>
+									{editingField === 'telefono' ? (
+										<input
+											type="tel"
+											value={editValues.telefono}
+											onChange={(e) => setEditValues({...editValues, telefono: e.target.value})}
+											className="info-input-MPF"
+										/>
+									) : (
+										<p className="info-value">{usuario?.telefono || "No registrado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'telefono' ? (
+										<>
+											<button
+												onClick={() => saveField('telefono')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'telefono'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('telefono', usuario?.telefono)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				{/* Tarjeta: Información Personal */}
+				<section className="card-info-MPF">
+					<div className="card-header-MPF">
+						<FaUser className="card-icon" />
+						<h2 className="card-title-MPF">Información Personal</h2>
+					</div>
+					<div className="info-list-MPF">
+						{/* Género */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Género</label>
+									{editingField === 'genero' ? (
+										<select
+											value={editValues.genero}
+											onChange={(e) => setEditValues({...editValues, genero: e.target.value})}
+											className="info-input-MPF"
+										>
+											<option value="">Seleccionar</option>
+											<option value="MASCULINO">Masculino</option>
+											<option value="FEMENINO">Femenino</option>
+											<option value="OTRO">Otro</option>
+										</select>
+									) : (
+										<p className="info-value">{usuario?.genero || "No especificado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'genero' ? (
+										<>
+											<button
+												onClick={() => saveField('genero')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'genero'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('genero', usuario?.genero)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Fecha de Nacimiento</label>
+									{editingField === 'fechaNacimiento' ? (
+										<input
+											type="date"
+											value={editValues.fechaNacimiento}
+											onChange={(e) => setEditValues({...editValues, fechaNacimiento: e.target.value})}
+											className="info-input-MPF"
+										/>
+									) : (
+										<p className="info-value">
+											{usuario?.fechaNacimiento 
+												? new Date(usuario.fechaNacimiento).toLocaleDateString('es-CO', {
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric'
+												})
+												: "No registrada"
+											}
+										</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'fechaNacimiento' ? (
+										<>
+											<button
+												onClick={() => saveField('fechaNacimiento')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'fechaNacimiento'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('fechaNacimiento', usuario?.fechaNacimiento)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+
+						<div className="info-item-MPF">
+							<label className="info-label">Cuenta Creada</label>
+							<p className="info-value">
+								{usuario?.fechaCreacion 
+									? new Date(usuario.fechaCreacion).toLocaleDateString('es-CO', {
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric'
+									})
+									: "Fecha no disponible"
+								}
+							</p>
+						</div>
+					</div>
+				</section>
+
+				{/* Tarjeta: Ubicación */}
+				<section className="card-info-MPF">
+					<div className="card-header-MPF">
+						<FaMapMarkerAlt className="card-icon" />
+						<h2 className="card-title-MPF">Ubicación</h2>
+					</div>
+					<div className="info-list-MPF">
+						{/* Municipio */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Municipio</label>
+									{editingField === 'municipio' ? (
+										<select
+											value={editValues.municipio}
+											onChange={(e) => setEditValues({...editValues, municipio: e.target.value})}
+											className="info-input-MPF"
+											disabled={loadingMunicipios}
+										>
+											<option value="">
+												{loadingMunicipios ? "Cargando municipios..." : "Selecciona un municipio"}
+											</option>
+											{municipios.map((municipio) => (
+												<option key={municipio.id} value={municipio.id}>
+													{municipio.nombre}
+												</option>
+											))}
+										</select>
+									) : (
+										<p className="info-value">{usuario?.municipio?.nombre || "No registrado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'municipio' ? (
+										<>
+											<button
+												onClick={() => saveField('municipio')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'municipio'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('municipio', usuario?.municipio?.nombre)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+
+						{/* Departamento */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Departamento</label>
+									<p className="info-value">
+										{editingField === 'municipio' && editValues.municipio
+											? municipios.find(m => m.id === parseInt(editValues.municipio))?.departamento || "No registrado"
+											: usuario?.municipio?.departamento || "No registrado"
+										}
+									</p>
+								</div>
+								<div className="edit-actions-MPF">
+									{/* El departamento se actualiza automáticamente con el municipio */}
+								</div>
+							</div>
+						</div>
+
+						<div className="info-item-MPF">
+							<label className="info-label">Estado de Cuenta</label>
+							<p className="info-value">
+								<span className={`status-badge-MPF ${usuario?.isActive ? 'active' : 'inactive'}`}>
+									{usuario?.isActive ? '✓ Activa' : '✗ Inactiva'}
+								</span>
+							</p>
+						</div>
+					</div>
+				</section>
+			</div>
+
+			{/* Descripción Personal */}
+			{usuario?.descripcion && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaBriefcase className="card-icon" />
+						<h2 className="card-title-MPF">Acerca de Mí</h2>
+					</div>
+					<p className="summary-text-MPF">{usuario.descripcion}</p>
+				</section>
+			)}
+
+			{/* Tarjeta: Información Profesional */}
+			{(usuario?.experienciaLaboral?.length > 0 || usuario?.estudios?.length > 0) && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaBriefcase className="card-icon" />
+						<h2 className="card-title-MPF">Información Profesional</h2>
+					</div>
+					
+					{/* Experiencia Laboral */}
+					{usuario?.experienciaLaboral?.length > 0 && (
+						<div className="professional-section-MPF">
+							<h3 className="subsection-title-MPF">Experiencia Laboral</h3>
+							<div className="professional-list-MPF">
+								{usuario.experienciaLaboral.map((exp, index) => (
+									<div key={index} className="professional-item-MPF">
+										<div className="item-header-MPF">
+											<h4 className="item-title-MPF">{exp.cargo || exp.puesto}</h4>
+											<span className="item-company-MPF">{exp.empresa}</span>
+										</div>
+										<p className="item-description-MPF">{exp.descripcion}</p>
+										<div className="item-dates-MPF">
+											<span>{new Date(exp.fechaInicio).toLocaleDateString('es-CO', { year: 'numeric', month: 'short' })}</span>
+											<span>→</span>
+											<span>{exp.fechaFin ? new Date(exp.fechaFin).toLocaleDateString('es-CO', { year: 'numeric', month: 'short' }) : 'Actualmente'}</span>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					{/* Educación */}
+					{usuario?.estudios?.length > 0 && (
+						<div className="professional-section-MPF">
+							<h3 className="subsection-title-MPF">Educación</h3>
+							<div className="professional-list-MPF">
+								{usuario.estudios.map((estudio, index) => (
+									<div key={index} className="professional-item-MPF">
+										<div className="item-header-MPF">
+											<h4 className="item-title-MPF">{estudio.titulo}</h4>
+											<span className="item-company-MPF">{estudio.institucion}</span>
+										</div>
+										<p className="item-level-MPF">Nivel: {estudio.nivel}</p>
+										<div className="item-dates-MPF">
+											<span>{new Date(estudio.fechaInicio).getFullYear()}</span>
+											<span>→</span>
+											<span>{estudio.fechaFin ? new Date(estudio.fechaFin).getFullYear() : 'En progreso'}</span>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+				</section>
+			)}
+
+			{/* Tarjeta: Habilidades */}
+			{usuario?.habilidades?.length > 0 && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaWheelchair className="card-icon" />
+						<h2 className="card-title-MPF">Habilidades</h2>
+					</div>
+					<div className="skills-grid-MPF">
+						{usuario.habilidades.map((habilidad, index) => (
+							<span key={index} className="skill-badge-MPF">
+								{typeof habilidad === 'string' ? habilidad : habilidad.nombre}
+							</span>
+						))}
+					</div>
+				</section>
+			)}
+
+			{/* Resumen */}
+			{usuario?.resumen && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaBriefcase className="card-icon" />
+						<h2 className="card-title-MPF">Resumen Profesional</h2>
+					</div>
+					<p className="summary-text-MPF">{usuario.resumen}</p>
+				</section>
+			)}
 
 			{/* Acciones Rápidas */}
 			<section className="quick-actions-MPF">
 			<h2>Acciones</h2>
 			<div className="actions-grid-MPF">
-				<Link
-				to="/ActualizarPerfil/ActualizarPerfil"
-				className="action-card-MPF"
-				>
-				<Settings size={32} className="action-icon" />
-				<h3>Editar Perfil</h3>
-				<p>Actualiza tu información personal</p>
-				</Link>
-
 				<Link to="/MiPerfil/MisPostulaciones" className="action-card-MPF">
 				<Rocket size={32} className="action-icon" />
 				<h3>Mis Postulaciones</h3>

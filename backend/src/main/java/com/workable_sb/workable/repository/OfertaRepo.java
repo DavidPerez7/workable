@@ -23,9 +23,6 @@ public interface OfertaRepo extends JpaRepository<Oferta, Long> {
     // Buscar ofertas por empresa y estado
     List<Oferta> findByEmpresaIdAndEstado(Long empresaId, EstadoOferta estado);
     
-    // Buscar ofertas por reclutador
-    List<Oferta> findByReclutadorId(Long reclutadorId);
-    
     // Buscar ofertas por municipio
     List<Oferta> findByMunicipioId(Long municipioId);
     

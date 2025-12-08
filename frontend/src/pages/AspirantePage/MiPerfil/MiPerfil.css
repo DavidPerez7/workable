@@ -88,11 +88,37 @@
   flex: 1;
 }
 
+.profile-name-section-MPF {
+  margin-bottom: 1rem;
+}
+
+.profile-name-display-MPF {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .profile-name-MPF {
   font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 800;
   color: var(--navy-dark);
   margin: 0 0 0.5rem 0;
+}
+
+.btn-edit-name-MPF {
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+.edit-name-section-MPF {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.edit-name-input-MPF {
+  max-width: 300px;
 }
 
 .profile-cargo-MPF {
@@ -149,6 +175,15 @@
   gap: 2rem;
 }
 
+/* ============================================================
+   PROFILE GRID
+   ============================================================ */
+.profile-grid-MPF {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
 .card-info-MPF {
   background: white;
   padding: 2rem;
@@ -158,14 +193,33 @@
   transition: all 0.3s ease;
 }
 
-.card-title-MPF {
+.card-info-MPF:hover {
+  border-color: var(--blue);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+}
+
+.card-full-MPF {
+  grid-column: 1 / -1;
+}
+
+.card-header-MPF {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-icon {
+  color: var(--blue);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.card-title-MPF {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--navy-dark);
-  margin: 0 0 1.5rem 0;
+  margin: 0;
 }
 
 .icon-title {
@@ -184,12 +238,16 @@
 
 .info-item-MPF {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 1rem;
   background: var(--sky-gray);
   border-radius: 10px;
   transition: all 0.2s ease;
+}
+
+.info-item-MPF:hover {
+  background: var(--light-gray);
 }
 
 .info-icon {
@@ -199,25 +257,253 @@
   margin-top: 0.2rem;
 }
 
-.info-item-MPF > div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex: 1;
-}
-
 .info-label {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--slate-light);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin: 0;
 }
 
 .info-value {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--navy-dark);
+  margin: 0;
+}
+
+/* ============================================================
+   EDITABLE FIELDS
+   ============================================================ */
+.info-field-wrapper-MPF {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.info-field-wrapper-MPF > div:first-child {
+  flex: 1;
+}
+
+.info-input-MPF {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--blue);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--navy-dark);
+  transition: all 0.2s ease;
+}
+
+.info-input-MPF:focus {
+  outline: none;
+  border-color: var(--blue-dark);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.edit-actions-MPF {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-edit-MPF,
+.btn-edit-save-MPF,
+.btn-edit-cancel-MPF {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.btn-edit-MPF {
+  background: transparent;
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  opacity: 0.6;
+}
+
+.btn-edit-MPF:hover {
+  opacity: 1;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-edit-save-MPF {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.btn-edit-save-MPF:hover:not(:disabled) {
+  background: #a7f3d0;
+  transform: scale(1.05);
+}
+
+.btn-edit-save-MPF:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-edit-cancel-MPF {
+  background: #fee2e2;
+  color: #7f1d1d;
+  border: 1px solid #fca5a5;
+}
+
+.btn-edit-cancel-MPF:hover {
+  background: #fecaca;
+  transform: scale(1.05);
+}
+.status-badge-MPF {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.status-badge-MPF.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge-MPF.inactive {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+/* ============================================================
+   INFORMACIÓN PROFESIONAL
+   ============================================================ */
+.professional-section-MPF {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--sky-gray);
+}
+
+.professional-section-MPF:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.subsection-title-MPF {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0 0 1rem 0;
+  padding: 0 0 0.75rem 0;
+  border-bottom: 2px solid var(--amber);
+}
+
+.professional-list-MPF {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.professional-item-MPF {
+  padding: 1.5rem;
+  background: var(--sky-gray);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.professional-item-MPF:hover {
+  background: var(--light-gray);
+  border-left-color: var(--amber);
+  transform: translateX(4px);
+}
+
+.item-header-MPF {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.item-title-MPF {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0;
+}
+
+.item-company-MPF {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.item-description-MPF {
+  font-size: 0.95rem;
+  color: var(--slate);
+  line-height: 1.5;
+  margin: 0.75rem 0;
+}
+
+.item-level-MPF {
+  font-size: 0.95rem;
+  color: var(--slate);
+  margin: 0;
+}
+
+.item-dates-MPF {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--slate-light);
+  font-weight: 500;
+}
+
+/* ============================================================
+   HABILIDADES
+   ============================================================ */
+.skills-grid-MPF {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.skill-badge-MPF {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.skill-badge-MPF:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+}
+
+/* ============================================================
+   RESUMEN PROFESIONAL
+   ============================================================ */
+.summary-text-MPF {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--slate);
+  margin: 0;
+  padding: 1.5rem;
+  background: var(--sky-gray);
+  border-left: 4px solid var(--amber);
+  border-radius: 8px;
 }
 
 /* ============================================================

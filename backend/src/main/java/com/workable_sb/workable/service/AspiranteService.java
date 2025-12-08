@@ -151,6 +151,65 @@ public class AspiranteService {
         return aspiranteRepo.save(existingAspirante);
     }
 
+    // - UPDATE MI PERFIL (usando token JWT)
+    public Aspirante updateMiPerfil(Long id, Aspirante request) {
+        // Obtener el usuario autenticado del contexto de seguridad
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String correoAuth = auth.getName();
+        Aspirante aspiranteAuth = aspiranteRepo.findByCorreo(correoAuth)
+                .orElseThrow(() -> new RuntimeException("Aspirante autenticado no encontrado"));
+
+        // Validar que el usuario autenticado esté actualizando su propio perfil
+        if (!aspiranteAuth.getId().equals(id)) {
+            throw new IllegalStateException("Solo puedes actualizar tu propio perfil");
+        }
+
+        Aspirante existingAspirante = aspiranteRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+
+        // Actualizar solo los campos que vienen en el request (actualización parcial)
+        if (request.getNombre() != null && !request.getNombre().isEmpty()) {
+            existingAspirante.setNombre(request.getNombre());
+        }
+        if (request.getApellido() != null && !request.getApellido().isEmpty()) {
+            existingAspirante.setApellido(request.getApellido());
+        }
+        if (request.getCorreo() != null && !request.getCorreo().isEmpty()) {
+            // Validar que el correo no esté en uso (a menos que sea el mismo)
+            if (!existingAspirante.getCorreo().equals(request.getCorreo())) {
+                if (aspiranteRepo.findByCorreo(request.getCorreo()).isPresent()) {
+                    throw new RuntimeException("El correo ya está en uso");
+                }
+            }
+            existingAspirante.setCorreo(request.getCorreo());
+        }
+        if (request.getTelefono() != null) {
+            existingAspirante.setTelefono(request.getTelefono());
+        }
+        if (request.getFechaNacimiento() != null) {
+            existingAspirante.setFechaNacimiento(request.getFechaNacimiento());
+        }
+        if (request.getGenero() != null) {
+            existingAspirante.setGenero(request.getGenero());
+        }
+        if (request.getDescripcion() != null) {
+            existingAspirante.setDescripcion(request.getDescripcion());
+        }
+        if (request.getUbicacion() != null) {
+            existingAspirante.setUbicacion(request.getUbicacion());
+        }
+        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+            existingAspirante.setMunicipio(municipio);
+        }
+        if (request.getUrlFotoPerfil() != null) {
+            existingAspirante.setUrlFotoPerfil(request.getUrlFotoPerfil());
+        }
+
+        return aspiranteRepo.save(existingAspirante);
+    }
+
     // - DELETE PUBLICO: solo el propio aspirante
     public void deletePublic(Long id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

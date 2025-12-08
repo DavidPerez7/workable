@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.workable_sb.workable.models.Empresa;
+import com.workable_sb.workable.models.Reclutador;
 import com.workable_sb.workable.service.EmpresaService;
 import com.workable_sb.workable.security.CustomUserDetails;
 
@@ -74,7 +75,7 @@ public class EmpresaController {
     // - READ reclutadores
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/{empresaId}/reclutadores")
-    public ResponseEntity<List<Usuario>> obtenerReclutadores(@PathVariable Long empresaId) {
+    public ResponseEntity<List<Reclutador>> obtenerReclutadores(@PathVariable Long empresaId) {
         return ResponseEntity.ok(empresaService.getReclutadores(empresaId));
     }
 
@@ -88,7 +89,7 @@ public class EmpresaController {
     // - CREATE add reclutador (solo owner o ADMIN)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping("/{empresaId}/reclutadores")
-    public ResponseEntity<Empresa> addReclutador(@PathVariable Long empresaId, @RequestBody Usuario nuevoReclutador, @AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<Empresa> addReclutador(@PathVariable Long empresaId, @RequestBody Reclutador nuevoReclutador, @AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(empresaService.addReclutador(empresaId, nuevoReclutador, user.getUsuarioId()));
     }
 
@@ -159,7 +160,7 @@ public class EmpresaController {
     // - CREATE unirse a empresa con codigo
     @PreAuthorize("hasRole('RECLUTADOR')")
     @PostMapping("/unirse-con-codigo")
-    public ResponseEntity<Empresa> unirseAEmpresaConCodigo(@RequestParam String nit, @RequestParam String codigoInvitacion, @RequestBody Usuario nuevoReclutador) {
+    public ResponseEntity<Empresa> unirseAEmpresaConCodigo(@RequestParam String nit, @RequestParam String codigoInvitacion, @RequestBody Reclutador nuevoReclutador) {
         return ResponseEntity.ok(empresaService.unirseAEmpresaConCodigo(nit, codigoInvitacion, nuevoReclutador));
     }
 }
