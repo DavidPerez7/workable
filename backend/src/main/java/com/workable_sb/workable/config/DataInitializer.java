@@ -42,7 +42,11 @@ public class DataInitializer implements CommandLineRunner {
         recreateTestUsers();
         recreateEmpresas();
         recreateOfertas();
-        initializeGenericData();
+        
+        // Crear aspirantes y reclutadores genéricos PRIMERO
+        createGenericUsersAndCompanies();
+        
+        // LUEGO crear educación y experiencia usando los aspirantes creados
         recreateEducacionYExperiencia();
     }
 
@@ -337,18 +341,8 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("✓ Ofertas recreadas: 10 ofertas disponibles");
     }
 
-    private void initializeGenericData() {
-        // ELIMINAR todos los registros genéricos primero
-        feedbackRepo.deleteAll();
-        notificacionRepo.deleteAll();
-        experienciaRepo.deleteAll();
-        estudioRepo.deleteAll();
-        usuarioHabilidadRepo.deleteAll();
-        postulacionRepo.deleteAll();
-        ofertaRepo.deleteAll();
-        
-        // Eliminar reclutadores y aspirantes genéricos (mantiene los de prueba que fueron creados antes)
-        // Solo eliminar los que no sean los usuarios de prueba
+    private void createGenericUsersAndCompanies() {
+        // Eliminar aspirantes y reclutadores genéricos (mantiene los de prueba)
         List<Aspirante> aspirantesGenericosAEliminar = aspiranteRepo.findAll().stream()
             .filter(a -> !a.getCorreo().equals("aspirante@example.com"))
             .collect(java.util.stream.Collectors.toList());
@@ -479,7 +473,7 @@ public class DataInitializer implements CommandLineRunner {
         estudioRepo.deleteAll();
         usuarioHabilidadRepo.deleteAll();
 
-        // Obtener un aspirante genérico para asignar datos
+        // Obtener un aspirante genérico DESPUÉS de haber recreado (está fresquecito)
         Aspirante aspirante = aspiranteRepo.findByCorreo("carlos.garcia.aspirante@example.com").orElse(null);
         
         if (aspirante != null) {
