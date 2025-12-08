@@ -81,6 +81,7 @@ public class DataInitializer implements CommandLineRunner {
         aspirante.setTelefono("3105555555");
         aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
         aspirante.setMunicipio(municipio);
+        aspirante.setGenero(Aspirante.Genero.MASCULINO);
         aspirante.setIsActive(true);
         aspiranteRepo.save(aspirante);
         System.out.println("✓ Usuario ASPIRANTE recreado: aspirante@example.com / pass123");
