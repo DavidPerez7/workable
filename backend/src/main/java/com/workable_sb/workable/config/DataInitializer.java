@@ -30,52 +30,80 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Siempre asegurar que el usuario ADMIN exista y tenga la contraseña conocida
-        ensureAdminUser();
-
-        // Inicializar datos de prueba solo si la base de datos está vacía
+        // Inicializar municipios y habilidades solo si la base de datos está vacía
         if (municipioRepo.count() == 0) {
             initializeMunicipios();
             initializeHabilidades();
-            initializeUsuarios();
             initializeEmpresas();
+            System.out.println("Base de datos inicializada con municipios, habilidades y empresas");
+        }
+
+        // SIEMPRE eliminar y recrear los usuarios de prueba para asegurar que existan
+        recreateTestUsers();
+
+        // Inicializar datos de prueba relacionados con los usuarios
+        if (estudioRepo.count() == 0) {
             initializeEstudios();
             initializeExperiencias();
-            initializeOfertas();
-            initializePostulaciones();
             initializeUsuarioHabilidades();
             initializeFeedbacks();
             initializeNotificaciones();
-            System.out.println("Base de datos inicializada con 10 registros por tabla");
-        } else {
-            System.out.println("Base de datos ya contiene datos. Solo se verifico usuario ADMIN.");
+            System.out.println("Datos de estudios, experiencias y feedback inicializados");
+        }
+
+        // Inicializar ofertas y postulaciones solo si están vacías
+        if (ofertaRepo.count() == 0) {
+            initializeOfertas();
+            initializePostulaciones();
+            System.out.println("Ofertas y postulaciones inicializadas");
         }
     }
 
-    private void ensureAdminUser() {
-        Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
-        var admin = administradorRepo.findByCorreo("admin@example.com");
+    private void recreateTestUsers() {
+        // Obtener un municipio por defecto para los usuarios
+        Municipio municipio = municipioRepo.findByNombre("Bogotá").orElse(municipioRepo.findAll().stream().findFirst().orElse(null));
 
-        if (admin.isEmpty()) {
-            Administrador nuevo = new Administrador();
-            nuevo.setNombre("Admin");
-            nuevo.setApellido("Sistema");
-            nuevo.setCorreo("admin@example.com");
-            nuevo.setPassword(passwordEncoder.encode("admin123"));
-            nuevo.setTelefono("3001111111");
-            nuevo.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-            nuevo.setMunicipio(municipio);
-            nuevo.setIsActive(true);
-            administradorRepo.save(nuevo);
-            System.out.println("Usuario ADMINISTRADOR creado: admin@example.com / admin123");
-        } else {
-            Administrador existente = admin.get();
-            existente.setPassword(passwordEncoder.encode("admin123"));
-            existente.setIsActive(true);
-            existente.setMunicipio(municipio);
-            administradorRepo.save(existente);
-            System.out.println("Usuario ADMINISTRADOR verificado/actualizado: admin@example.com / admin123");
-        }
+        // ===== ELIMINAR Y RECREAR ADMINISTRADOR =====
+        administradorRepo.deleteAll();
+        Administrador admin = new Administrador();
+        admin.setNombre("Sistema");
+        admin.setApellido("Administrador");
+        admin.setCorreo("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setTelefono("3001111111");
+        admin.setFechaNacimiento(LocalDate.of(1990, 1, 1));
+        admin.setMunicipio(municipio);
+        admin.setIsActive(true);
+        administradorRepo.save(admin);
+        System.out.println("✓ Usuario ADMINISTRADOR recreado: admin@example.com / admin123");
+
+        // ===== ELIMINAR Y RECREAR ASPIRANTE =====
+        aspiranteRepo.deleteAll();
+        Aspirante aspirante = new Aspirante();
+        aspirante.setNombre("Aspirante");
+        aspirante.setApellido("Prueba");
+        aspirante.setCorreo("aspirante@example.com");
+        aspirante.setPassword(passwordEncoder.encode("pass123"));
+        aspirante.setTelefono("3105555555");
+        aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
+        aspirante.setMunicipio(municipio);
+        aspirante.setIsActive(true);
+        aspiranteRepo.save(aspirante);
+        System.out.println("✓ Usuario ASPIRANTE recreado: aspirante@example.com / pass123");
+
+        // ===== ELIMINAR Y RECREAR RECLUTADOR =====
+        reclutadorRepo.deleteAll();
+        Reclutador reclutador = new Reclutador();
+        reclutador.setNombre("Reclutador");
+        reclutador.setApellido("Prueba");
+        reclutador.setCorreo("reclutador@example.com");
+        reclutador.setPassword(passwordEncoder.encode("pass123"));
+        reclutador.setTelefono("3105555556");
+        reclutador.setFechaNacimiento(LocalDate.of(1990, 9, 20));
+        reclutador.setMunicipio(municipio);
+        reclutador.setIsActive(true);
+        reclutadorRepo.save(reclutador);
+        System.out.println("✓ Usuario RECLUTADOR recreado: reclutador@example.com / pass123");
     }
 
     private void initializeMunicipios() {
@@ -120,74 +148,6 @@ public class DataInitializer implements CommandLineRunner {
             habilidad.setNombre(habilidades[i]);
             habilidad.setTipo(Habilidad.TipoHabilidad.values()[i % Habilidad.TipoHabilidad.values().length]);
             habilidadRepo.save(habilidad);
-        }
-    }
-
-    private void initializeUsuarios() {
-        // ===== USUARIO ADMINISTRADOR (único) =====
-        var admin = administradorRepo.findByCorreo("admin@example.com");
-        if (admin.isEmpty()) {
-            Administrador nuevo = new Administrador();
-            nuevo.setNombre("Sistema");
-            nuevo.setApellido("Administrador");
-            nuevo.setCorreo("admin@example.com");
-            nuevo.setPassword(passwordEncoder.encode("admin123"));
-            nuevo.setIsActive(true);
-            administradorRepo.save(nuevo);
-            System.out.println("✓ Usuario ADMINISTRADOR creado: admin@example.com / admin123");
-        } else {
-            // Actualizar si existe para asegurar contraseña correcta
-            Administrador existing = admin.get();
-            existing.setPassword(passwordEncoder.encode("admin123"));
-            existing.setIsActive(true);
-            administradorRepo.save(existing);
-            System.out.println("✓ Usuario ADMINISTRADOR verificado/actualizado: admin@example.com / admin123");
-        }
-
-        // ===== 1 ASPIRANTE POR DEFECTO =====
-        var aspirante = aspiranteRepo.findByCorreo("aspirante@example.com");
-        if (aspirante.isEmpty()) {
-            Aspirante nuevo = new Aspirante();
-            nuevo.setNombre("Aspirante");
-            nuevo.setApellido("Prueba");
-            nuevo.setCorreo("aspirante@example.com");
-            nuevo.setPassword(passwordEncoder.encode("pass123"));
-            nuevo.setTelefono("3105555555");
-            nuevo.setFechaNacimiento(LocalDate.of(2000, 6, 15));
-            nuevo.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
-            nuevo.setIsActive(true);
-            aspiranteRepo.save(nuevo);
-            System.out.println("✓ Usuario ASPIRANTE creado: aspirante@example.com / pass123");
-        } else {
-            // Restaurar si fue eliminado
-            Aspirante existing = aspirante.get();
-            existing.setPassword(passwordEncoder.encode("pass123"));
-            existing.setIsActive(true);
-            aspiranteRepo.save(existing);
-            System.out.println("✓ Usuario ASPIRANTE verificado/actualizado: aspirante@example.com / pass123");
-        }
-
-        // ===== 1 RECLUTADOR POR DEFECTO =====
-        var reclutador = reclutadorRepo.findByCorreo("reclutador@example.com");
-        if (reclutador.isEmpty()) {
-            Reclutador nuevo = new Reclutador();
-            nuevo.setNombre("Reclutador");
-            nuevo.setApellido("Prueba");
-            nuevo.setCorreo("reclutador@example.com");
-            nuevo.setPassword(passwordEncoder.encode("pass123"));
-            nuevo.setTelefono("3105555556");
-            nuevo.setFechaNacimiento(LocalDate.of(1990, 9, 20));
-            nuevo.setMunicipio(municipioRepo.findByNombre("Bogotá").orElse(null));
-            nuevo.setIsActive(true);
-            reclutadorRepo.save(nuevo);
-            System.out.println("✓ Usuario RECLUTADOR creado: reclutador@example.com / pass123");
-        } else {
-            // Restaurar si fue eliminado
-            Reclutador existing = reclutador.get();
-            existing.setPassword(passwordEncoder.encode("pass123"));
-            existing.setIsActive(true);
-            reclutadorRepo.save(existing);
-            System.out.println("✓ Usuario RECLUTADOR verificado/actualizado: reclutador@example.com / pass123");
         }
     }
 
