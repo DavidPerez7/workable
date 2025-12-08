@@ -86,7 +86,8 @@ public class Aspirante {
     private String descripcion;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @NotNull(message = "El género es obligatorio")
+    @Column(nullable = false, length = 20)
     private Genero genero;
 
     public enum Genero {
