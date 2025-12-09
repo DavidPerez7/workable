@@ -7,6 +7,7 @@ import java.util.Set;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -91,6 +92,7 @@ public class Oferta {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
+	@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"reclutadores", "reclutadorOwner"})
 	private Empresa empresa;
 
 	@ElementCollection(fetch = FetchType.LAZY)
@@ -113,6 +115,7 @@ public class Oferta {
 
 
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	private Set<Postulacion> postulaciones = new HashSet<>();
 
 	private Float puntuacion = 0.0f;

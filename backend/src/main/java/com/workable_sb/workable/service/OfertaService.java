@@ -35,6 +35,9 @@ public class OfertaService {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private AdminValidationService adminValidationService;
+
     // ===== CREATE =====
     public Oferta crearOferta(Oferta oferta, Long empresaId, Long reclutadorId) {
 
@@ -61,21 +64,28 @@ public class OfertaService {
             throw new IllegalArgumentException("El nivel de experiencia es obligatorio");
         }
 
-        // Validar que la empresa existe
-        Empresa empresa = empresaRepository.findById(empresaId)
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+    // Validar que la empresa existe
+    Empresa empresa = empresaRepository.findById(empresaId)
+        .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
 
-        // Validar que el reclutador existe y pertenece a la empresa (regla de negocio)
-        usuarioRepo.findById(reclutadorId)
-                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
+    // Si el token pertenece a un ADMIN, permitimos crear sin validar pertenencia a empresa
+    if (!adminValidationService.isAdmin()) {
+        // No es ADMIN: validar que el reclutador existe y pertenece a la empresa
+        if (reclutadorId == null) {
+            throw new RuntimeException("El reclutadorId es requerido para usuarios no admin");
+        }
+        var reclutador = usuarioRepo.findById(reclutadorId)
+            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
 
-        // Validar que el reclutador pertenece a la empresa (regla de negocio)
-        boolean perteneceAEmpresa = empresa.getReclutadores().stream()
-                .anyMatch(r -> r.getId().equals(reclutadorId));
+        List<Long> reclutadorIds = new java.util.ArrayList<>(empresa.getReclutadores())
+            .stream()
+            .map(r -> r.getId())
+            .collect(java.util.stream.Collectors.toList());
         
-        if (!perteneceAEmpresa) {
+        if (!reclutadorIds.contains(reclutadorId)) {
             throw new IllegalStateException("El reclutador no pertenece a la empresa");
         }
+    }
 
         // Validar municipio
         if (oferta.getMunicipio() != null) {
@@ -210,12 +220,18 @@ public class OfertaService {
     }
 
     private boolean puedeModificarOferta(Oferta oferta, Long usuarioId) {
+        // Si es ADMIN, permitir sin validar pertenencia
+        if (adminValidationService.isAdmin()) {
+            return true;
+        }
+
         // Validar que el reclutador existe
         usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Es reclutador de la empresa
-        return oferta.getEmpresa().getReclutadores().stream()
+        // Es reclutador de la empresa (hacer copia de lista para evitar ConcurrentModificationException)
+        return new java.util.ArrayList<>(oferta.getEmpresa().getReclutadores()).stream()
                 .anyMatch(r -> r.getId().equals(usuarioId));
     }
 }
+

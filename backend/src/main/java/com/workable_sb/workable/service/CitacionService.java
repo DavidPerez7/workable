@@ -20,6 +20,7 @@ import com.workable_sb.workable.repository.CitacionRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
 import com.workable_sb.workable.repository.ReclutadorRepo;
 import com.workable_sb.workable.repository.AspiranteRepo;
+import com.workable_sb.workable.service.AdminValidationService;
 
 @Service
 @Transactional
@@ -42,6 +43,9 @@ public class CitacionService {
     
     @Autowired(required = false)
     private EmailService emailService;
+
+    @Autowired
+    private AdminValidationService adminValidationService;
     
     // ===== CREAR CITACIÓN =====
     public Citacion crearCitacion(Long postulacionId, Long reclutadorId, LocalDate fechaCitacion, 
@@ -235,9 +239,20 @@ public class CitacionService {
     }
     
     // ===== OBTENER CITACIONES =====
+    public List<Citacion> obtenerTodas() {
+        return citacionRepo.findAll().stream()
+            .filter(c -> c.getIsActive() != null && c.getIsActive())
+            .toList();
+    }
+    
     public Citacion obtenerCitacion(Long citacionId, Long reclutadorIdActual) {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
+        
+        // Admin puede ver cualquier citación
+        if (adminValidationService.isAdmin()) {
+            return citacion;
+        }
         
         // Validar permisos - reclutador solo sus citaciones
         Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
@@ -309,10 +324,17 @@ public class CitacionService {
         Citacion citacion = citacionRepo.findById(citacionId)
             .orElseThrow(() -> new RuntimeException("Citación no encontrada"));
         
+        // Admin puede eliminar cualquier citación
+        if (adminValidationService.isAdmin()) {
+            citacion.setIsActive(false);
+            citacionRepo.save(citacion);
+            return;
+        }
+        
         Reclutador reclutadorActual = reclutadorRepo.findById(reclutadorIdActual)
             .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Solo el reclutador puede eliminar
+        // Solo el reclutador puede eliminar su citación
         if (!reclutadorActual.getId().equals(citacion.getReclutador().getId())) {
             throw new RuntimeException("No tienes permisos para eliminar esta citación");
         }

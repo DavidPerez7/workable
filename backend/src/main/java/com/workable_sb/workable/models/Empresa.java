@@ -2,9 +2,11 @@ package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import jakarta.persistence.Transient;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -143,9 +145,9 @@ public class Empresa {
 
     // Relación unidireccional: La empresa conoce sus reclutadores
     // Se crea una columna empresa_id en la tabla reclutador
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id", referencedColumnName = "id")
-    private List<Reclutador> reclutadores = new ArrayList<>();
+    // IMPORTANTE: Usar @Transient para evitar ConcurrentModificationException durante serialización JSON
+    @Transient
+    private List<Reclutador> reclutadores = Collections.synchronizedList(new ArrayList<>());
 
     @PrePersist
     protected void onCreate() {

@@ -75,6 +75,18 @@ public class CitacionController {
     
     // ===== READ =====
     
+    // Obtener todas las citaciones (solo ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> obtenerTodas() {
+        try {
+            List<Citacion> citaciones = citacionService.obtenerTodas();
+            return ResponseEntity.ok(citaciones);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener citaciones: " + e.getMessage()));
+        }
+    }
+    
     // Obtener una citación por ID
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
     @GetMapping("/{citacionId}")

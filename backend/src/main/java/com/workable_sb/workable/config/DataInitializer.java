@@ -38,8 +38,8 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // SIEMPRE elimiar y recrear TODOS los datos
-        recreateTestUsers();
         recreateEmpresas();
+        recreateTestUsers();
         recreateOfertas();
         
         // Crear aspirantes y reclutadores genéricos
@@ -113,6 +113,9 @@ public class DataInitializer implements CommandLineRunner {
         reclutador.setFechaNacimiento(LocalDate.of(1990, 9, 20));
         reclutador.setMunicipio(municipio);
         reclutador.setIsActive(true);
+        // Asignar empresa al reclutador de prueba (Bancolombia)
+        Empresa empresa = empresaRepo.findById(1L).orElse(null);
+        reclutador.setEmpresa(empresa);
         reclutadorRepo.save(reclutador);
         System.out.println("✓ Usuario RECLUTADOR recreado: reclutador@example.com / pass123");
     }
@@ -394,6 +397,9 @@ public class DataInitializer implements CommandLineRunner {
             reclutador.setFechaNacimiento(LocalDate.of(1990 + (i % 10), (i % 12) + 1, (i % 28) + 1));
             reclutador.setMunicipio(municipioRepo.findByNombre("Medellín").orElse(null));
             reclutador.setIsActive(true);
+            // Asignar empresa a cada reclutador (rotando entre las 10 empresas principales)
+            Empresa empresa = empresaRepo.findById((long) (i % 10) + 1).orElse(null);
+            reclutador.setEmpresa(empresa);
             reclutadorRepo.save(reclutador);
         }
         System.out.println("✓ 10 Reclutadores genéricos creados");

@@ -26,6 +26,7 @@ import com.workable_sb.workable.repository.PostulacionRepo;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.EstudioRepo;
 import com.workable_sb.workable.repository.ExperienciaRepo;
+import com.workable_sb.workable.service.AdminValidationService;
 
 @Service
 @Transactional
@@ -45,10 +46,20 @@ public class PostulacionService {
 	@Autowired
 	private ExperienciaRepo experienciaRepo;
 
+	@Autowired
+	private AdminValidationService adminValidationService;
+
 	// ===== CREACIÓN =====
-	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId) {
+	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId, Long usuarioIdActual) {
 		Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
 			.orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+
+		// Si no es ADMIN, validar que el usuario actual sea el aspirante (solo puedes postularte por ti mismo)
+		if (!adminValidationService.isAdmin()) {
+			if (!aspiranteId.equals(usuarioIdActual)) {
+				throw new IllegalStateException("Solo puedes postularte en nombre de ti mismo");
+			}
+		}
 
 		// Validar que la oferta existe
 		Oferta oferta = ofertaRepo.findById(ofertaId)
@@ -96,8 +107,8 @@ public class PostulacionService {
 	}
 
 	public List<Postulacion> listarPorAspirante(Long aspiranteId, Long aspiranteIdActual) {
-		// Validar permisos: solo puedes ver tus propias postulaciones
-		if (!aspiranteId.equals(aspiranteIdActual)) {
+		// Validar permisos: aspirante solo puede ver sus propias postulaciones, admin ve todas
+		if (!aspiranteId.equals(aspiranteIdActual) && !adminValidationService.isAdmin()) {
 			throw new IllegalStateException("Solo puedes ver tus propias postulaciones");
 		}
 
@@ -137,7 +148,7 @@ public class PostulacionService {
 		Postulacion postulacion = postulacionRepo.findById(postulacionId)
 			.orElseThrow(() -> new RuntimeException("Postulación no encontrada"));
 
-		if (!postulacion.getAspirante().getId().equals(usuarioIdActual)) {
+		if (!postulacion.getAspirante().getId().equals(usuarioIdActual) && !adminValidationService.isAdmin()) {
 			throw new IllegalStateException("Solo puedes eliminar tus propias postulaciones");
 		}
 
@@ -446,6 +457,11 @@ public class PostulacionService {
 	private boolean puedeVerPostulacion(Postulacion postulacion, Long usuarioId) {
 		// El aspirante puede ver sus propias postulaciones
 		if (postulacion.getAspirante().getId().equals(usuarioId)) {
+			return true;
+		}
+		
+		// El admin puede ver todas las postulaciones
+		if (adminValidationService.isAdmin()) {
 			return true;
 		}
 		

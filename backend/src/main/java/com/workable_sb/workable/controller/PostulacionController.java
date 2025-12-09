@@ -3,10 +3,12 @@ package com.workable_sb.workable.controller;
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.models.Postulacion.Estado;
 import com.workable_sb.workable.service.PostulacionService;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +21,14 @@ public class PostulacionController {
     @Autowired
     private PostulacionService postulacionService;
 
-    // CREATE - Solo ASPIRANTE puede postularse a ofertas
-    @PreAuthorize("hasRole('ASPIRANTE')")
+    // CREATE - Solo ASPIRANTE puede postularse a ofertas, pero ADMIN puede crear para testing
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> create(@RequestParam Long usuarioId, @RequestParam Long ofertaId) {
+    public ResponseEntity<?> create(@RequestBody Map<String, Object> request, @AuthenticationPrincipal CustomUserDetails user) {
         try {
-            Postulacion postulacion = postulacionService.crearPostulacion(usuarioId, ofertaId);
+            Long usuarioId = user.getUsuarioId();
+            Long ofertaId = Long.parseLong(request.get("ofertaId").toString());
+            Postulacion postulacion = postulacionService.crearPostulacion(usuarioId, ofertaId, usuarioId);
             return ResponseEntity.ok(postulacion);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -159,6 +163,19 @@ public class PostulacionController {
     @GetMapping("/mis-postulaciones")
     public ResponseEntity<?> miasPostulaciones(@RequestParam Long usuarioId) {
         try {
+            List<Postulacion> postulaciones = postulacionService.listarPorAspirante(usuarioId, usuarioId);
+            return ResponseEntity.ok(postulaciones);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
+        }
+    }
+
+    // Endpoint: Obtener postulaciones del aspirante autenticado
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/aspirante")
+    public ResponseEntity<?> obtenerPostulacionesAspirante(@AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            Long usuarioId = user.getUsuarioId();
             List<Postulacion> postulaciones = postulacionService.listarPorAspirante(usuarioId, usuarioId);
             return ResponseEntity.ok(postulaciones);
         } catch (Exception e) {

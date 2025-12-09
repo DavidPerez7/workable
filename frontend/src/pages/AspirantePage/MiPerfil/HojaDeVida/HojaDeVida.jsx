@@ -3,68 +3,71 @@ import { useNavigate } from "react-router-dom";
 import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
+import { getUsuarioById } from "../../../../api/usuarioAPI";
+import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
+import { obtenerExperienciasAspirante, crearExperiencia, eliminarExperiencia } from "../../../../api/experienciaAPI";
+import { obtenerEstudiosAspirante, crearEstudio, eliminarEstudio } from "../../../../api/estudioAPI";
 
 const HojaDeVida = () => {
   const [perfil, setPerfil] = useState(null);
+  const [habilidades, setHabilidades] = useState([]);
+  const [experiencias, setExperiencias] = useState([]);
+  const [estudios, setEstudios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Estados para agregar nuevos datos
   const [nuevaHabilidad, setNuevaHabilidad] = useState("");
   const [nuevaExp, setNuevaExp] = useState({
     empresa: "",
     cargo: "",
-    fecha: "",
+    fechaInicio: "",
     descripcion: "",
+  });
+  const [nuevoEstudio, setNuevoEstudio] = useState({
+    institucion: "",
+    titulo: "",
+    fechaInicio: "",
+    estado: "EN_CURSO",
   });
 
   const navigate = useNavigate();
 
-  // ========= SIMULACIÓN =========
-  const mockPerfil = {
-    nombre: "Nicolás Zapata",
-    tituloProfesional: "Desarrollador Frontend Junior",
-    descripcion:
-      "Apasionado por la tecnología, el diseño y la creación de interfaces modernas enfocadas en la accesibilidad digital.",
-    ciudad: "Medellín, Antioquia",
-    edad: 22,
-    foto: "https://cdn-icons-png.flaticon.com/512/3177/3177440.png",
-    habilidades: [
-      "JavaScript",
-      "React",
-      "Node.js",
-      "HTML5",
-      "CSS3",
-      "Git / GitHub",
-      "SQL",
-    ],
-    experiencia: [
-      {
-        empresa: "Codexia Tech Labs",
-        cargo: "Desarrollador Frontend (Prácticas)",
-        fecha: "2024",
-        descripcion: "Implementación de interfaces y consumo de APIs REST.",
-      },
-    ],
-    educacion: [
-      {
-        institucion: "SENA",
-        titulo: "Análisis y Desarrollo de Software",
-        fecha: "2023 - En curso",
-      },
-    ],
-    contacto: {
-      email: "nicolasdev@correo.com",
-      telefono: "+57 300 000 0000",
-    },
-    verificado: true,
-  };
-
+  // Cargar datos del perfil y sus relacionados
   useEffect(() => {
-    setTimeout(() => {
-      setPerfil(mockPerfil);
-      setLoading(false);
-    }, 600);
+    cargarDatos();
   }, []);
+
+  const cargarDatos = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const token = localStorage.getItem("token");
+      const usuarioId = localStorage.getItem("usuarioId");
+      const rol = localStorage.getItem("rol");
+
+      // Cargar perfil
+      const usuarioData = await getUsuarioById(usuarioId, token, rol);
+      setPerfil(usuarioData);
+
+      // Cargar habilidades
+      const habilidadesData = await obtenerHabilidadesAspirante();
+      setHabilidades(habilidadesData || []);
+
+      // Cargar experiencias
+      const experienciasData = await obtenerExperienciasAspirante();
+      setExperiencias(experienciasData || []);
+
+      // Cargar estudios
+      const estudiosData = await obtenerEstudiosAspirante();
+      setEstudios(estudiosData || []);
+    } catch (err) {
+      console.error("Error al cargar datos:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -74,50 +77,110 @@ const HojaDeVida = () => {
     );
   }
 
+  if (!perfil) {
+    return (
+      <div className="perfil-loading">
+        <p>No se pudo cargar el perfil</p>
+      </div>
+    );
+  }
+
   /* ============================
         HABILIDADES
   ============================ */
 
-  const agregarHabilidad = () => {
+  const agregarHabilidad = async () => {
     if (nuevaHabilidad.trim() === "") return;
 
-    setPerfil((prev) => ({
-      ...prev,
-      habilidades: [...prev.habilidades, nuevaHabilidad],
-    }));
-
-    setNuevaHabilidad("");
+    try {
+      const habilidadData = {
+        nombre: nuevaHabilidad,
+      };
+      const nuevaHab = await crearHabilidad(habilidadData);
+      setHabilidades([...habilidades, nuevaHab]);
+      setNuevaHabilidad("");
+    } catch (err) {
+      console.error("Error al agregar habilidad:", err);
+      alert("Error al agregar habilidad: " + err.message);
+    }
   };
 
-  const borrarHabilidad = (index) => {
-    setPerfil((prev) => ({
-      ...prev,
-      habilidades: prev.habilidades.filter((_, i) => i !== index),
-    }));
+  const borrarHabilidad = async (id) => {
+    try {
+      await eliminarHabilidad(id);
+      setHabilidades(habilidades.filter((h) => h.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar habilidad:", err);
+      alert("Error al eliminar habilidad: " + err.message);
+    }
   };
 
   /* ============================
         EXPERIENCIA
   ============================ */
 
-  const agregarExperiencia = () => {
-    const { empresa, cargo, fecha, descripcion } = nuevaExp;
+  const agregarExperiencia = async () => {
+    const { empresa, cargo, fechaInicio, descripcion } = nuevaExp;
 
-    if (!empresa || !cargo || !fecha || !descripcion) return;
+    if (!empresa || !cargo || !fechaInicio || !descripcion) {
+      alert("Por favor rellena todos los campos");
+      return;
+    }
 
-    setPerfil((prev) => ({
-      ...prev,
-      experiencia: [...prev.experiencia, nuevaExp],
-    }));
-
-    setNuevaExp({ empresa: "", cargo: "", fecha: "", descripcion: "" });
+    try {
+      const experienciaData = {
+        empresa,
+        cargo,
+        fechaInicio,
+        descripcion,
+      };
+      const nuevaExpData = await crearExperiencia(experienciaData);
+      setExperiencias([...experiencias, nuevaExpData]);
+      setNuevaExp({ empresa: "", cargo: "", fechaInicio: "", descripcion: "" });
+    } catch (err) {
+      console.error("Error al agregar experiencia:", err);
+      alert("Error al agregar experiencia: " + err.message);
+    }
   };
 
-  const borrarExperiencia = (index) => {
-    setPerfil((prev) => ({
-      ...prev,
-      experiencia: prev.experiencia.filter((_, i) => i !== index),
-    }));
+  const borrarExperiencia = async (id) => {
+    try {
+      await eliminarExperiencia(id);
+      setExperiencias(experiencias.filter((e) => e.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar experiencia:", err);
+      alert("Error al eliminar experiencia: " + err.message);
+    }
+  };
+
+  /* ============================
+        EDUCACIÓN (ESTUDIOS)
+  ============================ */
+
+  const agregarEstudio = async () => {
+    const { institucion, titulo, fechaInicio, estado } = nuevoEstudio;
+
+    if (!institucion || !titulo || !fechaInicio) {
+      alert("Por favor rellena todos los campos requeridos");
+      return;
+    }
+
+    try {
+      const estudioData = {
+        institucion,
+        titulo,
+        fechaInicio,
+        estado,
+      };
+      const nuevoEstudioData = await crearEstudio(estudioData);
+      setEstudios([...estudios, nuevoEstudioData]);
+      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", estado: "EN_CURSO" });
+      const form = document.getElementById("add-edu-form");
+      if (form) form.style.display = "none";
+    } catch (err) {
+      console.error("Error al agregar estudio:", err);
+      alert("Error al agregar estudio: " + err.message);
+    }
   };
 
   return (
@@ -129,22 +192,22 @@ const HojaDeVida = () => {
         {/* HEADER */}
         <div className="perfil-header-PF">
           <img
-            src={perfil.foto}
+            src={perfil?.urlFotoPerfil || "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"}
             alt="Foto de perfil"
             className="perfil-foto-PF"
           />
 
           <div className="perfil-header-info-PF">
-            <h1 className="perfil-nombre-PF">{perfil.nombre}</h1>
-            <h2 className="perfil-titulo-PF">{perfil.tituloProfesional}</h2>
+            <h1 className="perfil-nombre-PF">{perfil?.nombre} {perfil?.apellido}</h1>
+            <h2 className="perfil-titulo-PF">{perfil?.descripcion || "Sin descripción"}</h2>
             <p className="perfil-ubicacion-PF">
-              {perfil.ciudad} • {perfil.edad} años
+              {perfil?.municipio?.nombre || "Sin ubicación"}
             </p>
           </div>
 
           <button
             className="editar-perfil-btn-PF"
-            onClick={() => navigate("/ActualizarPerfil/ActualizarPerfil")}
+            onClick={() => navigate("/ActualizarPerfil")}
           >
             Editar perfil
           </button>
@@ -153,7 +216,7 @@ const HojaDeVida = () => {
         {/* DESCRIPCION */}
         <div className="perfil-bloque-PF">
           <h3 className="perfil-bloque-titulo-PF">Sobre mí</h3>
-          <p>{perfil.descripcion}</p>
+          <p>{perfil?.descripcion || "Sin información"}</p>
         </div>
 
         {/* HABILIDADES */}
@@ -191,17 +254,21 @@ const HojaDeVida = () => {
 
           {/* LISTA DE HABILIDADES */}
           <div className="perfil-habilidades-PF">
-            {perfil.habilidades.map((skill, index) => (
-              <span key={index} className="perfil-skill-PF">
-                {skill}
-                <button
-                  className="perfil-skill-delete-PF"
-                  onClick={() => borrarHabilidad(index)}
-                >
-                  ✕
-                </button>
-              </span>
-            ))}
+            {habilidades.length === 0 ? (
+              <p>No tienes habilidades registradas</p>
+            ) : (
+              habilidades.map((skill) => (
+                <span key={skill.id} className="perfil-skill-PF">
+                  {skill.nombre}
+                  <button
+                    className="perfil-skill-delete-PF"
+                    onClick={() => borrarHabilidad(skill.id)}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))
+            )}
           </div>
         </div>
 
@@ -246,10 +313,10 @@ const HojaDeVida = () => {
             />
             <input
               type="text"
-              placeholder="Fecha"
-              value={nuevaExp.fecha}
+              placeholder="Fecha inicio (ej: 2024-01-15)"
+              value={nuevaExp.fechaInicio}
               onChange={(e) =>
-                setNuevaExp({ ...nuevaExp, fecha: e.target.value })
+                setNuevaExp({ ...nuevaExp, fechaInicio: e.target.value })
               }
             />
             <textarea
@@ -263,43 +330,116 @@ const HojaDeVida = () => {
           </div>
 
           {/* LISTA DE EXPERIENCIA */}
-          {perfil.experiencia.map((exp, index) => (
-            <div key={index} className="perfil-experiencia-card-PF">
-              <button
-                className="perfil-exp-delete-PF"
-                onClick={() => borrarExperiencia(index)}
-              >
-                Eliminar
-              </button>
+          {experiencias.length === 0 ? (
+            <p>No tienes experiencias registradas</p>
+          ) : (
+            experiencias.map((exp) => (
+              <div key={exp.id} className="perfil-experiencia-card-PF">
+                <button
+                  className="perfil-exp-delete-PF"
+                  onClick={() => borrarExperiencia(exp.id)}
+                >
+                  Eliminar
+                </button>
 
-              <h4>{exp.cargo}</h4>
-              <p className="perfil-exp-empresa-PF">{exp.empresa}</p>
-              <p className="perfil-exp-fecha-PF">{exp.fecha}</p>
-              <p>{exp.descripcion}</p>
-            </div>
-          ))}
+                <h4>{exp.cargo}</h4>
+                <p className="perfil-exp-empresa-PF">{exp.empresa}</p>
+                <p className="perfil-exp-fecha-PF">{exp.fechaInicio}</p>
+                <p>{exp.descripcion}</p>
+              </div>
+            ))
+          )}
         </div>
 
         {/* EDUCACIÓN */}
         <div className="perfil-bloque-PF">
-          <h3 className="perfil-bloque-titulo-PF">Educación</h3>
-          {perfil.educacion.map((edu, index) => (
-            <div key={index} className="perfil-educ-card-PF">
-              <h4>{edu.titulo}</h4>
-              <p className="perfil-edu-inst-PF">{edu.institucion}</p>
-              <p className="perfil-edu-fecha-PF">{edu.fecha}</p>
-            </div>
-          ))}
+          <div className="perfil-bloque-top-PF">
+            <h3 className="perfil-bloque-titulo-PF">Educación</h3>
+
+            <button
+              className="perfil-add-btn-PF"
+              onClick={() => {
+                const section = document.getElementById("add-edu-form");
+                section.style.display =
+                  section.style.display === "none" ? "grid" : "none";
+              }}
+            >
+              + Añadir educación
+            </button>
+          </div>
+
+          {/* FORMULARIO NUEVA EDUCACIÓN */}
+          <div
+            id="add-edu-form"
+            className="perfil-form-exp-PF"
+            style={{ display: "none" }}
+          >
+            <input
+              type="text"
+              placeholder="Institución"
+              value={nuevoEstudio.institucion}
+              onChange={(e) =>
+                setNuevoEstudio({ ...nuevoEstudio, institucion: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              placeholder="Título"
+              value={nuevoEstudio.titulo}
+              onChange={(e) =>
+                setNuevoEstudio({ ...nuevoEstudio, titulo: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              placeholder="Fecha inicio (ej: 2023-01-15)"
+              value={nuevoEstudio.fechaInicio}
+              onChange={(e) =>
+                setNuevoEstudio({ ...nuevoEstudio, fechaInicio: e.target.value })
+              }
+            />
+            <select
+              value={nuevoEstudio.estado}
+              onChange={(e) =>
+                setNuevoEstudio({ ...nuevoEstudio, estado: e.target.value })
+              }
+            >
+              <option value="EN_CURSO">En curso</option>
+              <option value="COMPLETADO">Completado</option>
+              <option value="PAUSADO">Pausado</option>
+            </select>
+            <button onClick={() => agregarEstudio()}>Añadir educación</button>
+          </div>
+
+          {/* LISTA DE EDUCACIÓN */}
+          {estudios.length === 0 ? (
+            <p>No tienes estudios registrados</p>
+          ) : (
+            estudios.map((edu) => (
+              <div key={edu.id} className="perfil-educ-card-PF">
+                <button
+                  className="perfil-exp-delete-PF"
+                  onClick={() => eliminarEstudio(edu.id)}
+                >
+                  Eliminar
+                </button>
+                <h4>{edu.titulo}</h4>
+                <p className="perfil-edu-inst-PF">{edu.institucion}</p>
+                <p className="perfil-edu-fecha-PF">{edu.fechaInicio}</p>
+                <p className="perfil-edu-estado-PF">Estado: {edu.estado}</p>
+              </div>
+            ))
+          )}
         </div>
 
         {/* CONTACTO */}
         <div className="perfil-bloque-PF">
           <h3 className="perfil-bloque-titulo-PF">Contacto</h3>
           <p>
-            <strong>Email:</strong> {perfil.contacto.email}
+            <strong>Email:</strong> {perfil?.correo || "Sin email"}
           </p>
           <p>
-            <strong>Teléfono:</strong> {perfil.contacto.telefono}
+            <strong>Teléfono:</strong> {perfil?.telefono || "Sin teléfono"}
           </p>
         </div>
       </div>
