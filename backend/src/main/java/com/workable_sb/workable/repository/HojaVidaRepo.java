@@ -11,23 +11,11 @@ import com.workable_sb.workable.models.HojaVida;
 @Repository
 public interface HojaVidaRepo extends JpaRepository<HojaVida, Long> {
     
-    // Buscar hojas de vida por aspirante
+    // Buscar hoja de vida por aspirante
     List<HojaVida> findByAspiranteId(Long aspiranteId);
     
-    // Buscar hojas de vida activas de un aspirante
-    List<HojaVida> findByAspiranteIdAndIsActive(Long aspiranteId, Boolean isActive);
-    
-    // Buscar hoja de vida principal de un aspirante (puede ser la primera activa)
-    Optional<HojaVida> findFirstByAspiranteIdAndIsActiveOrderByFechaCreacionDesc(Long aspiranteId, Boolean isActive);
-    
     // Buscar hojas de vida públicas
-    List<HojaVida> findByEsPublicaAndIsActive(Boolean esPublica, Boolean isActive);
-    
-    // Buscar hojas de vida por título
-    List<HojaVida> findByTituloContainingIgnoreCaseAndIsActive(String titulo, Boolean isActive);
-    
-    // Verificar si un aspirante tiene hoja de vida
-    boolean existsByAspiranteIdAndIsActive(Long aspiranteId, Boolean isActive);
+    List<HojaVida> findByEsPublicaTrue();
     
     // Contar hojas de vida de un aspirante
     long countByAspiranteId(Long aspiranteId);

@@ -147,6 +147,30 @@ public class EmpresaService {
         return empresaRepository.save(existingEmpresa);
     }
 
+    // ===== UPDATE (ADMIN - sin restricciones) =====
+    public Empresa updateAdmin(Long id, Empresa request) {
+        Empresa existingEmpresa = empresaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        existingEmpresa.setNombre(request.getNombre());
+        existingEmpresa.setDescripcion(request.getDescripcion());
+        existingEmpresa.setNumeroTrabajadores(request.getNumeroTrabajadores());
+        existingEmpresa.setEmailContacto(request.getEmailContacto());
+        existingEmpresa.setTelefonoContacto(request.getTelefonoContacto());
+        existingEmpresa.setWebsite(request.getWebsite());
+        existingEmpresa.setLogoUrl(request.getLogoUrl());
+        existingEmpresa.setRazonSocial(request.getRazonSocial());
+        existingEmpresa.setCategories(request.getCategories());
+
+        if (request.getMunicipio() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                .orElseThrow(() -> new RuntimeException("Municipio not found"));
+            existingEmpresa.setMunicipio(municipio);
+        }
+
+        return empresaRepository.save(existingEmpresa);
+    }
+
     // ===== DELETE =====
     public void delete(Long id, Long usuarioIdActual) {
         Empresa existingEmpresa = empresaRepository.findById(id)
@@ -155,6 +179,14 @@ public class EmpresaService {
         if (!puedeModificarEmpresa(existingEmpresa, usuarioIdActual)) {
             throw new IllegalStateException("Solo el owner o un ADMIN pueden eliminar esta empresa");
         }
+
+        empresaRepository.delete(existingEmpresa);
+    }
+
+    // ===== DELETE (ADMIN - sin restricciones) =====
+    public void deleteAdmin(Long id) {
+        Empresa existingEmpresa = empresaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Empresa not found"));
 
         empresaRepository.delete(existingEmpresa);
     }

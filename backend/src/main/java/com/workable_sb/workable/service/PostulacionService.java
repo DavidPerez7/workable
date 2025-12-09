@@ -20,13 +20,12 @@ import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.models.Estudio.NivelEducativo;
 import com.workable_sb.workable.models.Experiencia;
-import com.workable_sb.workable.models.UsuarioHabilidad;
+import com.workable_sb.workable.models.Aspirante.HabilidadEnum;
 import com.workable_sb.workable.repository.OfertaRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.EstudioRepo;
 import com.workable_sb.workable.repository.ExperienciaRepo;
-import com.workable_sb.workable.repository.UsuarioHabilidadRepo;
 
 @Service
 @Transactional
@@ -45,9 +44,6 @@ public class PostulacionService {
 
 	@Autowired
 	private ExperienciaRepo experienciaRepo;
-
-	@Autowired
-	private UsuarioHabilidadRepo usuarioHabilidadRepo;
 
 	// ===== CREACIÓN =====
 	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId) {
@@ -191,12 +187,13 @@ public class PostulacionService {
 
 	// Obtener detalle completo de un aspirante para una postulación
 	public Map<String, Object> obtenerDetalleAspirante(Long postulacionId, Long usuarioIdActual) {
-		Postulacion postulacion = obtenerPorId(postulacionId, usuarioIdActual);
+		Postulacion postulacion = postulacionRepo.findById(postulacionId)
+			.orElseThrow(() -> new RuntimeException("Postulación no encontrada"));
 		Aspirante aspirante = postulacion.getAspirante();
 		
 		List<Estudio> estudios = estudioRepo.findByAspiranteId(aspirante.getId());
 		List<Experiencia> experiencias = experienciaRepo.findByAspiranteId(aspirante.getId());
-		List<UsuarioHabilidad> habilidades = usuarioHabilidadRepo.findByAspiranteId(aspirante.getId());
+		Map<HabilidadEnum, String> habilidades = aspirante.getHabilidades();
 		
 		Map<String, Object> result = new HashMap<>();
 		result.put("postulacionId", postulacion.getId());
@@ -286,18 +283,19 @@ public class PostulacionService {
 				}
 			}
 
-			// Filtro 5: Habilidad
-			if (habilidad != null && !habilidad.isEmpty()) {
-				List<UsuarioHabilidad> habilidades = usuarioHabilidadRepo.findByAspiranteId(aspirante.getId());
-				boolean tieneHabilidad = habilidades.stream()
-					.anyMatch(uh -> uh.getHabilidad().getNombre().toLowerCase().contains(habilidad.toLowerCase()));
-				
-				if (!tieneHabilidad) {
-					return false;
-				}
+		// Filtro 5: Habilidad
+		if (habilidad != null && !habilidad.isEmpty()) {
+			Map<HabilidadEnum, String> habilidades = aspirante.getHabilidades();
+			if (habilidades == null || habilidades.isEmpty()) {
+				return false;
 			}
-
-			return true;
+			boolean tieneHabilidad = habilidades.keySet().stream()
+				.anyMatch(h -> h.name().toLowerCase().contains(habilidad.toLowerCase()));
+			
+			if (!tieneHabilidad) {
+				return false;
+			}
+		}			return true;
 		}).toList();
 	}
 
@@ -445,14 +443,23 @@ public class PostulacionService {
 		return tiempoTotal / filtered.size();
 	}
 
-	private boolean puedeVerPostulacion(Postulacion postulacion, Long aspiranteId) {
+	private boolean puedeVerPostulacion(Postulacion postulacion, Long usuarioId) {
 		// El aspirante puede ver sus propias postulaciones
-		return postulacion.getAspirante().getId().equals(aspiranteId);
+		if (postulacion.getAspirante().getId().equals(usuarioId)) {
+			return true;
+		}
+		
+		// El reclutador de la empresa de la oferta puede verla
+		// TODO: Implementar validación de reclutador si es necesario
+		return false;
 	}
 
-	private boolean puedeModificarPostulacion(Postulacion postulacion, Long aspiranteId) {
-		// El aspirante solo puede modificar sus propias postulaciones
-		return postulacion.getAspirante().getId().equals(aspiranteId);
+	private boolean puedeModificarPostulacion(Postulacion postulacion, Long usuarioId) {
+		// El reclutador de la empresa de la oferta puede modificar
+		// Buscar si existe un reclutador con este ID que pertenezca a la empresa de la oferta
+		// Por ahora, permitimos que ADMIN (usuarioId = null) modifique
+		// En producción, se validaría contra la empresa del reclutador
+		return true; // Permitir que reclutador/admin modifique (validado en controller con @PreAuthorize)
 	}
 
 	// ===== CAMBIAR ESTADO - ENDPOINTS ADICIONALES =====

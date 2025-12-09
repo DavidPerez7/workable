@@ -2,10 +2,11 @@ package com.workable_sb.workable.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.models.Experiencia;
-import com.workable_sb.workable.models.UsuarioHabilidad;
+import com.workable_sb.workable.models.Aspirante.HabilidadEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -51,7 +52,7 @@ public class CandidatoDetalleDto {
     private List<Experiencia> experiencias;
 
     // Habilidades
-    private List<UsuarioHabilidad> habilidades;
+    private Map<HabilidadEnum, String> habilidades;
 
     // Resumen profesional
     private String resumenProfesional;

@@ -78,6 +78,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/usuario/public/**").hasAnyRole("ASPIRANTE", "RECLUTADOR")
                 .requestMatchers("/api/usuario/**").hasRole("ADMIN")
 
+                // ===== ASPIRANTE, ADMINISTRADOR, RECLUTADOR =====
+                .requestMatchers("/api/aspirante/**").authenticated()
+                .requestMatchers("/api/administrador/**").authenticated()
+                .requestMatchers("/api/reclutador/**").authenticated()
+
                 // ===== EMPRESA - SOLO RECLUTADORES Y ADMIN =====
                 .requestMatchers(HttpMethod.POST, "/api/empresa").hasAnyRole("ADMIN", "RECLUTADOR")
                 .requestMatchers(HttpMethod.PUT, "/api/empresa/**").hasAnyRole("ADMIN", "RECLUTADOR")

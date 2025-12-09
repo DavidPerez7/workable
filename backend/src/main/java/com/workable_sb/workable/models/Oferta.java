@@ -102,13 +102,14 @@ public class Oferta {
 	@Column(name = "beneficio", length = 30, nullable = false)
 	private Set<Beneficio> beneficios = new HashSet<>();
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(
-		name = "oferta_habilidad_requerida",
-		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id"),
-		inverseJoinColumns = @JoinColumn(name = "habilidad_id", referencedColumnName = "id")
+	@ElementCollection(fetch = FetchType.LAZY)
+	@CollectionTable(
+		name = "oferta_habilidades_requeridas",
+		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
 	)
-	private Set<Habilidad> habilidadesRequeridas = new HashSet<>();
+	@Enumerated(EnumType.STRING)
+	@Column(name = "habilidad", length = 30, nullable = false)
+	private Set<Aspirante.HabilidadEnum> habilidadesRequeridas = new HashSet<>();
 
 
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)

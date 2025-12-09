@@ -107,7 +107,7 @@ public class AspiranteController {
 
     // - DELETE PUBLICO: solo el propio aspirante
     @DeleteMapping("/publicDelete/{id}")
-    @PreAuthorize("hasRole('ASPIRANTE')")
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
     public ResponseEntity<Void> deletePublic(@PathVariable Long id) {
         aspiranteService.deletePublic(id);
         return ResponseEntity.noContent().build();

@@ -97,7 +97,17 @@ public class EmpresaController {
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Empresa> actualizar(@PathVariable Long id, @RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
-        return ResponseEntity.ok(empresaService.update(id, empresa, user.getUsuarioId()));
+        // Verificar si es ADMIN desde el token (seguro, no del cliente)
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (isAdmin) {
+            // ADMIN puede actualizar sin restricciones
+            return ResponseEntity.ok(empresaService.updateAdmin(id, empresa));
+        } else {
+            // Reclutador solo puede si es owner
+            return ResponseEntity.ok(empresaService.update(id, empresa, user.getUsuarioId()));
+        }
     }
 
     // - DESACTIVAR (solo ADMIN)
@@ -124,7 +134,17 @@ public class EmpresaController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) {
-        empresaService.delete(id, user.getUsuarioId());
+        // Verificar si es ADMIN desde el token (seguro)
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (isAdmin) {
+            // ADMIN puede eliminar sin restricciones
+            empresaService.deleteAdmin(id);
+        } else {
+            // Si por alguna razón no es admin (no debería llegar aquí), usar validación normal
+            empresaService.delete(id, user.getUsuarioId());
+        }
         return ResponseEntity.noContent().build();
     }
 

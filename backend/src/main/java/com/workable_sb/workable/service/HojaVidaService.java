@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.HojaVida;
-import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
 
 @Service
@@ -18,23 +16,11 @@ public class HojaVidaService {
     @Autowired
     private HojaVidaRepo hojaVidaRepo;
 
-    @Autowired
-    private AspiranteRepo aspiranteRepo;
-
-    // ===== CREATE =====
-    public HojaVida crearHojaVida(HojaVida hojaVida, Long aspiranteId) {
-        
-        // Validar que el aspirante existe
-        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
-                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
-
-        // Validar campos obligatorios
-        if (hojaVida.getTitulo() == null || hojaVida.getTitulo().isEmpty()) {
-            throw new IllegalArgumentException("El título es obligatorio");
+    // ===== CREATE (Manual, solo para ADMIN) =====
+    public HojaVida crearHojaVidaManual(HojaVida hojaVida) {
+        if (hojaVida.getAspirante() == null || hojaVida.getAspirante().getId() == null) {
+            throw new IllegalArgumentException("El aspirante es requerido");
         }
-
-        hojaVida.setAspirante(aspirante);
-        
         return hojaVidaRepo.save(hojaVida);
     }
 
@@ -45,23 +31,16 @@ public class HojaVidaService {
     }
 
     public HojaVida obtenerHojaVidaPorAspirante(Long aspiranteId) {
-        return hojaVidaRepo.findFirstByAspiranteIdAndIsActiveOrderByFechaCreacionDesc(aspiranteId, true)
-                .orElseThrow(() -> new RuntimeException("El aspirante no tiene hoja de vida activa"));
+        return hojaVidaRepo.findByAspiranteId(aspiranteId).stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("El aspirante no tiene hoja de vida"));
     }
 
-    public List<HojaVida> obtenerHojasVidaPorUsuario(Long aspiranteId) {
-        if (!aspiranteRepo.existsById(aspiranteId)) {
-            throw new RuntimeException("Aspirante no encontrado");
-        }
-        return hojaVidaRepo.findByAspiranteId(aspiranteId);
+    public List<HojaVida> obtenerTodasLasHojasVida() {
+        return hojaVidaRepo.findAll();
     }
 
     public List<HojaVida> obtenerHojasVidaPublicas() {
-        return hojaVidaRepo.findByEsPublicaAndIsActive(true, true);
-    }
-
-    public List<HojaVida> buscarPorTitulo(String titulo) {
-        return hojaVidaRepo.findByTituloContainingIgnoreCaseAndIsActive(titulo, true);
+        return hojaVidaRepo.findByEsPublicaTrue();
     }
 
     // ===== UPDATE =====
@@ -69,55 +48,28 @@ public class HojaVidaService {
         HojaVida existente = obtenerPorId(id);
 
         // Validar que el aspirante actual es el dueño
-        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
+        if (!existente.getAspirante().getId().equals(aspiranteIdActual)) {
             throw new IllegalStateException("Solo el dueño puede actualizar esta hoja de vida");
         }
 
-        // Actualizar campos
-        if (hojaVidaActualizada.getTitulo() != null) {
-            existente.setTitulo(hojaVidaActualizada.getTitulo());
-        }
+        // Actualizar campos opcionales
         if (hojaVidaActualizada.getResumenProfesional() != null) {
             existente.setResumenProfesional(hojaVidaActualizada.getResumenProfesional());
         }
         if (hojaVidaActualizada.getObjetivoProfesional() != null) {
             existente.setObjetivoProfesional(hojaVidaActualizada.getObjetivoProfesional());
         }
-        if (hojaVidaActualizada.getTelefonoAdicional() != null) {
-            existente.setTelefonoAdicional(hojaVidaActualizada.getTelefonoAdicional());
+        if (hojaVidaActualizada.getRedSocial1() != null) {
+            existente.setRedSocial1(hojaVidaActualizada.getRedSocial1());
         }
-        if (hojaVidaActualizada.getLinkedin() != null) {
-            existente.setLinkedin(hojaVidaActualizada.getLinkedin());
-        }
-        if (hojaVidaActualizada.getPortfolio() != null) {
-            existente.setPortfolio(hojaVidaActualizada.getPortfolio());
-        }
-        if (hojaVidaActualizada.getGithub() != null) {
-            existente.setGithub(hojaVidaActualizada.getGithub());
-        }
-        if (hojaVidaActualizada.getDisponibilidad() != null) {
-            existente.setDisponibilidad(hojaVidaActualizada.getDisponibilidad());
+        if (hojaVidaActualizada.getRedSocial2() != null) {
+            existente.setRedSocial2(hojaVidaActualizada.getRedSocial2());
         }
         if (hojaVidaActualizada.getSalarioEsperado() != null) {
             existente.setSalarioEsperado(hojaVidaActualizada.getSalarioEsperado());
         }
-        if (hojaVidaActualizada.getNivelExperiencia() != null) {
-            existente.setNivelExperiencia(hojaVidaActualizada.getNivelExperiencia());
-        }
         if (hojaVidaActualizada.getIdiomas() != null) {
             existente.setIdiomas(hojaVidaActualizada.getIdiomas());
-        }
-        if (hojaVidaActualizada.getCertificaciones() != null) {
-            existente.setCertificaciones(hojaVidaActualizada.getCertificaciones());
-        }
-        if (hojaVidaActualizada.getReferencias() != null) {
-            existente.setReferencias(hojaVidaActualizada.getReferencias());
-        }
-        if (hojaVidaActualizada.getLogros() != null) {
-            existente.setLogros(hojaVidaActualizada.getLogros());
-        }
-        if (hojaVidaActualizada.getUrlCvPdf() != null) {
-            existente.setUrlCvPdf(hojaVidaActualizada.getUrlCvPdf());
         }
         if (hojaVidaActualizada.getEsPublica() != null) {
             existente.setEsPublica(hojaVidaActualizada.getEsPublica());
@@ -126,42 +78,15 @@ public class HojaVidaService {
         return hojaVidaRepo.save(existente);
     }
 
-    public HojaVida cambiarVisibilidad(Long id, Boolean esPublica, Long aspiranteIdActual) {
-        HojaVida existente = obtenerPorId(id);
-
-        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
-            throw new IllegalStateException("Solo el dueño puede cambiar la visibilidad");
-        }
-
-        existente.setEsPublica(esPublica);
-        return hojaVidaRepo.save(existente);
-    }
-
     // ===== DELETE =====
     public void eliminarHojaVida(Long id, Long aspiranteIdActual) {
-        HojaVida existente = obtenerPorId(id);
+        HojaVida hojaVida = obtenerPorId(id);
 
-        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
+        // Validar que el aspirante actual es el dueño
+        if (!hojaVida.getAspirante().getId().equals(aspiranteIdActual)) {
             throw new IllegalStateException("Solo el dueño puede eliminar esta hoja de vida");
         }
 
-        hojaVidaRepo.delete(existente);
-    }
-
-    public void desactivarHojaVida(Long id, Long aspiranteIdActual) {
-        HojaVida existente = obtenerPorId(id);
-
-        if (!puedeModificarHojaVida(existente, aspiranteIdActual)) {
-            throw new IllegalStateException("Solo el dueño puede desactivar esta hoja de vida");
-        }
-
-        existente.setIsActive(false);
-        hojaVidaRepo.save(existente);
-    }
-
-    // ===== MÉTODOS AUXILIARES =====
-    private boolean puedeModificarHojaVida(HojaVida hojaVida, Long aspiranteId) {
-        // Es el dueño
-        return hojaVida.getAspirante().getId().equals(aspiranteId);
+        hojaVidaRepo.delete(hojaVida);
     }
 }

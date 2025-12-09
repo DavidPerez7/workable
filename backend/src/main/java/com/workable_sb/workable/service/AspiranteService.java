@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.models.HojaVida;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.AspiranteRepo;
+import com.workable_sb.workable.repository.HojaVidaRepo;
 import com.workable_sb.workable.repository.MunicipioRepo;
 
 @Service
@@ -20,6 +22,9 @@ import com.workable_sb.workable.repository.MunicipioRepo;
 public class AspiranteService {
     @Autowired
     private AspiranteRepo aspiranteRepo;
+
+    @Autowired
+    private HojaVidaRepo hojaVidaRepo;
 
     @Autowired
     private MunicipioRepo municipioRepo;
@@ -65,7 +70,12 @@ public class AspiranteService {
         }
 
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        return aspiranteRepo.save(request);
+        Aspirante aspirante = aspiranteRepo.save(request);
+        
+        // Crear HojaVida automáticamente
+        crearHojaVidaAutomatica(aspirante);
+        
+        return aspirante;
     }
 
     public Aspirante create(Aspirante request) {
@@ -78,7 +88,20 @@ public class AspiranteService {
         } else {
             request.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        return aspiranteRepo.save(request);
+        Aspirante aspirante = aspiranteRepo.save(request);
+        
+        // Crear HojaVida automáticamente
+        crearHojaVidaAutomatica(aspirante);
+        
+        return aspirante;
+    }
+
+    // Método privado para crear HojaVida automáticamente
+    private void crearHojaVidaAutomatica(Aspirante aspirante) {
+        HojaVida hojaVida = new HojaVida();
+        hojaVida.setAspirante(aspirante);
+        hojaVida.setEsPublica(false);
+        hojaVidaRepo.save(hojaVida);
     }
 
     // - UPDATE (PUBLICO: solo el propio aspirante)

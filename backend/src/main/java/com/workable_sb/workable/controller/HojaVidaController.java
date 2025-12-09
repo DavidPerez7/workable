@@ -18,16 +18,12 @@ public class HojaVidaController {
     @Autowired
     private HojaVidaService hojaVidaService;
 
-    // ===== CREATE =====
-    @PreAuthorize("hasRole('ASPIRANTE')")
+    // ===== CREATE (Solo ADMIN) =====
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida, @RequestParam Long usuarioId, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida) {
         try {
-            // Validar que el usuario solo puede crear su propia hoja de vida
-            if (!usuarioId.equals(usuarioIdActual)) {
-                return ResponseEntity.status(403).body(Map.of("error", "No puedes crear hoja de vida para otro usuario"));
-            }
-            HojaVida creada = hojaVidaService.crearHojaVida(hojaVida, usuarioId);
+            HojaVida creada = hojaVidaService.crearHojaVidaManual(hojaVida);
             return ResponseEntity.ok(creada);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -50,26 +46,11 @@ public class HojaVidaController {
         }
     }
 
-    // Obtener hoja de vida completa con todos los datos
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/{id}/completa")
-    public ResponseEntity<?> obtenerCompleta(@PathVariable Long id) {
+    @GetMapping("/aspirante/{aspiranteId}")
+    public ResponseEntity<?> obtenerPorAspirante(@PathVariable Long aspiranteId) {
         try {
-            HojaVida hojaVida = hojaVidaService.obtenerPorId(id);
-            return ResponseEntity.ok(hojaVida);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hoja de vida completa: " + e.getMessage()));
-        }
-    }
-
-    // Obtener hoja de vida completa por usuario
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}/completa")
-    public ResponseEntity<?> obtenerCompletaPorUsuario(@PathVariable Long usuarioId) {
-        try {
-            HojaVida hojaVida = hojaVidaService.obtenerHojaVidaPorAspirante(usuarioId);
+            HojaVida hojaVida = hojaVidaService.obtenerHojaVidaPorAspirante(aspiranteId);
             return ResponseEntity.ok(hojaVida);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
@@ -78,53 +59,25 @@ public class HojaVidaController {
         }
     }
 
-    // Obtener todas las hojas de vida de un usuario
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<?> obtenerPorUsuario(@PathVariable Long usuarioId) {
+    @GetMapping
+    public ResponseEntity<?> obtenerTodas() {
         try {
-            List<HojaVida> hojasVida = hojaVidaService.obtenerHojasVidaPorUsuario(usuarioId);
+            List<HojaVida> hojasVida = hojaVidaService.obtenerTodasLasHojasVida();
             return ResponseEntity.ok(hojasVida);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hojas de vida: " + e.getMessage()));
         }
     }
 
-    // Obtener hojas de vida públicas (para reclutadores)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/publicas")
+    @GetMapping("/publicas/todas")
     public ResponseEntity<?> obtenerPublicas() {
         try {
             List<HojaVida> hojasVida = hojaVidaService.obtenerHojasVidaPublicas();
             return ResponseEntity.ok(hojasVida);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hojas de vida públicas: " + e.getMessage()));
-        }
-    }
-
-    // Obtener hojas de vida públicas completas
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/publicas/completas")
-    public ResponseEntity<?> obtenerPublicasCompletas() {
-        try {
-            List<HojaVida> hojasVida = hojaVidaService.obtenerHojasVidaPublicas();
-            return ResponseEntity.ok(hojasVida);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hojas de vida: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por título
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/buscar")
-    public ResponseEntity<?> buscarPorTitulo(@RequestParam String titulo) {
-        try {
-            List<HojaVida> hojasVida = hojaVidaService.buscarPorTitulo(titulo);
-            return ResponseEntity.ok(hojasVida);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al buscar hojas de vida: " + e.getMessage()));
         }
     }
 
@@ -144,40 +97,8 @@ public class HojaVidaController {
         }
     }
 
-    // Cambiar visibilidad (pública/privada)
-    @PreAuthorize("hasRole('ASPIRANTE')")
-    @PatchMapping("/{id}/visibilidad")
-    public ResponseEntity<?> cambiarVisibilidad(@PathVariable Long id, @RequestParam Boolean esPublica, @RequestParam Long usuarioIdActual) {
-        try {
-            HojaVida actualizada = hojaVidaService.cambiarVisibilidad(id, esPublica, usuarioIdActual);
-            return ResponseEntity.ok(actualizada);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al cambiar visibilidad: " + e.getMessage()));
-        }
-    }
-
-    // Desactivar
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
-    @PutMapping("/{id}/desactivar")
-    public ResponseEntity<?> desactivar(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
-        try {
-            hojaVidaService.desactivarHojaVida(id, usuarioIdActual);
-            return ResponseEntity.ok(Map.of("message", "Hoja de vida desactivada correctamente"));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al desactivar: " + e.getMessage()));
-        }
-    }
-
     // ===== DELETE =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
         try {

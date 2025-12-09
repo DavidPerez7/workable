@@ -181,32 +181,47 @@ stop_all_processes() {
     
     local stopped=false
     
-    # Detener backend
-    if pgrep -f "mvn spring-boot:run" > /dev/null; then
-        pkill -f "mvn spring-boot:run"
-        print_success "Backend detenido"
-        stopped=true
+    # Detener backend si existe el PID guardado
+    if [ -f /tmp/workable-backend.pid ]; then
+        local backend_pid=$(cat /tmp/workable-backend.pid)
+        if kill -0 $backend_pid 2>/dev/null; then
+            kill -9 $backend_pid 2>/dev/null
+            print_success "Backend (PID $backend_pid) detenido"
+            stopped=true
+        fi
+        rm -f /tmp/workable-backend.pid
     fi
     
-    # Detener frontend (Vite)
-    if pgrep -f "npm run dev" > /dev/null; then
-        pkill -f "npm run dev"
-        print_success "Frontend detenido"
-        stopped=true
+    # Detener frontend si existe el PID guardado
+    if [ -f /tmp/workable-frontend.pid ]; then
+        local frontend_pid=$(cat /tmp/workable-frontend.pid)
+        if kill -0 $frontend_pid 2>/dev/null; then
+            kill -9 $frontend_pid 2>/dev/null
+            print_success "Frontend (PID $frontend_pid) detenido"
+            stopped=true
+        fi
+        rm -f /tmp/workable-frontend.pid
     fi
     
-    # Detener Java Maven
-    if pgrep -f "java.*spring-boot" > /dev/null; then
-        pkill -f "java.*spring-boot"
+    # Matar todos los procesos java y node como alternativa
+    if pgrep java > /dev/null; then
+        pkill -9 java 2>/dev/null
         print_success "Procesos Java detenidos"
         stopped=true
     fi
     
+    if pgrep node > /dev/null; then
+        pkill -9 node 2>/dev/null
+        print_success "Procesos Node.js detenidos"
+        stopped=true
+    fi
+    
+    sleep 1
+    
     if [ "$stopped" = true ]; then
-        print_success "Todos los procesos han sido detenidos"
-        sleep 1
+        print_success "✓ Todos los procesos han sido detenidos correctamente"
     else
-        print_warning "No hay procesos en ejecución"
+        print_warning "⚠ No hay procesos en ejecución"
     fi
 }
 
@@ -272,15 +287,24 @@ run_frontend() {
 }
 
 run_backend_in_new_terminal() {
-    print_success "Abriendo backend en nueva terminal..."
+    print_success "Compilando y iniciando Backend en background..."
     
-    # Ejecutar en background con nohup
-    nohup bash -c "cd '$SCRIPT_DIR' && bash '$0' --backend-only" > /tmp/workable-backend.log 2>&1 &
+    cd "$BACKEND_DIR"
+    
+    # Compilar si es necesario
+    if [ ! -f "target/workable-0.0.1-SNAPSHOT.jar" ]; then
+        print_warning "JAR no encontrado. Compilando..."
+        mvn clean package -DskipTests -q
+    fi
+    
+    # Ejecutar el JAR directamente (más eficiente que mvn spring-boot:run)
+    java -jar target/workable-0.0.1-SNAPSHOT.jar > /tmp/workable-backend.log 2>&1 &
     
     if [ $? -eq 0 ]; then
-        print_success "Backend iniciándose en background..."
-        print_warning "Log: tail -f /tmp/workable-backend.log"
+        echo $! > /tmp/workable-backend.pid
         sleep 3
+        print_success "Backend iniciado (PID: $(cat /tmp/workable-backend.pid))"
+        print_warning "Log: tail -f /tmp/workable-backend.log"
         return 0
     else
         print_error "Error al iniciar backend"
@@ -289,13 +313,23 @@ run_backend_in_new_terminal() {
 }
 
 run_frontend_in_new_terminal() {
-    print_success "Abriendo frontend en nueva terminal..."
+    print_success "Iniciando Frontend en background..."
     
-    # Ejecutar en background con nohup
-    nohup bash -c "cd '$SCRIPT_DIR' && bash '$0' --frontend-only" > /tmp/workable-frontend.log 2>&1 &
+    cd "$FRONTEND_DIR"
+    
+    # Verificar si node_modules existe
+    if [ ! -d "node_modules" ]; then
+        print_warning "node_modules no encontrado. Instalando dependencias..."
+        npm install --legacy-peer-deps -q
+    fi
+    
+    # Ejecutar en background
+    npm run dev > /tmp/workable-frontend.log 2>&1 &
     
     if [ $? -eq 0 ]; then
-        print_success "Frontend iniciándose en background..."
+        echo $! > /tmp/workable-frontend.pid
+        sleep 2
+        print_success "Frontend iniciado (PID: $(cat /tmp/workable-frontend.pid))"
         print_warning "Log: tail -f /tmp/workable-frontend.log"
         return 0
     else
@@ -326,6 +360,7 @@ show_menu() {
 
 main_menu() {
     while true; do
+        clear  # Limpiar la pantalla
         show_menu
         read -p "Selecciona una opción (1-7): " choice
         
@@ -337,56 +372,63 @@ main_menu() {
                 run_frontend
                 ;;
             3)
+                clear
                 print_header "INICIANDO BACKEND Y FRONTEND EN BACKGROUND"
                 
                 if ! run_backend_in_new_terminal; then
                     print_error "No se pudo iniciar backend"
+                    read -p "Presiona Enter para continuar..."
                     continue
                 fi
                 
                 if ! run_frontend_in_new_terminal; then
                     print_error "No se pudo iniciar frontend"
+                    read -p "Presiona Enter para continuar..."
                     continue
                 fi
                 
-                print_success "Backend y Frontend iniciados en background"
+                print_success "✓ Backend y Frontend iniciados en background"
                 echo ""
-                echo -e "${YELLOW}═══════════════════════════════════════════${NC}"
-                echo -e "${YELLOW}URLs DE ACCESO:${NC}"
+                echo -e "${YELLOW}═══════════════════════════════════════════════════${NC}"
+                echo -e "${GREEN}✓ ACCESO A APLICACIONES:${NC}"
                 echo "  Backend:  http://localhost:8080"
                 echo "  Frontend: http://localhost:5173"
                 echo ""
-                echo -e "${YELLOW}MONITOREAR EJECUCIÓN:${NC}"
+                echo -e "${YELLOW}📊 MONITOREAR EJECUCIÓN:${NC}"
                 echo "  Backend:  tail -f /tmp/workable-backend.log"
                 echo "  Frontend: tail -f /tmp/workable-frontend.log"
                 echo ""
-                echo -e "${YELLOW}DETENER TODO CON UN COMANDO:${NC}"
-                echo "  pkill -f 'mvn spring-boot:run' && pkill -f 'npm run dev'"
-                echo ""
-                echo -e "${RED}O usa esta opción del menú:${NC}"
-                echo "  Vuelve y selecciona opción 7 para detener todo"
-                echo -e "${YELLOW}═══════════════════════════════════════════${NC}"
-                echo ""
+                echo -e "${RED}🛑 PARA DETENER TODO:${NC}"
+                echo "  Vuelve al menú y selecciona opción 6"
+                echo -e "${YELLOW}═══════════════════════════════════════════════════${NC}"
                 read -p "Presiona Enter para volver al menú..."
                 ;;
             4)
+                clear
                 check_dependencies
                 read -p "Presiona Enter para continuar..."
                 ;;
             5)
+                clear
                 validate_project_structure
                 read -p "Presiona Enter para continuar..."
                 ;;
             6)
+                clear
                 stop_all_processes
-                read -p "Presiona Enter para volver al menú..."
+                sleep 2
                 ;;
             7)
+                clear
+                print_header "DETENIENDO TODO"
+                stop_all_processes
+                echo ""
                 print_success "¡Hasta luego!"
                 exit 0
                 ;;
             *)
                 print_error "Opción no válida. Por favor selecciona 1-7."
+                sleep 2
                 ;;
         esac
     done
