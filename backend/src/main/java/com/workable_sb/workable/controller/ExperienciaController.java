@@ -79,6 +79,19 @@ public class ExperienciaController {
         return ResponseEntity.ok(experienciaService.listarTodas());
     }
 
+    // ===== READ experiencias del aspirante autenticado =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/aspirante")
+    public ResponseEntity<?> obtenerMisExperiencias(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        try {
+            Long aspiranteId = userDetails.getUsuarioId();
+            List<Experiencia> experiencias = experienciaService.obtenerExperienciasPorUsuario(aspiranteId);
+            return ResponseEntity.ok(experiencias);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener experiencias: " + e.getMessage()));
+        }
+    }
+
     // ===== UPDATE - Solo ASPIRANTE sus propias experiencias o ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")

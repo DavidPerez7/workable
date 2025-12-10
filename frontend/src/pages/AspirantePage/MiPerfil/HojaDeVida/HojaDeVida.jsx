@@ -4,7 +4,7 @@ import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
 import { getUsuarioActual } from "../../../../api/usuarioAPI";
-import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
+// import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
 import { obtenerExperienciasAspirante, crearExperiencia, eliminarExperiencia } from "../../../../api/experienciaAPI";
 import { obtenerEstudiosAspirante, crearEstudio, eliminarEstudio } from "../../../../api/estudioAPI";
 
@@ -49,9 +49,9 @@ const HojaDeVida = () => {
       const usuarioData = await getUsuarioActual(rol);
       setPerfil(usuarioData);
 
-      // Cargar habilidades
-      const habilidadesData = await obtenerHabilidadesAspirante();
-      setHabilidades(habilidadesData || []);
+      // Cargar habilidades - Por ahora comentado, no hay endpoint en backend
+      // const habilidadesData = await obtenerHabilidadesAspirante();
+      // setHabilidades(habilidadesData || []);
 
       // Cargar experiencias
       const experienciasData = await obtenerExperienciasAspirante();

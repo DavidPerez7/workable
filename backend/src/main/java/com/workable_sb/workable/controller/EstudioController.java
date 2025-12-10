@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -94,6 +95,20 @@ public class EstudioController {
     @GetMapping
     public ResponseEntity<List<Estudio>> listarTodos() {
         return ResponseEntity.ok(estudioService.listarTodos());
+    }
+
+    // ===== READ estudios del aspirante autenticado =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/aspirante")
+    public ResponseEntity<?> obtenerMisEstudios(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        try {
+            Long aspiranteId = userDetails.getUsuarioId();
+            List<Estudio> estudios = estudioService.obtenerEstudiosPorUsuario(aspiranteId);
+            return ResponseEntity.ok(estudios);
+        } catch (Exception e) {
+            log.error("Error al obtener estudios", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener estudios: " + e.getMessage()));
+        }
     }
 
     // ===== UPDATE - Solo ASPIRANTE sus propios estudios o ADMIN =====
