@@ -14,11 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Controlador de Habilidades - Habilidades técnicas y profesionales del aspirante.
- * Roles permitidos:
- * - ASPIRANTE: Crear/editar/eliminar sus propias habilidades
- * - RECLUTADOR: Solo lectura de habilidades públicas
- * - ADMIN: Acceso completo
+ * Controlador de Habilidades - CRUD simple para habilidades del aspirante.
+ * Las habilidades son strings simples (máx 20 caracteres).
+ * Solo ASPIRANTE puede crear/editar/eliminar sus propias habilidades.
  */
 @RestController
 @RequestMapping("/api/habilidad")
@@ -27,7 +25,7 @@ public class HabilidadController {
     @Autowired
     private HabilidadService habilidadService;
 
-    // ===== READ habilidades del aspirante autenticado (DEBE IR ANTES DE /{id}) =====
+    // ===== READ habilidades del aspirante autenticado =====
     @PreAuthorize("hasRole('ASPIRANTE')")
     @GetMapping("/aspirante")
     public ResponseEntity<?> obtenerMisHabilidades(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -36,79 +34,67 @@ public class HabilidadController {
             List<Habilidad> habilidades = habilidadService.obtenerHabilidadesPorUsuario(aspiranteId);
             return ResponseEntity.ok(habilidades);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener habilidades: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
 
-    // ===== READ por usuario - Todos autenticados =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    // ===== READ por usuario ID - público (para ver perfil de otros) =====
     @GetMapping("/usuario/{aspiranteId}")
-    public ResponseEntity<List<Habilidad>> obtenerHabilidadesPorUsuario(@PathVariable Long aspiranteId) {
-        return ResponseEntity.ok(habilidadService.obtenerHabilidadesPorUsuario(aspiranteId));
+    public ResponseEntity<?> obtenerHabilidadesPorUsuario(@PathVariable Long aspiranteId) {
+        try {
+            List<Habilidad> habilidades = habilidadService.obtenerHabilidadesPorUsuario(aspiranteId);
+            return ResponseEntity.ok(habilidades);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
     }
 
-    // ===== READ todas - ADMIN solamente =====
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
-    public ResponseEntity<List<Habilidad>> listarTodas() {
-        return ResponseEntity.ok(habilidadService.listarTodas());
-    }
-
-    // ===== READ by id - Todos autenticados =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    // ===== READ by id =====
     @GetMapping("/{id}")
-    public ResponseEntity<Habilidad> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(habilidadService.obtenerPorId(id));
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(habilidadService.obtenerPorId(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        }
     }
 
-    // ===== CREATE - Solo ASPIRANTE y ADMIN =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    // ===== CREATE - Solo ASPIRANTE =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
     @PostMapping
     public ResponseEntity<?> crearHabilidad(@RequestBody Habilidad habilidad, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             Long aspiranteId = userDetails.getUsuarioId();
-            return ResponseEntity.ok(habilidadService.crearHabilidad(habilidad, aspiranteId));
+            Habilidad nueva = habilidadService.crearHabilidad(habilidad, aspiranteId);
+            return ResponseEntity.ok(nueva);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al crear habilidad: " + e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
     }
 
-    // ===== UPDATE - Solo ASPIRANTE sus propias habilidades o ADMIN =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    // ===== UPDATE - Solo ASPIRANTE sus propias habilidades =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarHabilidad(@PathVariable Long id, @RequestBody Habilidad habilidad, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             Long aspiranteId = userDetails.getUsuarioId();
-            Habilidad habilidadExistente = habilidadService.obtenerPorId(id);
-            
-            // Validar ownership
-            if (!habilidadExistente.getAspirante().getId().equals(aspiranteId)) {
-                return ResponseEntity.status(403).body(Map.of("error", "No puedes editar habilidades de otro usuario"));
-            }
-            
-            return ResponseEntity.ok(habilidadService.actualizarHabilidad(id, habilidad, aspiranteId));
+            Habilidad actualizada = habilidadService.actualizarHabilidad(id, habilidad, aspiranteId);
+            return ResponseEntity.ok(actualizada);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar habilidad: " + e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
     }
 
-    // ===== DELETE - Solo ASPIRANTE sus propias habilidades o ADMIN =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    // ===== DELETE - Solo ASPIRANTE sus propias habilidades =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarHabilidad(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             Long aspiranteId = userDetails.getUsuarioId();
-            Habilidad habilidad = habilidadService.obtenerPorId(id);
-            
-            // Validar ownership
-            if (!habilidad.getAspirante().getId().equals(aspiranteId)) {
-                return ResponseEntity.status(403).body(Map.of("error", "No puedes eliminar habilidades de otro usuario"));
-            }
-            
             habilidadService.eliminarHabilidad(id, aspiranteId);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar habilidad: " + e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         }
     }
 }

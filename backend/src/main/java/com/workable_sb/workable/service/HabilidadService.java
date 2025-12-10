@@ -8,13 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Habilidad;
-import com.workable_sb.workable.models.Habilidad.Estado;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HabilidadRepo;
 
 /**
- * Servicio de Habilidades - CRUD completo para habilidades del aspirante
- * Incluye validaciones de ownership y estados.
+ * Servicio de Habilidades - CRUD simple para habilidades del aspirante
+ * Las habilidades son simples strings (máx 20 caracteres)
  */
 @Service
 @Transactional
@@ -28,10 +27,13 @@ public class HabilidadService {
 
     // ===== CREATE =====
     public Habilidad crearHabilidad(Habilidad habilidad, Long aspiranteId) {
-
         // Validar campos obligatorios
-        if (habilidad.getNombre() == null || habilidad.getNombre().isEmpty()) {
+        if (habilidad.getNombre() == null || habilidad.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la habilidad es obligatorio");
+        }
+        
+        if (habilidad.getNombre().length() > 20) {
+            throw new IllegalArgumentException("La habilidad no puede exceder 20 caracteres");
         }
 
         // Validar que el aspirante existe
@@ -39,14 +41,6 @@ public class HabilidadService {
                 .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
         habilidad.setAspirante(aspirante);
-        
-        // Si no se especifica nivel, usar INTERMEDIO por defecto
-        if (habilidad.getNivel() == null) {
-            habilidad.setNivel(Habilidad.Nivel.INTERMEDIO);
-        }
-        
-        habilidad.setEstado(Estado.ACTIVO);
-
         return habilidadRepo.save(habilidad);
     }
 
@@ -61,29 +55,11 @@ public class HabilidadService {
         if (!aspiranteRepo.existsById(aspiranteId)) {
             throw new RuntimeException("Aspirante no encontrado con id: " + aspiranteId);
         }
-        return habilidadRepo.findByAspiranteId(aspiranteId);
-    }
-
-    public List<Habilidad> obtenerHabilidadesActivas(Long aspiranteId) {
-        if (!aspiranteRepo.existsById(aspiranteId)) {
-            throw new RuntimeException("Aspirante no encontrado con id: " + aspiranteId);
-        }
-        return habilidadRepo.findByAspiranteIdAndEstado(aspiranteId, Estado.ACTIVO);
-    }
-
-    public List<Habilidad> obtenerHabilidadesOrdenadasPorNombre(Long aspiranteId) {
-        if (!aspiranteRepo.existsById(aspiranteId)) {
-            throw new RuntimeException("Aspirante no encontrado con id: " + aspiranteId);
-        }
         return habilidadRepo.findByAspiranteIdOrderByNombre(aspiranteId);
     }
 
     public List<Habilidad> listarTodas() {
         return habilidadRepo.findAll();
-    }
-
-    public List<Habilidad> obtenerPorNombre(String nombre) {
-        return habilidadRepo.findByNombre(nombre);
     }
 
     // ===== UPDATE =====
@@ -95,17 +71,12 @@ public class HabilidadService {
             throw new RuntimeException("No puedes editar habilidades de otro usuario");
         }
 
-        // Actualizar solo los campos permitidos
-        if (habilidadActualizada.getNombre() != null && !habilidadActualizada.getNombre().isEmpty()) {
-            habilidad.setNombre(habilidadActualizada.getNombre());
-        }
-
-        if (habilidadActualizada.getDescripcion() != null) {
-            habilidad.setDescripcion(habilidadActualizada.getDescripcion());
-        }
-
-        if (habilidadActualizada.getNivel() != null) {
-            habilidad.setNivel(habilidadActualizada.getNivel());
+        // Actualizar solo el nombre
+        if (habilidadActualizada.getNombre() != null && !habilidadActualizada.getNombre().trim().isEmpty()) {
+            if (habilidadActualizada.getNombre().length() > 20) {
+                throw new IllegalArgumentException("La habilidad no puede exceder 20 caracteres");
+            }
+            habilidad.setNombre(habilidadActualizada.getNombre().trim());
         }
 
         return habilidadRepo.save(habilidad);
@@ -121,29 +92,5 @@ public class HabilidadService {
         }
 
         habilidadRepo.delete(habilidad);
-    }
-
-    public void desactivarHabilidad(Long id, Long aspiranteId) {
-        Habilidad habilidad = obtenerPorId(id);
-
-        // Validar ownership
-        if (!habilidad.getAspirante().getId().equals(aspiranteId)) {
-            throw new RuntimeException("No puedes desactivar habilidades de otro usuario");
-        }
-
-        habilidad.setEstado(Estado.INACTIVO);
-        habilidadRepo.save(habilidad);
-    }
-
-    public void activarHabilidad(Long id, Long aspiranteId) {
-        Habilidad habilidad = obtenerPorId(id);
-
-        // Validar ownership
-        if (!habilidad.getAspirante().getId().equals(aspiranteId)) {
-            throw new RuntimeException("No puedes activar habilidades de otro usuario");
-        }
-
-        habilidad.setEstado(Estado.ACTIVO);
-        habilidadRepo.save(habilidad);
     }
 }

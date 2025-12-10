@@ -313,7 +313,7 @@ const HojaDeVida = () => {
             </button>
           </div>
 
-          {/* FORMULARIO INLINE */}
+          {/* FORMULARIO INLINE PARA NUEVA HABILIDAD */}
           <div
             id="add-skill-form"
             className="perfil-form-inline-PF"
@@ -321,28 +321,49 @@ const HojaDeVida = () => {
           >
             <input
               type="text"
-              placeholder="Nueva habilidad..."
+              placeholder="Ej: JavaScript (máx 20 caracteres)"
+              maxLength="20"
               value={nuevaHabilidad}
               onChange={(e) => setNuevaHabilidad(e.target.value)}
             />
-            <button onClick={agregarHabilidad}>Añadir</button>
+            <button 
+              className="perfil-skill-add-btn-PF"
+              onClick={agregarHabilidad}
+            >
+              Añadir
+            </button>
+            <button 
+              className="perfil-skill-cancel-btn-PF"
+              onClick={() => {
+                const form = document.getElementById("add-skill-form");
+                form.style.display = "none";
+                setNuevaHabilidad("");
+              }}
+            >
+              Cancelar
+            </button>
           </div>
 
-          {/* LISTA DE HABILIDADES */}
+          {/* LISTA DE HABILIDADES EDITABLE */}
           <div className="perfil-habilidades-PF">
             {habilidades.length === 0 ? (
-              <p>No tienes habilidades registradas</p>
+              <p className="perfil-no-habilidades-PF">No tienes habilidades registradas</p>
             ) : (
               habilidades.map((skill) => (
-                <span key={skill.id} className="perfil-skill-PF">
-                  {skill.nombre}
+                <div key={skill.id} className="perfil-skill-item-PF">
+                  <span className="perfil-skill-nombre-PF">{skill.nombre}</span>
                   <button
                     className="perfil-skill-delete-PF"
-                    onClick={() => borrarHabilidad(skill.id)}
+                    onClick={() => {
+                      if (window.confirm(`¿Eliminar habilidad "${skill.nombre}"?`)) {
+                        borrarHabilidad(skill.id);
+                      }
+                    }}
+                    title="Eliminar habilidad"
                   >
                     ✕
                   </button>
-                </span>
+                </div>
               ))
             )}
           </div>
