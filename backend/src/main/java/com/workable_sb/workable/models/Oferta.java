@@ -112,7 +112,6 @@ public class Oferta {
 	)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "habilidad", length = 30, nullable = false)
-	@JsonDeserialize(contentAs = Aspirante.HabilidadEnum.class)
 	private Set<Aspirante.HabilidadEnum> habilidadesRequeridas = new HashSet<>();
 
 

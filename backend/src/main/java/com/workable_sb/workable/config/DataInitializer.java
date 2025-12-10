@@ -210,39 +210,53 @@ public class DataInitializer implements CommandLineRunner {
 
     private void recreateEmpresas() {
         try {
-            // 10 EMPRESAS con nombres reales de Colombia
-            String[][] empresasData = {
-                {"Bancolombia", "Banco líder en Colombia", "Bogotá", "860002964", "contacto@bancolombia.com.co", "6013078000"},
-                {"Ecopetrol", "Empresa petrolera estatal", "Bogotá", "899999063", "contacto@ecopetrol.com.co", "6012345678"},
-                {"Grupo Aval", "Holding financiero", "Bogotá", "860034313", "contacto@grupoaval.com", "6012345679"},
-                {"Cementos Argos", "Empresa cementera", "Medellín", "890900286", "contacto@argos.com.co", "6042345678"},
-                {"Postobón", "Empresa de bebidas", "Medellín", "890900608", "contacto@postobon.com.co", "6042345679"},
-                {"Alpina", "Productos lácteos y alimentos", "Bogotá", "860002738", "contacto@alpina.com.co", "6012345680"},
-                {"Colombina", "Dulces y chocolates", "Cali", "890900251", "contacto@colombina.com", "6022345678"},
-                {"ISA", "Infraestructura energética", "Medellín", "890900738", "contacto@isa.com.co", "6042345680"},
-                {"Nutresa", "Alimentos procesados", "Medellín", "890900840", "contacto@nutresa.com.co", "6042345681"},
-                {"Éxito", "Cadena de supermercados", "Medellín", "890900609", "contacto@exito.com", "6042345682"}
-            };
+            Municipio municipioBogota = municipioRepo.findByNombre("Bogotá").orElse(null);
+            Municipio municipioMedellin = municipioRepo.findByNombre("Medellín").orElse(null);
+            Municipio municipioCali = municipioRepo.findByNombre("Cali").orElse(null);
 
-            int count = 0;
-            for (int i = 0; i < empresasData.length; i++) {
-                try {
-                    Empresa empresa = new Empresa();
-                    empresa.setNombre(empresasData[i][0]);
-                    empresa.setNit(empresasData[i][3]);
-                    empresa.setDescripcion(empresasData[i][1]);
-                    empresa.setNumeroTrabajadores(1000 + (i * 500));
-                    empresa.setEmailContacto(empresasData[i][4]);
-                    empresa.setTelefonoContacto(empresasData[i][5]);
-                    empresa.setMunicipio(municipioRepo.findByNombre(empresasData[i][2]).orElse(null));
-                    empresa.setIsActive(true);
-                    empresaRepo.save(empresa);
-                    count++;
-                } catch (Exception e) {
-                    System.err.println("Error al crear empresa: " + e.getMessage());
-                }
-            }
-            System.out.println("✓ Empresas recreadas: " + count + " empresas disponibles");
+            // EMPRESA 1 - Bancolombia
+            Empresa empresa1 = new Empresa();
+            empresa1.setNombre("Bancolombia");
+            empresa1.setDescripcion("Banco líder en Colombia");
+            empresa1.setNit("860002964");
+            empresa1.setEmailContacto("contacto@bancolombia.com.co");
+            empresa1.setTelefonoContacto("6013078000");
+            empresa1.setNumeroTrabajadores(5000);
+            empresa1.setWebsite("www.bancolombia.com");
+            empresa1.setMunicipio(municipioBogota);
+            empresa1.setIsActive(true);
+            empresaRepo.save(empresa1);
+            System.out.println("✓ Empresa 1 creada: Bancolombia");
+
+            // EMPRESA 2 - Ecopetrol
+            Empresa empresa2 = new Empresa();
+            empresa2.setNombre("Ecopetrol");
+            empresa2.setDescripcion("Empresa petrolera estatal");
+            empresa2.setNit("899999063");
+            empresa2.setEmailContacto("contacto@ecopetrol.com.co");
+            empresa2.setTelefonoContacto("6012345678");
+            empresa2.setNumeroTrabajadores(3500);
+            empresa2.setWebsite("www.ecopetrol.com.co");
+            empresa2.setMunicipio(municipioBogota);
+            empresa2.setIsActive(true);
+            empresaRepo.save(empresa2);
+            System.out.println("✓ Empresa 2 creada: Ecopetrol");
+
+            // EMPRESA 3 - Grupo Aval
+            Empresa empresa3 = new Empresa();
+            empresa3.setNombre("Grupo Aval");
+            empresa3.setDescripcion("Holding financiero");
+            empresa3.setNit("860034313");
+            empresa3.setEmailContacto("contacto@grupoaval.com");
+            empresa3.setTelefonoContacto("6012345679");
+            empresa3.setNumeroTrabajadores(2000);
+            empresa3.setWebsite("www.grupoaval.com");
+            empresa3.setMunicipio(municipioBogota);
+            empresa3.setIsActive(true);
+            empresaRepo.save(empresa3);
+            System.out.println("✓ Empresa 3 creada: Grupo Aval");
+
+            System.out.println("✓ Empresas recreadas: 3 empresas disponibles");
         } catch (Exception e) {
             System.err.println("Error en recreateEmpresas: " + e.getMessage());
             e.printStackTrace();
