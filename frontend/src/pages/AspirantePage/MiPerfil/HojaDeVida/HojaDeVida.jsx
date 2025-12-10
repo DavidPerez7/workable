@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
-import { getUsuarioById } from "../../../../api/usuarioAPI";
+import { getUsuarioActual } from "../../../../api/usuarioAPI";
 import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
 import { obtenerExperienciasAspirante, crearExperiencia, eliminarExperiencia } from "../../../../api/experienciaAPI";
 import { obtenerEstudiosAspirante, crearEstudio, eliminarEstudio } from "../../../../api/estudioAPI";
@@ -43,11 +43,10 @@ const HojaDeVida = () => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const usuarioId = localStorage.getItem("usuarioId");
       const rol = localStorage.getItem("rol");
 
-      // Cargar perfil
-      const usuarioData = await getUsuarioById(usuarioId, token, rol);
+      // Cargar perfil usando el nuevo endpoint /me
+      const usuarioData = await getUsuarioActual(rol);
       setPerfil(usuarioData);
 
       // Cargar habilidades
