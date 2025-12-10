@@ -79,12 +79,16 @@ export const actualizarPostulacion = async (id, postulacionData) => {
 // Eliminar postulación
 export const eliminarPostulacion = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`, {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      throw new Error("No se encontró la sesión del usuario");
+    }
+    const response = await axios.delete(`${API_URL}/${id}?usuarioIdActual=${userId}`, {
       headers: getAuthHeaders(),
     });
     return response.data;
   } catch (error) {
     console.error("Error al eliminar postulación:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar postulación");
+    throw new Error(error.response?.data?.error || error.response?.data?.message || "Error al eliminar postulación");
   }
 };

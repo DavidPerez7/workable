@@ -240,14 +240,20 @@
   letter-spacing: 0.5px;
 }
 
-.mp-delete-btn:hover {
+.mp-delete-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #dc2626, #b91c1c);
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
 }
 
-.mp-delete-btn:active {
+.mp-delete-btn:active:not(:disabled) {
   transform: translateY(-1px);
+}
+
+.mp-delete-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 /* ===========================

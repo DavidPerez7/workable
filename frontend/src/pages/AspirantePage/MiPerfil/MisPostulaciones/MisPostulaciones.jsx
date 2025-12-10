@@ -8,6 +8,7 @@ const MisPostulaciones = () => {
   const [postulaciones, setPostulaciones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [eliminando, setEliminando] = useState(null);
 
   // ============================================
   //   📌 OBTENER POSTULACIONES – API REAL
@@ -32,12 +33,16 @@ const MisPostulaciones = () => {
 
   const handleEliminarPostulacion = async (id) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar esta postulación?")) {
+      setEliminando(id);
       try {
         await eliminarPostulacion(id);
         setPostulaciones(postulaciones.filter(post => post.id !== id));
+        alert("Postulación eliminada exitosamente");
       } catch (error) {
         console.error("Error al eliminar postulación:", error);
         alert("Error al eliminar la postulación: " + error.message);
+      } finally {
+        setEliminando(null);
       }
     }
   };
@@ -101,8 +106,9 @@ const MisPostulaciones = () => {
                   <button 
                     className="mp-delete-btn"
                     onClick={() => handleEliminarPostulacion(post.id)}
+                    disabled={eliminando === post.id}
                   >
-                    Eliminar
+                    {eliminando === post.id ? "Eliminando..." : "Eliminar"}
                   </button>
                 </div>
               </div>
