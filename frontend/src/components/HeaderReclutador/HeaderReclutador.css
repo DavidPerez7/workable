@@ -104,6 +104,7 @@
 .username-text-rc {
   font-weight: 500;
   font-size: 1em;
+  margin-right: 0.5rem;
 }
 
 .avatar-placeholder-rc {
@@ -117,6 +118,24 @@
   font-size: 0.8em;
   font-weight: bold;
   color: #2541a0;
+  margin-right: 0.5rem;
+}
+
+.logout-btn-rc {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.logout-btn-rc:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 @media (max-width: 900px) {

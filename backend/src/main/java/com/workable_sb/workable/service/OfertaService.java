@@ -5,16 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
 
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.EstadoOferta;
 import com.workable_sb.workable.models.Oferta.Modalidad;
-import com.workable_sb.workable.models.Usuario;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
 
 @Service
 @Transactional
@@ -27,10 +27,16 @@ public class OfertaService {
     private EmpresaRepository empresaRepository;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private ReclutadorRepo usuarioRepo;
 
     @Autowired
     private MunicipioRepo municipioRepo;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private AdminValidationService adminValidationService;
 
     // ===== CREATE =====
     public Oferta crearOferta(Oferta oferta, Long empresaId, Long reclutadorId) {
@@ -60,19 +66,7 @@ public class OfertaService {
 
         // Validar que la empresa existe
         Empresa empresa = empresaRepository.findById(empresaId)
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        Usuario reclutador = usuarioRepo.findById(reclutadorId)
-                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
-
-        // Validar que el reclutador pertenece a la empresa (regla de negocio, excepto ADMIN)
-        if (reclutador.getRol() == Usuario.Rol.RECLUTADOR) {
-            boolean perteneceAEmpresa = empresa.getReclutadores().stream()
-                    .anyMatch(r -> r.getId().equals(reclutadorId));
-            
-            if (!perteneceAEmpresa) {
-                throw new IllegalStateException("El reclutador no pertenece a la empresa");
-            }
-        }
+            .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
 
         // Validar municipio
         if (oferta.getMunicipio() != null) {
@@ -80,9 +74,11 @@ public class OfertaService {
                     .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
         }
 
-        // Asignar empresa y reclutador
+        // Asignar empresa
         oferta.setEmpresa(empresa);
-        oferta.setReclutador(reclutador);
+        
+        // Asignar fecha de publicación automática
+        oferta.setFechaPublicacion(java.time.LocalDate.now());
 
         return ofertaRepository.save(oferta);
     }
@@ -113,10 +109,17 @@ public class OfertaService {
     }
 
     public List<Oferta> listarPorReclutador(Long reclutadorId) {
-        if (!usuarioRepo.existsById(reclutadorId)) {
-            throw new RuntimeException("Reclutador no encontrado");
+        // Obtener el reclutador
+        com.workable_sb.workable.models.Reclutador reclutador = usuarioRepo.findById(reclutadorId)
+                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
+        
+        // Obtener la empresa del reclutador
+        if (reclutador.getEmpresa() == null) {
+            return List.of(); // Retornar lista vacía si el reclutador no tiene empresa
         }
-        return ofertaRepository.findByReclutadorId(reclutadorId);
+        
+        // Retornar las ofertas de la empresa del reclutador
+        return ofertaRepository.findByEmpresaId(reclutador.getEmpresa().getId());
     }
 
     public List<Oferta> listarPorMunicipio(Long municipioId) {
@@ -188,24 +191,31 @@ public class OfertaService {
             throw new IllegalStateException("Solo el reclutador de la empresa o un administrador pueden eliminar esta oferta");
         }
 
+        // Validar que no hay postulaciones activas
+        long postulacionesCount = (long) entityManager.createNativeQuery(
+            "SELECT COUNT(*) FROM postulacion WHERE oferta_id = ?1")
+            .setParameter(1, id).getSingleResult();
+        
+        if (postulacionesCount > 0) {
+            throw new IllegalStateException("No se puede eliminar una oferta con " + postulacionesCount + " postulaciones. Primero debe rechazar o aceptar todas las postulaciones.");
+        }
+
         ofertaRepository.delete(existente);
     }
 
     private boolean puedeModificarOferta(Oferta oferta, Long usuarioId) {
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Es ADMIN
-        if (usuario.getRol() == Usuario.Rol.ADMIN) {
+        // Si es ADMIN, permitir sin validar pertenencia
+        if (adminValidationService.isAdmin()) {
             return true;
         }
+
+        // Obtener el reclutador
+        var reclutador = usuarioRepo.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Es reclutador de la empresa
-        if (usuario.getRol() == Usuario.Rol.RECLUTADOR) {
-            return oferta.getEmpresa().getReclutadores().stream()
-                    .anyMatch(r -> r.getId().equals(usuarioId));
-        }
-        
-        return false;
+        // Verificar que el reclutador pertenece a la misma empresa
+        return reclutador.getEmpresa() != null && 
+               reclutador.getEmpresa().getId().equals(oferta.getEmpresa().getId());
     }
 }
+

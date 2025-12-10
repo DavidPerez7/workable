@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './SalaryPage.css';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
+import Footer from '../../components/Footer/footer';
 
 function SalaryPage() {
   const navigate = useNavigate();

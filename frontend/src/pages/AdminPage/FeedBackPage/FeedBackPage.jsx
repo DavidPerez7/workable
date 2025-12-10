@@ -1,6 +1,6 @@
 import React from 'react';
 import HeaderAdmin from '../../../components/HeaderAdmin/HeaderAdmin';
-import Footer from '../../../components/Footer/Footer';
+import Footer from '../../../components/Footer/footer';
 import './FeedBackPage.css';
 
 function FeedbackManagementPage() {

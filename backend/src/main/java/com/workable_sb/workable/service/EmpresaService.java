@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.exception.ResourceNotFoundException;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.Reclutador;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
 
 @Service
 @Transactional
@@ -22,7 +23,7 @@ public class EmpresaService {
     private EmpresaRepository empresaRepository;
 
     @Autowired
-    private UsuarioRepo usuarioRepository;
+    private ReclutadorRepo usuarioRepository;
 
     @Autowired
     private MunicipioRepo municipioRepo;
@@ -49,7 +50,7 @@ public class EmpresaService {
     }
 
     // READ (para reclutadores de la empresa)
-    public List<Usuario> getReclutadores(Long empresaId) {
+    public List<Reclutador> getReclutadores(Long empresaId) {
         Empresa empresa = empresaRepository.findById(empresaId).orElseThrow(() -> new RuntimeException("Empresa not found"));
         return empresa.getReclutadores();
     }
@@ -57,34 +58,38 @@ public class EmpresaService {
     // ===== CREATE =====
     public Empresa create(Empresa request, Long usuarioId) {
 
-        // Validar que el usuario existe
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar usuario autenticado
+        Reclutador usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reclutador", "id", usuarioId));
 
         if (empresaRepository.existsByNit(request.getNit())) {
-            throw new RuntimeException("NIT already in use");
+            throw new IllegalArgumentException("El NIT ya está en uso");
         }
 
         if (request.getMunicipio() != null) {
             Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                .orElseThrow(() -> new RuntimeException("Municipio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Municipio", "id", request.getMunicipio().getId()));
             request.setMunicipio(municipio);
         }
+
+        // Definir owner y agregar a reclutadores
+        request.setReclutadorOwner(usuario);
+        request.getReclutadores().add(usuario);
 
         return empresaRepository.save(request);
     }
 
-    public Empresa createWithOwner(Empresa empresa, Usuario reclutadorOwner) {
+    public Empresa createWithOwner(Empresa empresa, Reclutador reclutadorOwner) {
 
         if (empresaRepository.existsByNit(empresa.getNit())) {
-            throw new RuntimeException("NIT already in use");
+            throw new IllegalArgumentException("El NIT ya está en uso");
         }
 
         if (usuarioRepository.findByCorreo(reclutadorOwner.getCorreo()).isPresent()) {
-            throw new RuntimeException("Correo already in use");
+            throw new IllegalArgumentException("El correo ya está en uso");
         }
 
-        Usuario ownerGuardado = usuarioRepository.save(reclutadorOwner);
+        Reclutador ownerGuardado = usuarioRepository.save(reclutadorOwner);
 
         empresa.setReclutadorOwner(ownerGuardado);
         empresa.getReclutadores().add(ownerGuardado);
@@ -92,7 +97,7 @@ public class EmpresaService {
         return empresaRepository.save(empresa);
     }
 
-    public Empresa addReclutador(Long empresaId, Usuario nuevoReclutador, Long usuarioIdActual) {
+    public Empresa addReclutador(Long empresaId, Reclutador nuevoReclutador, Long usuarioIdActual) {
 
         Empresa empresa = empresaRepository.findById(empresaId)
             .orElseThrow(() -> new RuntimeException("Empresa not found"));
@@ -106,7 +111,7 @@ public class EmpresaService {
             throw new RuntimeException("Correo already in use");
         }
 
-        Usuario guardado = usuarioRepository.save(nuevoReclutador);
+        Reclutador guardado = usuarioRepository.save(nuevoReclutador);
         empresa.getReclutadores().add(guardado);
 
         return empresaRepository.save(empresa);
@@ -142,6 +147,30 @@ public class EmpresaService {
         return empresaRepository.save(existingEmpresa);
     }
 
+    // ===== UPDATE (ADMIN - sin restricciones) =====
+    public Empresa updateAdmin(Long id, Empresa request) {
+        Empresa existingEmpresa = empresaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Empresa not found"));
+
+        existingEmpresa.setNombre(request.getNombre());
+        existingEmpresa.setDescripcion(request.getDescripcion());
+        existingEmpresa.setNumeroTrabajadores(request.getNumeroTrabajadores());
+        existingEmpresa.setEmailContacto(request.getEmailContacto());
+        existingEmpresa.setTelefonoContacto(request.getTelefonoContacto());
+        existingEmpresa.setWebsite(request.getWebsite());
+        existingEmpresa.setLogoUrl(request.getLogoUrl());
+        existingEmpresa.setRazonSocial(request.getRazonSocial());
+        existingEmpresa.setCategories(request.getCategories());
+
+        if (request.getMunicipio() != null) {
+            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
+                .orElseThrow(() -> new RuntimeException("Municipio not found"));
+            existingEmpresa.setMunicipio(municipio);
+        }
+
+        return empresaRepository.save(existingEmpresa);
+    }
+
     // ===== DELETE =====
     public void delete(Long id, Long usuarioIdActual) {
         Empresa existingEmpresa = empresaRepository.findById(id)
@@ -150,6 +179,14 @@ public class EmpresaService {
         if (!puedeModificarEmpresa(existingEmpresa, usuarioIdActual)) {
             throw new IllegalStateException("Solo el owner o un ADMIN pueden eliminar esta empresa");
         }
+
+        empresaRepository.delete(existingEmpresa);
+    }
+
+    // ===== DELETE (ADMIN - sin restricciones) =====
+    public void deleteAdmin(Long id) {
+        Empresa existingEmpresa = empresaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Empresa not found"));
 
         empresaRepository.delete(existingEmpresa);
     }
@@ -173,8 +210,8 @@ public class EmpresaService {
             throw new RuntimeException("Reclutador not found in empresa");
         }
 
-        Usuario reclutador = usuarioRepository.findById(reclutadorId)
-            .orElseThrow(() -> new RuntimeException("Usuario not found"));
+        Reclutador reclutador = usuarioRepository.findById(reclutadorId)
+            .orElseThrow(() -> new RuntimeException("Reclutador not found"));
         reclutador.setIsActive(false);
         usuarioRepository.save(reclutador);
 
@@ -217,7 +254,7 @@ public class EmpresaService {
         return empresa.getCodigoInvitacion() != null && empresa.getCodigoInvitacion().equals(codigo);
     }
 
-    public Empresa unirseAEmpresaConCodigo(String nit, String codigoInvitacion, Usuario nuevoReclutador) {
+    public Empresa unirseAEmpresaConCodigo(String nit, String codigoInvitacion, Reclutador nuevoReclutador) {
         if (nit == null || nit.isEmpty()) {
             throw new IllegalArgumentException("NIT requerido");
         }
@@ -248,7 +285,7 @@ public class EmpresaService {
         }
 
         // 5. Guardar el nuevo reclutador
-        Usuario reclutadorGuardado = usuarioRepository.save(nuevoReclutador);
+        Reclutador reclutadorGuardado = usuarioRepository.save(nuevoReclutador);
 
         // 6. Agregar a la lista de reclutadores de la empresa
         empresa.getReclutadores().add(reclutadorGuardado);
@@ -258,13 +295,8 @@ public class EmpresaService {
     }
 
     private boolean puedeModificarEmpresa(Empresa empresa, Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Es ADMIN
-        if (usuario.getRol() == Usuario.Rol.ADMIN) {
-            return true;
-        }
+        Reclutador usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
         // Es el owner de la empresa
         if (empresa.getReclutadorOwner() != null && 

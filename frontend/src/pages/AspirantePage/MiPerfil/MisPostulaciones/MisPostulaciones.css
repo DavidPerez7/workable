@@ -3,22 +3,26 @@
    =========================== */
 .mispostulaciones-container-MP {
   font-family: "Inter", sans-serif;
-  background: #f9fafb;
-  padding: 2rem 3rem;
+  background: linear-gradient(135deg, #f0f4f8 0%, #f9fafb 100%);
+  padding: 2.5rem 3rem;
   min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .mp-title {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 2.5rem;
+  font-weight: 900;
   color: #0f172a;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
 }
 
 .mp-subtitle {
-  color: #475569;
-  font-size: 1rem;
-  margin-bottom: 2rem;
+  color: #64748b;
+  font-size: 1.05rem;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
 }
 
 /* ===========================
@@ -27,7 +31,7 @@
 .mp-list {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.5rem;
 }
 
 /* ===========================
@@ -35,67 +39,111 @@
    =========================== */
 .mp-card {
   background: white;
-  padding: 1.8rem;
-  border-radius: 14px;
-  border: 2px solid #e5e7eb;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mp-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
   transition: all 0.3s ease;
 }
 
 .mp-card:hover {
   border-color: #3b82f6;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.2);
+}
+
+.mp-card:hover::before {
+  background: linear-gradient(90deg, #1d4ed8, #1e40af);
 }
 
 .mp-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.6rem;
+  align-items: flex-start;
+  margin-bottom: 1.2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .mp-job-title {
-  font-size: 1.3rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 800;
   color: #0f172a;
   margin: 0;
+  flex: 1;
+  min-width: 200px;
+  letter-spacing: -0.3px;
 }
 
 .mp-company {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: #3b82f6;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-company::before {
+  content: "🏢";
 }
 
 .mp-location {
   font-size: 0.95rem;
   color: #64748b;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-location::before {
+  content: "📍";
 }
 
 /* ===========================
    ESTADOS
    =========================== */
 .mp-status {
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 1.1rem;
   border-radius: 50px;
   font-size: 0.85rem;
   font-weight: 700;
   color: white;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .mp-status-review {
-  background: #6366f1;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
 }
 
 .mp-status-pending {
-  background: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
 .mp-status-rejected {
-  background: #ef4444;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.mp-status-accepted {
+  background: linear-gradient(135deg, #10b981, #059669);
 }
 
 /* ===========================
@@ -103,29 +151,38 @@
    =========================== */
 .mp-tags {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.7rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .mp-tag {
-  padding: 0.35rem 0.9rem;
+  padding: 0.45rem 1.1rem;
   border-radius: 50px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   border: 2px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+
+.mp-tag:hover {
+  transform: scale(1.08);
 }
 
 .mp-tag.modalidad {
-  background: #eff6ff;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
   color: #1d4ed8;
   border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
 }
 
 .mp-tag.contrato {
-  background: #fef3c7;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
   color: #d97706;
   border-color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
 }
 
 /* ===========================
@@ -135,19 +192,68 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 2px solid #e5e7eb;
-  padding-top: 1rem;
+  border-top: 2px solid #e2e8f0;
+  padding-top: 1.2rem;
+  gap: 1.2rem;
+  flex-wrap: wrap;
 }
 
 .mp-salary {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 900;
   color: #10b981;
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mp-salary::before {
+  content: "💰";
 }
 
 .mp-date {
   font-size: 0.9rem;
   color: #64748b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mp-date::before {
+  content: "📅";
+}
+
+.mp-delete-btn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.3rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mp-delete-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+}
+
+.mp-delete-btn:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.mp-delete-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
 /* ===========================
@@ -155,8 +261,36 @@
    =========================== */
 .mp-loading,
 .mp-empty {
-  padding: 3rem;
+  padding: 4rem;
   text-align: center;
   color: #64748b;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  margin-top: 2rem;
+}
+
+.mp-empty {
+  font-weight: 600;
+  color: #475569;
+}
+
+.mp-loading::before {
+  content: "⏳ ";
+}
+
+.mp-empty::before {
+  content: "📋 ";
+}
+
+.mp-error {
+  padding: 1.2rem;
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #7f1d1d;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  border-left: 5px solid #dc2626;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
 }

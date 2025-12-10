@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +13,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.CascadeType;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,17 +42,18 @@ public class Feedback {
 	private LocalDate fechaCreacion;
 	private Boolean isActive = true;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "empresa_id", foreignKey = @ForeignKey(name = "FK_empresa_feedback"))
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "empresa_id", referencedColumnName = "id")
 	private Empresa empresa;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "oferta_id", foreignKey = @ForeignKey(name = "FK_oferta_feedback"))
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "oferta_id", referencedColumnName = "id")
 	private Oferta oferta;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_usuario_feedback"))
-	private Usuario usuario;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Aspirante aspirante;
 
 	@PrePersist
 	@PreUpdate

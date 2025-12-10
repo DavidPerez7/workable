@@ -3,11 +3,11 @@ package com.workable_sb.workable.service;
 import com.workable_sb.workable.models.Feedback;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Oferta;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.repository.FeedbackRepo;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.OfertaRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +24,13 @@ public class FeedbackService {
     @Autowired
     private OfertaRepo ofertaRepo;
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private AspiranteRepo aspiranteRepo;
 
     // ===== CREATE =====
     public Feedback create(Feedback request) {
-        Usuario usuario = usuarioRepo.findById(request.getUsuario().getId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        request.setUsuario(usuario);
+        Aspirante aspirante = aspiranteRepo.findById(request.getAspirante().getId())
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+        request.setAspirante(aspirante);
 
         if (request.getEmpresa() != null) {
             Empresa empresa = empresaRepository.findById(request.getEmpresa().getId())
@@ -61,12 +61,12 @@ public class FeedbackService {
         return feedbackRepo.findByOfertaIdAndIsActiveTrue(ofertaId);
     }
 
-    public List<Feedback> getByUsuario(Long usuarioId) {
-        return feedbackRepo.findByUsuarioIdAndIsActiveTrue(usuarioId);
+    public List<Feedback> getByAspirante(Long aspiranteId) {
+        return feedbackRepo.findByAspiranteIdAndIsActiveTrue(aspiranteId);
     }
 
-    public Feedback getByUsuarioAndEmpresa(Long usuarioId, Long empresaId) {
-        return feedbackRepo.findByUsuarioIdAndEmpresaIdAndIsActiveTrue(usuarioId, empresaId)
+    public Feedback getByAspiranteAndEmpresa(Long aspiranteId, Long empresaId) {
+        return feedbackRepo.findByAspiranteIdAndEmpresaIdAndIsActiveTrue(aspiranteId, empresaId)
                 .orElse(null);
     }
 
@@ -91,9 +91,9 @@ public class FeedbackService {
     }
 
     // ===== HELPER PARA @PreAuthorize =====
-    public boolean esOwner(Long feedbackId, Long usuarioId) {
+    public boolean esOwner(Long feedbackId, Long aspiranteId) {
         return feedbackRepo.findById(feedbackId)
-                .map(f -> f.getUsuario().getId().equals(usuarioId))
+                .map(f -> f.getAspirante().getId().equals(aspiranteId))
                 .orElse(false);
     }
 

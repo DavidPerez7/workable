@@ -1,0 +1,326 @@
+/* ================================
+   Container principal
+================================ */
+.reclutador-form-container {
+  min-height: 70vh;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* ================================
+   Card del formulario
+================================ */
+.reclutador-form-card {
+  background: transparent;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 650px;
+  animation: fadeIn 0.5s ease-out;
+  min-height: 400px;
+}
+
+/* ================================
+   Header del formulario
+================================ */
+.reclutador-form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.reclutador-form-title {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.reclutador-form-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ================================
+   Formulario (CORREGIDO)
+================================ */
+form {
+  display: flex;
+  flex-direction: column; /* CORRECCIÓN IMPORTANTE */
+  gap: 20px;
+  width: 100%; /* CORRECCIÓN IMPORTANTE */
+}
+
+/* ================================
+   Secciones del formulario
+================================ */
+.form-section {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.personal-section {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+/* ================================
+   Títulos de sección
+================================ */
+.section-title-reclutador {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ================================
+   Grid general
+================================ */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+/* ================================
+   Campos del formulario
+================================ */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+/* ================================
+   Checkbox field
+================================ */
+.checkbox-field {
+  margin-top: 1rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #10b981;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ================================
+   Full width
+================================ */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ================================
+   Categorías
+================================ */
+.categories-label {
+  display: block;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.category-item:hover {
+  background: #f1f5f9;
+}
+
+.category-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+}
+
+.category-label {
+  font-size: 0.95rem;
+  color: #475569;
+  text-transform: capitalize;
+}
+
+/* ================================
+   Botón de submit
+================================ */
+.submit-button {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  margin-top: 1rem;
+}
+
+.submit-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.submit-button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ================================
+   Link login
+================================ */
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #64748b;
+}
+
+.login-anchor {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-anchor:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.new-reclutador-link {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.new-reclutador-anchor {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.new-reclutador-anchor:hover {
+  text-decoration: underline;
+  color: #1e40af;
+}
+
+/* ================================
+   Responsive
+================================ */
+@media (max-width: 768px) {
+  .reclutador-form-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .section-title-reclutador {
+    font-size: 1.2rem; /* CORRECCIÓN */
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .reclutador-form-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .reclutador-form-title {
+    font-size: 1.75rem;
+  }
+
+  .reclutador-form-subtitle {
+    font-size: 1rem;
+  }
+
+  /* CORRECCIÓN: aplicar padding a secciones reales */
+  .form-section-personal-section,
+  .empresa-section,
+  .compromiso-section {
+    padding: 1rem;
+  }
+}
+
+/* ================================
+   Accesibilidad
+================================ */
+.form-input:invalid:not(:placeholder-shown) {
+  border-color: #ef4444;
+}
+
+.form-input:valid:not(:placeholder-shown) {
+  border-color: #10b981;
+}
+
+/* ================================
+   Animación
+================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

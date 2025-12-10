@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './ProfessionalPage.css';
 import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
+import Footer from '../../components/Footer/footer';
 
 function ProfessionalPage() {
   return (

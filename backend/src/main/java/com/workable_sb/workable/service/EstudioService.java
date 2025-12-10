@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Estudio;
 import com.workable_sb.workable.models.Estudio.NivelEducativo;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.EstudioRepo;
 import com.workable_sb.workable.repository.MunicipioRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
 @Service
 @Transactional
@@ -21,13 +21,13 @@ public class EstudioService {
     private EstudioRepo estudioRepo;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private AspiranteRepo aspiranteRepo;
 
     @Autowired
     private MunicipioRepo municipioRepo;
 
     // ===== CREATE =====
-    public Estudio crearEstudio(Estudio estudio, Long usuarioId) {
+    public Estudio crearEstudio(Estudio estudio, Long aspiranteId) {
 
         // Validar campos obligatorios
         if (estudio.getTitulo() == null || estudio.getTitulo().isEmpty()) {
@@ -43,9 +43,9 @@ public class EstudioService {
             throw new IllegalArgumentException("El nivel educativo es obligatorio");
         }
 
-        // Validar que el usuario existe
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar que el aspirante existe
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
         // Validar municipio
         if (estudio.getMunicipio() != null) {
@@ -58,7 +58,7 @@ public class EstudioService {
             throw new IllegalArgumentException("Un estudio finalizado debe tener fecha de fin");
         }
 
-        estudio.setUsuario(usuario);
+        estudio.setAspirante(aspirante);
 
         return estudioRepo.save(estudio);
     }
@@ -71,27 +71,27 @@ public class EstudioService {
 
     public List<Estudio> obtenerEstudiosPorUsuario(Long usuarioId) {
         // Validar que el usuario existe
-        if (!usuarioRepo.existsById(usuarioId)) {
-            throw new RuntimeException("Usuario no encontrado con id: " + usuarioId);
+        if (!aspiranteRepo.existsById(usuarioId)) {
+            throw new RuntimeException("Aspirante no encontrado con id: " + usuarioId);
         }
-        return estudioRepo.findByUsuarioId(usuarioId);
+        return estudioRepo.findByAspiranteId(usuarioId);
     }
 
     public List<Estudio> obtenerEstudiosEnCurso(Long usuarioId) {
-        if (!usuarioRepo.existsById(usuarioId)) {
-            throw new RuntimeException("Usuario no encontrado con id: " + usuarioId);
+        if (!aspiranteRepo.existsById(usuarioId)) {
+            throw new RuntimeException("Aspirante no encontrado con id: " + usuarioId);
         }
-        return estudioRepo.findByUsuarioIdAndEnCurso(usuarioId, true);
+        return estudioRepo.findByAspiranteIdAndEnCurso(usuarioId, true);
     }
 
     public List<Estudio> obtenerEstudiosPorNivel(Long usuarioId, NivelEducativo nivel) {
-        if (!usuarioRepo.existsById(usuarioId)) {
-            throw new RuntimeException("Usuario no encontrado con id: " + usuarioId);
+        if (!aspiranteRepo.existsById(usuarioId)) {
+            throw new RuntimeException("Aspirante no encontrado con id: " + usuarioId);
         }
         if (nivel == null) {
             throw new IllegalArgumentException("Nivel educativo requerido");
         }
-        return estudioRepo.findByUsuarioIdAndNivelEducativo(usuarioId, nivel);
+        return estudioRepo.findByAspiranteIdAndNivelEducativo(usuarioId, nivel);
     }
 
     public List<Estudio> listarTodos() {
@@ -139,11 +139,7 @@ public class EstudioService {
     }
 
     private boolean puedeModificarEstudio(Estudio estudio, Long usuarioId) {
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
-        // Es el dueño o es ADMIN
-        return estudio.getUsuario().getId().equals(usuarioId) || 
-               usuario.getRol() == Usuario.Rol.ADMIN;
+        // Es el dueño
+        return estudio.getAspirante().getId().equals(usuarioId);
     }
 }

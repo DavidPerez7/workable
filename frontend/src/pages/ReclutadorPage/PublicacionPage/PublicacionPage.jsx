@@ -1,39 +1,65 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ← IMPORTANTE
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import { crearOferta } from "../../../api/ofertasAPI";
+import { getMunicipios } from "../../../api/municipioAPI";
 import "./PublicacionPage.css";
 
 const PublicacionPage = () => {
-  const navigate = useNavigate(); // ← NAVEGACIÓN
+  const navigate = useNavigate();
 
+  const [municipios, setMunicipios] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     tituloAviso: "",
     descripcionTrabajo: "",
     salario: "",
     direccion: "",
-    fechaPublicacion: "",
     fechaLimite: "",
     modalidadTrabajo: "",
     tipoContrato: "",
+    nivelExperiencia: "",
     municipio: "",
+    empresaId: "",
   });
 
+  useEffect(() => {
+    const cargarMunicipios = async () => {
+      try {
+        const data = await getMunicipios();
+        setMunicipios(data);
+      } catch (error) {
+        console.error("Error al cargar municipios:", error);
+      }
+    };
+    cargarMunicipios();
+
+    // Obtener empresa del reclutador actual desde localStorage o contexto
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.empresa?.id) {
+          setFormData(prev => ({ ...prev, empresaId: user.empresa.id }));
+        }
+      } catch (e) {
+        console.error("Error parsing user:", e);
+      }
+    }
+  }, []);
+
   const modalidades = [
-    { id: 1, nombre: "Presencial" },
-    { id: 2, nombre: "Remoto" },
-    { id: 3, nombre: "Híbrido" },
+    { value: "PRESENCIAL", nombre: "Presencial" },
+    { value: "REMOTO", nombre: "Remoto" },
+    { value: "HIBRIDO", nombre: "Híbrido" }
   ];
 
   const tiposContrato = [
-    { id: 1, nombre: "Indefinido" },
-    { id: 2, nombre: "Término fijo" },
-    { id: 3, nombre: "Prácticas" },
-  ];
-
-  const municipios = [
-    { id: 1, nombre: "Bogotá" },
-    { id: 2, nombre: "Medellín" },
-    { id: 3, nombre: "Cali" },
+    { value: "TIEMPO_COMPLETO", nombre: "Tiempo completo" },
+    { value: "MEDIO_TIEMPO", nombre: "Medio tiempo" },
+    { value: "TEMPORAL", nombre: "Temporal" },
+    { value: "FREELANCE", nombre: "Freelance" },
+    { value: "PRACTICAS", nombre: "Prácticas" },
   ];
 
   const handleChange = (e) => {
@@ -41,26 +67,63 @@ const PublicacionPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const datosListos = {
-      NOMBRE: formData.tituloAviso,
-      DESCRIPCION: formData.descripcionTrabajo,
-      SALARIO: formData.salario,
-      DIRECCION: formData.direccion,
-      FECHA_PUBLI: formData.fechaPublicacion,
-      FECHA_LIMIT: formData.fechaLimite,
-      MODAL_ID: parseInt(formData.modalidadTrabajo),
-      TIP_CONT_ID: parseInt(formData.tipoContrato),
-      MUNIC_ID: parseInt(formData.municipio),
-    };
+    if (!formData.empresaId) {
+      alert("No se encontró información de la empresa. Por favor, inicia sesión nuevamente.");
+      setLoading(false);
+      return;
+    }
 
-    console.log("Datos listos para guardar:", datosListos);
-    alert("Oferta preparada para guardar (ver consola).");
+    try {
+      const ofertaData = {
+        titulo: formData.tituloAviso,
+        descripcion: formData.descripcionTrabajo,
+        salario: parseFloat(formData.salario),
+        ubicacion: formData.direccion,
+        fechaLimite: formData.fechaLimite,
+        modalidad: formData.modalidadTrabajo,
+        tipoContrato: formData.tipoContrato,
+        nivelExperiencia: formData.nivelExperiencia,
+        estadoOferta: "ABIERTA",
+        empresa: {
+          id: formData.empresaId
+        },
+        municipio: {
+          id: parseInt(formData.municipio)
+        }
+      };
 
-    // 🔵 REDIRECCIÓN A ReclutadorPage.jsx
-    navigate("/Reclutador");
+      console.log("Creando oferta:", ofertaData);
+      const response = await crearOferta(ofertaData);
+      console.log("Oferta creada:", response);
+
+      alert("Oferta publicada exitosamente");
+      
+      // Resetear formulario
+      setFormData({
+        tituloAviso: "",
+        descripcionTrabajo: "",
+        salario: "",
+        direccion: "",
+        fechaLimite: "",
+        modalidadTrabajo: "",
+        tipoContrato: "",
+        nivelExperiencia: "",
+        municipio: "",
+        empresaId: formData.empresaId // Mantener empresaId
+      });
+
+      navigate("/Reclutador/GestigOferts");
+
+    } catch (error) {
+      console.error("Error al crear oferta:", error);
+      alert(`Error al publicar oferta: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,19 +190,6 @@ const PublicacionPage = () => {
             </div>
 
             <div className="pb-field">
-              <label htmlFor="fechaPublicacion">Fecha de publicación *</label>
-              <input
-                type="date"
-                id="fechaPublicacion"
-                name="fechaPublicacion"
-                value={formData.fechaPublicacion}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
-
-            <div className="pb-field">
               <label htmlFor="fechaLimite">Fecha límite *</label>
               <input
                 type="date"
@@ -164,7 +214,7 @@ const PublicacionPage = () => {
               >
                 <option value="">Selecciona una modalidad</option>
                 {modalidades.map((mod) => (
-                  <option key={mod.id} value={mod.id}>
+                  <option key={mod.value} value={mod.value}>
                     {mod.nombre}
                   </option>
                 ))}
@@ -183,7 +233,7 @@ const PublicacionPage = () => {
               >
                 <option value="">Selecciona un tipo de contrato</option>
                 {tiposContrato.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id}>
+                  <option key={tipo.value} value={tipo.value}>
                     {tipo.nombre}
                   </option>
                 ))}
@@ -203,15 +253,34 @@ const PublicacionPage = () => {
                 <option value="">Selecciona un municipio</option>
                 {municipios.map((mun) => (
                   <option key={mun.id} value={mun.id}>
-                    {mun.nombre}
+                    {mun.nombre} - {mun.departamento?.nombre || ''}
                   </option>
                 ))}
               </select>
             </div>
 
+            <div className="pb-field">
+              <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
+              <select
+                id="nivelExperiencia"
+                name="nivelExperiencia"
+                value={formData.nivelExperiencia}
+                onChange={handleChange}
+                required
+                className="pb-select"
+              >
+                <option value="">Selecciona un nivel</option>
+                <option value="SIN_EXPERIENCIA">Sin experiencia</option>
+                <option value="BASICO">Básico</option>
+                <option value="INTERMEDIO">Intermedio</option>
+                <option value="AVANZADO">Avanzado</option>
+                <option value="EXPERTO">Experto</option>
+              </select>
+            </div>
+
             {/* 🔵 BOTÓN ACTUALIZADO */}
-            <button className="pb-btn-primary" type="submit">
-              Publicar
+            <button className="pb-btn-primary" type="submit" disabled={loading}>
+              {loading ? "Publicando..." : "Publicar"}
             </button>
           </section>
         </form>

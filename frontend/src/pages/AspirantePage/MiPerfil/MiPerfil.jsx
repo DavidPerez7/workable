@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getUsuarioActual, getUsuarioById } from "../../../api/usuarioAPI";
+import { deletePublicUsuario } from "../../../api/usuarioAPI";
+import { getMunicipios } from "../../../api/municipioAPI";
 import {
   FaUser,
   FaBriefcase,
@@ -12,431 +15,849 @@ import {
 import {
   CheckCircle,
   Eye,
-  Settings,
   Rocket,
   Trash2,
   AlertCircle,
+  Edit2,
+  Save,
+  X,
+  LogOut,
 } from "lucide-react";
-import HeaderAspirant from "../../../components/HeaderAspirant/HeaderAspirant";
+import Header from "../../../components/Header/Header";
 import Menu from "../../../components/Menu/Menu";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
 import "./MiPerfil.css";
 
 const MiPerfil = () => {
-  const [aspirante, setAspirante] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deletePassword, setDeletePassword] = useState("");
-  const [deleteError, setDeleteError] = useState("");
-  const navigate = useNavigate();
+	const [usuario, setUsuario] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState("");
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [deletePassword, setDeletePassword] = useState("");
+	const [deleteError, setDeleteError] = useState("");
+	const [editingField, setEditingField] = useState(null);
+	const [editValues, setEditValues] = useState({});
+	const [savingField, setSavingField] = useState(null);
+	const [municipios, setMunicipios] = useState([]);
+	const [loadingMunicipios, setLoadingMunicipios] = useState(true);
+	const navigate = useNavigate();
 
-  const idAspirante = localStorage.getItem("idAspirante");
-  const token = localStorage.getItem("token");
+	// getPerfil, token ya implementado
+	const getUsuario = async () => {
+		const TOKEN = localStorage.getItem("token");
+		const rol = localStorage.getItem("rol"); // Obtener el rol del usuario
+		setLoading(true);
+		setError(""); // limpiar errores previos
 
-  // ============================================================
-  // RF03: Obtener datos del perfil del aspirante
-  // TODO: CONECTAR CON API - Por ahora usando datos de ejemplo
-  // ============================================================
-  const obtenerAspirante = async (id) => {
-    try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch(`http://localhost:8080/api/aspirante/${id}`, {
-      //   method: 'GET',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //     "Content-Type": "application/json",
-      //   },
-      // });
+		try {
 
-      // if (!response.ok) {
-      //   throw new Error("Error al obtener el perfil del aspirante");
-      // }
+			if (!TOKEN) {
+				throw new Error("No se encontró token de autenticación");
+			}
+			const usuario = await getUsuarioActual(rol);
+			console.log("Usuario obtenido:", usuario);
+			setUsuario(usuario); // Actualizar estado con datos obtenidos
 
-      // const data = await response.json();
+		} catch (err) {
+			console.error("Error obteniendo usuario:", err);
+			setError(err.message || "No se pudo cargar la información del perfil. Por favor, intenta de nuevo.");
+			if (err.message.includes("401") || err.message.includes("expirada") || err.message.includes("404")) {
+				// Token inválido, expirado o usuario no encontrado
+				localStorage.clear();
+				navigate("/login");
+			}
 
-      // ✅ DATOS DE EJEMPLO - Simula la respuesta del backend
-      const data = {
-        id: id,
-        nom: "Juan Carlos",
-        ape: "Pérez González",
-        cargo: "Desarrollador Full Stack",
-        descripcion:
-          "Desarrollador apasionado por crear soluciones tecnológicas inclusivas y accesibles. Con experiencia en React, Node.js y bases de datos.",
-        numerDoc: "1020304050",
-        nombreTipDoc: "C.C",
-        nombreMunicipio: "Bogotá D.C",
-        nombreGenero: "Masculino",
-        tel: "3001234567",
-        ubi: "Calle 123 #45-67, Bogotá",
-        feNa: "1995-06-15",
-        nombreDiscapacidad: "Discapacidad Motriz",
-        fotoPerfilUrl: null, // Cambia a una URL válida si tienes imagen
-      };
+		} finally {
+			setLoading(false);
+		}
+	};
 
-      // Simular delay de red
-      await new Promise((resolve) => setTimeout(resolve, 800));
+	// deleteUsuario, token ya implementado
+	const eliminarCuenta = async () => {
+		if (!deletePassword || deletePassword.trim().length === 0) {
+			setDeleteError("Debes ingresar tu contraseña para confirmar");
+			return;
+		}
+		const TOKEN = localStorage.getItem("token");
+		const usuarioId = localStorage.getItem("usuarioId");
+		const rol = localStorage.getItem("rol");
 
-      setAspirante(data);
-      setError("");
-    } catch (err) {
-      console.error("Error obteniendo perfil:", err);
-      setError("No se pudo cargar tu perfil. Por favor, intenta de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  };
+		try { 
+			const response = await deletePublicUsuario(usuarioId, TOKEN, rol)
 
-  // ============================================================
-  // RF04: Eliminar cuenta de aspirante
-  // Criterios de aceptación:
-  // - El sistema pide confirmación antes de eliminar
-  // - Se eliminan todos los datos asociados (postulaciones/perfil)
-  // - Requiere verificación con contraseña
-  // TODO: CONECTAR CON API - Por ahora simula la eliminación
-  // ============================================================
-  const handleEliminarCuenta = async () => {
-    // Validación de contraseña
-    if (!deletePassword || deletePassword.trim().length === 0) {
-      setDeleteError("Debes ingresar tu contraseña para confirmar");
-      return;
-    }
+			//Verificar si la respuesta indica éxito
+			if (response.status === 200 || response.status === 204) {
+				//Exito: limpiar estado, cerra modal, redirigir a login
+				setShowDeleteModal(false);
+				setDeletePassword("");
+				setDeleteError("");
+				localStorage.clear();
+				alert("Tu cuenta ha sido eliminada exitosamente.");
+				navigate("/login");
+			} else {
+				throw new Error("No se pudo eliminar la cuenta. Por favor, intenta de nuevo.");
+			}
 
-    try {
-      // ❌ COMENTADO - Llamada a API
-      // const response = await fetch(
-      //   `http://localhost:8080/api/aspirante/${idAspirante}`,
-      //   {
-      //     method: "DELETE",
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //       "Content-Type": "application/json"
-      //     },
-      //     body: JSON.stringify({
-      //       clave: deletePassword // Verificación de contraseña
-      //     })
-      //   }
-      // );
+		} catch (error) {
+			console.error("Error eliminando cuenta:", error);
+			//Manejar errores específicos
+			if (error.response?.status === 401) {
+				setDeleteError("Token inválido o expirado. Por favor, inicia sesión nuevamente.");
+				localStorage.clear();
+				navigate("/login");
+			} else if (error.response?.status === 403) {
+				setDeleteError("No tienes permiso para eliminar esta cuenta.");
+			} else {
+				setDeleteError("Error al eliminar la cuenta. Por favor, intenta de nuevo.");
+			}
+		}
+	};
 
-      // if (!response.ok) {
-      //   if (response.status === 401) {
-      //     setDeleteError("Contraseña incorrecta");
-      //     return;
-      //   }
-      //   throw new Error("Error al eliminar la cuenta");
-      // }
+	const cerrarSesion = () => {
+		localStorage.clear();
+		navigate("/login");
+	};
 
-      // ✅ SIMULACIÓN - Por ahora simula validación de contraseña
-      // Para testing, acepta cualquier contraseña con más de 4 caracteres
-      if (deletePassword.length < 4) {
-        setDeleteError("Contraseña incorrecta");
-        return;
-      }
+	// Función para cargar municipios
+	const cargarMunicipios = async () => {
+		try {
+			setLoadingMunicipios(true);
+			const municipiosData = await getMunicipios();
+			setMunicipios(municipiosData);
+		} catch (error) {
+			console.error("Error cargando municipios:", error);
+		} finally {
+			setLoadingMunicipios(false);
+		}
+	};
 
-      // Simular delay de red
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+	// Funciones para editar campos
+	const startEditing = (field, value) => {
+		setEditingField(field);
+		if (field === 'municipio') {
+			// Para municipio, guardamos el ID del municipio actual
+			const currentMunicipioId = usuario?.municipio?.id;
+			setEditValues({ ...editValues, municipio: currentMunicipioId || "" });
+		} else {
+			setEditValues({ ...editValues, [field]: value || "" });
+		}
+	};
 
-      // Éxito: limpiar localStorage y redirigir
-      alert("Tu cuenta ha sido eliminada exitosamente");
-      localStorage.clear();
-      navigate("/");
-    } catch (err) {
-      console.error("Error eliminando cuenta:", err);
-      setDeleteError("No se pudo eliminar la cuenta. Intenta de nuevo.");
-    }
-  };
+	const cancelEditing = () => {
+		setEditingField(null);
+		setEditValues({});
+	};
 
-  // Cargar datos al montar el componente
-  useEffect(() => {
-    // ✅ TEMPORAL - Usar datos simulados
-    // Comentar validación de localStorage para testing
-    // if (!idAspirante || !token) {
-    //   setError("Sesión no válida. Por favor, inicia sesión nuevamente.");
-    //   setLoading(false);
-    //   navigate("/login");
-    //   return;
-    // }
+	// Cargar municipios al montar el componente
+	useEffect(() => {
+		cargarMunicipios();
+	}, []);
 
-    // Para testing, usar ID simulado si no existe en localStorage
-    const testId = idAspirante || "1";
-    obtenerAspirante(testId);
-  }, [idAspirante, token, navigate]);
+	const saveField = async (field) => {
+		const TOKEN = localStorage.getItem("token");
+		const usuarioId = localStorage.getItem("usuarioId");
+		const rol = localStorage.getItem("rol");
+		
+		setSavingField(field);
+		
+		try {
+			let updateData;
+			
+			if (field === 'municipio') {
+				// Para municipio, enviar el ID del municipio seleccionado
+				const selectedMunicipio = municipios.find(m => m.id === parseInt(editValues[field]));
+				updateData = {
+					municipio: {
+						id: parseInt(editValues[field])
+					}
+				};
+			} else {
+				updateData = {
+					[field]: editValues[field]
+				};
+			}
+			
+			// Llamar a API para actualizar
+			const endpoint = rol === "ASPIRANTE" 
+				? `http://localhost:8080/api/aspirante/${usuarioId}` 
+				: `http://localhost:8080/api/reclutador/${usuarioId}`;
+			
+			const response = await fetch(endpoint, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${TOKEN}`
+				},
+				body: JSON.stringify(updateData)
+			});
 
-  // Estados de carga y error
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Cargando tu perfil...</p>
-      </div>
-    );
-  }
+			if (response.ok) {
+				// Actualizar el estado local
+				if (field === 'municipio') {
+					const selectedMunicipio = municipios.find(m => m.id === parseInt(editValues[field]));
+					setUsuario({
+						...usuario,
+						municipio: selectedMunicipio
+					});
+				} else {
+					setUsuario({
+						...usuario,
+						[field]: editValues[field]
+					});
+				}
+				setEditingField(null);
+				setEditValues({});
+				alert("Campo actualizado exitosamente");
+			} else {
+				throw new Error("Error al actualizar el campo");
+			}
+		} catch (err) {
+			console.error("Error actualizando campo:", err);
+			alert("Error al actualizar. Por favor, intenta de nuevo.");
+		} finally {
+			setSavingField(null);
+		}
+	};
 
-  if (error && !aspirante) {
-    return (
-      <div className="error-container">
-        <AlertCircle size={48} className="error-icon" />
-        <h2>Error al cargar perfil</h2>
-        <p>{error}</p>
-        <button
-          onClick={() => obtenerAspirante(idAspirante)}
-          className="btn-retry"
-        >
-          Reintentar
-        </button>
-      </div>
-    );
-  }
+	useEffect(() => {
+		getUsuario();
+	}, []);
 
-  return (
-    <>
-      <HeaderAspirant />
-      <Menu />
+	if (loading) {
+		return (
+			<div className="loading-container">
+			<div className="spinner"></div>
+			<p>Cargando tu perfil...</p>
+			</div>
+		);
+	}
 
-      <main className="main-perfil-MPF">
-        <div className="container-perfil-MPF">
-          {/* Encabezado del Perfil */}
-          <section className="profile-header-MPF">
-            <div className="profile-pic-MPF">
-              {aspirante?.fotoPerfilUrl ? (
-                <img
-                  src={aspirante.fotoPerfilUrl}
-                  alt={`${aspirante.nom} ${aspirante.ape}`}
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextSibling.style.display = "flex";
-                  }}
-                />
-              ) : null}
-              <div className="profile-pic-placeholder-MPF">
-                <FaUser size={64} />
-              </div>
-            </div>
+	if (error && !usuario) {
+		return (
+			<div className="error-container">
+			<AlertCircle size={48} className="error-icon" />
+			<h2>Error al cargar perfil</h2>
+			<p>{error}</p>
+			<button
+				onClick={() => getUsuario()}
+				className="btn-retry"
+			>
+				Reintentar
+			</button>
+			</div>
+		);
+	}
 
-            <div className="profile-info-MPF">
-              <h1 className="profile-name-MPF">
-                {aspirante?.nom} {aspirante?.ape}
-              </h1>
-              <p className="profile-cargo-MPF">
-                {aspirante?.cargo || "Buscando oportunidades laborales"}
-              </p>
-              <div className="profile-status-MPF">
-                <CheckCircle size={20} className="icon-check" />
-                <span>Perfil activo</span>
-              </div>
-            </div>
-          </section>
+	return (
+	<>
+		<Header isLoggedIn={true} userRole="ASPIRANTE" />
+		<Menu />
 
-          {/* Resumen del Perfil */}
-          {aspirante?.descripcion && (
-            <section className="profile-summary-MPF">
-              <h2>Acerca de mí</h2>
-              <p>{aspirante.descripcion}</p>
-            </section>
-          )}
+		<main className="main-perfil-MPF">
+		<div className="container-perfil-MPF">
+			{/* Encabezado del Perfil */}
+			<section className="profile-header-MPF">
+			<div className="profile-pic-MPF">
+				{usuario?.urlFotoPerfil ? (
+				<img
+					src={usuario.urlFotoPerfil}
+					alt={`${usuario.nombre} ${usuario.apellido}`}
+					onError={(e) => {
+					e.target.style.display = "none";
+					e.target.nextSibling.style.display = "flex";
+					}}
+				/>
+				) : null}
+				<div className="profile-pic-placeholder-MPF">
+				<FaUser size={64} />
+				</div>
+			</div>
 
-          <div className="profile-grid-MPF">
-            {/* Información Personal */}
-            <section className="card-info-MPF">
-              <h2 className="card-title-MPF">
-                <FaUser className="icon-title" />
-                Información Personal
-              </h2>
+			<div className="profile-info-MPF">
+				<div className="profile-name-section-MPF">
+					{editingField === 'nombre' || editingField === 'apellido' ? (
+						<div className="edit-name-section-MPF">
+							<input
+								type="text"
+								placeholder="Nombre"
+								value={editValues.nombre !== undefined ? editValues.nombre : usuario?.nombre || ''}
+								onChange={(e) => setEditValues({...editValues, nombre: e.target.value})}
+								className="info-input-MPF edit-name-input-MPF"
+							/>
+							<input
+								type="text"
+								placeholder="Apellido"
+								value={editValues.apellido !== undefined ? editValues.apellido : usuario?.apellido || ''}
+								onChange={(e) => setEditValues({...editValues, apellido: e.target.value})}
+								className="info-input-MPF edit-name-input-MPF"
+							/>
+							<div className="edit-actions-MPF">
+								<button
+									onClick={() => {
+										saveField('nombre');
+										saveField('apellido');
+									}}
+									className="btn-edit-save-MPF"
+									disabled={savingField === 'nombre' || savingField === 'apellido'}
+								>
+									<Save size={16} />
+								</button>
+								<button
+									onClick={cancelEditing}
+									className="btn-edit-cancel-MPF"
+								>
+									<X size={16} />
+								</button>
+							</div>
+						</div>
+					) : (
+						<div className="profile-name-display-MPF">
+							<h1 className="profile-name-MPF">
+								{usuario?.nombre} {usuario?.apellido}
+							</h1>
+							<button
+								onClick={() => startEditing('nombre', usuario?.nombre)}
+								className="btn-edit-MPF btn-edit-name-MPF"
+								title="Editar nombre"
+							>
+								<Edit2 size={18} />
+							</button>
+						</div>
+					)}
+				</div>
+				<div className="profile-status-MPF">
+					<CheckCircle size={20} className="icon-check" />
+					<span>Perfil activo</span>
+				</div>
+			</div>
+			</section>
 
-              <div className="info-list-MPF">
-                <div className="info-item-MPF">
-                  <FaIdCard className="info-icon" />
-                  <div>
-                    <span className="info-label">Documento</span>
-                    <span className="info-value">
-                      {aspirante?.nombreTipDoc || "N/A"}{" "}
-                      {aspirante?.numerDoc || ""}
-                    </span>
-                  </div>
-                </div>
+			{/* Grid de Información en Tarjetas */}
+			<div className="profile-grid-MPF">
+				{/* Tarjeta: Información de Contacto */}
+				<section className="card-info-MPF">
+					<div className="card-header-MPF">
+						<FaPhone className="card-icon" />
+						<h2 className="card-title-MPF">Información de Contacto</h2>
+					</div>
+					<div className="info-list-MPF">
+						{/* Correo Electrónico */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Correo Electrónico</label>
+									{editingField === 'correo' ? (
+										<input
+											type="email"
+											value={editValues.correo}
+											onChange={(e) => setEditValues({...editValues, correo: e.target.value})}
+											className="info-input-MPF"
+										/>
+									) : (
+										<p className="info-value">{usuario?.correo || "No registrado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'correo' ? (
+										<>
+											<button
+												onClick={() => saveField('correo')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'correo'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('correo', usuario?.correo)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
 
-                <div className="info-item-MPF">
-                  <FaUser className="info-icon" />
-                  <div>
-                    <span className="info-label">Género</span>
-                    <span className="info-value">
-                      {aspirante?.nombreGenero || "N/A"}
-                    </span>
-                  </div>
-                </div>
+						{/* Teléfono */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Teléfono</label>
+									{editingField === 'telefono' ? (
+										<input
+											type="tel"
+											value={editValues.telefono}
+											onChange={(e) => setEditValues({...editValues, telefono: e.target.value})}
+											className="info-input-MPF"
+										/>
+									) : (
+										<p className="info-value">{usuario?.telefono || "No registrado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'telefono' ? (
+										<>
+											<button
+												onClick={() => saveField('telefono')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'telefono'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('telefono', usuario?.telefono)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
 
-                <div className="info-item-MPF">
-                  <FaCalendar className="info-icon" />
-                  <div>
-                    <span className="info-label">Fecha de Nacimiento</span>
-                    <span className="info-value">
-                      {aspirante?.feNa
-                        ? new Date(aspirante.feNa).toLocaleDateString("es-CO", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "N/A"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </section>
+				{/* Tarjeta: Información Personal */}
+				<section className="card-info-MPF">
+					<div className="card-header-MPF">
+						<FaUser className="card-icon" />
+						<h2 className="card-title-MPF">Información Personal</h2>
+					</div>
+					<div className="info-list-MPF">
+						{/* Género */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Género</label>
+									{editingField === 'genero' ? (
+										<select
+											value={editValues.genero}
+											onChange={(e) => setEditValues({...editValues, genero: e.target.value})}
+											className="info-input-MPF"
+										>
+											<option value="">Seleccionar</option>
+											<option value="MASCULINO">Masculino</option>
+											<option value="FEMENINO">Femenino</option>
+											<option value="OTRO">Otro</option>
+										</select>
+									) : (
+										<p className="info-value">{usuario?.genero || "No especificado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'genero' ? (
+										<>
+											<button
+												onClick={() => saveField('genero')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'genero'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('genero', usuario?.genero)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
 
-            {/* Información de Contacto */}
-            <section className="card-info-MPF">
-              <h2 className="card-title-MPF">
-                <FaPhone className="icon-title" />
-                Información de Contacto
-              </h2>
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Fecha de Nacimiento</label>
+									{editingField === 'fechaNacimiento' ? (
+										<input
+											type="date"
+											value={editValues.fechaNacimiento}
+											onChange={(e) => setEditValues({...editValues, fechaNacimiento: e.target.value})}
+											className="info-input-MPF"
+										/>
+									) : (
+										<p className="info-value">
+											{usuario?.fechaNacimiento 
+												? new Date(usuario.fechaNacimiento).toLocaleDateString('es-CO', {
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric'
+												})
+												: "No registrada"
+											}
+										</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'fechaNacimiento' ? (
+										<>
+											<button
+												onClick={() => saveField('fechaNacimiento')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'fechaNacimiento'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('fechaNacimiento', usuario?.fechaNacimiento)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
 
-              <div className="info-list-MPF">
-                <div className="info-item-MPF">
-                  <FaPhone className="info-icon" />
-                  <div>
-                    <span className="info-label">Teléfono</span>
-                    <span className="info-value">
-                      {aspirante?.tel || "No registrado"}
-                    </span>
-                  </div>
-                </div>
+						<div className="info-item-MPF">
+							<label className="info-label">Cuenta Creada</label>
+							<p className="info-value">
+								{usuario?.fechaCreacion 
+									? new Date(usuario.fechaCreacion).toLocaleDateString('es-CO', {
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric'
+									})
+									: "Fecha no disponible"
+								}
+							</p>
+						</div>
+					</div>
+				</section>
 
-                <div className="info-item-MPF">
-                  <FaMapMarkerAlt className="info-icon" />
-                  <div>
-                    <span className="info-label">Municipio</span>
-                    <span className="info-value">
-                      {aspirante?.nombreMunicipio || "No especificado"}
-                    </span>
-                  </div>
-                </div>
+				{/* Tarjeta: Ubicación */}
+				<section className="card-info-MPF">
+					<div className="card-header-MPF">
+						<FaMapMarkerAlt className="card-icon" />
+						<h2 className="card-title-MPF">Ubicación</h2>
+					</div>
+					<div className="info-list-MPF">
+						{/* Municipio */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Municipio</label>
+									{editingField === 'municipio' ? (
+										<select
+											value={editValues.municipio}
+											onChange={(e) => setEditValues({...editValues, municipio: e.target.value})}
+											className="info-input-MPF"
+											disabled={loadingMunicipios}
+										>
+											<option value="">
+												{loadingMunicipios ? "Cargando municipios..." : "Selecciona un municipio"}
+											</option>
+											{municipios.map((municipio) => (
+												<option key={municipio.id} value={municipio.id}>
+													{municipio.nombre}
+												</option>
+											))}
+										</select>
+									) : (
+										<p className="info-value">{usuario?.municipio?.nombre || "No registrado"}</p>
+									)}
+								</div>
+								<div className="edit-actions-MPF">
+									{editingField === 'municipio' ? (
+										<>
+											<button
+												onClick={() => saveField('municipio')}
+												className="btn-edit-save-MPF"
+												disabled={savingField === 'municipio'}
+											>
+												<Save size={16} />
+											</button>
+											<button
+												onClick={cancelEditing}
+												className="btn-edit-cancel-MPF"
+											>
+												<X size={16} />
+											</button>
+										</>
+									) : (
+										<button
+											onClick={() => startEditing('municipio', usuario?.municipio?.nombre)}
+											className="btn-edit-MPF"
+										>
+											<Edit2 size={16} />
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
 
-                {aspirante?.ubi && (
-                  <div className="info-item-MPF">
-                    <FaMapMarkerAlt className="info-icon" />
-                    <div>
-                      <span className="info-label">Ubicación</span>
-                      <span className="info-value">{aspirante.ubi}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </section>
-          </div>
+						{/* Departamento */}
+						<div className="info-item-MPF">
+							<div className="info-field-wrapper-MPF">
+								<div>
+									<label className="info-label">Departamento</label>
+									<p className="info-value">
+										{editingField === 'municipio' && editValues.municipio
+											? municipios.find(m => m.id === parseInt(editValues.municipio))?.departamento || "No registrado"
+											: usuario?.municipio?.departamento || "No registrado"
+										}
+									</p>
+								</div>
+								<div className="edit-actions-MPF">
+									{/* El departamento se actualiza automáticamente con el municipio */}
+								</div>
+							</div>
+						</div>
 
-          {/* Acciones Rápidas */}
-          <section className="quick-actions-MPF">
-            <h2>Acciones</h2>
-            <div className="actions-grid-MPF">
-              <Link
-                to="/ActualizarPerfil/ActualizarPerfil"
-                className="action-card-MPF"
-              >
-                <Settings size={32} className="action-icon" />
-                <h3>Editar Perfil</h3>
-                <p>Actualiza tu información personal</p>
-              </Link>
+						<div className="info-item-MPF">
+							<label className="info-label">Estado de Cuenta</label>
+							<p className="info-value">
+								<span className={`status-badge-MPF ${usuario?.isActive ? 'active' : 'inactive'}`}>
+									{usuario?.isActive ? '✓ Activa' : '✗ Inactiva'}
+								</span>
+							</p>
+						</div>
+					</div>
+				</section>
+			</div>
 
-              <Link to="/MiPerfil/MisPostulaciones" className="action-card-MPF">
-                <Rocket size={32} className="action-icon" />
-                <h3>Mis Postulaciones</h3>
-                <p>Revisa el estado de tus aplicaciones</p>
-              </Link>
+			{/* Descripción Personal */}
+			{usuario?.descripcion && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaBriefcase className="card-icon" />
+						<h2 className="card-title-MPF">Acerca de Mí</h2>
+					</div>
+					<p className="summary-text-MPF">{usuario.descripcion}</p>
+				</section>
+			)}
 
-              <Link to="/MiPerfil/VerPerfil" className="action-card-MPF">
-                <Eye size={32} className="action-icon" />
-                <h3>Ver Mi Hoja de Vida</h3>
-                <p>Mira cómo te ven los reclutadores</p>
-              </Link>
+			{/* Tarjeta: Información Profesional */}
+			{(usuario?.experienciaLaboral?.length > 0 || usuario?.estudios?.length > 0) && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaBriefcase className="card-icon" />
+						<h2 className="card-title-MPF">Información Profesional</h2>
+					</div>
+					
+					{/* Experiencia Laboral */}
+					{usuario?.experienciaLaboral?.length > 0 && (
+						<div className="professional-section-MPF">
+							<h3 className="subsection-title-MPF">Experiencia Laboral</h3>
+							<div className="professional-list-MPF">
+								{usuario.experienciaLaboral.map((exp, index) => (
+									<div key={index} className="professional-item-MPF">
+										<div className="item-header-MPF">
+											<h4 className="item-title-MPF">{exp.cargo || exp.puesto}</h4>
+											<span className="item-company-MPF">{exp.empresa}</span>
+										</div>
+										<p className="item-description-MPF">{exp.descripcion}</p>
+										<div className="item-dates-MPF">
+											<span>{new Date(exp.fechaInicio).toLocaleDateString('es-CO', { year: 'numeric', month: 'short' })}</span>
+											<span>→</span>
+											<span>{exp.fechaFin ? new Date(exp.fechaFin).toLocaleDateString('es-CO', { year: 'numeric', month: 'short' }) : 'Actualmente'}</span>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
 
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="action-card-MPF action-danger-MPF"
-              >
-                <Trash2 size={32} className="action-icon" />
-                <h3>Eliminar Cuenta</h3>
-                <p>Elimina permanentemente tu perfil</p>
-              </button>
-            </div>
-          </section>
-        </div>
-      </main>
+					{/* Educación */}
+					{usuario?.estudios?.length > 0 && (
+						<div className="professional-section-MPF">
+							<h3 className="subsection-title-MPF">Educación</h3>
+							<div className="professional-list-MPF">
+								{usuario.estudios.map((estudio, index) => (
+									<div key={index} className="professional-item-MPF">
+										<div className="item-header-MPF">
+											<h4 className="item-title-MPF">{estudio.titulo}</h4>
+											<span className="item-company-MPF">{estudio.institucion}</span>
+										</div>
+										<p className="item-level-MPF">Nivel: {estudio.nivel}</p>
+										<div className="item-dates-MPF">
+											<span>{new Date(estudio.fechaInicio).getFullYear()}</span>
+											<span>→</span>
+											<span>{estudio.fechaFin ? new Date(estudio.fechaFin).getFullYear() : 'En progreso'}</span>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+				</section>
+			)}
 
-      {/* Modal de Confirmación para Eliminar Cuenta (RF04) */}
-      {showDeleteModal && (
-        <div
-          className="modal-overlay-MPF"
-          onClick={() => setShowDeleteModal(false)}
-        >
-          <div
-            className="modal-content-MPF"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header-MPF">
-              <AlertCircle size={48} className="modal-icon-danger" />
-              <h2>¿Eliminar cuenta?</h2>
-            </div>
+			{/* Tarjeta: Habilidades */}
+			{usuario?.habilidades?.length > 0 && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaWheelchair className="card-icon" />
+						<h2 className="card-title-MPF">Habilidades</h2>
+					</div>
+					<div className="skills-grid-MPF">
+						{usuario.habilidades.map((habilidad, index) => (
+							<span key={index} className="skill-badge-MPF">
+								{typeof habilidad === 'string' ? habilidad : habilidad.nombre}
+							</span>
+						))}
+					</div>
+				</section>
+			)}
 
-            <div className="modal-body-MPF">
-              <p className="warning-text-MPF">
-                Esta acción es <strong>permanente e irreversible</strong>.
-              </p>
-              <p>Se eliminarán:</p>
-              <ul className="delete-list-MPF">
-                <li>✓ Tu información personal</li>
-                <li>✓ Todas tus postulaciones</li>
-                <li>✓ Tu hoja de vida</li>
-                <li>✓ Tus valoraciones</li>
-              </ul>
+			{/* Resumen */}
+			{usuario?.resumen && (
+				<section className="card-info-MPF card-full-MPF">
+					<div className="card-header-MPF">
+						<FaBriefcase className="card-icon" />
+						<h2 className="card-title-MPF">Resumen Profesional</h2>
+					</div>
+					<p className="summary-text-MPF">{usuario.resumen}</p>
+				</section>
+			)}
 
-              <div className="form-group-MPF">
-                <label htmlFor="delete-password">
-                  Ingresa tu contraseña para confirmar:
-                </label>
-                <input
-                  type="password"
-                  id="delete-password"
-                  value={deletePassword}
-                  onChange={(e) => {
-                    setDeletePassword(e.target.value);
-                    setDeleteError("");
-                  }}
-                  placeholder="Tu contraseña"
-                  className="input-delete-MPF"
-                  autoFocus
-                />
-                {deleteError && (
-                  <span className="error-message-MPF">{deleteError}</span>
-                )}
-              </div>
-            </div>
+			{/* Acciones Rápidas */}
+			<section className="quick-actions-MPF">
+			<h2>Acciones</h2>
+			<div className="actions-grid-MPF">
+				<Link to="/MiPerfil/MisPostulaciones" className="action-card-MPF">
+				<Rocket size={32} className="action-icon" />
+				<h3>Mis Postulaciones</h3>
+				<p>Revisa el estado de tus aplicaciones</p>
+				</Link>
 
-            <div className="modal-footer-MPF">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setDeletePassword("");
-                  setDeleteError("");
-                }}
-                className="btn-cancel-MPF"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleEliminarCuenta}
-                className="btn-delete-MPF"
-                disabled={!deletePassword}
-              >
-                Eliminar mi cuenta
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+				<Link to="/MiPerfil/HojaDeVida" className="action-card-MPF">
+				<Eye size={32} className="action-icon" />
+				<h3>Ver Mi Hoja de Vida</h3>
+				<p>Mira cómo te ven los reclutadores</p>
+				</Link>
 
-      <Footer />
-    </>
-  );
+				<button
+				onClick={cerrarSesion}
+				className="action-card-MPF action-warning-MPF"
+				>
+				<LogOut size={32} className="action-icon" />
+				<h3>Cerrar Sesión</h3>
+				<p>Cierra tu sesión en la plataforma</p>
+				</button>
+
+				<button
+				onClick={() => setShowDeleteModal(true)}
+				className="action-card-MPF action-danger-MPF"
+				>
+				<Trash2 size={32} className="action-icon" />
+				<h3>Eliminar Cuenta</h3>
+				<p>Elimina permanentemente tu perfil</p>
+				</button>
+			</div>
+			</section>
+		</div>
+		</main>
+
+		{/* Modal de Confirmación para Eliminar Cuenta (RF04) */}
+		{showDeleteModal && (
+		<div
+			className="modal-overlay-MPF"
+			onClick={() => setShowDeleteModal(false)}
+		>
+			<div
+			className="modal-content-MPF"
+			onClick={(e) => e.stopPropagation()}
+			>
+			<div className="modal-header-MPF">
+				<AlertCircle size={48} className="modal-icon-danger" />
+				<h2>¿Eliminar cuenta?</h2>
+			</div>
+
+			<div className="modal-body-MPF">
+				<p className="warning-text-MPF">
+				Esta acción es <strong>permanente e irreversible</strong>.
+				</p>
+				<p>Se eliminarán:</p>
+				<ul className="delete-list-MPF">
+				<li>✓ Tu información personal</li>
+				<li>✓ Todas tus postulaciones</li>
+				<li>✓ Tu hoja de vida</li>
+				<li>✓ Tus valoraciones</li>
+				</ul>
+
+				<div className="form-group-MPF">
+				<label htmlFor="delete-password">
+					Ingresa tu contraseña para confirmar:
+				</label>
+				<input
+					type="password"
+					id="delete-password"
+					value={deletePassword}
+					onChange={(e) => {
+					setDeletePassword(e.target.value);
+					setDeleteError("");
+					}}
+					placeholder="Tu contraseña"
+					className="input-delete-MPF"
+					autoFocus
+				/>
+				{deleteError && (
+					<span className="error-message-MPF">{deleteError}</span>
+				)}
+				</div>
+			</div>
+
+			<div className="modal-footer-MPF">
+				<button
+				onClick={() => {
+					setShowDeleteModal(false);
+					setDeletePassword("");
+					setDeleteError("");
+				}}
+				className="btn-cancel-MPF"
+				>
+				Cancelar
+				</button>
+				<button
+				onClick={eliminarCuenta}
+				className="btn-delete-MPF"
+				disabled={!deletePassword}
+				>
+				Eliminar mi cuenta
+				</button>
+			</div>
+			</div>
+		</div>
+		)}
+
+		<Footer />
+	</>
+	);
+
 };
 
 export default MiPerfil;

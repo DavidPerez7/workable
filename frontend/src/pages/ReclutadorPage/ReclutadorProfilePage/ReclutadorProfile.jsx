@@ -1,78 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { getReclutadorPorCorreo } from "../../../api/reclutadoresApi";
+import { getEmpresaById } from "../../../api/empresaAPI";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import Footer from "../../../components/Footer/Footer";
+import Footer from "../../../components/Footer/footer";
+import { User, Building2, BarChart3, LogOut, Edit2, Save, X } from "lucide-react";
 import "./ReclutadorProfile.css";
 
 function ReclutadorProfile() {
-  const { id } = useParams();
+  const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showEditSidebar, setShowEditSidebar] = useState(false);
-  const [editForm, setEditForm] = useState({
-    nombre: "",
-    correo: "",
-    fotoPerfilUrl: "",
-    fotoBannerUrl: "",
-  });
-  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [editingField, setEditingField] = useState(null);
+  const [editValues, setEditValues] = useState({});
+  const [savingField, setSavingField] = useState(null);
 
   useEffect(() => {
     fetchProfileData();
-  }, [id]);
+  }, []);
 
   const fetchProfileData = async () => {
     try {
-      // TODO: Reemplazar con llamada real a API
-      // const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   }
-      // });
-      // const data = await response.json();
+      setLoading(true);
+      setError(null);
 
-      // Datos simulados según tu backend
-      const mockData = {
-        id: 1,
-        nombre: "Beatriz López",
-        correo: "beatriz.lopez@aegon.com",
-        telefono: 3121234567,
-        fotoPerfilUrl: "https://i.pravatar.cc/200?img=47",
-        fotoBannerUrl:
-          "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200",
-        rol: "RECLUTADOR",
-        estado: "ACTIVO",
-        municipio: {
-          id: 1,
-          nombre: "BOGOTA D.C",
-          departamento: {
-            id: 1,
-            nombre: "BOGOTA D.C",
-          },
-        },
-        empresa: {
-          nitId: 9001,
-          nombre: "TechColombia SAS",
-          descripcion: "Consultoría en software y ciberseguridad",
-          numeroTrabajadores: 150,
-          puntuacion: 4.5,
-          logo: "https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png",
-        },
-        ofertasPublicadas: 12,
-        candidatosContratados: 45,
-        conexiones: 448,
-        seguidores: 8873,
-      };
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const correo = user.correo;
 
-      setProfileData(mockData);
-      setEditForm({
-        nombre: mockData.nombre,
-        correo: mockData.correo,
-        fotoPerfilUrl: mockData.fotoPerfilUrl,
-        fotoBannerUrl: mockData.fotoBannerUrl,
+      if (!correo) {
+        throw new Error("No se encontró información del usuario");
+      }
+
+      const reclutadorData = await getReclutadorPorCorreo(correo);
+
+      let empresaData = null;
+      if (reclutadorData.empresa?.id) {
+        try {
+          empresaData = await getEmpresaById(reclutadorData.empresa.id);
+        } catch (err) {
+          console.warn("No se pudo cargar información de la empresa:", err);
+        }
+      }
+
+      setProfileData({
+        ...reclutadorData,
+        empresa: empresaData || reclutadorData.empresa,
+      });
+      setEditValues({
+        nombre: reclutadorData.nombre || "",
+        correo: reclutadorData.correo || "",
+        telefono: reclutadorData.telefono || "",
+        urlFotoPerfil: reclutadorData.urlFotoPerfil || "",
+        urlBanner: reclutadorData.urlBanner || "",
       });
     } catch (error) {
       console.error("Error al cargar perfil:", error);
+      setError(error.message || "Error al cargar el perfil");
     } finally {
       setLoading(false);
     }
@@ -142,29 +126,47 @@ function ReclutadorProfile() {
     }
   };
 
-  if (loading) {
-    return (
-      <>
-        <HeaderReclutador />
-        <div className="loading-container-RP">
-          <div className="spinner-large-RP"></div>
-          <p>Cargando perfil...</p>
-        </div>
-        <Footer />
-      </>
-    );
-  }
+  const cerrarSesion = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
+  const startEditing = (field) => {
+    setEditingField(field);
+  };
+
+  const cancelEdit = () => {
+    setEditingField(null);
+  };
+
+  const saveEdit = async (field) => {
+    setSavingField(field);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setProfileData((prev) => ({
+        ...prev,
+        [field]: editValues[field],
+      }));
+      setEditingField(null);
+    } catch (error) {
+      console.error("Error al guardar:", error);
+    } finally {
+      setSavingField(null);
+    }
+  };
 
   if (!profileData) {
     return (
       <>
         <HeaderReclutador />
-        <div className="error-container-RP">
-          <h2>Perfil no encontrado</h2>
-          <Link to="/Reclutador" className="btn-back-RP">
-            Volver al inicio
-          </Link>
-        </div>
+        <main className="profile-main-RPF">
+          <div className="error-container-RPF">
+            <h2>Perfil no encontrado</h2>
+            <Link to="/Reclutador" className="btn-back-RPF">
+              Volver
+            </Link>
+          </div>
+        </main>
         <Footer />
       </>
     );
@@ -173,354 +175,136 @@ function ReclutadorProfile() {
   return (
     <>
       <HeaderReclutador />
-      <main className="profile-main-RP">
-        <div className="profile-container-RP">
-          {/* Hero Section con Foto y Datos Básicos */}
-          <section className="profile-hero-RP">
+      <main className="profile-main-RPF">
+        <div className="profile-container-RPF">
+          {/* Sección Hero */}
+          <section className="profile-hero-RPF">
             <div
-              className="hero-background-RP"
+              className="hero-banner-RPF"
               style={{
-                backgroundImage: `url(${profileData.fotoBannerUrl})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundImage: `url(${profileData.urlBanner || "https://via.placeholder.com/1200x300"})`,
               }}
             ></div>
-            <button className="btn-edit-profile-RP" onClick={handleEditClick}>
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-              Editar perfil
-            </button>
 
-            <div className="hero-content-RP">
-              <div className="profile-avatar-large-RP">
+            <div className="hero-content-RPF">
+              <div className="profile-avatar-RPF">
                 <img
-                  src={profileData.fotoPerfilUrl}
+                  src={profileData.urlFotoPerfil || "https://via.placeholder.com/150"}
                   alt={profileData.nombre}
-                  className="avatar-img-RP"
                 />
-                <div className="avatar-badge-RP">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
               </div>
-              <div className="profile-info-main-RP">
-                <div className="name-section-RP">
-                  <h1 className="profile-name-RP">{profileData.nombre}</h1>
-                  <span className="profile-role-badge-RP">Reclutador</span>
-                </div>
-                <p className="profile-title-RP">
-                  Reclutador en {profileData.empresa.nombre}
-                </p>
-                <div className="profile-meta-RP">
-                  <span className="meta-item-RP">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    {profileData.municipio.nombre},{" "}
-                    {profileData.municipio.departamento.nombre}
-                  </span>
-                  <span className="meta-separator-RP">·</span>
-                  <span className="meta-item-RP">
-                    <strong>{profileData.conexiones}+</strong> conexiones
-                  </span>
-                </div>
-                <div className="profile-company-RP">
-                  <img
-                    src={profileData.empresa.logo}
-                    alt={profileData.empresa.nombre}
-                    className="company-logo-small-RP"
-                  />
-                  <div>
-                    <p className="company-name-RP">
-                      {profileData.empresa.nombre}
-                    </p>
-                    <p className="company-desc-RP">
-                      {profileData.empresa.descripcion}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="profile-actions-RP">
-                <button className="btn-action-primary-RP">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                  </svg>
-                  {profileData.correo}
-                </button>
+
+              <div className="hero-info-RPF">
+                <h1 className="profile-name-RPF">{profileData.nombre}</h1>
+                <p className="profile-role-RPF">Reclutador</p>
+                {profileData.empresa && (
+                  <p className="profile-company-RPF">
+                    <Building2 size={16} />
+                    {profileData.empresa.nombre}
+                  </p>
+                )}
+                {profileData.municipio && (
+                  <p className="profile-location-RPF">
+                    {profileData.municipio.nombre}
+                    {profileData.municipio.departamento
+                      ? `, ${profileData.municipio.departamento}`
+                      : ""}
+                  </p>
+                )}
               </div>
             </div>
           </section>
 
-          <Link to="/Reclutador/EnterprisePage" className="link-no-style-RP">
-            <section className="profile-section-RP empresa-section-RP">
-              <div className="section-header-profile-RP">
-                <h2 className="section-title-profile-RP">Empresa</h2>
+          {/* Información Personal */}
+          <section className="info-section-RPF">
+            <div className="section-header-RPF">
+              <h2>
+                <User size={24} />
+                Información Personal
+              </h2>
+            </div>
+
+            <div className="info-grid-RPF">
+              <div className="info-card-RPF">
+                <label>Nombre Completo</label>
+                <p className="info-value-static-RPF">{profileData.nombre}</p>
               </div>
-              <div className="empresa-card-RP">
-                <img
-                  src={profileData.empresa.logo}
-                  alt={profileData.empresa.nombre}
-                  className="empresa-logo-RP"
-                />
-                <div className="empresa-info-RP">
-                  <h3 className="empresa-name-RP">
-                    {profileData.empresa.nombre}
-                  </h3>
-                  <p className="empresa-desc-RP">
-                    {profileData.empresa.descripcion}
-                  </p>
-                  <div className="empresa-stats-RP">
-                    <span className="empresa-stat-RP">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                      </svg>
-                      {profileData.empresa.numeroTrabajadores} empleados
+
+              <div className="info-card-RPF">
+                <label>Correo Electrónico</label>
+                <p className="info-value-static-RPF">{profileData.correo}</p>
+              </div>
+
+              <div className="info-card-RPF">
+                <label>Teléfono</label>
+                <p className="info-value-static-RPF">{profileData.telefono || "No especificado"}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Empresa */}
+          {profileData.empresa && (
+            <section className="info-section-RPF">
+              <div className="section-header-RPF">
+                <h2>
+                  <Building2 size={24} />
+                  Empresa
+                </h2>
+              </div>
+
+              <div className="company-card-RPF">
+                {profileData.empresa.logo && (
+                  <img
+                    src={profileData.empresa.logo}
+                    alt={profileData.empresa.nombre}
+                    className="company-logo-RPF"
+                  />
+                )}
+                <div className="company-info-RPF">
+                  <h3>{profileData.empresa.nombre}</h3>
+                  <p>{profileData.empresa.descripcion}</p>
+                  <div className="company-stats-RPF">
+                    <span>
+                      <Building2 size={16} />
+                      {profileData.empresa.numeroTrabajadores || 0} empleados
                     </span>
-                    <span className="empresa-stat-RP">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                      </svg>
-                      {profileData.empresa.puntuacion} / 5.0
+                    <span>
+                      <BarChart3 size={16} />
+                      {profileData.empresa.puntuacion || 0}/5.0
                     </span>
                   </div>
                 </div>
               </div>
             </section>
-          </Link>
+          )}
 
-          {/* Actividad */}
-          <section className="profile-section-RP">
-            <div className="section-header-profile-RP">
-              <h2 className="section-title-profile-RP">Actividad</h2>
-            </div>
-            <div className="activity-content-RP">
-              <p className="activity-text-RP">
-                Las publicaciones de ofertas y actividad de reclutamiento de{" "}
-                {profileData.nombre.split(" ")[0]} aparecen aquí.
-              </p>
-            </div>
-          </section>
+          {/* Acciones Rápidas */}
+          <section className="quick-actions-RPF">
+            <h2>Acciones</h2>
+            <div className="actions-grid-RPF">
+              <Link to="/Reclutador/GestigOferts" className="action-card-RPF">
+                <BarChart3 size={32} className="action-icon" />
+                <h3>Gestionar Ofertas</h3>
+                <p>Administra tus ofertas publicadas</p>
+              </Link>
 
-          {/* Estadísticas de Reclutador */}
-          <section className="profile-section-RP stats-section-RP">
-            <div className="section-header-profile-RP">
-              <h2 className="section-title-profile-RP">
-                Estadísticas de reclutamiento
-              </h2>
-            </div>
-            <div className="recruiter-stats-RP">
-              <div className="stat-box-RP">
-                <div className="stat-icon-wrapper-RP blue-bg-RP">
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <rect
-                      x="2"
-                      y="7"
-                      width="20"
-                      height="14"
-                      rx="2"
-                      ry="2"
-                    ></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                  </svg>
-                </div>
-                <div className="stat-content-RP">
-                  <p className="stat-number-RP">
-                    {profileData.ofertasPublicadas}
-                  </p>
-                  <p className="stat-label-RP">Ofertas publicadas</p>
-                </div>
-              </div>
-              <div className="stat-box-RP">
-                <div className="stat-icon-wrapper-RP green-bg-RP">
-                  <svg
-                    width="28"
-                    height="28"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                  </svg>
-                </div>
-                <div className="stat-content-RP">
-                  <p className="stat-number-RP">
-                    {profileData.candidatosContratados}
-                  </p>
-                  <p className="stat-label-RP">Candidatos contratados</p>
-                </div>
-              </div>
+              <Link to="/Reclutador/Publicacion" className="action-card-RPF">
+                <Building2 size={32} className="action-icon" />
+                <h3>Publicar Oferta</h3>
+                <p>Crea una nueva oferta laboral</p>
+              </Link>
+
+              <button
+                onClick={cerrarSesion}
+                className="action-card-RPF action-warning-RPF"
+              >
+                <LogOut size={32} className="action-icon" />
+                <h3>Cerrar Sesión</h3>
+                <p>Cierra tu sesión en la plataforma</p>
+              </button>
             </div>
           </section>
         </div>
-
-        {/* Sidebar de Edición */}
-        {showEditSidebar && (
-          <>
-            <div
-              className="sidebar-overlay-RP"
-              onClick={handleCloseSidebar}
-            ></div>
-            <div className="edit-sidebar-RP">
-              <div className="sidebar-header-RP">
-                <h2>Editar perfil</h2>
-                <button
-                  className="btn-close-sidebar-RP"
-                  onClick={handleCloseSidebar}
-                >
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-
-              <div className="sidebar-content-RP">
-                <div className="form-group-RP">
-                  <label className="form-label-RP">Nombre completo</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={editForm.nombre}
-                    onChange={handleInputChange}
-                    className="form-input-RP"
-                    placeholder="Ingresa tu nombre"
-                  />
-                </div>
-
-                <div className="form-group-RP">
-                  <label className="form-label-RP">Correo electrónico</label>
-                  <input
-                    type="email"
-                    name="correo"
-                    value={editForm.correo}
-                    onChange={handleInputChange}
-                    className="form-input-RP"
-                    placeholder="correo@ejemplo.com"
-                  />
-                </div>
-
-                <div className="form-group-RP">
-                  <label className="form-label-RP">URL de foto de perfil</label>
-                  <input
-                    type="url"
-                    name="fotoPerfilUrl"
-                    value={editForm.fotoPerfilUrl}
-                    onChange={handleInputChange}
-                    className="form-input-RP"
-                    placeholder="https://ejemplo.com/foto.jpg"
-                  />
-                  {editForm.fotoPerfilUrl && (
-                    <div className="preview-image-RP">
-                      <img src={editForm.fotoPerfilUrl} alt="Preview perfil" />
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group-RP">
-                  <label className="form-label-RP">URL de foto de banner</label>
-                  <input
-                    type="url"
-                    name="fotoBannerUrl"
-                    value={editForm.fotoBannerUrl}
-                    onChange={handleInputChange}
-                    className="form-input-RP"
-                    placeholder="https://ejemplo.com/banner.jpg"
-                  />
-                  {editForm.fotoBannerUrl && (
-                    <div className="preview-banner-RP">
-                      <img src={editForm.fotoBannerUrl} alt="Preview banner" />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="sidebar-footer-RP">
-                <button
-                  className="btn-cancel-RP"
-                  onClick={handleCloseSidebar}
-                  disabled={saving}
-                >
-                  Cancelar
-                </button>
-                <button
-                  className="btn-save-RP"
-                  onClick={handleSaveChanges}
-                  disabled={saving}
-                >
-                  {saving ? "Guardando..." : "Guardar cambios"}
-                </button>
-              </div>
-            </div>
-          </>
-        )}
       </main>
       <Footer />
     </>

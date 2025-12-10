@@ -2,6 +2,8 @@ package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,14 +45,26 @@ public class Notificacion {
     private Boolean leida = false;
     private Boolean isActive = true;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_notificacion_usuario"))
-    private Usuario usuario;
+    // Receptor: puede ser Aspirante O Reclutador, no ambos
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "aspirante_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Aspirante aspirante;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "reclutador_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Reclutador reclutador;
 
     @PrePersist
     protected void onCreate() {
         if (this.fechaCreacion == null) {
             this.fechaCreacion = LocalDate.now();
         }
+        // Validación: debe tener aspirante O reclutador, no ambos ni ninguno
+        if ((aspirante == null && reclutador == null) || (aspirante != null && reclutador != null)) {
+            throw new IllegalStateException("Notificacion debe tener receptor Aspirante O Reclutador, no ambos ni ninguno");
+        }
     }
 }
+

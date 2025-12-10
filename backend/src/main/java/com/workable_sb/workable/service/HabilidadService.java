@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Habilidad;
-import com.workable_sb.workable.models.Habilidad.TipoHabilidad;
-import com.workable_sb.workable.models.Usuario;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HabilidadRepo;
-import com.workable_sb.workable.repository.UsuarioRepo;
 
+/**
+ * Servicio de Habilidades - CRUD simple para habilidades del aspirante
+ * Las habilidades son simples strings (máx 20 caracteres)
+ */
 @Service
 @Transactional
 public class HabilidadService {
@@ -20,97 +23,73 @@ public class HabilidadService {
     private HabilidadRepo habilidadRepo;
 
     @Autowired
-    private UsuarioRepo usuarioRepo;
+    private AspiranteRepo aspiranteRepo;
 
     // ===== CREATE =====
-    public Habilidad crearHabilidad(Habilidad habilidad, Long usuarioId) {
-
+    public Habilidad crearHabilidad(Habilidad habilidad, Long aspiranteId) {
         // Validar campos obligatorios
-        if (habilidad.getNombre() == null || habilidad.getNombre().isEmpty()) {
+        if (habilidad.getNombre() == null || habilidad.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre de la habilidad es obligatorio");
         }
-        if (habilidad.getTipo() == null) {
-            throw new IllegalArgumentException("El tipo de habilidad es obligatorio");
+        
+        if (habilidad.getNombre().length() > 20) {
+            throw new IllegalArgumentException("La habilidad no puede exceder 20 caracteres");
         }
 
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar que el aspirante existe
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
-        // Verificar que no exista otra habilidad con el mismo nombre
-        if (habilidadRepo.existsByNombre(habilidad.getNombre())) {
-            throw new IllegalArgumentException("Ya existe una habilidad con ese nombre");
-        }
-
-        habilidad.setIsActive(true);
+        habilidad.setAspirante(aspirante);
         return habilidadRepo.save(habilidad);
     }
 
     // ===== READ =====
     public Habilidad obtenerPorId(Long id) {
-
         return habilidadRepo.findById(id)
-                .filter(h -> h.getIsActive())
-                .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Habilidad no encontrada con id: " + id));
     }
 
-    public List<Habilidad> listarActivas() {
-        return habilidadRepo.findAll().stream()
-                .filter(Habilidad::getIsActive)
-                .toList();
+    public List<Habilidad> obtenerHabilidadesPorUsuario(Long aspiranteId) {
+        // Validar que el aspirante existe
+        if (!aspiranteRepo.existsById(aspiranteId)) {
+            throw new RuntimeException("Aspirante no encontrado con id: " + aspiranteId);
+        }
+        return habilidadRepo.findByAspiranteIdOrderByNombre(aspiranteId);
     }
 
-    public List<Habilidad> listarPorTipo(TipoHabilidad tipo) {
-
-        return habilidadRepo.findByTipo(tipo).stream()
-                .filter(Habilidad::getIsActive)
-                .toList();
-    }
-
-    public Habilidad buscarPorNombre(String nombre) {
-
-        return habilidadRepo.findByNombre(nombre)
-                .filter(h -> h.getIsActive())
-                .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
-    }
-
-    public List<Habilidad> buscarPorNombreParcial(String texto) {
-
-        return habilidadRepo.findByNombreContainingIgnoreCase(texto).stream()
-                .filter(Habilidad::getIsActive)
-                .toList();
+    public List<Habilidad> listarTodas() {
+        return habilidadRepo.findAll();
     }
 
     // ===== UPDATE =====
-    public Habilidad actualizarHabilidad(Long id, Habilidad habilidadActualizada, Long usuarioId) {
+    public Habilidad actualizarHabilidad(Long id, Habilidad habilidadActualizada, Long aspiranteId) {
+        Habilidad habilidad = obtenerPorId(id);
 
-        Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // Validar ownership
+        if (!habilidad.getAspirante().getId().equals(aspiranteId)) {
+            throw new RuntimeException("No puedes editar habilidades de otro usuario");
+        }
 
-        Habilidad habilidadExistente = habilidadRepo.findById(id)
-                .filter(h -> h.getIsActive())
-                .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
-
-        // Validar que el nuevo nombre no esté ya en uso (por otra habilidad)
-        if (habilidadActualizada.getNombre() != null && 
-            !habilidadActualizada.getNombre().equals(habilidadExistente.getNombre())) {
-            
-            if (habilidadRepo.existsByNombre(habilidadActualizada.getNombre())) {
-                throw new IllegalArgumentException("Ya existe una habilidad con ese nombre");
+        // Actualizar solo el nombre
+        if (habilidadActualizada.getNombre() != null && !habilidadActualizada.getNombre().trim().isEmpty()) {
+            if (habilidadActualizada.getNombre().length() > 20) {
+                throw new IllegalArgumentException("La habilidad no puede exceder 20 caracteres");
             }
-            habilidadExistente.setNombre(habilidadActualizada.getNombre());
+            habilidad.setNombre(habilidadActualizada.getNombre().trim());
         }
 
-        if (habilidadActualizada.getTipo() != null) {
-            habilidadExistente.setTipo(habilidadActualizada.getTipo());
-        }
-
-        return habilidadRepo.save(habilidadExistente);
+        return habilidadRepo.save(habilidad);
     }
 
     // ===== DELETE =====
-    public void eliminarHabilidad(Long id) {
-        Habilidad habilidad = habilidadRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Habilidad no encontrada"));
+    public void eliminarHabilidad(Long id, Long aspiranteId) {
+        Habilidad habilidad = obtenerPorId(id);
+
+        // Validar ownership
+        if (!habilidad.getAspirante().getId().equals(aspiranteId)) {
+            throw new RuntimeException("No puedes eliminar habilidades de otro usuario");
+        }
 
         habilidadRepo.delete(habilidad);
     }

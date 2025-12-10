@@ -12,21 +12,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificacionRepo extends JpaRepository<Notificacion, Long> {
     
-    // Buscar notificaciones por usuario
-    List<Notificacion> findByUsuarioId(Long usuarioId);
-
-    //Buscar por titulo
-    Optional <Notificacion> findByTitulo(String titulo);
+    // Búsquedas por Aspirante
+    List<Notificacion> findByAspiranteId(Long aspiranteId);
+    List<Notificacion> findByAspiranteIdAndLeida(Long aspiranteId, Boolean leida);
+    List<Notificacion> findByAspiranteIdAndTipo(Long aspiranteId, Tipo tipo);
+    List<Notificacion> findByAspiranteIdOrderByFechaCreacionDesc(Long aspiranteId);
+    Long countByAspiranteIdAndLeida(Long aspiranteId, Boolean leida);
     
-    // Buscar notificaciones por usuario y estado de lectura
-    List<Notificacion> findByUsuarioIdAndLeida(Long usuarioId, Boolean leida);
+    // Búsquedas por Reclutador
+    List<Notificacion> findByReclutadorId(Long reclutadorId);
+    List<Notificacion> findByReclutadorIdAndLeida(Long reclutadorId, Boolean leida);
+    List<Notificacion> findByReclutadorIdAndTipo(Long reclutadorId, Tipo tipo);
+    List<Notificacion> findByReclutadorIdOrderByFechaCreacionDesc(Long reclutadorId);
+    Long countByReclutadorIdAndLeida(Long reclutadorId, Boolean leida);
     
-    // Buscar notificaciones por tipo
-    List<Notificacion> findByUsuarioIdAndTipo(Long usuarioId, Tipo tipo);
-    
-    // Contar notificaciones no leídas
-    Long countByUsuarioIdAndLeida(Long usuarioId, Boolean leida);
-    
-    // Ordenar por fecha descendente
-    List<Notificacion> findByUsuarioIdOrderByFechaCreacionDesc(Long usuarioId);
+    // Búsqueda general
+    Optional<Notificacion> findByTitulo(String titulo);
 }

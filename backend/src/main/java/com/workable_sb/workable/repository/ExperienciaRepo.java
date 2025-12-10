@@ -10,12 +10,15 @@ import com.workable_sb.workable.models.Experiencia.Estado;
 
 @Repository
 public interface ExperienciaRepo extends JpaRepository<Experiencia, Long> {
-    // Buscar experiencias por usuario
-    List<Experiencia> findByUsuarioId(Long usuarioId);
+    // Buscar experiencias por aspirante
+    List<Experiencia> findByAspiranteId(Long aspiranteId);
     
-    // Buscar experiencias activas de un usuario
-    List<Experiencia> findByUsuarioIdAndEstado(Long usuarioId, Estado estado);
+    // Buscar experiencias activas de un aspirante
+    List<Experiencia> findByAspiranteIdAndEstado(Long aspiranteId, Estado estado);
     
     // Buscar experiencias ordenadas por fecha
-    List<Experiencia> findByUsuarioIdOrderByFechaInicioDesc(Long usuarioId);
+    List<Experiencia> findByAspiranteIdOrderByFechaInicioDesc(Long aspiranteId);
+    
+    // Contar experiencias por aspirante
+    long countByAspiranteId(Long aspiranteId);
 }
