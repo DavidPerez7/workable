@@ -88,6 +88,10 @@ public class AspiranteService {
         } else {
             request.setPassword(passwordEncoder.encode(request.getPassword()));
         }
+        // Si no se proporciona fechaNacimiento, usar una fecha por defecto
+        if (request.getFechaNacimiento() == null) {
+            request.setFechaNacimiento(java.time.LocalDate.of(1990, 1, 1));
+        }
         Aspirante aspirante = aspiranteRepo.save(request);
         
         // Crear HojaVida automáticamente

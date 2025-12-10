@@ -93,10 +93,7 @@ const PublicacionPage = () => {
         },
         municipio: {
           id: parseInt(formData.municipio)
-        },
-        habilidadesRequeridas: [],
-        requisitos: [],
-        beneficios: []
+        }
       };
 
       console.log("Creando oferta:", ofertaData);

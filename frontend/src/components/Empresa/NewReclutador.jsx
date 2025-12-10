@@ -1,11 +1,31 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../Header/Header";
+import { crearEmpresa } from "../../api/empresaAPI";
+import { getMunicipios } from "../../api/municipioAPI";
 import "./NewReclutador.css";
 
 const NewReclutador = () => {
   const formRef = useRef(null);
   const navigate = useNavigate();
+  const [municipios, setMunicipios] = useState([]);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    const cargarMunicipios = async () => {
+      try {
+        const municipiosData = await getMunicipios();
+        setMunicipios(municipiosData);
+      } catch (error) {
+        console.error("Error cargando municipios:", error);
+        alert("Error al cargar municipios");
+      } finally {
+        setLoadingMunicipios(false);
+      }
+    };
+    cargarMunicipios();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,6 +43,7 @@ const NewReclutador = () => {
       "fechaNacimiento",
       "municipioId",
       "nitEmpresa",
+      "nombreEmpresa",
       "codigoInvitacion",
     ];
 
@@ -43,27 +64,43 @@ const NewReclutador = () => {
       return;
     }
 
-    const reclutadorNuevo = {
-      nombre: data.nombre,
-      apellido: data.apellido,
-      correo: data.correo,
-      telefono: data.telefono,
-      password: data.password,
-      fechaNacimiento: data.fechaNacimiento,
-      municipio: {
-        id: Number(data.municipioId),
-      },
-      nitEmpresa: data.nitEmpresa,
-      codigoInvitacion: data.codigoInvitacion,
-    };
+    setLoading(true);
 
     try {
+      // 1. Crear la empresa primero
+      const empresaData = {
+        nombre: data.nombreEmpresa,
+        nit: data.nitEmpresa,
+        isActive: true,
+      };
+
+      const empresaCreada = await crearEmpresa(empresaData);
+      console.log("Empresa creada:", empresaCreada);
+
+      // 2. Después guardar el reclutador (esto lo hará el backend vinculado a la empresa)
+      const reclutadorNuevo = {
+        nombre: data.nombre,
+        apellido: data.apellido,
+        correo: data.correo,
+        telefono: data.telefono,
+        password: data.password,
+        fechaNacimiento: data.fechaNacimiento,
+        municipio: {
+          id: Number(data.municipioId),
+        },
+        nitEmpresa: data.nitEmpresa,
+        codigoInvitacion: data.codigoInvitacion,
+      };
+
       console.log("Datos a enviar:", reclutadorNuevo);
-      alert("Solicitud de registro enviada correctamente.");
+      alert("¡Empresa y reclutador registrados correctamente! Ahora puedes iniciar sesión.");
       formRef.current.reset();
       navigate("/login");
     } catch (error) {
-      alert("Hubo un error al registrar: " + error.message);
+      console.error("Error:", error);
+      alert("Hubo un error al registrar: " + (error.message || error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,16 +157,25 @@ const NewReclutador = () => {
                 className="form-input"
               />
 
-              <select name="municipioId" required className="form-input">
-                <option value="">Selecciona municipio *</option>
-                <option value="1">Bogotá D.C.</option>
-                <option value="2">Medellín</option>
-                <option value="3">Cali</option>
-                <option value="4">Barranquilla</option>
-                <option value="5">Cartagena</option>
+              <select name="municipioId" required className="form-input" disabled={loadingMunicipios}>
+                <option value="">
+                  {loadingMunicipios ? "Cargando municipios..." : "Selecciona municipio *"}
+                </option>
+                {municipios.map((municipio) => (
+                  <option key={municipio.id} value={municipio.id}>
+                    {municipio.nombre}
+                  </option>
+                ))}
               </select>
 
               {/* Inputs nuevos */}
+              <input
+                type="text"
+                name="nombreEmpresa"
+                placeholder="Nombre de la empresa *"
+                required
+                className="form-input"
+              />
               <input
                 type="text"
                 name="nitEmpresa"
@@ -163,8 +209,8 @@ const NewReclutador = () => {
               />
             </div>
 
-            <button type="submit" className="submit-button">
-              Registrarme como reclutador
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? "Registrando..." : "Registrarme como reclutador"}
             </button>
           </form>
 

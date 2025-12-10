@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -111,6 +112,7 @@ public class Oferta {
 	)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "habilidad", length = 30, nullable = false)
+	@JsonDeserialize(contentAs = Aspirante.HabilidadEnum.class)
 	private Set<Aspirante.HabilidadEnum> habilidadesRequeridas = new HashSet<>();
 
 
