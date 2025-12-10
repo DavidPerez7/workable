@@ -79,11 +79,7 @@ export const actualizarPostulacion = async (id, postulacionData) => {
 // Eliminar postulación
 export const eliminarPostulacion = async (id) => {
   try {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      throw new Error("No se encontró la sesión del usuario");
-    }
-    const response = await axios.delete(`${API_URL}/${id}?usuarioIdActual=${userId}`, {
+    const response = await axios.delete(`${API_URL}/${id}/eliminar`, {
       headers: getAuthHeaders(),
     });
     return response.data;

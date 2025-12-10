@@ -158,6 +158,23 @@ public class PostulacionController {
         }
     }
 
+    // DELETE alternativo - Usa el usuario autenticado del JWT
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @DeleteMapping("/{id}/eliminar")
+    public ResponseEntity<?> deleteWithAuth(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            Long usuarioId = user.getUsuarioId();
+            postulacionService.eliminarPostulacion(id, usuarioId);
+            return ResponseEntity.ok(Map.of("message", "Postulación eliminada correctamente"));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar postulación: " + e.getMessage()));
+        }
+    }
+
     // Endpoint adicional: Listar todas las postulaciones del aspirante actual
     @PreAuthorize("hasRole('ASPIRANTE')")
     @GetMapping("/mis-postulaciones")
