@@ -48,7 +48,13 @@ public class EstudioController {
                 return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
             }
             
-            Long aspiranteId = estudio.getAspirante().getId();
+            // Si el aspirante no viene en el request, usar el del token
+            Long aspiranteId;
+            if (estudio.getAspirante() == null || estudio.getAspirante().getId() == null) {
+                aspiranteId = usuarioIdActual;
+            } else {
+                aspiranteId = estudio.getAspirante().getId();
+            }
             
             // Validar que el usuario solo puede crear estudios para sí mismo (ADMIN puede crear para cualquiera)
             if (!isAdmin && !aspiranteId.equals(usuarioIdActual)) {

@@ -26,7 +26,7 @@ const GestigOfertsPage = () => {
       }
 
       const user = JSON.parse(userStr);
-      const reclutadorId = user.id;
+      const reclutadorId = user.usuarioId;
 
       if (!reclutadorId) {
         throw new Error('No se encontró ID de reclutador');
@@ -89,8 +89,10 @@ const GestigOfertsPage = () => {
     return (
       <>
         <HeaderReclutador />
-        <div className="gestion-container">
-          <p className="loading-text">Cargando ofertas...</p>
+        <div className="container-main-GO">
+          <div className="loading-state-GO">
+            <p className="loading-text-GO">⏳ Cargando ofertas...</p>
+          </div>
         </div>
       </>
     );
@@ -100,11 +102,13 @@ const GestigOfertsPage = () => {
     return (
       <>
         <HeaderReclutador />
-        <div className="gestion-container">
-          <p className="error-text">Error: {error}</p>
-          <button onClick={fetchOfertas} className="btn-reintentar">
-            Reintentar
-          </button>
+        <div className="container-main-GO">
+          <div className="error-state-GO">
+            <p className="error-text-GO">❌ Error: {error}</p>
+            <button onClick={fetchOfertas} className="btn-retry-GO">
+              Reintentar
+            </button>
+          </div>
         </div>
       </>
     );
@@ -113,92 +117,106 @@ const GestigOfertsPage = () => {
   return (
     <>
       <HeaderReclutador />
-      <div className="gestion-container">
-        <div className="gestion-header">
-          <h1 className="gestion-title">Gestión de Ofertas</h1>
+      <div className="container-main-GO">
+        <div className="header-section-GO">
+          <h1 className="title-page-GO">Gestión de Ofertas</h1>
           <button
-            className="btn-nueva-oferta"
+            className="link-goback-GO"
             onClick={() => navigate("/Reclutador/Publicacion")}
           >
             + Nueva Oferta
           </button>
         </div>
 
-        {ofertas.length === 0 ? (
-          <div className="empty-state">
-            <p>No tienes ofertas publicadas</p>
-            <button
-              className="btn-primary"
-              onClick={() => navigate("/Reclutador/Publicacion")}
-            >
-              Publicar tu primera oferta
-            </button>
-          </div>
-        ) : (
-          <div className="ofertas-grid">
-            {ofertas.map((oferta) => (
-              <div key={oferta.id} className="oferta-card">
-                <div className="oferta-header">
-                  <h3 className="oferta-title">{oferta.titulo}</h3>
-                  <span className={`estado-badge estado-${oferta.estadoOferta?.toLowerCase()}`}>
-                    {oferta.estadoOferta || 'ABIERTA'}
-                  </span>
-                </div>
-
-                <div className="oferta-info">
-                  <p className="oferta-descripcion">{oferta.descripcion}</p>
-                  <p className="oferta-fecha">
-                    Publicada: {new Date(oferta.fechaPublicacion).toLocaleDateString()}
-                  </p>
-                  <p className="oferta-ubicacion">
-                    📍 {oferta.municipio?.nombre || oferta.ubicacion}
-                  </p>
-                  <p className="oferta-salario">
-                    💰 ${new Intl.NumberFormat('es-CO').format(oferta.salario || 0)}
-                  </p>
-                </div>
-
-                <div className="oferta-actions">
-                  <button
-                    className="btn-secondary"
-                    onClick={() => handleVerPostulaciones(oferta.id)}
-                  >
-                    Ver Postulaciones
-                  </button>
-                  <button
-                    className="btn-editar"
-                    onClick={() => handleEditar(oferta.id)}
-                  >
-                    Editar
-                  </button>
-                  
-                  {oferta.estadoOferta === 'ABIERTA' ? (
-                    <button
-                      className="btn-cerrar"
-                      onClick={() => handleCambiarEstado(oferta.id, 'CERRADA')}
-                    >
-                      Cerrar
-                    </button>
-                  ) : (
-                    <button
-                      className="btn-abrir"
-                      onClick={() => handleCambiarEstado(oferta.id, 'ABIERTA')}
-                    >
-                      Abrir
-                    </button>
-                  )}
-                  
-                  <button
-                    className="btn-eliminar"
-                    onClick={() => handleEliminar(oferta.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
+        <div className="section-card-GO">
+          {ofertas.length === 0 ? (
+            <div className="empty-state-GO">
+              <p className="empty-text-GO">No tienes ofertas publicadas</p>
+              <button
+                className="btn-create-GO"
+                onClick={() => navigate("/Reclutador/Publicacion")}
+              >
+                Publicar tu primera oferta
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div className="table-wrapper-GO">
+                <table className="tabla-gestion-GO">
+                  <thead>
+                    <tr>
+                      <th>Título</th>
+                      <th>Ubicación</th>
+                      <th>Salario</th>
+                      <th>Fecha Publicación</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ofertas.map((oferta) => (
+                      <tr key={oferta.id}>
+                        <td className="td-titulo-GO">{oferta.titulo}</td>
+                        <td>{oferta.municipio?.nombre || oferta.ubicacion}</td>
+                        <td>${new Intl.NumberFormat('es-CO').format(oferta.salario || 0)}</td>
+                        <td className="td-fecha-GO">
+                          {new Date(oferta.fechaPublicacion).toLocaleDateString('es-CO')}
+                        </td>
+                        <td>
+                          <span className={`badge-estado-GO ${oferta.estadoOferta === 'ABIERTA' ? 'badge-activa-GO' : 'badge-cerrada-GO'}`}>
+                            {oferta.estadoOferta || 'ABIERTA'}
+                          </span>
+                        </td>
+                        <td className="td-acciones-GO">
+                          <button
+                            className="btn-editar-GO"
+                            onClick={() => handleVerPostulaciones(oferta.id)}
+                            title="Ver postulaciones"
+                          >
+                            👥
+                          </button>
+                          <button
+                            className="btn-editar-GO"
+                            onClick={() => handleEditar(oferta.id)}
+                            title="Editar oferta"
+                          >
+                            ✏️
+                          </button>
+                          
+                          {oferta.estadoOferta === 'ABIERTA' ? (
+                            <button
+                              className="btn-estado-GO"
+                              onClick={() => handleCambiarEstado(oferta.id, 'CERRADA')}
+                              title="Cerrar oferta"
+                            >
+                              Cerrar
+                            </button>
+                          ) : (
+                            <button
+                              className="btn-estado-GO"
+                              onClick={() => handleCambiarEstado(oferta.id, 'ABIERTA')}
+                              title="Abrir oferta"
+                            >
+                              Abrir
+                            </button>
+                          )}
+                          
+                          <button
+                            className="btn-eliminar-GO"
+                            onClick={() => handleEliminar(oferta.id)}
+                            title="Eliminar oferta"
+                          >
+                            🗑️
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

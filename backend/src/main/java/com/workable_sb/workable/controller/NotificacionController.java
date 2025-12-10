@@ -2,10 +2,13 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Notificacion;
 import com.workable_sb.workable.service.NotificacionService;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +20,54 @@ public class NotificacionController {
 
     @Autowired
     private NotificacionService notificacionService;
+
+    // ===== READ notificaciones del aspirante actual =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/aspirante")
+    public ResponseEntity<?> getNotificacionesAspirante() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Long usuarioId = null;
+            
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+                usuarioId = userDetails.getUsuarioId();
+            }
+            
+            if (usuarioId == null) {
+                return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
+            }
+            
+            return ResponseEntity.ok(notificacionService.getByUsuario(usuarioId));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ===== UPDATE marcar como leída (PUT) =====
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @PutMapping("/{id}/marcar-leida")
+    public ResponseEntity<?> marcarComoLeidaPut(@PathVariable Long id) {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            Long usuarioId = null;
+            
+            if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+                CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+                usuarioId = userDetails.getUsuarioId();
+            }
+            
+            if (usuarioId == null) {
+                return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
+            }
+            
+            return ResponseEntity.ok(notificacionService.marcarComoLeida(id, usuarioId));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
 
     // ===== CREATE (Solo ADMIN para crear notificaciones de sistema) =====
     @PreAuthorize("hasRole('ADMIN')")

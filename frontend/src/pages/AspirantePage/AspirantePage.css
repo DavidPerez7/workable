@@ -31,42 +31,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #9ca3af;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #3b82f6;
+  gap: 0.8rem;
 }
 
 .filters-title-AP {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .btn-clear-filters-AP {
-  background: transparent;
-  border: none;
+  background: #eff6ff;
+  border: 1px solid #3b82f6;
   color: #3b82f6;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .btn-clear-filters-AP:hover {
-  color: #1d4ed8;
+  background: #3b82f6;
+  color: white;
   transform: scale(1.05);
 }
 
 .filter-group-AP {
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.2rem;
 }
 
 .filter-label-AP {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 0.8rem 0;
+  margin: 0 0 0.6rem 0;
 }
 
 .filter-select-AP,
@@ -140,15 +149,23 @@
 .results-title-AP {
   font-size: clamp(1.8rem, 3vw, 2.2rem);
   font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.8rem 0;
 }
 
 .results-count-AP {
-  font-size: 1.05rem;
-  color: #64748b;
+  font-size: 1.2rem;
+  color: #1e6ff1;
   margin: 0;
-  font-weight: 500;
+  font-weight: 700;
+  background: #eff6ff;
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  border: 2px solid #3b82f6;
 }
 
 /* ===========================
@@ -177,14 +194,14 @@
 .job-cards-grid-AP {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.8rem;
 }
 
 /* ===========================
    TARJETAS DE OFERTAS
    =========================== */
 .job-card-AP {
-  padding: 1.8rem;
+  padding: 1rem 1.2rem;
   background: white;
   border: 1px solid #9ca3af;
   border-radius: 14px;
@@ -208,11 +225,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
 .job-card-title-AP {
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
@@ -222,37 +239,37 @@
 .job-time-badge-AP {
   background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
   color: white;
-  padding: 0.4rem 0.8rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 50px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .job-company-AP {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #3b82f6;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.3rem 0;
 }
 
 .job-location-AP {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #64748b;
-  margin: 0 0 1rem 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .job-tags-AP {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
 }
 
 .job-tag-AP {
-  padding: 0.4rem 0.9rem;
+  padding: 0.3rem 0.7rem;
   border-radius: 50px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   border: 2px solid;
 }
@@ -273,19 +290,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1rem;
+  padding-top: 0.6rem;
   border-top: 1px solid #9ca3af;
 }
 
 .job-salary-AP {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #10b981;
   margin: 0;
 }
 
 .job-deadline-AP {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #64748b;
   margin: 0;
 }
@@ -318,17 +335,24 @@
 }
 
 .job-detail-title-AP {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.8rem 0;
 }
 
 .job-detail-company-AP {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #3b82f6;
   margin: 0;
+  background: #eff6ff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  display: inline-block;
 }
 
 .btn-save-job-AP {
@@ -369,12 +393,15 @@
 .info-item-AP {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.8rem;
-  padding: 1rem;
-  background: #f9fafb;
+  padding: 1rem 0.8rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #3b82f6;
   border-radius: 10px;
   font-size: 0.95rem;
-  color: #475569;
+  font-weight: 600;
+  color: #1d4ed8;
 }
 
 .info-icon-AP {

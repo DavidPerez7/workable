@@ -593,6 +593,24 @@
   color: #dc2626;
 }
 
+/* Acción advertencia (Cerrar Sesión) */
+.action-warning-MPF {
+  border-color: #fed7aa;
+}
+
+.action-warning-MPF:hover {
+  border-color: #f97316;
+  box-shadow: 0 12px 32px rgba(249, 115, 22, 0.2);
+}
+
+.action-warning-MPF .action-icon {
+  color: #f97316;
+}
+
+.action-warning-MPF:hover .action-icon {
+  color: #ea580c;
+}
+
 /* ============================================================
    MODAL DE CONFIRMACIÓN (RF04)
    ============================================================ */

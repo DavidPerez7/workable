@@ -64,28 +64,9 @@ public class OfertaService {
             throw new IllegalArgumentException("El nivel de experiencia es obligatorio");
         }
 
-    // Validar que la empresa existe
-    Empresa empresa = empresaRepository.findById(empresaId)
-        .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-
-    // Si el token pertenece a un ADMIN, permitimos crear sin validar pertenencia a empresa
-    if (!adminValidationService.isAdmin()) {
-        // No es ADMIN: validar que el reclutador existe y pertenece a la empresa
-        if (reclutadorId == null) {
-            throw new RuntimeException("El reclutadorId es requerido para usuarios no admin");
-        }
-        var reclutador = usuarioRepo.findById(reclutadorId)
-            .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
-
-        List<Long> reclutadorIds = new java.util.ArrayList<>(empresa.getReclutadores())
-            .stream()
-            .map(r -> r.getId())
-            .collect(java.util.stream.Collectors.toList());
-        
-        if (!reclutadorIds.contains(reclutadorId)) {
-            throw new IllegalStateException("El reclutador no pertenece a la empresa");
-        }
-    }
+        // Validar que la empresa existe
+        Empresa empresa = empresaRepository.findById(empresaId)
+            .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
 
         // Validar municipio
         if (oferta.getMunicipio() != null) {
@@ -95,6 +76,9 @@ public class OfertaService {
 
         // Asignar empresa
         oferta.setEmpresa(empresa);
+        
+        // Asignar fecha de publicación automática
+        oferta.setFechaPublicacion(java.time.LocalDate.now());
 
         return ofertaRepository.save(oferta);
     }
@@ -225,13 +209,13 @@ public class OfertaService {
             return true;
         }
 
-        // Validar que el reclutador existe
-        usuarioRepo.findById(usuarioId)
+        // Obtener el reclutador
+        var reclutador = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
         
-        // Es reclutador de la empresa (hacer copia de lista para evitar ConcurrentModificationException)
-        return new java.util.ArrayList<>(oferta.getEmpresa().getReclutadores()).stream()
-                .anyMatch(r -> r.getId().equals(usuarioId));
+        // Verificar que el reclutador pertenece a la misma empresa
+        return reclutador.getEmpresa() != null && 
+               reclutador.getEmpresa().getId().equals(oferta.getEmpresa().getId());
     }
 }
 

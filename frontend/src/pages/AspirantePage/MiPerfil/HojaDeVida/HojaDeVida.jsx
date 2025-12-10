@@ -30,7 +30,8 @@ const HojaDeVida = () => {
     institucion: "",
     titulo: "",
     fechaInicio: "",
-    estado: "EN_CURSO",
+    nivelEducativo: "UNIVERSITARIO",
+    enCurso: true,
   });
 
   const navigate = useNavigate();
@@ -195,9 +196,9 @@ const HojaDeVida = () => {
   ============================ */
 
   const agregarEstudio = async () => {
-    const { institucion, titulo, fechaInicio, estado } = nuevoEstudio;
+    const { institucion, titulo, fechaInicio, nivelEducativo, enCurso } = nuevoEstudio;
 
-    if (!institucion || !titulo || !fechaInicio) {
+    if (!institucion || !titulo || !fechaInicio || !nivelEducativo) {
       alert("Por favor rellena todos los campos requeridos");
       return;
     }
@@ -207,11 +208,12 @@ const HojaDeVida = () => {
         institucion,
         titulo,
         fechaInicio,
-        estado,
+        nivelEducativo,
+        enCurso,
       };
       const nuevoEstudioData = await crearEstudio(estudioData);
       setEstudios([...estudios, nuevoEstudioData]);
-      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", estado: "EN_CURSO" });
+      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", nivelEducativo: "UNIVERSITARIO", enCurso: true });
       const form = document.getElementById("add-edu-form");
       if (form) form.style.display = "none";
     } catch (err) {
@@ -496,15 +498,30 @@ const HojaDeVida = () => {
               }
             />
             <select
-              value={nuevoEstudio.estado}
+              value={nuevoEstudio.nivelEducativo}
               onChange={(e) =>
-                setNuevoEstudio({ ...nuevoEstudio, estado: e.target.value })
+                setNuevoEstudio({ ...nuevoEstudio, nivelEducativo: e.target.value })
               }
             >
-              <option value="EN_CURSO">En curso</option>
-              <option value="COMPLETADO">Completado</option>
-              <option value="PAUSADO">Pausado</option>
+              <option value="PRIMARIA">Primaria</option>
+              <option value="BACHILLERATO">Bachillerato</option>
+              <option value="TECNICO">Técnico</option>
+              <option value="TECNOLOGO">Tecnólogo</option>
+              <option value="UNIVERSITARIO">Universitario</option>
+              <option value="MAESTRIA">Maestría</option>
+              <option value="DOCTORADO">Doctorado</option>
+              <option value="ESPECIALIZACION">Especialización</option>
             </select>
+            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <input
+                type="checkbox"
+                checked={nuevoEstudio.enCurso}
+                onChange={(e) =>
+                  setNuevoEstudio({ ...nuevoEstudio, enCurso: e.target.checked })
+                }
+              />
+              En curso
+            </label>
             <button onClick={() => agregarEstudio()}>Añadir educación</button>
           </div>
 

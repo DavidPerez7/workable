@@ -5,7 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.workable_sb.workable.models.Aspirante.HabilidadEnum;
 import com.workable_sb.workable.models.*;
 import com.workable_sb.workable.repository.*;
 
@@ -23,6 +22,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private EmpresaRepository empresaRepo;
     @Autowired private EstudioRepo estudioRepo;
     @Autowired private ExperienciaRepo experienciaRepo;
+    @Autowired private HabilidadRepo habilidadRepo;
     @Autowired private OfertaRepo ofertaRepo;
     @Autowired private PostulacionRepo postulacionRepo;
     @Autowired private FeedbackRepo feedbackRepo;
@@ -31,31 +31,63 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Inicializar municipios solo si la base de datos está vacía
-        if (municipioRepo.count() == 0) {
-            initializeMunicipios();
-            System.out.println("Base de datos inicializada con municipios");
-        }
+        try {
+            System.out.println("=== INICIANDO DATA INITIALIZER ===");
+            
+            // Inicializar municipios solo si la base de datos está vacía
+            if (municipioRepo.count() == 0) {
+                initializeMunicipios();
+                System.out.println("✓ Base de datos inicializada con municipios");
+            }
 
-        // Comentado temporalmente para evitar errores con municipio_id null
-        // recreateEmpresas();
-        // recreateTestUsers();
-        // recreateOfertas();
-        // createGenericUsersAndCompanies();
-        // recreateEducacionYExperiencia();
-        // cleanupOldGenericUsers();
+            // Siempre limpiar datos existentes y recrear datos de prueba
+            System.out.println("▶ Limpiando datos existentes...");
+            cleanupExistingData();
+
+            // Crear empresas básicas
+            System.out.println("▶ Creando empresas...");
+            recreateEmpresas();
+
+            // Crear usuarios de prueba
+            System.out.println("▶ Creando usuarios de prueba...");
+            recreateTestUsers();
+            System.out.println("▶ Creando aspirantes...");
+            createGenericAspirantes();
+            System.out.println("▶ Creando ofertas...");
+            createGenericOfertas();
+            
+            System.out.println("=== DATA INITIALIZER COMPLETADO ===");
+        } catch (Exception e) {
+            System.err.println("ERROR CRÍTICO en DataInitializer: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void cleanupExistingData() {
+        try {
+            // Limpiar datos en orden inverso a las dependencias
+            feedbackRepo.deleteAll();
+            notificacionRepo.deleteAll();
+            postulacionRepo.deleteAll();
+            ofertaRepo.deleteAll();
+            estudioRepo.deleteAll();
+            experienciaRepo.deleteAll();
+            habilidadRepo.deleteAll();
+            reclutadorRepo.deleteAll();
+            aspiranteRepo.deleteAll();
+            administradorRepo.deleteAll();
+            empresaRepo.deleteAll();
+            
+            System.out.println("✓ Datos existentes limpiados");
+        } catch (Exception e) {
+            System.err.println("Error limpiando datos: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void recreateTestUsers() {
         // Obtener un municipio por defecto para los usuarios
         Municipio municipio = municipioRepo.findByNombre("Bogotá").orElse(municipioRepo.findAll().stream().findFirst().orElse(null));
-
-        // Limpiar aspirante específico para evitar duplicados
-        try {
-            aspiranteRepo.deleteById(aspiranteRepo.findByCorreo("aspirante@example.com").orElse(new Aspirante()).getId());
-        } catch (Exception e) {
-            // Ignorar si no existe
-        }
 
         // ===== CREAR ASPIRANTE =====
         Aspirante aspirante = new Aspirante();
@@ -177,38 +209,44 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void recreateEmpresas() {
-        // Eliminar y recrear todas las empresas
-        postulacionRepo.deleteAll();
-        ofertaRepo.deleteAll();
-        empresaRepo.deleteAll();
+        try {
+            // 10 EMPRESAS con nombres reales de Colombia
+            String[][] empresasData = {
+                {"Bancolombia", "Banco líder en Colombia", "Bogotá", "860002964", "contacto@bancolombia.com.co", "6013078000"},
+                {"Ecopetrol", "Empresa petrolera estatal", "Bogotá", "899999063", "contacto@ecopetrol.com.co", "6012345678"},
+                {"Grupo Aval", "Holding financiero", "Bogotá", "860034313", "contacto@grupoaval.com", "6012345679"},
+                {"Cementos Argos", "Empresa cementera", "Medellín", "890900286", "contacto@argos.com.co", "6042345678"},
+                {"Postobón", "Empresa de bebidas", "Medellín", "890900608", "contacto@postobon.com.co", "6042345679"},
+                {"Alpina", "Productos lácteos y alimentos", "Bogotá", "860002738", "contacto@alpina.com.co", "6012345680"},
+                {"Colombina", "Dulces y chocolates", "Cali", "890900251", "contacto@colombina.com", "6022345678"},
+                {"ISA", "Infraestructura energética", "Medellín", "890900738", "contacto@isa.com.co", "6042345680"},
+                {"Nutresa", "Alimentos procesados", "Medellín", "890900840", "contacto@nutresa.com.co", "6042345681"},
+                {"Éxito", "Cadena de supermercados", "Medellín", "890900609", "contacto@exito.com", "6042345682"}
+            };
 
-        // 10 EMPRESAS con nombres reales de Colombia
-        String[][] empresasData = {
-            {"Bancolombia", "Banco líder en Colombia", "Bogotá", "860002964", "contacto@bancolombia.com.co", "6013078000"},
-            {"Ecopetrol", "Empresa petrolera estatal", "Bogotá", "899999063", "contacto@ecopetrol.com.co", "6012345678"},
-            {"Grupo Aval", "Holding financiero", "Bogotá", "860034313", "contacto@grupoaval.com", "6012345679"},
-            {"Cementos Argos", "Empresa cementera", "Medellín", "890900286", "contacto@argos.com.co", "6042345678"},
-            {"Postobón", "Empresa de bebidas", "Medellín", "890900608", "contacto@postobon.com.co", "6042345679"},
-            {"Alpina", "Productos lácteos y alimentos", "Bogotá", "860002738", "contacto@alpina.com.co", "6012345680"},
-            {"Colombina", "Dulces y chocolates", "Cali", "890900251", "contacto@colombina.com", "6022345678"},
-            {"ISA", "Infraestructura energética", "Medellín", "890900738", "contacto@isa.com.co", "6042345680"},
-            {"Nutresa", "Alimentos procesados", "Medellín", "890900840", "contacto@nutresa.com.co", "6042345681"},
-            {"Éxito", "Cadena de supermercados", "Medellín", "890900609", "contacto@exito.com", "6042345682"}
-        };
-
-        for (int i = 0; i < empresasData.length; i++) {
-            Empresa empresa = new Empresa();
-            empresa.setNombre(empresasData[i][0]);
-            empresa.setNit(empresasData[i][3]);
-            empresa.setDescripcion(empresasData[i][1]);
-            empresa.setNumeroTrabajadores(1000 + (i * 500));
-            empresa.setEmailContacto(empresasData[i][4]);
-            empresa.setTelefonoContacto(empresasData[i][5]);
-            empresa.setMunicipio(municipioRepo.findByNombre(empresasData[i][2]).orElse(null));
-            empresa.setIsActive(true);
-            empresaRepo.save(empresa);
+            int count = 0;
+            for (int i = 0; i < empresasData.length; i++) {
+                try {
+                    Empresa empresa = new Empresa();
+                    empresa.setNombre(empresasData[i][0]);
+                    empresa.setNit(empresasData[i][3]);
+                    empresa.setDescripcion(empresasData[i][1]);
+                    empresa.setNumeroTrabajadores(1000 + (i * 500));
+                    empresa.setEmailContacto(empresasData[i][4]);
+                    empresa.setTelefonoContacto(empresasData[i][5]);
+                    empresa.setMunicipio(municipioRepo.findByNombre(empresasData[i][2]).orElse(null));
+                    empresa.setIsActive(true);
+                    empresaRepo.save(empresa);
+                    count++;
+                } catch (Exception e) {
+                    System.err.println("Error al crear empresa: " + e.getMessage());
+                }
+            }
+            System.out.println("✓ Empresas recreadas: " + count + " empresas disponibles");
+        } catch (Exception e) {
+            System.err.println("Error en recreateEmpresas: " + e.getMessage());
+            e.printStackTrace();
         }
-        System.out.println("✓ Empresas recreadas: 10 empresas disponibles");
     }
 
     private void initializeEstudios() {
@@ -508,11 +546,13 @@ public class DataInitializer implements CommandLineRunner {
             }
             System.out.println("✓ 10 Experiencias creadas");
 
+            System.out.println("✓ 10 Experiencias creadas");
+
             // AGREGAR HABILIDADES DIRECTAMENTE AL ASPIRANTE
-            Map<HabilidadEnum, String> habilidades = new java.util.HashMap<>();
-            HabilidadEnum[] skillArray = HabilidadEnum.values();
+            Map<Aspirante.HabilidadEnum, String> habilidades = new java.util.HashMap<>();
+            Aspirante.HabilidadEnum[] skillArray = Aspirante.HabilidadEnum.values();
             for (int i = 0; i < 5; i++) {
-                HabilidadEnum habilidad = skillArray[i % skillArray.length];
+                Aspirante.HabilidadEnum habilidad = skillArray[i % skillArray.length];
                 String nivel = Aspirante.NivelDominio.values()[i % Aspirante.NivelDominio.values().length].name();
                 habilidades.put(habilidad, nivel);
             }
@@ -651,10 +691,10 @@ public class DataInitializer implements CommandLineRunner {
     private void initializeUsuarioHabilidades() {
         Aspirante aspirante = aspiranteRepo.findByCorreo("juan.perez@example.com").orElse(null);
         if (aspirante != null) {
-            Map<HabilidadEnum, String> habilidades = new java.util.HashMap<>();
-            HabilidadEnum[] skillArray = HabilidadEnum.values();
+            Map<Aspirante.HabilidadEnum, String> habilidades = new java.util.HashMap<>();
+            Aspirante.HabilidadEnum[] skillArray = Aspirante.HabilidadEnum.values();
             for (int i = 0; i < 5; i++) {
-                HabilidadEnum habilidad = skillArray[i % skillArray.length];
+                Aspirante.HabilidadEnum habilidad = skillArray[i % skillArray.length];
                 String nivel = Aspirante.NivelDominio.values()[i % Aspirante.NivelDominio.values().length].name();
                 habilidades.put(habilidad, nivel);
             }
@@ -734,5 +774,77 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("⚠ Error durante la limpieza de usuarios genéricos: " + e.getMessage());
             // No lanzamos la excepción para que el startup continúe
         }
+    }
+
+    private void createGenericAspirantes() {
+        // Obtener un municipio por defecto
+        Municipio municipio = municipioRepo.findByNombre("Bogotá").orElse(municipioRepo.findAll().stream().findFirst().orElse(null));
+
+        // Crear 3 aspirantes genéricos adicionales
+        Object[][] aspirantesData = {
+            {"Carlos", "García", "carlos.garcia@example.com", "3105555556", Aspirante.Genero.MASCULINO},
+            {"María", "Rodríguez", "maria.rodriguez@example.com", "3105555557", Aspirante.Genero.FEMENINO},
+            {"Juan", "Martínez", "juan.martinez@example.com", "3105555558", Aspirante.Genero.MASCULINO}
+        };
+
+        for (int i = 0; i < aspirantesData.length; i++) {
+            // Verificar si ya existe
+            if (aspiranteRepo.findByCorreo((String)aspirantesData[i][2]).isPresent()) {
+                continue; // Saltar si ya existe
+            }
+
+            Aspirante aspirante = new Aspirante();
+            aspirante.setNombre((String)aspirantesData[i][0]);
+            aspirante.setApellido((String)aspirantesData[i][1]);
+            aspirante.setCorreo((String)aspirantesData[i][2]);
+            aspirante.setPassword(passwordEncoder.encode("pass123"));
+            aspirante.setTelefono((String)aspirantesData[i][3]);
+            aspirante.setFechaNacimiento(LocalDate.of(1995 + i, 6, 15));
+            aspirante.setMunicipio(municipio);
+            aspirante.setGenero((Aspirante.Genero) aspirantesData[i][4]);
+            aspirante.setIsActive(true);
+            aspiranteRepo.save(aspirante);
+        }
+        System.out.println("✓ 3 Aspirantes genéricos adicionales creados");
+    }
+
+    private void createGenericOfertas() {
+        // Crear 2 ofertas simples
+        Empresa empresa1 = empresaRepo.findById(1L).orElse(null);
+        Empresa empresa2 = empresaRepo.findById(2L).orElse(null);
+
+        if (empresa1 != null) {
+            Oferta oferta1 = new Oferta();
+            oferta1.setTitulo("Desarrollador Java");
+            oferta1.setDescripcion("Desarrollo de aplicaciones web con Spring Boot");
+            oferta1.setFechaPublicacion(LocalDate.now());
+            oferta1.setFechaLimite(LocalDate.now().plusDays(30));
+            oferta1.setSalario(4000000L);
+            oferta1.setNumeroVacantes(1);
+            oferta1.setNivelExperiencia(Oferta.NivelExperiencia.INTERMEDIO);
+            oferta1.setModalidad(Oferta.Modalidad.PRESENCIAL);
+            oferta1.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
+            oferta1.setEmpresa(empresa1);
+            oferta1.setEstado(Oferta.EstadoOferta.ABIERTA);
+            ofertaRepo.save(oferta1);
+        }
+
+        if (empresa2 != null) {
+            Oferta oferta2 = new Oferta();
+            oferta2.setTitulo("Analista de Sistemas");
+            oferta2.setDescripcion("Análisis y diseño de sistemas empresariales");
+            oferta2.setFechaPublicacion(LocalDate.now());
+            oferta2.setFechaLimite(LocalDate.now().plusDays(30));
+            oferta2.setSalario(3500000L);
+            oferta2.setNumeroVacantes(1);
+            oferta2.setNivelExperiencia(Oferta.NivelExperiencia.BASICO);
+            oferta2.setModalidad(Oferta.Modalidad.REMOTO);
+            oferta2.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
+            oferta2.setEmpresa(empresa2);
+            oferta2.setEstado(Oferta.EstadoOferta.ABIERTA);
+            ofertaRepo.save(oferta2);
+        }
+
+        System.out.println("✓ 2 Ofertas simples creadas");
     }
 }

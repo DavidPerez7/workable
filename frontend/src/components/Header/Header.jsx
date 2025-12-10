@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaBars, FaBriefcase, FaMapMarkerAlt, FaSearch } from "react-icons/fa";
+import NotificationsModal from "../NotificationsModal/NotificationsModal";
 import "./Header.css";
 
 const ofertasMock = [
@@ -162,6 +163,7 @@ function Header({ isLoggedIn = false, userRole = null }) {
 
           {/* Menú de perfil para aspirante */}
           <div className={`user-profile-menu ${menuOpen ? "show" : ""}`}>
+            <NotificationsModal />
             <div className="user-info">
               <div className="avatar-placeholder">N</div>
             </div>

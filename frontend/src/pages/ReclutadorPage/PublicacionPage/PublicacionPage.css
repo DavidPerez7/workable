@@ -12,7 +12,10 @@
 
 .pb-title {
   font-size: clamp(2rem, 4vw, 2.8rem);
-  color: #0F172A;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: 800;
   text-align: center;
   margin-bottom: 2.5rem;
@@ -28,11 +31,20 @@
   border-radius: 16px;
   border: 2px solid #E2E8F0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.pb-card:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.08);
 }
 
 .pb-section-title {
   font-size: 1.6rem;
-  color: #1E293B;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: 700;
   margin-bottom: 1.5rem;
 }
@@ -46,8 +58,11 @@
 
 .pb-field label {
   font-size: 1.05rem;
-  color: #475569;
-  font-weight: 500;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
   margin-bottom: 0.4rem;
 }
 
@@ -63,6 +78,7 @@
   font-size: 1rem;
   transition: all 0.3s ease;
   outline: none;
+  color: #1E293B;
 }
 
 /* Hover + Focus (según tu guía) */
@@ -71,14 +87,16 @@
 .pb-textarea:hover {
   border-color: #3B82F6;
   box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(29, 78, 216, 0.02) 100%);
 }
 
 .pb-input:focus,
 .pb-select:focus,
 .pb-textarea:focus {
   border-color: #1D4ED8;
-  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.25);
   outline: 3px solid rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.04) 0%, rgba(29, 78, 216, 0.04) 100%);
 }
 
 /* --- BUTTON PRIMARY --- */

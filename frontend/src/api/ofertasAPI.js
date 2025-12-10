@@ -101,10 +101,9 @@ export const actualizarOferta = async (id, ofertaData) => {
 };
 
 export const cambiarEstadoOferta = async (id, estado) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/${id}/estado`, {
+  const response = await fetch(`http://localhost:8080/api/oferta/${id}/estado?estado=${estado}`, {
     method: "PATCH",
     headers: getAuthHeaders(),
-    body: JSON.stringify({ estado }),
   });
 
   if (!response.ok) {
@@ -122,7 +121,8 @@ export const eliminarOferta = async (id) => {
   });
 
   if (!response.ok) {
-    throw new Error("Error al eliminar oferta");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Error al eliminar oferta");
   }
 
   return null;
