@@ -37,20 +37,13 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Base de datos inicializada con municipios");
         }
 
-        // SIEMPRE elimiar y recrear TODOS los datos
-        recreateEmpresas();
-        recreateTestUsers();
-        recreateOfertas();
-        
-        // Crear aspirantes y reclutadores genéricos
-        createGenericUsersAndCompanies();
-        
-        // NOTA: recreateEducacionYExperiencia() deshabilitado temporalmente debido a problemas con entidades desacopladas
-        // El sistema funciona correctamente sin este método
+        // Comentado temporalmente para evitar errores con municipio_id null
+        // recreateEmpresas();
+        // recreateTestUsers();
+        // recreateOfertas();
+        // createGenericUsersAndCompanies();
         // recreateEducacionYExperiencia();
-        
-        // AL FINAL: limpiar aspirantes/reclutadores genéricos (ya se usaron para crear educación)
-        cleanupOldGenericUsers();
+        // cleanupOldGenericUsers();
     }
 
     private void recreateTestUsers() {

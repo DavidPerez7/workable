@@ -1,77 +1,52 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { obtenerPostulacionesPorOferta, cambiarEstadoPostulacion } from "../../api/postulacionesAPI";
 import HeaderReclutador from "../HeaderReclutador/HeaderReclutador";
 import "./VerPostulacionesRecibidas.css";
 
 const VerPostulacionesRecibidas = () => {
-  // ===============================
-  // 📌 SIMULACIÓN DE DATOS (TEMP)
-  // ===============================
+  const location = useLocation();
+  const ofertaId = location.state?.ofertaId;
 
-  const postulacionesSimuladas = [
-    {
-      id: 1,
-      aspirante: "Juan Pérez",
-      oferta: "Diseñador UX/UI",
-      fecha: "2024-01-10",
-      estado: "En proceso",
-      correo: "juan.perez@example.com",
-      telefono: "3001234567",
-    },
-    {
-      id: 2,
-      aspirante: "María Gomez",
-      oferta: "Desarrollador Frontend",
-      fecha: "2024-03-04",
-      estado: "Aprobada",
-      correo: "maria.gomez@example.com",
-      telefono: "3109876543",
-    },
-    {
-      id: 3,
-      aspirante: "Carlos Díaz",
-      oferta: "Analista QA",
-      fecha: "2024-06-20",
-      estado: "Rechazada",
-      correo: "carlos.diaz@example.com",
-      telefono: "3205558899",
-    },
-    {
-      id: 4,
-      aspirante: "Paola Rodríguez",
-      oferta: "Diseñador UX/UI",
-      fecha: "2024-09-15",
-      estado: "En proceso",
-      correo: "paola.rod@example.com",
-      telefono: "3154448899",
-    },
-  ];
-
-  // =====================================
-  // 📌 ESTADOS DE FILTRO + RESULTADOS
-  // =====================================
   const [postulaciones, setPostulaciones] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filtroEstado, setFiltroEstado] = useState("todos");
-  const [ordenFecha, setOrdenFecha] = useState("asc");
-  const [filtroOferta, setFiltroOferta] = useState("todas");
+  const [ordenFecha, setOrdenFecha] = useState("desc");
 
   useEffect(() => {
-    // ======================================================
-    // 📌 PETICIÓN API REAL (COMENTADA)
-    // ======================================================
-    /*
-    fetch("https://api.tu-backend.com/postulaciones")
-      .then(res => res.json())
-      .then(data => {
-        setPostulaciones(data);
-      });
-    */
+    if (ofertaId) {
+      fetchPostulaciones();
+    } else {
+      setError('No se especificó una oferta');
+      setLoading(false);
+    }
+  }, [ofertaId]);
 
-    // Simulación temporal
-    setPostulaciones(postulacionesSimuladas);
-  }, []);
-  // =====================================
-  // 📌 FILTROS LOGIC
-  // =====================================
+  const fetchPostulaciones = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await obtenerPostulacionesPorOferta(ofertaId);
+      setPostulaciones(data || []);
+    } catch (err) {
+      console.error('Error al cargar postulaciones:', err);
+      setError(err.message || 'Error al cargar postulaciones');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCambiarEstado = async (postulacionId, nuevoEstado) => {
+    try {
+      await cambiarEstadoPostulacion(postulacionId, nuevoEstado);
+      await fetchPostulaciones();
+      alert(`Estado cambiado a: ${nuevoEstado}`);
+    } catch (err) {
+      console.error('Error al cambiar estado:', err);
+      alert('Error al cambiar el estado de la postulación');
+    }
+  };
 
   const obtenerPostulacionesFiltradas = () => {
     let resultado = [...postulaciones];
@@ -81,16 +56,13 @@ const VerPostulacionesRecibidas = () => {
       resultado = resultado.filter((p) => p.estado === filtroEstado);
     }
 
-    // Filtro por oferta
-    if (filtroOferta !== "todas") {
-      resultado = resultado.filter((p) => p.oferta === filtroOferta);
-    }
-
     // Orden por fecha
     resultado.sort((a, b) => {
+      const fechaA = a.fechaPostulacion || a.fecha;
+      const fechaB = b.fechaPostulacion || b.fecha;
       return ordenFecha === "asc"
-        ? new Date(a.fecha) - new Date(b.fecha)
-        : new Date(b.fecha) - new Date(a.fecha);
+        ? new Date(fechaA) - new Date(fechaB)
+        : new Date(fechaB) - new Date(fechaA);
     });
 
     return resultado;
@@ -98,17 +70,33 @@ const VerPostulacionesRecibidas = () => {
 
   const postulacionesFiltradas = obtenerPostulacionesFiltradas();
 
-  // Lista dinámica de ofertas disponibles
-  const ofertasUnicas = [
-    "todas",
-    ...new Set(postulacionesSimuladas.map((p) => p.oferta)),
-  ];
+  if (loading) {
+    return (
+      <>
+        <HeaderReclutador />
+        <div className="vp-page">
+          <p>Cargando postulaciones...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <HeaderReclutador />
+        <div className="vp-page">
+          <p className="error-text">Error: {error}</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <HeaderReclutador />
       <main className="vp-page">
-        <h1 className="vp-title">Todas las postulaciones recibidas</h1>
+        <h1 className="vp-title">Postulaciones Recibidas</h1>
 
         {/* ======== CONTROLES DE FILTRO ======== */}
         <div className="vp-filters">
@@ -119,9 +107,9 @@ const VerPostulacionesRecibidas = () => {
               onChange={(e) => setFiltroEstado(e.target.value)}
             >
               <option value="todos">Todos</option>
-              <option value="Aprobada">Aprobada</option>
-              <option value="En proceso">En proceso</option>
-              <option value="Rechazada">Rechazada</option>
+              <option value="PENDIENTE">Pendiente</option>
+              <option value="ACEPTADA">Aceptada</option>
+              <option value="RECHAZADA">Rechazada</option>
             </select>
           </div>
 
@@ -135,20 +123,6 @@ const VerPostulacionesRecibidas = () => {
               <option value="desc">Recientes → Antiguas</option>
             </select>
           </div>
-
-          <div className="vp-filter-group">
-            <label>Oferta aplicada:</label>
-            <select
-              value={filtroOferta}
-              onChange={(e) => setFiltroOferta(e.target.value)}
-            >
-              {ofertasUnicas.map((o, i) => (
-                <option key={i} value={o}>
-                  {o}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         <p className="vp-count">
@@ -157,25 +131,55 @@ const VerPostulacionesRecibidas = () => {
 
         {/* ======== LISTA DE POSTULACIONES ======== */}
         <div className="vp-container">
-          {postulacionesFiltradas.map((p) => (
-            <div className="vp-item" key={p.id}>
-              <div className="vp-header">
-                <div className="vp-avatar">{p.aspirante.charAt(0)}</div>
+          {postulacionesFiltradas.length === 0 ? (
+            <p>No hay postulaciones para esta oferta</p>
+          ) : (
+            postulacionesFiltradas.map((p) => (
+              <div className="vp-item" key={p.id}>
+                <div className="vp-header">
+                  <div className="vp-avatar">
+                    {p.aspirante?.nombre?.charAt(0) || 'A'}
+                  </div>
 
-                <div className="vp-info">
-                  <p className="vp-name">{p.aspirante}</p>
-                  <p className="vp-status">{p.estado}</p>
+                  <div className="vp-info">
+                    <p className="vp-name">
+                      {p.aspirante?.nombre || 'Aspirante'} {p.aspirante?.apellido || ''}
+                    </p>
+                    <p className="vp-status">{p.estado}</p>
+                  </div>
+                </div>
+
+                <p className="vp-text">
+                  Fecha: {new Date(p.fechaPostulacion || p.fecha).toLocaleDateString()}
+                </p>
+                <p className="vp-text">
+                  Correo: {p.aspirante?.correo || 'No disponible'}
+                </p>
+                <p className="vp-text">
+                  Teléfono: {p.aspirante?.telefono || 'No disponible'}
+                </p>
+
+                <div className="vp-actions">
+                  {p.estado === 'PENDIENTE' && (
+                    <>
+                      <button
+                        className="btn-aceptar"
+                        onClick={() => handleCambiarEstado(p.id, 'ACEPTADA')}
+                      >
+                        Aceptar
+                      </button>
+                      <button
+                        className="btn-rechazar"
+                        onClick={() => handleCambiarEstado(p.id, 'RECHAZADA')}
+                      >
+                        Rechazar
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
-
-              <p className="vp-text">
-                Oferta aplicada: <strong>{p.oferta}</strong>
-              </p>
-              <p className="vp-text">Fecha: {p.fecha}</p>
-              <p className="vp-text">Correo: {p.correo}</p>
-              <p className="vp-text">Teléfono: {p.telefono}</p>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </main>
     </>

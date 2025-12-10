@@ -1,99 +1,119 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getOfertaById, actualizarOferta } from "../../../../api/ofertasAPI";
+import { getMunicipios } from "../../../../api/municipioAPI";
 import HeaderReclutador from "../../../../components/HeaderReclutador/HeaderReclutador";
 import "./EditarOfertaLaboral.css";
 
 const EditarOfertaLaboral = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const ofertaId = location.state?.ofertaId;
+
   const [formData, setFormData] = useState({
-    id: "",
-    tituloAviso: "",
-    descripcionTrabajo: "",
-    salario: "",
-    direccion: "",
-    fechaPublicacion: "",
-    fechaLimite: "",
-    modalidadTrabajo: "",
-    tipoContrato: "",
-    municipio: "",
-    nitEmpresa: "", // NO editable (RF08)
+    titulo: "",
+    descripcion: "",
+    salarioMin: "",
+    salarioMax: "",
+    ubicacion: "",
+    fechaCierre: "",
+    modalidad: "PRESENCIAL",
+    tipoContrato: "TIEMPO_COMPLETO",
+    nivelExperiencia: "SIN_EXPERIENCIA",
+    municipioId: "",
   });
 
+  const [municipios, setMunicipios] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
+  const [guardando, setGuardando] = useState(false);
 
-  // Datos estáticos de prueba (deberás reemplazar con fetch real)
-  const modalidades = [
-    { id: 1, nombre: "Presencial" },
-    { id: 2, nombre: "Remoto" },
-    { id: 3, nombre: "Híbrido" },
-  ];
-
-  const tiposContrato = [
-    { id: 1, nombre: "Indefinido" },
-    { id: 2, nombre: "Término fijo" },
-    { id: 3, nombre: "Prácticas" },
-  ];
-
-  const municipios = [
-    { id: 1, nombre: "Bogotá" },
-    { id: 2, nombre: "Medellín" },
-    { id: 3, nombre: "Cali" },
-  ];
-
-  // ⚡ RF08 — Cargar datos actuales de la oferta
   useEffect(() => {
-    // Simulación de carga (deberás reemplazar con API GET oferta/:id)
-    setTimeout(() => {
-      setFormData({
-        id: "25",
-        tituloAviso: "Desarrollador Frontend React",
-        descripcionTrabajo: "Mantenimiento y desarrollo de nuevas funcionalidades.",
-        salario: "3500000",
-        direccion: "Calle 45 # 12 - 22",
-        fechaPublicacion: "2025-02-01",
-        fechaLimite: "2025-02-20",
-        modalidadTrabajo: "2",
-        tipoContrato: "1",
-        municipio: "1",
-        nitEmpresa: "901457890", // NO editable
-      });
+    if (!ofertaId) {
+      setError('No se especificó una oferta para editar');
       setCargando(false);
-    }, 600);
-  }, []);
+      return;
+    }
+    cargarDatos();
+  }, [ofertaId]);
+
+  const cargarDatos = async () => {
+    try {
+      setCargando(true);
+      setError(null);
+
+      const [ofertaData, municipiosData] = await Promise.all([
+        getOfertaById(ofertaId),
+        getMunicipios()
+      ]);
+
+      setMunicipios(municipiosData);
+      setFormData({
+        titulo: ofertaData.titulo || "",
+        descripcion: ofertaData.descripcion || "",
+        salarioMin: ofertaData.salarioMin || "",
+        salarioMax: ofertaData.salarioMax || "",
+        ubicacion: ofertaData.ubicacion || "",
+        fechaCierre: ofertaData.fechaCierre?.split('T')[0] || "",
+        modalidad: ofertaData.modalidad || "PRESENCIAL",
+        tipoContrato: ofertaData.tipoContrato || "TIEMPO_COMPLETO",
+        nivelExperiencia: ofertaData.nivelExperiencia || "SIN_EXPERIENCIA",
+        municipioId: ofertaData.municipio?.id || "",
+      });
+    } catch (err) {
+      console.error("Error cargando datos:", err);
+      setError(err.message || 'Error al cargar la oferta');
+    } finally {
+      setCargando(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ⚡ RF08 — Actualizar oferta
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    setGuardando(true);
+    try {
+      const datosActualizados = {
+        ...formData,
+        municipio: { id: Number(formData.municipioId) }
+      };
 
-    const datosListos = {
-      ID: formData.id,
-      TITULO: formData.tituloAviso,
-      DESCRIPCION: formData.descripcionTrabajo,
-      SALARIO: formData.salario,
-      DIRECCION: formData.direccion,
-      FECHA_PUBLI: formData.fechaPublicacion,
-      FECHA_LIMIT: formData.fechaLimite,
-      MODAL_ID: parseInt(formData.modalidadTrabajo),
-      CONTRATO_ID: parseInt(formData.tipoContrato),
-      MUNIC_ID: parseInt(formData.municipio),
-      NIT_EMPRESA: formData.nitEmpresa,
-    };
-
-    console.log("Datos actualizados:", datosListos);
-    alert("Oferta actualizada exitosamente ✔");
+      await actualizarOferta(ofertaId, datosActualizados);
+      alert("Oferta actualizada exitosamente ✔");
+      navigate("/Reclutador/GestigOferts");
+    } catch (err) {
+      console.error("Error al actualizar:", err);
+      alert(`Error al actualizar la oferta: ${err.message}`);
+    } finally {
+      setGuardando(false);
+    }
   };
 
   if (cargando) {
     return (
-        <>
-          <HeaderReclutador />
-          <main className="pb-container">
-            <p className="pb-loading">Cargando datos...</p>
-          </main>
-        </>
+      <>
+        <HeaderReclutador />
+        <main className="pb-container">
+          <p className="pb-loading">Cargando datos...</p>
+        </main>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <HeaderReclutador />
+        <main className="pb-container">
+          <p className="pb-error">{error}</p>
+          <button onClick={() => navigate("/Reclutador/GestigOferts")}>Volver</button>
+        </main>
+      </>
     );
   }
 

@@ -79,8 +79,8 @@ public class EmpresaController {
         return ResponseEntity.ok(empresaService.getReclutadores(empresaId));
     }
 
-    // - CREATE (solo ADMIN)
-    @PreAuthorize("hasRole('ADMIN')")
+    // - CREATE (RECLUTADORES pueden crear sus propias empresas)
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
     public ResponseEntity<Empresa> crear(@RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
         return ResponseEntity.ok(empresaService.create(empresa, user.getUsuarioId()));
