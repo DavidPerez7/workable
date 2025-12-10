@@ -88,3 +88,42 @@ export const eliminarPostulacion = async (id) => {
     throw new Error(error.response?.data?.error || error.response?.data?.message || "Error al eliminar postulación");
   }
 };
+
+// Obtener postulaciones de una oferta (para reclutadores)
+export const obtenerPostulacionesPorOferta = async (ofertaId, usuarioIdActual) => {
+  try {
+    const response = await axios.get(`${API_URL}/oferta/${ofertaId}?usuarioIdActual=${usuarioIdActual}`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener postulaciones:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || "Error al obtener postulaciones");
+  }
+};
+
+// Cambiar estado de postulación (para reclutadores)
+export const cambiarEstadoPostulacion = async (postulacionId, estado, usuarioIdActual) => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}/${postulacionId}/estado?usuarioIdActual=${usuarioIdActual}`,
+      { estado },
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error al cambiar estado:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || "Error al cambiar estado");
+  }
+};
+
+export default {
+  obtenerPostulacionesAspirante,
+  obtenerTodasPostulaciones,
+  obtenerPostulacionPorId,
+  obtenerPostulacionesPorOferta,
+  crearPostulacion,
+  actualizarPostulacion,
+  cambiarEstadoPostulacion,
+  eliminarPostulacion
+};

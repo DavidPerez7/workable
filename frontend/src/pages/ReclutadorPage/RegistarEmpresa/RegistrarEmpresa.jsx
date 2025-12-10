@@ -1,5 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { crearEmpresa } from "../../../api/empresaAPI";
+import { getMunicipios } from "../../../api/municipioAPI";
 import "./RegistrarEmpresa.css";
 
 const RegistrarEmpresa = () => {
@@ -7,6 +9,19 @@ const RegistrarEmpresa = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [municipios, setMunicipios] = useState([]);
+
+  useEffect(() => {
+    const cargarMunicipios = async () => {
+      try {
+        const data = await getMunicipios();
+        setMunicipios(data);
+      } catch (error) {
+        console.error("Error al cargar municipios:", error);
+      }
+    };
+    cargarMunicipios();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -53,10 +68,34 @@ const RegistrarEmpresa = () => {
     };
 
     try {
-      // 🔵 Aquí llamas tu API real
-      // const response = await registrarEmpresaAPI(empresaData);
+      const categories = formData.getAll("categories");
+      const empresaData = {
+        nombre: data.nombreEmpresa,
+        nit: data.nit,
+        razonSocial: data.razonSocial,
+        descripcion: data.descripcionEmpresa,
+        numeroTrabajadores: Number(data.numeroTrabajadores),
+        emailContacto: data.emailContacto,
+        telefonoContacto: data.telefonoContacto,
+        direcciones: [data.ubicacion],
+        website: data.website || null,
+        categoryEnum: categories.length > 0 ? categories : ["TECNOLOGIA"],
+        municipio: {
+          id: Number(data.municipioId),
+        },
+        isActive: true
+      };
 
-      console.log("Datos enviados:", empresaData);
+      console.log("Datos a enviar:", empresaData);
+
+      const response = await crearEmpresa(empresaData);
+      console.log("Empresa creada:", response);
+
+      // Actualizar localStorage con el empresaId
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      user.empresaId = response.id;
+      user.empresaNombre = response.nombre;
+      localStorage.setItem('user', JSON.stringify(user));
 
       alert("Empresa registrada con éxito");
       formRef.current.reset();
@@ -65,7 +104,7 @@ const RegistrarEmpresa = () => {
 
     } catch (error) {
       console.error("Error al registrar empresa:", error);
-      alert("Error al registrar empresa.");
+      alert(`Error al registrar empresa: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -154,11 +193,11 @@ const RegistrarEmpresa = () => {
 
               <select name="municipioId" required className="empresa-input">
                 <option value="">Selecciona municipio *</option>
-                <option value="1">Bogotá</option>
-                <option value="2">Medellín</option>
-                <option value="3">Cali</option>
-                <option value="4">Barranquilla</option>
-                <option value="5">Cartagena</option>
+                {municipios.map((mun) => (
+                  <option key={mun.id} value={mun.id}>
+                    {mun.nombre} - {mun.departamento?.nombre || ''}
+                  </option>
+                ))}
               </select>
 
               <div className="full-width">

@@ -5,25 +5,59 @@ import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador
 import OfertaCard from "../../components/OfertaCard/ofertaCard";
 import VerPostulacionesRecibidas from "../../components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import "./ReclutadorPage.css";
-import { getAllOfertas } from "../../api/ofertasAPI";
+import { getAllOfertas, getOfertasPorReclutador } from "../../api/ofertasAPI";
+import { getReclutadorPorCorreo } from "../../api/reclutadoresApi";
+import { getEmpresaById } from "../../api/empresaAPI";
 
 function ReclutadorPage() {
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reclutadorData, setReclutadorData] = useState(null);
+  const [empresaData, setEmpresaData] = useState(null);
 
   useEffect(() => {
-    const fetchOfertas = async () => {
-      try {
-        const data = await getAllOfertas();
-        setOfertas(data);
-      } catch (error) {
-        console.error("Error al obtener ofertas:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOfertas();
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      
+      // Obtener datos del usuario desde localStorage
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      // Cargar datos del reclutador
+      if (user.correo) {
+        const reclutador = await getReclutadorPorCorreo(user.correo);
+        setReclutadorData(reclutador);
+        
+        // Cargar empresa si existe
+        if (reclutador.empresa?.id) {
+          try {
+            const empresa = await getEmpresaById(reclutador.empresa.id);
+            setEmpresaData(empresa);
+          } catch (err) {
+            console.warn('No se pudo cargar la empresa:', err);
+          }
+        }
+        
+        // Cargar ofertas del reclutador
+        if (reclutador.id) {
+          try {
+            const ofertasData = await getOfertasPorReclutador(reclutador.id);
+            setOfertas(ofertasData || []);
+          } catch (err) {
+            console.warn('No se pudieron cargar ofertas:', err);
+            setOfertas([]);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -100,14 +134,18 @@ function ReclutadorPage() {
                 <div className="company-card">
                   <div className="company-avatar">
                     <img
-                      src="https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png"
+                      src={empresaData?.logo || "https://via.placeholder.com/80"}
                       alt="Logo empresa"
                       className="company-logo-img"
                     />
                   </div>
                   <div className="company-info">
-                    <h2 className="company-name">Empresa genérica</h2>
-                    <p className="company-role">Usuario administrador</p>
+                    <h2 className="company-name">
+                      {empresaData?.nombre || reclutadorData?.nombre || 'Mi Empresa'}
+                    </h2>
+                    <p className="company-role">
+                      {empresaData ? 'Reclutador' : 'Sin empresa registrada'}
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -275,31 +313,63 @@ function ReclutadorPage() {
             <div className="column-right">
               <div className="banner-card">
                 <div className="banner-content">
-                  <h3 className="banner-title">Informacion de la empresa</h3>
-                  <p className="banner-text">
-                    <p>
-                      Descripcion:{" "}
-                      <span>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Deleniti dicta, saepe vitae numquam culpa qui? Beatae est
-                        ea quod asperiores voluptate. Pariatur delectus provident
-                        possimus ipsam dolores ad laboriosam quam?
-                      </span>
-                    </p>
-                    <p>Numero de trabajadores: <span>30</span></p>
-                    <div className="banner-puntuation">
-                      <p>Puntuacion: </p>
+                  <h3 className="banner-title">Información de la empresa</h3>
+                  {empresaData ? (
+                    <div className="banner-text">
+                      <p>
+                        <strong>Nombre:</strong>{" "}
+                        <span>{empresaData.nombre}</span>
+                      </p>
+                      <p>
+                        <strong>Descripción:</strong>{" "}
+                        <span>{empresaData.descripcion || 'No disponible'}</span>
+                      </p>
+                      <p>
+                        <strong>Número de trabajadores:</strong>{" "}
+                        <span>{empresaData.numeroTrabajadores || 0}</span>
+                      </p>
                       <div className="banner-puntuation">
-                        <FaStar color="#ffffff" />
-                        <FaStar color="#ffffff" />
-                        <FaStar color="#ffffff" />
-                        <FaStar color="#ffffff" />
+                        <p><strong>Puntuación:</strong> </p>
+                        <div className="banner-stars">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar 
+                              key={i} 
+                              color={i < (empresaData.puntuacion || 0) ? "#FFD700" : "#cccccc"} 
+                            />
+                          ))}
+                        </div>
                       </div>
+                      <p>
+                        <strong>NIT:</strong>{" "}
+                        <span>{empresaData.nit || 'No disponible'}</span>
+                      </p>
+                      <p>
+                        <strong>Email:</strong>{" "}
+                        <span>{empresaData.correo || 'No disponible'}</span>
+                      </p>
+                      <p>
+                        <strong>Teléfono:</strong>{" "}
+                        <span>{empresaData.telefono || 'No disponible'}</span>
+                      </p>
+                      {empresaData.municipio && (
+                        <p>
+                          <strong>Ubicación:</strong>{" "}
+                          <span>
+                            {empresaData.municipio.nombre}
+                            {empresaData.municipio.departamento?.nombre && 
+                              `, ${empresaData.municipio.departamento.nombre}`}
+                          </span>
+                        </p>
+                      )}
                     </div>
-                    <p>Fecha de creacion: <span>10/10/2020</span></p>
-                    <p>Email: <span>info@generico.com</span></p>
-                    <p>Telefono: <span>+123456789</span></p>
-                  </p>
+                  ) : (
+                    <div className="banner-text">
+                      <p className="empty-text">No tienes una empresa registrada</p>
+                      <Link to="/Reclutador/RegistrarEmpresa" className="btn-register-company">
+                        Registrar empresa
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
 

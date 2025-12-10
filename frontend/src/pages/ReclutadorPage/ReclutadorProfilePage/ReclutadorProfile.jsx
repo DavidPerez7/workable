@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { getReclutadorPorCorreo } from "../../../api/reclutadoresApi";
+import { getEmpresaById } from "../../../api/empresaAPI";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import Footer from "../../../components/Footer/footer";
 import "./ReclutadorProfile.css";
@@ -8,6 +10,7 @@ function ReclutadorProfile() {
   const { id } = useParams();
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showEditSidebar, setShowEditSidebar] = useState(false);
   const [editForm, setEditForm] = useState({
     nombre: "",
@@ -19,60 +22,53 @@ function ReclutadorProfile() {
 
   useEffect(() => {
     fetchProfileData();
-  }, [id]);
+  }, []);
 
   const fetchProfileData = async () => {
     try {
-      // TODO: Reemplazar con llamada real a API
-      // const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
-      //   headers: {
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   }
-      // });
-      // const data = await response.json();
+      setLoading(true);
+      setError(null);
 
-      // Datos simulados según tu backend
-      const mockData = {
-        id: 1,
-        nombre: "Beatriz López",
-        correo: "beatriz.lopez@aegon.com",
-        telefono: 3121234567,
-        fotoPerfilUrl: "https://i.pravatar.cc/200?img=47",
-        fotoBannerUrl:
-          "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200",
-        rol: "RECLUTADOR",
-        estado: "ACTIVO",
-        municipio: {
-          id: 1,
-          nombre: "BOGOTA D.C",
-          departamento: {
-            id: 1,
-            nombre: "BOGOTA D.C",
-          },
-        },
-        empresa: {
-          nitId: 9001,
-          nombre: "TechColombia SAS",
-          descripcion: "Consultoría en software y ciberseguridad",
-          numeroTrabajadores: 150,
-          puntuacion: 4.5,
-          logo: "https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png",
-        },
-        ofertasPublicadas: 12,
-        candidatosContratados: 45,
-        conexiones: 448,
-        seguidores: 8873,
+      // Obtener correo del usuario logueado
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const correo = user.correo;
+
+      if (!correo) {
+        throw new Error('No se encontró información del usuario');
+      }
+
+      // Obtener datos del reclutador
+      const reclutadorData = await getReclutadorPorCorreo(correo);
+      
+      // Si tiene empresa, obtener datos de la empresa
+      let empresaData = null;
+      if (reclutadorData.empresa?.id) {
+        try {
+          empresaData = await getEmpresaById(reclutadorData.empresa.id);
+        } catch (err) {
+          console.warn('No se pudo cargar información de la empresa:', err);
+        }
+      }
+
+      const profileInfo = {
+        ...reclutadorData,
+        empresa: empresaData || reclutadorData.empresa,
+        ofertasPublicadas: 0, // TODO: Obtener de API de ofertas
+        candidatosContratados: 0,
+        conexiones: 0,
+        seguidores: 0,
       };
 
-      setProfileData(mockData);
+      setProfileData(profileInfo);
       setEditForm({
-        nombre: mockData.nombre,
-        correo: mockData.correo,
-        fotoPerfilUrl: mockData.fotoPerfilUrl,
-        fotoBannerUrl: mockData.fotoBannerUrl,
+        nombre: reclutadorData.nombre || '',
+        correo: reclutadorData.correo || '',
+        fotoPerfilUrl: reclutadorData.urlFotoPerfil || '',
+        fotoBannerUrl: reclutadorData.urlBanner || '',
       });
     } catch (error) {
       console.error("Error al cargar perfil:", error);
+      setError(error.message || 'Error al cargar el perfil');
     } finally {
       setLoading(false);
     }
@@ -226,7 +222,7 @@ function ReclutadorProfile() {
                   <span className="profile-role-badge-RP">Reclutador</span>
                 </div>
                 <p className="profile-title-RP">
-                  Reclutador en {profileData.empresa.nombre}
+                  Reclutador {profileData.empresa?.nombre ? `en ${profileData.empresa.nombre}` : ''}
                 </p>
                 <div className="profile-meta-RP">
                   <span className="meta-item-RP">
@@ -241,29 +237,31 @@ function ReclutadorProfile() {
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                       <circle cx="12" cy="10" r="3"></circle>
                     </svg>
-                    {profileData.municipio.nombre},{" "}
-                    {profileData.municipio.departamento.nombre}
+                    {profileData.municipio?.nombre || 'Ubicación no especificada'}
+                    {profileData.municipio?.departamento?.nombre ? `, ${profileData.municipio.departamento.nombre}` : ''}
                   </span>
                   <span className="meta-separator-RP">·</span>
                   <span className="meta-item-RP">
                     <strong>{profileData.conexiones}+</strong> conexiones
                   </span>
                 </div>
-                <div className="profile-company-RP">
-                  <img
-                    src={profileData.empresa.logo}
-                    alt={profileData.empresa.nombre}
-                    className="company-logo-small-RP"
-                  />
-                  <div>
-                    <p className="company-name-RP">
-                      {profileData.empresa.nombre}
-                    </p>
-                    <p className="company-desc-RP">
-                      {profileData.empresa.descripcion}
-                    </p>
+                {profileData.empresa && (
+                  <div className="profile-company-RP">
+                    <img
+                      src={profileData.empresa.logo || 'https://via.placeholder.com/50'}
+                      alt={profileData.empresa.nombre}
+                      className="company-logo-small-RP"
+                    />
+                    <div>
+                      <p className="company-name-RP">
+                        {profileData.empresa.nombre}
+                      </p>
+                      <p className="company-desc-RP">
+                        {profileData.empresa.descripcion}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="profile-actions-RP">
                 <button className="btn-action-primary-RP">
@@ -284,59 +282,70 @@ function ReclutadorProfile() {
             </div>
           </section>
 
-          <Link to="/Reclutador/EnterprisePage" className="link-no-style-RP">
+          {profileData.empresa ? (
+            <Link to="/Reclutador/EnterprisePage" className="link-no-style-RP">
+              <section className="profile-section-RP empresa-section-RP">
+                <div className="section-header-profile-RP">
+                  <h2 className="section-title-profile-RP">Empresa</h2>
+                </div>
+                <div className="empresa-card-RP">
+                  <img
+                    src={profileData.empresa.logo || 'https://via.placeholder.com/100'}
+                    alt={profileData.empresa.nombre}
+                    className="empresa-logo-RP"
+                  />
+                  <div className="empresa-info-RP">
+                    <h3 className="empresa-name-RP">
+                      {profileData.empresa.nombre}
+                    </h3>
+                    <p className="empresa-desc-RP">
+                      {profileData.empresa.descripcion}
+                    </p>
+                    <div className="empresa-stats-RP">
+                      <span className="empresa-stat-RP">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="9" cy="7" r="4"></circle>
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {profileData.empresa.numeroTrabajadores || 0} empleados
+                      </span>
+                      <span className="empresa-stat-RP">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        {profileData.empresa.puntuacion || 0} / 5.0
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </Link>
+          ) : (
             <section className="profile-section-RP empresa-section-RP">
               <div className="section-header-profile-RP">
                 <h2 className="section-title-profile-RP">Empresa</h2>
               </div>
               <div className="empresa-card-RP">
-                <img
-                  src={profileData.empresa.logo}
-                  alt={profileData.empresa.nombre}
-                  className="empresa-logo-RP"
-                />
-                <div className="empresa-info-RP">
-                  <h3 className="empresa-name-RP">
-                    {profileData.empresa.nombre}
-                  </h3>
-                  <p className="empresa-desc-RP">
-                    {profileData.empresa.descripcion}
-                  </p>
-                  <div className="empresa-stats-RP">
-                    <span className="empresa-stat-RP">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                      </svg>
-                      {profileData.empresa.numeroTrabajadores} empleados
-                    </span>
-                    <span className="empresa-stat-RP">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                      </svg>
-                      {profileData.empresa.puntuacion} / 5.0
-                    </span>
-                  </div>
-                </div>
+                <p>No tienes una empresa asociada. <Link to="/Reclutador/RegistrarEmpresa">Registrar empresa</Link></p>
               </div>
             </section>
-          </Link>
+          )}
 
           {/* Actividad */}
           <section className="profile-section-RP">
