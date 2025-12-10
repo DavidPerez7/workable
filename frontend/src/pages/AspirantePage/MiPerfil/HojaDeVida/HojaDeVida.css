@@ -248,6 +248,98 @@
   color: #475569;
 }
 
+
+/* ============================
+   EDICION DESCRIPCIÓN
+===============================*/
+.perfil-desc-view-PF {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-desc-view-PF p {
+  color: #475569;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.perfil-desc-edit-btn-PF {
+  align-self: flex-start;
+  background: transparent;
+  color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.perfil-desc-edit-btn-PF:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+.perfil-desc-edit-PF {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-desc-textarea-PF {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #1e293b;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.perfil-desc-textarea-PF:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+.perfil-desc-buttons-PF {
+  display: flex;
+  gap: 10px;
+}
+
+.perfil-desc-save-btn-PF,
+.perfil-desc-cancel-btn-PF {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: none;
+}
+
+.perfil-desc-save-btn-PF {
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
+  color: white;
+}
+
+.perfil-desc-save-btn-PF:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+.perfil-desc-cancel-btn-PF {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.perfil-desc-cancel-btn-PF:hover {
+  background: #e2e8f0;
+}
+
 /* ============================
    RESPONSIVO
 ===============================*/
@@ -265,3 +357,4 @@
     grid-template-columns: 1fr;
   }
 }
+

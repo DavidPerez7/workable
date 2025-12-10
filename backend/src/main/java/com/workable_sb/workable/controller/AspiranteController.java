@@ -57,6 +57,18 @@ public class AspiranteController {
         }
     }
 
+    // - UPDATE my profile (using JWT authentication)
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @PutMapping("/actualizar")
+    public ResponseEntity<?> actualizarMiPerfil(@RequestBody Aspirante aspirante, @AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            Long usuarioId = user.getUsuarioId();
+            return ResponseEntity.ok(aspiranteService.updateMiPerfil(usuarioId, aspirante));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al actualizar perfil: " + e.getMessage());
+        }
+    }
+
     // - READ by correo
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN', 'ADSO')")
     @GetMapping("/correo")

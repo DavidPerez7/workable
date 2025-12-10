@@ -4,12 +4,14 @@ import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
 import { getUsuarioActual } from "../../../../api/usuarioAPI";
-// import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
+import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
 import { obtenerExperienciasAspirante, crearExperiencia, eliminarExperiencia } from "../../../../api/experienciaAPI";
 import { obtenerEstudiosAspirante, crearEstudio, eliminarEstudio } from "../../../../api/estudioAPI";
 
 const HojaDeVida = () => {
   const [perfil, setPerfil] = useState(null);
+  const [editandoDescripcion, setEditandoDescripcion] = useState(false);
+  const [descripcionTemporal, setDescripcionTemporal] = useState("");
   const [habilidades, setHabilidades] = useState([]);
   const [experiencias, setExperiencias] = useState([]);
   const [estudios, setEstudios] = useState([]);
@@ -48,10 +50,11 @@ const HojaDeVida = () => {
       // Cargar perfil usando el nuevo endpoint /me
       const usuarioData = await getUsuarioActual(rol);
       setPerfil(usuarioData);
+      setDescripcionTemporal(usuarioData.descripcion || "");
 
-      // Cargar habilidades - Por ahora comentado, no hay endpoint en backend
-      // const habilidadesData = await obtenerHabilidadesAspirante();
-      // setHabilidades(habilidadesData || []);
+      // Cargar habilidades
+      const habilidadesData = await obtenerHabilidadesAspirante();
+      setHabilidades(habilidadesData || []);
 
       // Cargar experiencias
       const experienciasData = await obtenerExperienciasAspirante();
@@ -83,6 +86,41 @@ const HojaDeVida = () => {
       </div>
     );
   }
+
+  /* ============================
+        DESCRIPCIÓN
+  ============================ */
+
+  const guardarDescripcion = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const rol = localStorage.getItem("rol");
+      
+      if (rol === "ASPIRANTE") {
+        const response = await fetch("http://localhost:8080/api/aspirante/actualizar", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            descripcion: descripcionTemporal,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error("Error al guardar descripción");
+        }
+        
+        const perfilActualizado = await response.json();
+        setPerfil(perfilActualizado);
+        setEditandoDescripcion(false);
+      }
+    } catch (err) {
+      console.error("Error al guardar descripción:", err);
+      alert("Error al guardar: " + err.message);
+    }
+  };
 
   /* ============================
         HABILIDADES
@@ -214,8 +252,47 @@ const HojaDeVida = () => {
 
         {/* DESCRIPCION */}
         <div className="perfil-bloque-PF">
-          <h3 className="perfil-bloque-titulo-PF">Sobre mí</h3>
-          <p>{perfil?.descripcion || "Sin información"}</p>
+          <div className="perfil-bloque-top-PF">
+            <h3 className="perfil-bloque-titulo-PF">Sobre mí</h3>
+          </div>
+          
+          {editandoDescripcion ? (
+            <div className="perfil-desc-edit-PF">
+              <textarea
+                value={descripcionTemporal}
+                onChange={(e) => setDescripcionTemporal(e.target.value)}
+                placeholder="Escribe tu descripción aquí..."
+                className="perfil-desc-textarea-PF"
+              />
+              <div className="perfil-desc-buttons-PF">
+                <button 
+                  className="perfil-desc-save-btn-PF"
+                  onClick={guardarDescripcion}
+                >
+                  Guardar
+                </button>
+                <button 
+                  className="perfil-desc-cancel-btn-PF"
+                  onClick={() => {
+                    setEditandoDescripcion(false);
+                    setDescripcionTemporal(perfil?.descripcion || "");
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="perfil-desc-view-PF">
+              <p>{perfil?.descripcion || "Sin información"}</p>
+              <button 
+                className="perfil-desc-edit-btn-PF"
+                onClick={() => setEditandoDescripcion(true)}
+              >
+                Editar descripción
+              </button>
+            </div>
+          )}
         </div>
 
         {/* HABILIDADES */}
