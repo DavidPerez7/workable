@@ -27,23 +27,17 @@ public class HabilidadController {
     @Autowired
     private HabilidadService habilidadService;
 
-    // ===== CREATE - Solo ASPIRANTE y ADMIN =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
-    @PostMapping
-    public ResponseEntity<?> crearHabilidad(@RequestBody Habilidad habilidad, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    // ===== READ habilidades del aspirante autenticado (DEBE IR ANTES DE /{id}) =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/aspirante")
+    public ResponseEntity<?> obtenerMisHabilidades(@AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             Long aspiranteId = userDetails.getUsuarioId();
-            return ResponseEntity.ok(habilidadService.crearHabilidad(habilidad, aspiranteId));
+            List<Habilidad> habilidades = habilidadService.obtenerHabilidadesPorUsuario(aspiranteId);
+            return ResponseEntity.ok(habilidades);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al crear habilidad: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener habilidades: " + e.getMessage()));
         }
-    }
-
-    // ===== READ by id - Todos autenticados =====
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/{id}")
-    public ResponseEntity<Habilidad> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(habilidadService.obtenerPorId(id));
     }
 
     // ===== READ por usuario - Todos autenticados =====
@@ -60,16 +54,22 @@ public class HabilidadController {
         return ResponseEntity.ok(habilidadService.listarTodas());
     }
 
-    // ===== READ habilidades del aspirante autenticado =====
-    @PreAuthorize("hasRole('ASPIRANTE')")
-    @GetMapping("/aspirante")
-    public ResponseEntity<?> obtenerMisHabilidades(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    // ===== READ by id - Todos autenticados =====
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Habilidad> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(habilidadService.obtenerPorId(id));
+    }
+
+    // ===== CREATE - Solo ASPIRANTE y ADMIN =====
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    @PostMapping
+    public ResponseEntity<?> crearHabilidad(@RequestBody Habilidad habilidad, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             Long aspiranteId = userDetails.getUsuarioId();
-            List<Habilidad> habilidades = habilidadService.obtenerHabilidadesPorUsuario(aspiranteId);
-            return ResponseEntity.ok(habilidades);
+            return ResponseEntity.ok(habilidadService.crearHabilidad(habilidad, aspiranteId));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener habilidades: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error al crear habilidad: " + e.getMessage()));
         }
     }
 
