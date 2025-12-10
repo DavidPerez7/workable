@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import Header from "../../../components/Header/Header";
+import { getOfertasPorEmpresa } from "../../../api/ofertasAPI";
+import { getEmpresaById } from "../../../api/empresaAPI";
+import { getReclutadorPorCorreo } from "../../../api/reclutadoresApi";
+import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import Footer from "../../../components/Footer/footer";
 import "./EnterprisePage.css";
 
@@ -9,92 +12,62 @@ function EnterprisePage() {
   const [empresaData, setEmpresaData] = useState(null);
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("descripcion"); // descripcion, empleos, vida
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("descripcion");
 
   useEffect(() => {
     fetchEmpresaData();
-    fetchOfertas();
-  }, [nitId]);
+  }, []);
 
   const fetchEmpresaData = async () => {
     try {
-      // TODO: Reemplazar con llamada real a API
-      // const response = await fetch(`http://localhost:8080/api/empresa/${nitId}`);
-      // const data = await response.json();
+      setLoading(true);
+      setError(null);
 
-      // Datos simulados según tu backend
-      const mockData = {
-        nitId: 9001,
-        nombre: "TechColombia SAS",
-        descripcion:
-          "Líder en consultoría de software, ciberseguridad y transformación digital. Ayudamos a empresas a innovar y crecer mediante soluciones tecnológicas de vanguardia.",
-        numeroTrabajadores: 150,
-        puntuacion: 4.5,
-        fechaUnion: "2019-03-15",
-        logo: "https://logodownload.org/wp-content/uploads/2014/04/coca-cola-logo-1-1.png",
-        banner:
-          "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400",
-        empresaCategoria: {
-          id: 1,
-          nombre: "TECNOLOGIA",
-          descripcion:
-            "Empresas dedicadas a desarrollo de software y servicios TI",
-        },
-        municipio: {
-          id: 1,
-          nombre: "BOGOTA D.C",
-          departamento: {
-            nombre: "BOGOTA D.C",
-          },
-        },
-        seguidores: 1377575,
-        ofertas: [],
-      };
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      // Primero intentar obtener el reclutador para saber su empresa
+      let empresaId = user.empresaId;
+      
+      if (!empresaId && user.correo) {
+        try {
+          const reclutador = await getReclutadorPorCorreo(user.correo);
+          empresaId = reclutador.empresa?.id;
+          
+          // Actualizar localStorage
+          if (empresaId) {
+            user.empresaId = empresaId;
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+        } catch (err) {
+          console.warn('No se pudo obtener el reclutador:', err);
+        }
+      }
 
-      setEmpresaData(mockData);
+      if (!empresaId) {
+        setError('No tienes una empresa asociada. Por favor registra una empresa primero.');
+        setLoading(false);
+        return;
+      }
+
+      // Cargar datos completos de la empresa
+      const empresaInfo = await getEmpresaById(empresaId);
+      setEmpresaData(empresaInfo);
+
+      // Cargar ofertas de la empresa
+      try {
+        const ofertasData = await getOfertasPorEmpresa(empresaId);
+        setOfertas(ofertasData || []);
+      } catch (err) {
+        console.warn('No se pudieron cargar las ofertas:', err);
+        setOfertas([]);
+      }
+
     } catch (error) {
       console.error("Error al cargar empresa:", error);
+      setError(error.message || 'Error al cargar información de la empresa');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchOfertas = async () => {
-    try {
-      // TODO: Reemplazar con llamada real a API
-      // const response = await fetch(`http://localhost:8080/api/oferta?empresaId=${nitId}`);
-      // const data = await response.json();
-
-      const mockOfertas = [
-        {
-          id: 1,
-          titulo: "Desarrollador Full Stack Senior",
-          descripcion:
-            "Buscamos desarrollador con experiencia en React y Node.js",
-          salario: 8000000,
-          ubicacion: "Bogotá D.C",
-          modalidad: { nombre: "Híbrido" },
-          tipoContrato: { nombre: "Tiempo completo" },
-          fechaPublicacion: "2024-11-20",
-          estado: "ABIERTA",
-        },
-        {
-          id: 2,
-          titulo: "Analista de Ciberseguridad",
-          descripcion:
-            "Profesional en seguridad informática y análisis de vulnerabilidades",
-          salario: 7500000,
-          ubicacion: "Bogotá D.C",
-          modalidad: { nombre: "Presencial" },
-          tipoContrato: { nombre: "Tiempo completo" },
-          fechaPublicacion: "2024-11-18",
-          estado: "ABIERTA",
-        },
-      ];
-
-      setOfertas(mockOfertas);
-    } catch (error) {
-      console.error("Error al cargar ofertas:", error);
     }
   };
 
@@ -118,7 +91,7 @@ function EnterprisePage() {
   if (loading) {
     return (
       <>
-        <Header />
+        <HeaderReclutador />
         <div className="loading-container-EP">
           <div className="spinner-large-EP"></div>
           <p>Cargando información de la empresa...</p>
@@ -131,7 +104,7 @@ function EnterprisePage() {
   if (!empresaData) {
     return (
       <>
-        <Header />
+        <HeaderReclutador />
         <div className="error-container-EP">
           <h2>Empresa no encontrada</h2>
           <Link to="/" className="btn-back-EP">
@@ -145,7 +118,7 @@ function EnterprisePage() {
 
   return (
     <>
-      <Header />
+      <HeaderReclutador />
       <main className="enterprise-main-EP">
         {/* Hero Section con Banner */}
         <section className="enterprise-hero-EP">
@@ -161,31 +134,35 @@ function EnterprisePage() {
           <div className="hero-content-wrapper-EP">
             <div className="hero-content-EP">
               <div className="enterprise-logo-large-EP">
-                <img src={empresaData.logo} alt={empresaData.nombre} />
+                <img src={empresaData.logo || 'https://via.placeholder.com/150'} alt={empresaData.nombre} />
               </div>
 
               <div className="enterprise-info-EP">
                 <h1 className="enterprise-name-EP">{empresaData.nombre}</h1>
-                <p className="enterprise-category-EP">
-                  {empresaData.empresaCategoria.nombre}
-                </p>
+                {empresaData.empresaCategoria && (
+                  <p className="enterprise-category-EP">
+                    {empresaData.empresaCategoria.nombre}
+                  </p>
+                )}
 
                 <div className="enterprise-meta-EP">
-                  <span className="meta-item-EP">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    {empresaData.municipio.nombre},{" "}
-                    {empresaData.municipio.departamento.nombre}
-                  </span>
+                  {empresaData.municipio && (
+                    <span className="meta-item-EP">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                      {empresaData.municipio.nombre}
+                      {empresaData.municipio.departamento?.nombre && `, ${empresaData.municipio.departamento.nombre}`}
+                    </span>
+                  )}
                   <span className="meta-separator-EP">·</span>
                 </div>
 
@@ -323,7 +300,7 @@ function EnterprisePage() {
                       </div>
                       <div>
                         <p className="stat-value-EP">
-                          {new Date(empresaData.fechaUnion).getFullYear()}
+                          {empresaData.fechaUnion ? new Date(empresaData.fechaUnion).getFullYear() : 'N/A'}
                         </p>
                         <p className="stat-label-EP">En la plataforma</p>
                       </div>
