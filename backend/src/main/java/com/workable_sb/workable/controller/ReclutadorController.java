@@ -3,9 +3,11 @@ package com.workable_sb.workable.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.workable_sb.workable.models.Reclutador;
+import com.workable_sb.workable.security.CustomUserDetails;
 import com.workable_sb.workable.service.ReclutadorService;
 
 import java.util.List;
@@ -32,8 +34,21 @@ public class ReclutadorController {
     }
 
     // ===== READ =====
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/{id}")
+    
+    // READ my profile (using JWT authentication)
+    @PreAuthorize("hasRole('RECLUTADOR')")
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            Long usuarioId = user.getUsuarioId();
+            Reclutador reclutador = reclutadorService.obtenerPorId(usuarioId);
+            return ResponseEntity.ok(reclutador);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener perfil: " + e.getMessage()));
+        }
+    }
+
+    // READ by id
     public ResponseEntity<?> obtenerReclutador(@PathVariable Long id) {
         try {
             Reclutador reclutador = reclutadorService.obtenerPorId(id);

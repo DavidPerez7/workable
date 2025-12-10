@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getUsuarioById } from "../../../api/usuarioAPI";
+import { getUsuarioActual, getUsuarioById } from "../../../api/usuarioAPI";
 import { deletePublicUsuario } from "../../../api/usuarioAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
 import {
@@ -44,7 +44,6 @@ const MiPerfil = () => {
 	// getPerfil, token ya implementado
 	const getUsuario = async () => {
 		const TOKEN = localStorage.getItem("token");
-		const usuarioId = localStorage.getItem("usuarioId");
 		const rol = localStorage.getItem("rol"); // Obtener el rol del usuario
 		setLoading(true);
 		setError(""); // limpiar errores previos
@@ -54,14 +53,14 @@ const MiPerfil = () => {
 			if (!TOKEN) {
 				throw new Error("No se encontró token de autenticación");
 			}
-			const usuario = await getUsuarioById(usuarioId, TOKEN, rol);
+			const usuario = await getUsuarioActual(rol);
 			console.log("Usuario obtenido:", usuario);
 			setUsuario(usuario); // Actualizar estado con datos obtenidos
 
 		} catch (err) {
 			console.error("Error obteniendo usuario:", err);
 			setError(err.message || "No se pudo cargar la información del perfil. Por favor, intenta de nuevo.");
-			if (err.message.includes("401")) {
+			if (err.message.includes("401") || err.message.includes("expirada")) {
 				// Token inválido o expirado
 				localStorage.clear();
 				navigate("/login");

@@ -2,10 +2,12 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.service.AspiranteService;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +38,23 @@ public class AspiranteController {
     @GetMapping
     public ResponseEntity<List<Aspirante>> getAll() {
         return ResponseEntity.ok(aspiranteService.getAll());
+    }
+
+    // - READ my profile (using JWT authentication)
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            Long usuarioId = user.getUsuarioId();
+            Optional<Aspirante> aspirante = aspiranteService.getById(usuarioId);
+            if (aspirante.isPresent()) {
+                return ResponseEntity.ok(aspirante.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al obtener perfil: " + e.getMessage());
+        }
     }
 
     // - READ by correo
