@@ -84,16 +84,12 @@ const PublicacionPage = () => {
         salario: parseFloat(formData.salario),
         ubicacion: formData.direccion,
         fechaLimite: formData.fechaLimite,
-        modalidad: formData.modalidadTrabajo,
-        tipoContrato: formData.tipoContrato,
-        nivelExperiencia: formData.nivelExperiencia,
-        estadoOferta: "ABIERTA",
-        empresa: {
-          id: formData.empresaId
-        },
-        municipio: {
-          id: parseInt(formData.municipio)
-        }
+        modalidad: formData.modalidadTrabajo, // Enum string
+        tipoContrato: formData.tipoContrato,  // Enum string
+        nivelExperiencia: formData.nivelExperiencia, // Enum string
+        estadoOferta: "ABIERTA", // Enum string
+        empresa: { id: formData.empresaId },
+        municipio: formData.municipio ? { id: parseInt(formData.municipio) } : undefined
       };
 
       console.log("Creando oferta:", ofertaData);

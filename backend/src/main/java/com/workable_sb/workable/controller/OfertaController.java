@@ -3,6 +3,7 @@
 package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Oferta;
+import com.workable_sb.workable.dto.OfertaDTO;
 import com.workable_sb.workable.service.OfertaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class OfertaController {
     // CREATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta) {
-        return ResponseEntity.ok(ofertaService.crearOferta(oferta));
+    public ResponseEntity<Oferta> crearOferta(@RequestBody OfertaDTO ofertaDTO) {
+        return ResponseEntity.ok(ofertaService.crearOferta(ofertaDTO));
     }
 
     // GET ALL

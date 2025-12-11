@@ -8,7 +8,9 @@ const getAuthHeaders = () => {
 
 export const getAllOfertas = async () => {
   try {
-    const response = await fetch("http://localhost:8080/api/oferta");
+    const response = await fetch("http://localhost:8080/api/oferta", {
+      headers: getAuthHeaders()
+    });
     if (!response.ok) {
       throw new Error("Error al obtener ofertas");
     }

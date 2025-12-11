@@ -26,6 +26,8 @@ import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
+import EmpresaCreatePage from "./pages/ReclutadorPage/EnterprisePage/EmpresaCreatePage";
+import EmpresaEditPage from "./pages/ReclutadorPage/EnterprisePage/EmpresaEditPage";
 import ReclutadorForm from "./components/Registro/reclutadorForm/reclutadorForm";
 import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
 import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
@@ -57,6 +59,8 @@ function App() {
         <Route path="/Reclutador/GestigOferts" element={<ProtectedRoute requiredRole="RECLUTADOR"><GestigOfertsPage /></ProtectedRoute>} />
         <Route path="/Reclutador/ReclutadorProfile" element={<ProtectedRoute requiredRole="RECLUTADOR"><ReclutadorProfile /></ProtectedRoute>} />
         <Route path="/Reclutador/EnterprisePage" element={<ProtectedRoute requiredRole="RECLUTADOR"><EnterprisePage /></ProtectedRoute>} />
+        <Route path="/Reclutador/EnterprisePage/Create" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaCreatePage /></ProtectedRoute>} />
+        <Route path="/Reclutador/EnterprisePage/Edit" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaEditPage /></ProtectedRoute>} />
         <Route path="/Reclutador/EditarOfertaLaboral" element={<ProtectedRoute requiredRole="RECLUTADOR"><EditarOfertaLaboral /></ProtectedRoute>} />
         <Route path="/Reclutador/VerPostulacionesRecibidas" element={<ProtectedRoute requiredRole="RECLUTADOR"><VerPostulacionesRecibidas /></ProtectedRoute>} />
         <Route path="/Reclutador/RegistrarEmpresa" element={<ProtectedRoute requiredRole="RECLUTADOR"><RegistrarEmpresa /></ProtectedRoute>} />

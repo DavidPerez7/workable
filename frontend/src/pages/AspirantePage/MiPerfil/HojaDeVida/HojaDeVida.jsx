@@ -30,6 +30,7 @@ const HojaDeVida = () => {
     institucion: "",
     titulo: "",
     fechaInicio: "",
+    fechaFin: "",
     nivelEducativo: "UNIVERSITARIO",
     enCurso: true,
   });
@@ -198,8 +199,13 @@ const HojaDeVida = () => {
   const agregarEstudio = async () => {
     const { institucion, titulo, fechaInicio, nivelEducativo, enCurso } = nuevoEstudio;
 
+
     if (!institucion || !titulo || !fechaInicio || !nivelEducativo) {
       alert("Por favor rellena todos los campos requeridos");
+      return;
+    }
+    if (!enCurso && !nuevoEstudio.fechaFin) {
+      alert("Si el estudio está finalizado, debes ingresar la fecha de fin.");
       return;
     }
 
@@ -211,9 +217,13 @@ const HojaDeVida = () => {
         nivelEducativo,
         enCurso,
       };
+      // Solo enviar fechaFin si enCurso es false y hay valor
+      if (!enCurso && nuevoEstudio.fechaFin) {
+        estudioData.fechaFin = nuevoEstudio.fechaFin;
+      }
       const nuevoEstudioData = await crearEstudio(estudioData);
       setEstudios([...estudios, nuevoEstudioData]);
-      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", nivelEducativo: "UNIVERSITARIO", enCurso: true });
+      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", fechaFin: "", nivelEducativo: "UNIVERSITARIO", enCurso: true });
       const form = document.getElementById("add-edu-form");
       if (form) form.style.display = "none";
     } catch (err) {
@@ -512,6 +522,17 @@ const HojaDeVida = () => {
               <option value="DOCTORADO">Doctorado</option>
               <option value="ESPECIALIZACION">Especialización</option>
             </select>
+            {/* Campo fechaFin solo si no está en curso */}
+            {!nuevoEstudio.enCurso && (
+              <input
+                type="text"
+                placeholder="Fecha fin (ej: 2024-12-15)"
+                value={nuevoEstudio.fechaFin}
+                onChange={(e) =>
+                  setNuevoEstudio({ ...nuevoEstudio, fechaFin: e.target.value })
+                }
+              />
+            )}
             <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <input
                 type="checkbox"

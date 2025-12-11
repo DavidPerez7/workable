@@ -1,4 +1,3 @@
-
 package com.workable_sb.workable.service;
 
 import java.util.List;
@@ -7,7 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.dto.OfertaDTO;
+import com.workable_sb.workable.models.Empresa;
+import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.Oferta;
+import com.workable_sb.workable.repository.EmpresaRepo;
+import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
 
 @Service
@@ -15,12 +19,44 @@ import com.workable_sb.workable.repository.OfertaRepo;
 public class OfertaService {
 
     @Autowired
-    private OfertaRepo ofertaRepository;
+    private EmpresaRepo empresaRepo;
 
-    // CREATE
-    public Oferta crearOferta(Oferta oferta) {
+    @Autowired
+    private MunicipioRepo municipioRepo;
+
+    public Oferta crearOferta(OfertaDTO dto) {
+        Oferta oferta = new Oferta();
+        oferta.setTitulo(dto.titulo);
+        oferta.setDescripcion(dto.descripcion);
+        oferta.setFechaLimite(dto.fechaLimite);
+        oferta.setSalario(dto.salario);
+        oferta.setNumeroVacantes(dto.numeroVacantes);
+        if (dto.nivelExperiencia != null)
+            oferta.setNivelExperiencia(Oferta.NivelExperiencia.valueOf(dto.nivelExperiencia));
+        if (dto.estado != null)
+            oferta.setEstado(Oferta.EstadoOferta.valueOf(dto.estado));
+        oferta.setRequisitos(dto.requisitos);
+        if (dto.municipioId != null)
+            oferta.setMunicipio(municipioRepo.findById(dto.municipioId).orElse(null));
+        if (dto.modalidad != null)
+            oferta.setModalidad(Oferta.Modalidad.valueOf(dto.modalidad));
+        if (dto.tipoContrato != null)
+            oferta.setTipoContrato(Oferta.TipoContrato.valueOf(dto.tipoContrato));
+        if (dto.empresaId != null)
+            oferta.setEmpresa(empresaRepo.findById(dto.empresaId).orElse(null));
+        if (dto.beneficios != null && !dto.beneficios.isEmpty()) {
+            java.util.Set<Oferta.Beneficio> enumSet = new java.util.HashSet<>();
+            for (String b : dto.beneficios) {
+                enumSet.add(Oferta.Beneficio.valueOf(b));
+            }
+            oferta.setBeneficios(enumSet);
+        }
         return ofertaRepository.save(oferta);
     }
+
+    @Autowired
+    private OfertaRepo ofertaRepository;
+
 
     // GET ALL
     public List<Oferta> listarTodas() {
