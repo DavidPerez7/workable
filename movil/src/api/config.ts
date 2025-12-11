@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
 // Configuración base - Usa la IP de tu máquina en lugar de localhost para móvil
-export const API_BASE_URL = 'http://172.16.100.150:8080/api';
+export const API_BASE_URL = 'http://172.16.103.240:8080/api';
 
 // Crear instancia de axios
 export const api = axios.create({

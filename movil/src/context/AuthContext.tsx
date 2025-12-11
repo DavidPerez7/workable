@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import * as SecureStore from 'expo-secure-store';
 import { login as loginApi, logout as logoutApi } from '../api/auth';
 import { setAuthToken } from '../api/config';
+import { getMyProfile } from '../api/reclutador';
 import type { User, LoginCredentials } from '../types';
 
 interface AuthContextType {
@@ -47,6 +48,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (credentials: LoginCredentials) => {
     try {
       const response = await loginApi(credentials);
+      // Set token early to allow follow-up requests (perfil)
+      setAuthToken(response.token);
+
+      let empresaId = response.empresaId || response.empresa?.id;
+      let empresa = response.empresa;
+
+      // Si es reclutador y no viene empresa, intenta hidratar desde /reclutador/me
+      if (response.rol === 'RECLUTADOR' && !empresaId) {
+        try {
+          const perfil = await getMyProfile();
+          empresaId = perfil.empresa?.id || null;
+          empresa = perfil.empresa || undefined;
+        } catch (perfilErr) {
+          console.warn('No se pudo hidratar empresa desde perfil:', perfilErr);
+        }
+      }
       
       const userData: User = {
         token: response.token,
@@ -55,8 +72,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         correo: response.correo,
         nombre: response.nombre,
         apellido: response.apellido,
-        reclutadorId: response.reclutadorId,
-        empresaId: response.empresaId,
+        // Si es reclutador, el usuarioId ES el reclutadorId
+        reclutadorId: response.rol === 'RECLUTADOR' ? response.usuarioId : response.reclutadorId,
+        empresaId,
+        empresa,
       };
 
       // Save to SecureStore
@@ -65,7 +84,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Update state
       setUser(userData);
-      setAuthToken(response.token);
     } catch (error) {
       throw error;
     }

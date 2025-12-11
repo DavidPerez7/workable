@@ -71,6 +71,23 @@ export const updateReclutador = async (id: number, data: Reclutador): Promise<Re
   }
 };
 
+// Update reclutador (requiere reclutadorIdActual como query param)
+export const updateReclutadorWithActual = async (
+  id: number,
+  data: Partial<Reclutador>,
+  reclutadorIdActual: number
+): Promise<Reclutador> => {
+  try {
+    const response = await api.put<Reclutador>(
+      `/reclutador/${id}?reclutadorIdActual=${reclutadorIdActual}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
 // Delete reclutador (ADMIN)
 export const deleteReclutador = async (id: number): Promise<void> => {
   try {

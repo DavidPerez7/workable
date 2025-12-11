@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
   Text,
@@ -11,8 +12,10 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { registerReclutador } from '../../api/auth';
+import { registerReclutador, login as loginApi } from '../../api/auth';
 import { createEmpresa } from '../../api/empresa';
+import { updateReclutadorWithActual } from '../../api/reclutador';
+import { setAuthToken } from '../../api/config';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { colors, spacing, fontSize, fontWeight } from '../../styles/theme';
@@ -34,18 +37,22 @@ const RegisterReclutadorScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [telefono, setTelefono] = useState('');
   const [cargo, setCargo] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Datos de la empresa
   const [nombreEmpresa, setNombreEmpresa] = useState('');
+  const [descripcionEmpresa, setDescripcionEmpresa] = useState('');
   const [nitEmpresa, setNitEmpresa] = useState('');
   const [direccionEmpresa, setDireccionEmpresa] = useState('');
   const [telefonoEmpresa, setTelefonoEmpresa] = useState('');
   const [correoEmpresa, setCorreoEmpresa] = useState('');
+  const [numeroTrabajadores, setNumeroTrabajadores] = useState('');
 
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!nombre || !apellido || !correo || !password || !nombreEmpresa) {
+    if (!nombre || !apellido || !correo || !password || !nombreEmpresa || !descripcionEmpresa || !fechaNacimiento) {
       Alert.alert('Error', 'Por favor completa los campos requeridos');
       return;
     }
@@ -62,16 +69,8 @@ const RegisterReclutadorScreen = () => {
 
     setLoading(true);
     try {
-      // Primero crear la empresa
-      const empresa = await createEmpresa({
-        nombre: nombreEmpresa,
-        nit: nitEmpresa,
-        direccion: direccionEmpresa,
-        telefono: telefonoEmpresa,
-        correo: correoEmpresa,
-      });
-
-      // Luego crear el reclutador asociado a la empresa
+      // Paso 1: Registrar el reclutador
+      console.log('Registrando reclutador...');
       await registerReclutador({
         nombre,
         apellido,
@@ -79,14 +78,71 @@ const RegisterReclutadorScreen = () => {
         password,
         telefono,
         cargo,
-        empresa: { id: empresa.id },
+        fechaNacimiento,
+        empresa: {
+          nombre: nombreEmpresa,
+          nit: nitEmpresa,
+          direccion: direccionEmpresa,
+          telefono: telefonoEmpresa,
+          correo: correoEmpresa,
+        },
       });
 
-      Alert.alert('Éxito', 'Registro exitoso. Ahora puedes iniciar sesión', [
-        { text: 'OK', onPress: () => navigation.navigate('Login') },
-      ]);
+      // Paso 2: Iniciar sesión automáticamente para obtener token
+      console.log('Iniciando sesión automática...');
+      const loginResponse = await loginApi({ correo, password });
+      console.log('Login response:', loginResponse);
+      setAuthToken(loginResponse.token);
+      
+      // Paso 3: Crear la empresa con autenticación y asociar al reclutador
+      console.log('Creando empresa...');
+      const reclutadorId = loginResponse.usuarioId;
+      const empresaData = {
+        nombre: nombreEmpresa,
+        descripcion: descripcionEmpresa,
+        nit: nitEmpresa || undefined,
+        direcciones: direccionEmpresa ? [direccionEmpresa] : [],
+        telefonoContacto: telefonoEmpresa || undefined,
+        emailContacto: correoEmpresa || undefined,
+        numeroTrabajadores: numeroTrabajadores ? parseInt(numeroTrabajadores) : 1,
+        isActive: true,
+        reclutadorOwner: { id: reclutadorId },
+      };
+      const empresaCreada = await createEmpresa(empresaData);
+
+      // Paso 4: Asociar el reclutador a la empresa usando el endpoint con reclutadorIdActual
+      // Enviamos también los datos del reclutador para no sobrescribir con null en el backend
+      console.log('Asociando empresa al reclutador...');
+      await updateReclutadorWithActual(
+        reclutadorId,
+        {
+          nombre,
+          apellido,
+          correo,
+          telefono,
+          cargo,
+          fechaNacimiento,
+          empresa: { id: empresaCreada.id },
+        } as any,
+        reclutadorId
+      );
+
+      // Paso 5: Volver a iniciar sesión para obtener los datos actualizados con la empresa
+      console.log('Actualizando datos de sesión...');
+      const loginResponseFinal = await loginApi({ correo, password });
+      console.log('Login final response:', loginResponseFinal);
+
+      // Limpiar el token temporal
+      setAuthToken(null);
+
+      Alert.alert(
+        'Éxito', 
+        'Registro exitoso. Tu empresa ha sido creada. Ahora puedes iniciar sesión', 
+        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+      );
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Error al registrar');
+      console.error('Error en registro:', error);
+      Alert.alert('Error', error.message || 'Error al registrar. Intenta iniciar sesión si ya te registraste.');
     } finally {
       setLoading(false);
     }
@@ -149,6 +205,37 @@ const RegisterReclutadorScreen = () => {
             icon="briefcase"
           />
 
+          <Text style={{ marginTop: 8, marginBottom: 4, fontWeight: 'bold' }}>Fecha de nacimiento *</Text>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 8,
+              padding: 12,
+              marginBottom: 12,
+            }}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Text style={{ color: fechaNacimiento ? '#000' : '#888' }}>
+              {fechaNacimiento ? fechaNacimiento : 'Selecciona tu fecha de nacimiento'}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={fechaNacimiento ? new Date(fechaNacimiento) : new Date('2000-01-01')}
+              mode="date"
+              display="default"
+              maximumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (selectedDate) {
+                  const iso = selectedDate.toISOString().split('T')[0];
+                  setFechaNacimiento(iso);
+                }
+              }}
+            />
+          )}
+
           <Input
             label="Contraseña *"
             placeholder="Mínimo 6 caracteres"
@@ -180,11 +267,29 @@ const RegisterReclutadorScreen = () => {
           />
 
           <Input
+            label="Descripción de la empresa *"
+            placeholder="Breve descripción de la empresa"
+            value={descripcionEmpresa}
+            onChangeText={setDescripcionEmpresa}
+            multiline
+            icon="document-text"
+          />
+
+          <Input
             label="NIT"
             placeholder="Opcional"
             value={nitEmpresa}
             onChangeText={setNitEmpresa}
             icon="document-text"
+          />
+
+          <Input
+            label="Número de trabajadores"
+            placeholder="Ej: 50"
+            value={numeroTrabajadores}
+            onChangeText={setNumeroTrabajadores}
+            keyboardType="numeric"
+            icon="people"
           />
 
           <Input

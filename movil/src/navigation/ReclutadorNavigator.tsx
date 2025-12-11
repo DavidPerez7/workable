@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import DashboardReclutadorScreen from '../screens/reclutador/DashboardReclutadorScreen';
 import MisOfertasNavigator from './stacks/MisOfertasNavigator';
 import CrearOfertaScreen from '../screens/reclutador/CrearOfertaScreen';
 import PerfilReclutadorScreen from '../screens/reclutador/PerfilReclutadorScreen';
@@ -29,6 +30,16 @@ const ReclutadorNavigator = () => {
         },
       }}
     >
+      <Tab.Screen
+        name="DashboardTab"
+        component={DashboardReclutadorScreen}
+        options={{
+          title: 'Inicio',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="MisOfertasTab"
         component={MisOfertasNavigator}

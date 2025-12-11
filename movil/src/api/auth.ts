@@ -1,4 +1,5 @@
-import { api, getErrorMessage } from './config';
+import { api, getErrorMessage, setAuthToken } from './config';
+import { getMyProfile } from './reclutador';
 import type { LoginCredentials, LoginResponse, Aspirante, Reclutador } from '../types';
 
 // Login
@@ -6,23 +7,30 @@ export const login = async (credentials: LoginCredentials): Promise<LoginRespons
   try {
     const response = await api.post<LoginResponse>('/auth/login', credentials);
     
-    // Si es reclutador, obtener datos completos
+    console.log('Login response:', JSON.stringify(response.data, null, 2));
+    
+    // Hidratación para reclutador: si no trae empresa, consultamos perfil
     if (response.data.rol === 'RECLUTADOR') {
-      try {
-        const reclutadorResponse = await api.get(`/reclutador/por-correo?correo=${response.data.correo}`, {
-          headers: {
-            Authorization: `Bearer ${response.data.token}`,
-          },
-        });
-        
-        return {
-          ...response.data,
-          reclutadorId: reclutadorResponse.data.id,
-          empresaId: reclutadorResponse.data.empresa?.id || null,
-        };
-      } catch (error) {
-        console.warn('No se pudieron obtener datos completos del reclutador');
+      let empresaId = response.data.empresa?.id || null;
+      let empresa = response.data.empresa;
+
+      if (!empresaId) {
+        try {
+          setAuthToken(response.data.token);
+          const perfil = await getMyProfile();
+          empresaId = perfil.empresa?.id || null;
+          empresa = perfil.empresa;
+        } catch (perfilErr) {
+          console.warn('No se pudo hidratar empresa en login:', perfilErr);
+        }
       }
+
+      return {
+        ...response.data,
+        reclutadorId: response.data.usuarioId, // El usuarioId ES el reclutadorId
+        empresaId,
+        empresa,
+      };
     }
     
     return response.data;

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
   Text,
@@ -32,10 +34,14 @@ const RegisterAspiranteScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [telefono, setTelefono] = useState('');
   const [loading, setLoading] = useState(false);
+  const [genero, setGenero] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleRegister = async () => {
-    if (!nombre || !apellido || !correo || !password) {
-      Alert.alert('Error', 'Por favor completa los campos requeridos');
+
+    if (!nombre || !apellido || !correo || !password || !genero || !fechaNacimiento) {
+      Alert.alert('Error', 'Por favor completa todos los campos requeridos');
       return;
     }
 
@@ -57,6 +63,8 @@ const RegisterAspiranteScreen = () => {
         correo,
         password,
         telefono,
+        genero,
+        fechaNacimiento,
       });
 
       Alert.alert('Éxito', 'Registro exitoso. Ahora puedes iniciar sesión', [
@@ -107,6 +115,7 @@ const RegisterAspiranteScreen = () => {
             icon="mail"
           />
 
+
           <Input
             label="Teléfono"
             placeholder="Opcional"
@@ -115,6 +124,51 @@ const RegisterAspiranteScreen = () => {
             keyboardType="phone-pad"
             icon="call"
           />
+
+          <Text style={{ marginTop: 16, marginBottom: 4, fontWeight: 'bold' }}>Género *</Text>
+          <View style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 8, marginBottom: 12 }}>
+            <Picker
+              selectedValue={genero}
+              onValueChange={(itemValue) => setGenero(itemValue)}
+            >
+              <Picker.Item label="Selecciona tu género" value="" />
+              <Picker.Item label="Masculino" value="MASCULINO" />
+              <Picker.Item label="Femenino" value="FEMENINO" />
+              <Picker.Item label="Otro" value="OTRO" />
+            </Picker>
+          </View>
+
+          <Text style={{ marginTop: 8, marginBottom: 4, fontWeight: 'bold' }}>Fecha de nacimiento *</Text>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 8,
+              padding: 12,
+              marginBottom: 12,
+            }}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Text style={{ color: fechaNacimiento ? '#000' : '#888' }}>
+              {fechaNacimiento ? fechaNacimiento : 'Selecciona tu fecha de nacimiento'}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={fechaNacimiento ? new Date(fechaNacimiento) : new Date('2000-01-01')}
+              mode="date"
+              display="default"
+              maximumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (selectedDate) {
+                  // Formato YYYY-MM-DD
+                  const iso = selectedDate.toISOString().split('T')[0];
+                  setFechaNacimiento(iso);
+                }
+              }}
+            />
+          )}
 
           <Input
             label="Contraseña *"

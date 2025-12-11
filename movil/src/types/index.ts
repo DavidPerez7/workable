@@ -13,6 +13,7 @@ export interface LoginResponse {
   apellido?: string;
   reclutadorId?: number;
   empresaId?: number;
+  empresa?: { id: number; nombre: string };
 }
 
 export interface User {
@@ -24,6 +25,7 @@ export interface User {
   apellido?: string;
   reclutadorId?: number;
   empresaId?: number;
+  empresa?: { id: number; nombre?: string };
 }
 
 // Aspirante types
@@ -61,13 +63,20 @@ export interface Empresa {
   nombre: string;
   nit?: string;
   direccion?: string;
+  direcciones?: string[];
   telefono?: string;
+  telefonoContacto?: string;
   correo?: string;
+  emailContacto?: string;
   descripcion?: string;
+  numeroTrabajadores?: number;
   sector?: string;
   tamano?: string;
   sitioWeb?: string;
+  website?: string;
   municipio?: Municipio;
+  isActive?: boolean;
+  reclutadorOwner?: Reclutador;
 }
 
 // Oferta types
@@ -184,6 +193,7 @@ export type AspiranteTabParamList = {
 };
 
 export type ReclutadorTabParamList = {
+  DashboardTab: undefined;
   MisOfertasTab: undefined;
   CrearOfertaTab: undefined;
   PerfilReclutadorTab: undefined;
