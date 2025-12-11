@@ -3,6 +3,7 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Feedback;
 import com.workable_sb.workable.service.FeedbackService;
+import com.workable_sb.workable.repository.FeedbackRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,21 @@ public class FeedbackController {
 
 	@Autowired
 	private FeedbackService feedbackService;
+
+	@Autowired
+	private FeedbackRepo feedbackRepo;
+
+	// ===== READ ALL - Solo RECLUTADOR y ADMIN =====
+	@PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+	@GetMapping
+	public ResponseEntity<List<Feedback>> getAll() {
+		try {
+			List<Feedback> list = feedbackRepo.findAll();
+			return ResponseEntity.ok(list);
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(null);
+		}
+	}
 
 	// ===== CREATE - Solo ASPIRANTE y ADMIN =====
 	@PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")

@@ -105,16 +105,6 @@ public class Oferta {
 	@Column(name = "beneficio", length = 30, nullable = false)
 	private Set<Beneficio> beneficios = new HashSet<>();
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(
-		name = "oferta_habilidades_requeridas",
-		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
-	)
-	@Enumerated(EnumType.STRING)
-	@Column(name = "habilidad", length = 30, nullable = false)
-	private Set<Aspirante.HabilidadEnum> habilidadesRequeridas = new HashSet<>();
-
-
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
 	@com.fasterxml.jackson.annotation.JsonIgnore
 	private Set<Postulacion> postulaciones = new HashSet<>();
