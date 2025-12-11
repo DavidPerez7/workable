@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import HeaderAdmin from '../../../components/HeaderAdmin/HeaderAdmin';
 import Footer from '../../../components/Footer/footer';
 import { getAllEmpresasDto, actualizarEmpresa, eliminarEmpresa, crearEmpresa } from '../../../api/empresaAPI';
-import './CompaniesPage.css';
+import './AdminEmpresas.css';
 
-function CompaniesPage() {
+function AdminEmpresas() {
   const navigate = useNavigate();
   const [filtroEstado, setFiltroEstado] = useState('todas');
   const [busqueda, setBusqueda] = useState('');
@@ -280,21 +279,29 @@ function CompaniesPage() {
             <>
               <div className="stats-section-CP">
                 <div className="stat-card-CP stat-total-CP">
-                  <div className="stat-icon-CP">🏢</div>
+                  <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
                   <div>
                     <div className="stat-number-CP">{estadisticas.total}</div>
                     <div className="stat-label-CP">Total Empresas</div>
                   </div>
                 </div>
                 <div className="stat-card-CP stat-aprobadas-CP">
-                  <div className="stat-icon-CP">✅</div>
+                  <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
                   <div>
                     <div className="stat-number-CP">{estadisticas.activas}</div>
                     <div className="stat-label-CP">Activas</div>
                   </div>
                 </div>
                 <div className="stat-card-CP stat-inactivas-CP">
-                  <div className="stat-icon-CP">⏸️</div>
+                  <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
                   <div>
                     <div className="stat-number-CP">{estadisticas.inactivas}</div>
                     <div className="stat-label-CP">Inactivas</div>
@@ -312,24 +319,28 @@ function CompaniesPage() {
                     onChange={(e) => setBusqueda(e.target.value)}
                     className="search-input-CP"
                   />
-                  <span className="search-icon-CP">🔍</span>
+                  <button type="button" className="search-btn-CP" onClick={() => {}}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
                 </div>
                 
                 <div className="filter-buttons-CP">
                   <button
-                    className={`filter-btn-CP ${filtroEstado === 'todas' ? 'active' : ''}`}
+                    className={`filter-empresa1 ${filtroEstado === 'todas' ? 'active' : ''}`}
                     onClick={() => setFiltroEstado('todas')}
                   >
                     Todas
                   </button>
                   <button
-                    className={`filter-btn-CP ${filtroEstado === 'Aprobado' ? 'active' : ''}`}
+                    className={`filter-empresa2 ${filtroEstado === 'Aprobado' ? 'active' : ''}`}
                     onClick={() => setFiltroEstado('Aprobado')}
                   >
                     Activas
                   </button>
                   <button
-                    className={`filter-btn-CP ${filtroEstado === 'Inactivo' ? 'active' : ''}`}
+                    className={`filter-empresa3 ${filtroEstado === 'Inactivo' ? 'active' : ''}`}
                     onClick={() => setFiltroEstado('Inactivo')}
                   >
                     Inactivas
@@ -376,7 +387,10 @@ function CompaniesPage() {
                                 onClick={() => handleEditEmpresa(empresa)}
                                 title="Editar"
                               >
-                                ✏️
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
                               </button>
                               {empresa.isActive ? (
                                 <button
@@ -384,7 +398,10 @@ function CompaniesPage() {
                                   onClick={() => handleDesactivar(empresa.id)}
                                   title="Desactivar"
                                 >
-                                  ⏸️
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                  </svg>
                                 </button>
                               ) : (
                                 <button
@@ -392,7 +409,9 @@ function CompaniesPage() {
                                   onClick={() => handleAprobar(empresa.id)}
                                   title="Activar"
                                 >
-                                  ▶️
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                  </svg>
                                 </button>
                               )}
                               <button
@@ -400,7 +419,12 @@ function CompaniesPage() {
                                 onClick={() => handleEliminar(empresa.id)}
                                 title="Eliminar"
                               >
-                                🗑️
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polyline points="3 6 5 6 21 6"></polyline>
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
                               </button>
                             </div>
                           </td>
@@ -681,4 +705,4 @@ function CompaniesPage() {
   );
 }
 
-export default CompaniesPage;
+export default AdminEmpresas;

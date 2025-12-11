@@ -19,8 +19,7 @@ import MiPerfil from "./pages/AspirantePage/MiPerfil/MiPerfil";
 import GestigOfertsPage from "./pages/ReclutadorPage/GestigOfertsPage/GestigOferts";
 import AdminPage from "./pages/AdminPage/AdminPage";
 import AdminAccountsPage from "./pages/AdminPage/AdminAccountPage/AdminAccountPage";
-import CompaniesPage from "./pages/AdminPage/CompaniesPage/CompaniesPage";
-import FeedBackPage from "./pages/AdminPage/FeedBackPage/FeedBackPage";
+import AdminEmpresas from "./pages/AdminPage/AdminEmpresas/AdminEmpresas";
 import OffersPage from "./pages/AdminPage/OffersPage/OffersPage";
 import ReportPage from "./pages/AdminPage/ReportPage/ReportPage";
 import UsersManagePage from "./pages/AdminPage/UsersManagePage/UsersManagePage";
@@ -72,9 +71,8 @@ function App() {
         {/* Rutas protegidas de Administrador */}
         <Route path="/Administrador" element={<ProtectedRoute requiredRole="ADMIN"><AdminPage /></ProtectedRoute>} />
         <Route path="/Administrador/CuentasInternas" element={<ProtectedRoute requiredRole="ADMIN"><AdminAccountsPage /></ProtectedRoute>} />
-        <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><CompaniesPage /></ProtectedRoute>} />
+        <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><AdminEmpresas/></ProtectedRoute>} />
         <Route path="/Administrador/Reportes" element={<ProtectedRoute requiredRole="ADMIN"><ReportPage /></ProtectedRoute>} />
-        <Route path="/Administrador/Retroalimentacion" element={<ProtectedRoute requiredRole="ADMIN"><FeedBackPage /></ProtectedRoute>} />
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />
         

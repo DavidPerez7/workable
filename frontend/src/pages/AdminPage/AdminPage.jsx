@@ -4,11 +4,8 @@ import Footer from '../../components/Footer/footer';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import UserManagement from './UserManagement';
-import CompaniesPage from './CompaniesPage/CompaniesPage';
+import AdminEmpresa from './AdminEmpresas/AdminEmpresas';
 import OffersPage from './OffersPage/OffersPage';
-import ProductManagement from './ProductManagement';
-import RolesManagement from './RolesManagement';
-import LogsPage from './LogsPage';
 import './AdminPage.css';
 
 function AdminPage() {
@@ -21,11 +18,8 @@ function AdminPage() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/Usuarios" element={<UserManagement />} />
-              <Route path="/Empresas" element={<CompaniesPage />} />
+              <Route path="/Empresas" element={<AdminEmpresa />} />
               <Route path="/Ofertas" element={<OffersPage />} />
-              <Route path="/Productos" element={<ProductManagement />} />
-              <Route path="/Roles" element={<RolesManagement />} />
-              <Route path="/Logs" element={<LogsPage />} />
               <Route path="*" element={<Dashboard />} />
             </Routes>
           </div>
