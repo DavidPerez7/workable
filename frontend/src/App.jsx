@@ -20,7 +20,7 @@ import GestigOfertsPage from "./pages/ReclutadorPage/GestigOfertsPage/GestigOfer
 import AdminPage from "./pages/AdminPage/AdminPage";
 import AdminAccountsPage from "./pages/AdminPage/AdminPerfil/AdminAccountPage";
 import AdminEmpresas from "./pages/AdminPage/AdminEmpresas/AdminEmpresas";
-  import OffersPage from "./pages/AdminPage/AdminOfertas/AdminOfertas";;
+import OffersPage from "./pages/AdminPage/AdminOfertas/AdminOfertas";;
 import UsersManagePage from "./pages/AdminPage/AdminUsuarios/AdminUsuarios";
 import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
@@ -35,6 +35,7 @@ import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 import NewReclutador from "./components/Empresa/NewReclutador";
 import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEmpresa";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import HojaDeVidaPage from "./pages/AdminPage/HojaDeVidaPage";
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
         <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><AdminEmpresas/></ProtectedRoute>} />
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />
+        <Route path="/Administrador/HojaDeVida" element={<ProtectedRoute requiredRole="ADMIN"><HojaDeVidaPage /></ProtectedRoute>} />
         
         <Route path="/Administrador" element={<AdminPage />} />
         <Route path="/articulo1" element={<Articulo1 />} />

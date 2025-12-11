@@ -22,6 +22,8 @@ export default function AdminUsuarios() {
     apellido: '',
     correo: '',
     telefono: '',
+    urlFotoPerfil: '',
+    urlBanner: '',
     fechaNacimiento: '',
     genero: '',
     password: '',
@@ -127,6 +129,8 @@ export default function AdminUsuarios() {
       apellido: '',
       correo: '',
       telefono: '',
+      urlFotoPerfil: '',
+      urlBanner: '',
       fechaNacimiento: '',
       genero: '',
       password: '',
@@ -140,9 +144,9 @@ export default function AdminUsuarios() {
     try {
       let usuario;
       if (rol === 'ASPIRANTE') {
-        usuario = await aspirantesApi.get(id);
+        usuario = await aspirantesApi.getPublic(id);
       } else if (rol === 'RECLUTADOR') {
-        usuario = await reclutadoresApi.get(id);
+        usuario = await reclutadoresApi.getPublic(id);
       } else if (rol === 'ADMIN') {
         usuario = await administradorAPI.get(id);
       }
@@ -153,6 +157,11 @@ export default function AdminUsuarios() {
         apellido: usuario.apellido || '',
         correo: usuario.correo || '',
         telefono: usuario.telefono || '',
+        urlFotoPerfil: usuario.urlFotoPerfil || '',
+        urlBanner: usuario.urlBanner || '',
+        fechaNacimiento: usuario.fechaNacimiento || '',
+        genero: usuario.genero || '',
+        password: '',
         rol: rol
       });
       setShowModal(true);
@@ -189,22 +198,35 @@ export default function AdminUsuarios() {
         telefono: formData.telefono || null
       };
 
-      // Agregar campos adicionales si es nuevo usuario
-      if (!editingUser) {
-        updateData.password = formData.password;
-        // Convertir fechaNacimiento a ISO format (YYYY-MM-DD)
+      if (editingUser) {
+        // Actualizar usuario existente - incluir todos los campos disponibles
+        const { id, rol } = editingUser;
+        
+        // Agregar fechaNacimiento si está disponible
         if (formData.fechaNacimiento) {
           updateData.fechaNacimiento = formData.fechaNacimiento;
         }
-        // Solo agregar genero si es ASPIRANTE (otros roles no tienen este campo)
-        if (formData.rol === 'ASPIRANTE') {
-          updateData.genero = formData.genero;
+        
+        // Campos específicos por rol
+        if (rol === 'ASPIRANTE') {
+          // Aspirante: puede tener genero y urlFotoPerfil
+          if (formData.genero) {
+            updateData.genero = formData.genero;
+          }
+          if (formData.urlFotoPerfil) {
+            updateData.urlFotoPerfil = formData.urlFotoPerfil;
+          }
+        } else if (rol === 'RECLUTADOR') {
+          // Reclutador: puede tener urlFotoPerfil y urlBanner
+          if (formData.urlFotoPerfil) {
+            updateData.urlFotoPerfil = formData.urlFotoPerfil;
+          }
+          if (formData.urlBanner) {
+            updateData.urlBanner = formData.urlBanner;
+          }
         }
-      }
-
-      if (editingUser) {
-        // Actualizar usuario existente
-        const { id, rol } = editingUser;
+        // Administrador: solo campos básicos
+        
         console.log('Actualizando usuario:', { id, rol, ...updateData });
         if (rol === 'ASPIRANTE') {
           await aspirantesApi.updateAdmin(id, updateData);
@@ -216,7 +238,37 @@ export default function AdminUsuarios() {
         setError('Usuario actualizado correctamente');
       } else {
         // Crear nuevo usuario
+        if (!formData.password) {
+          setError('Contraseña es requerida');
+          return;
+        }
+        if (!formData.fechaNacimiento) {
+          setError('Fecha de nacimiento es requerida');
+          return;
+        }
+        
+        updateData.password = formData.password;
+        updateData.fechaNacimiento = formData.fechaNacimiento;
+        
+        // Campos específicos por rol
         const rol = formData.rol;
+        if (rol === 'ASPIRANTE') {
+          // Aspirante: agregar genero y urlFotoPerfil
+          updateData.genero = formData.genero;
+          if (formData.urlFotoPerfil) {
+            updateData.urlFotoPerfil = formData.urlFotoPerfil;
+          }
+        } else if (rol === 'RECLUTADOR') {
+          // Reclutador: agregar urlFotoPerfil y urlBanner
+          if (formData.urlFotoPerfil) {
+            updateData.urlFotoPerfil = formData.urlFotoPerfil;
+          }
+          if (formData.urlBanner) {
+            updateData.urlBanner = formData.urlBanner;
+          }
+        }
+        // Administrador: sin campos adicionales especiales
+        
         console.log('Creando usuario nuevo:', { ...updateData, rol });
         let respuesta = null;
         if (rol === 'ASPIRANTE') {
@@ -286,13 +338,17 @@ export default function AdminUsuarios() {
         if (rol === 'ASPIRANTE') {
           await aspirantesApi.delete(id);
         } else if (rol === 'RECLUTADOR') {
-          await reclutadoresApi.delete(id, id);
+          await reclutadoresApi.delete(id, id); // reclutadorIdActual = id
         } else if (rol === 'ADMIN') {
           await administradorAPI.delete(id);
         }
         cargarUsuarios();
       } catch (err) {
-        setError('Error al eliminar usuario');
+        if (err.response && err.response.data && err.response.data.error) {
+          setError('Error al eliminar usuario: ' + err.response.data.error);
+        } else {
+          setError('Error al eliminar usuario');
+        }
         console.error(err);
       }
     }
@@ -308,6 +364,8 @@ export default function AdminUsuarios() {
       apellido: '',
       correo: '',
       telefono: '',
+      urlFotoPerfil: '',
+      urlBanner: '',
       fechaNacimiento: '',
       genero: '',
       password: '',
@@ -466,6 +524,10 @@ export default function AdminUsuarios() {
                   <th>Nombre</th>
                   <th>Correo</th>
                   <th>Teléfono</th>
+                  <th>Fecha Nacimiento</th>
+                  <th>Género</th>
+                  <th>Foto Perfil</th>
+                  <th>Banner</th>
                   <th>Rol</th>
                   <th>Estado</th>
                   <th>Fecha Registro</th>
@@ -478,7 +540,11 @@ export default function AdminUsuarios() {
                     <tr key={usuario.uniqueKey}>
                       <td className="nombre-cell-UP">{usuario.nombre}</td>
                       <td>{usuario.correo}</td>
-                      <td>{usuario.telefono}</td>
+                      <td>{usuario.telefono || '-'}</td>
+                      <td>{usuario.fechaNacimiento || '-'}</td>
+                      <td>{usuario.genero ? usuario.genero.charAt(0).toUpperCase() + usuario.genero.slice(1).toLowerCase() : '-'}</td>
+                      <td>{usuario.urlFotoPerfil ? <a href={usuario.urlFotoPerfil} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>
+                      <td>{usuario.urlBanner ? <a href={usuario.urlBanner} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>
                       <td><span style={{ textTransform: 'capitalize', fontWeight: '600' }}>{usuario.rol.toLowerCase()}</span></td>
                       <td><span className={`status-badge-UP ${usuario.estado === 'Activo' ? 'status-active-UP' : 'status-inactive-UP'}`}>{usuario.estado}</span></td>
                       <td>{usuario.fechaRegistro}</td>
@@ -517,7 +583,7 @@ export default function AdminUsuarios() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="no-results-UP">No hay usuarios que coincidan con los filtros</td>
+                    <td colSpan="11" className="no-results-UP">No hay usuarios que coincidan con los filtros</td>
                   </tr>
                 )}
               </tbody>
@@ -570,15 +636,31 @@ export default function AdminUsuarios() {
                     <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required />
                   </div>
 
-                  <div className="form-group-UP">
-                    <label>Género *</label>
-                    <select name="genero" value={formData.genero} onChange={handleInputChange} required>
-                      <option value="">Seleccionar género</option>
-                      <option value="MASCULINO">Masculino</option>
-                      <option value="FEMENINO">Femenino</option>
-                      <option value="OTRO">Otro</option>
-                    </select>
-                  </div>
+                  {formData.rol === 'ASPIRANTE' && (
+                    <div className="form-group-UP">
+                      <label>Género *</label>
+                      <select name="genero" value={formData.genero} onChange={handleInputChange} required>
+                        <option value="">Seleccionar género</option>
+                        <option value="MASCULINO">Masculino</option>
+                        <option value="FEMENINO">Femenino</option>
+                        <option value="OTRO">Otro</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {(formData.rol === 'ASPIRANTE' || formData.rol === 'RECLUTADOR') && (
+                    <div className="form-group-UP">
+                      <label>URL Foto de Perfil</label>
+                      <input type="text" name="urlFotoPerfil" value={formData.urlFotoPerfil} onChange={handleInputChange} placeholder="Ej: https://example.com/foto.jpg" />
+                    </div>
+                  )}
+
+                  {formData.rol === 'RECLUTADOR' && (
+                    <div className="form-group-UP">
+                      <label>URL Banner</label>
+                      <input type="text" name="urlBanner" value={formData.urlBanner} onChange={handleInputChange} placeholder="Ej: https://example.com/banner.jpg" />
+                    </div>
+                  )}
 
                   <div className="form-group-UP">
                     <label>Contraseña *</label>

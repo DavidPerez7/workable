@@ -344,14 +344,14 @@
   box-shadow: var(--shadow-light);
   border: 1.5px solid var(--border-color);
   overflow-x: auto;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
 }
 
 .table-UP {
   width: 100%;
   border-collapse: collapse;
   min-width: 1100px;
-  font-size: 0.95em;
+  font-size: 0.85em;
 }
 
 .table-UP thead {
@@ -359,21 +359,22 @@
 }
 
 .table-UP th {
-  padding: 0.7rem 0.9rem;
+  padding: 0.45rem 0.6rem;
   text-align: left;
   font-weight: 800;
   color: var(--text-primary);
-  font-size: 0.75em;
+  font-size: 0.7em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
   border: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .table-UP td {
-  padding: 0.7rem 0.9rem;
+  padding: 0.45rem 0.6rem;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 0.88em;
+  font-size: 0.82em;
   font-weight: 500;
 }
 
@@ -415,12 +416,12 @@
 
 .status-badge-UP {
   display: inline-block;
-  padding: 0.7rem 1.4rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 20px;
-  font-size: 0.8em;
+  font-size: 0.7em;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .status-active-UP {
@@ -437,15 +438,15 @@
 
 .actions-UP {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 0.3rem;
+  flex-wrap: nowrap;
 }
 
 .btn-action-UP {
-  padding: 0.75rem 1.2rem;
+  padding: 0.45rem 0.65rem;
   border: 1.5px solid var(--border-color);
   border-radius: var(--border-radius);
-  font-size: 0.9em;
+  font-size: 0.75em;
   cursor: pointer;
   transition: var(--transition);
   background-color: var(--background-card);

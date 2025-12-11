@@ -42,6 +42,15 @@ const Sidebar = () => {
           </svg>
           Ofertas
         </NavLink>
+        <NavLink to="/Administrador/HojaDeVida" className={({isActive})=> isActive? 'nav-link active':'nav-link'}>
+          <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <line x1="8" y1="8" x2="16" y2="8"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+            <line x1="8" y1="16" x2="12" y2="16"></line>
+          </svg>
+          Hoja de Vida
+        </NavLink>
       </nav>
       <div className="sidebar-footer">
         <small>Superusuario</small>
