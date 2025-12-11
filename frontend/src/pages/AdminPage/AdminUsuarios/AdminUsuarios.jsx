@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../../components/Sidebar/Sidebar';
+import Sidebar from '../Sidebar';
 import Footer from '../../../components/Footer/footer';
-import userAPI from '../../../api/usuarioAPI';
+import aspirantesApi from '../../../api/aspirantesApi';
+import reclutadoresApi from '../../../api/reclutadoresApi';
+import administradorAPI from '../../../api/administradorAPI';
 import './AdminUsuarios.css';
 
 export default function AdminUsuarios() {
@@ -12,14 +14,17 @@ export default function AdminUsuarios() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [selectedRole, setSelectedRole] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
     correo: '',
     telefono: '',
-    numeroDocumento: '',
-    tipoDocumento: 'CC',
+    fechaNacimiento: '',
+    genero: '',
+    password: '',
     rol: 'ASPIRANTE'
   });
 
@@ -31,18 +36,65 @@ export default function AdminUsuarios() {
     setLoading(true);
     setError('');
     try {
-      const data = await userAPI.getAll();
-      const usuariosData = data.map((u) => ({
-        id: u.id,
-        nombre: `${u.nombre} ${u.apellido || ''}`.trim(),
-        correo: u.correo,
-        telefono: u.telefono || 'N/A',
-        documento: u.numeroDocumento || 'N/A',
-        tipoDocumento: u.tipoDocumento || 'CC',
-        estado: u.isActive ? 'Activo' : 'Inactivo',
-        rol: u.rol || 'No asignado',
-        fechaRegistro: u.fechaRegistro?.split('T')[0] || 'N/A'
-      }));
+      let usuariosData = [];
+
+      // Cargar aspirantes
+      try {
+        const aspirantes = await aspirantesApi.getAll();
+        const aspirantesFormateados = aspirantes.map((a) => ({
+          id: a.id,
+          uniqueKey: `ASPIRANTE-${a.id}`,
+          nombre: `${a.nombre} ${a.apellido || ''}`.trim(),
+          correo: a.correo,
+          telefono: a.telefono || 'N/A',
+          estado: a.isActive ? 'Activo' : 'Inactivo',
+          rol: 'ASPIRANTE',
+          fechaRegistro: a.fechaCreacion?.split('T')[0] || 'N/A',
+          originalData: a
+        }));
+        usuariosData = [...usuariosData, ...aspirantesFormateados];
+      } catch (err) {
+        console.error('Error cargando aspirantes:', err);
+      }
+
+      // Cargar reclutadores
+      try {
+        const reclutadores = await reclutadoresApi.getAll();
+        const reclutadoresFormateados = reclutadores.map((r) => ({
+          id: r.id,
+          uniqueKey: `RECLUTADOR-${r.id}`,
+          nombre: `${r.nombre} ${r.apellido || ''}`.trim(),
+          correo: r.correo,
+          telefono: r.telefono || 'N/A',
+          estado: r.isActive ? 'Activo' : 'Inactivo',
+          rol: 'RECLUTADOR',
+          fechaRegistro: r.fechaCreacion?.split('T')[0] || 'N/A',
+          originalData: r
+        }));
+        usuariosData = [...usuariosData, ...reclutadoresFormateados];
+      } catch (err) {
+        console.error('Error cargando reclutadores:', err);
+      }
+
+      // Cargar administradores
+      try {
+        const administradores = await administradorAPI.getAll();
+        const administradoresFormateados = administradores.map((ad) => ({
+          id: ad.id,
+          uniqueKey: `ADMIN-${ad.id}`,
+          nombre: `${ad.nombre} ${ad.apellido || ''}`.trim(),
+          correo: ad.correo,
+          telefono: ad.telefono || 'N/A',
+          estado: ad.isActive ? 'Activo' : 'Inactivo',
+          rol: 'ADMIN',
+          fechaRegistro: ad.fechaCreacion?.split('T')[0] || 'N/A',
+          originalData: ad
+        }));
+        usuariosData = [...usuariosData, ...administradoresFormateados];
+      } catch (err) {
+        console.error('Error cargando administradores:', err);
+      }
+
       setUsuarios(usuariosData);
     } catch (err) {
       setError('Error al cargar usuarios');
@@ -57,37 +109,51 @@ export default function AdminUsuarios() {
     const cumpleRol = filtroRol === 'todos' || usuario.rol.toLowerCase() === filtroRol.toLowerCase();
     const cumpleBusqueda =
       usuario.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.correo.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.documento.toLowerCase().includes(busqueda.toLowerCase());
+      usuario.correo.toLowerCase().includes(busqueda.toLowerCase());
     return cumpleEstado && cumpleRol && cumpleBusqueda;
   });
 
   const handleCrear = () => {
     setEditingUser(null);
+    setError('');
+    setSelectedRole(null);
+    setShowRoleSelector(true);
+  };
+
+  const handleSelectRole = (role) => {
+    setSelectedRole(role);
     setFormData({
       nombre: '',
       apellido: '',
       correo: '',
       telefono: '',
-      numeroDocumento: '',
-      tipoDocumento: 'CC',
-      rol: 'ASPIRANTE'
+      fechaNacimiento: '',
+      genero: '',
+      password: '',
+      rol: role
     });
+    setShowRoleSelector(false);
     setShowModal(true);
   };
 
-  const handleEditar = async (id) => {
+  const handleEditar = async (id, rol) => {
     try {
-      const usuario = await userAPI.get(id);
-      setEditingUser(usuario);
+      let usuario;
+      if (rol === 'ASPIRANTE') {
+        usuario = await aspirantesApi.get(id);
+      } else if (rol === 'RECLUTADOR') {
+        usuario = await reclutadoresApi.get(id);
+      } else if (rol === 'ADMIN') {
+        usuario = await administradorAPI.get(id);
+      }
+
+      setEditingUser({ id, rol, data: usuario });
       setFormData({
         nombre: usuario.nombre || '',
         apellido: usuario.apellido || '',
         correo: usuario.correo || '',
         telefono: usuario.telefono || '',
-        numeroDocumento: usuario.numeroDocumento || '',
-        tipoDocumento: usuario.tipoDocumento || 'CC',
-        rol: usuario.rol || 'ASPIRANTE'
+        rol: rol
       });
       setShowModal(true);
     } catch (err) {
@@ -103,23 +169,92 @@ export default function AdminUsuarios() {
       return;
     }
 
-    try {
-      if (editingUser) {
-        await userAPI.update(editingUser.id, formData);
-      } else {
-        await userAPI.create(formData);
+    // Validaciones para nuevo usuario
+    if (!editingUser) {
+      if (!formData.password) {
+        setError('Contraseña es requerida');
+        return;
       }
-      cargarUsuarios();
-      handleCloseModal();
+      if (!formData.fechaNacimiento) {
+        setError('Fecha de nacimiento es requerida');
+        return;
+      }
+    }
+
+    try {
+      const updateData = {
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        correo: formData.correo,
+        telefono: formData.telefono || null
+      };
+
+      // Agregar campos adicionales si es nuevo usuario
+      if (!editingUser) {
+        updateData.password = formData.password;
+        // Convertir fechaNacimiento a ISO format (YYYY-MM-DD)
+        if (formData.fechaNacimiento) {
+          updateData.fechaNacimiento = formData.fechaNacimiento;
+        }
+        // Solo agregar genero si es ASPIRANTE (otros roles no tienen este campo)
+        if (formData.rol === 'ASPIRANTE') {
+          updateData.genero = formData.genero;
+        }
+      }
+
+      if (editingUser) {
+        // Actualizar usuario existente
+        const { id, rol } = editingUser;
+        console.log('Actualizando usuario:', { id, rol, ...updateData });
+        if (rol === 'ASPIRANTE') {
+          await aspirantesApi.updateAdmin(id, updateData);
+        } else if (rol === 'RECLUTADOR') {
+          await reclutadoresApi.updateAdmin(id, updateData);
+        } else if (rol === 'ADMIN') {
+          await administradorAPI.update(id, updateData);
+        }
+        setError('Usuario actualizado correctamente');
+      } else {
+        // Crear nuevo usuario
+        const rol = formData.rol;
+        console.log('Creando usuario nuevo:', { ...updateData, rol });
+        let respuesta = null;
+        if (rol === 'ASPIRANTE') {
+          respuesta = await aspirantesApi.create(updateData);
+        } else if (rol === 'RECLUTADOR') {
+          respuesta = await reclutadoresApi.create(updateData);
+        } else if (rol === 'ADMIN') {
+          respuesta = await administradorAPI.create(updateData);
+        }
+        console.log('Respuesta de creación:', respuesta);
+        setError('Usuario creado correctamente');
+      }
+      
+      setTimeout(() => {
+        cargarUsuarios();
+        handleCloseModal();
+      }, 1000);
     } catch (err) {
-      setError(editingUser ? 'Error al actualizar usuario' : 'Error al crear usuario');
-      console.error(err);
+      console.error('Error en handleGuardar:', err);
+      setError(editingUser ? 'Error al actualizar usuario: ' + err.message : 'Error al crear usuario: ' + err.message);
+      // Aún así, intentar recargar en 2 segundos en caso de que se haya guardado
+      setTimeout(() => {
+        cargarUsuarios();
+      }, 2000);
     }
   };
 
-  const handleActivar = async (id) => {
+  const handleActivar = async (id, rol) => {
     try {
-      await userAPI.activate(id);
+      if (rol === 'ASPIRANTE') {
+        await aspirantesApi.activate(id);
+      } else if (rol === 'RECLUTADOR') {
+        const reclutador = await reclutadoresApi.get(id);
+        await reclutadoresApi.updateAdmin(id, { ...reclutador, isActive: true });
+      } else if (rol === 'ADMIN') {
+        const admin = await administradorAPI.get(id);
+        await administradorAPI.update(id, { ...admin, isActive: true });
+      }
       cargarUsuarios();
     } catch (err) {
       setError('Error al activar usuario');
@@ -127,9 +262,17 @@ export default function AdminUsuarios() {
     }
   };
 
-  const handleDesactivar = async (id) => {
+  const handleDesactivar = async (id, rol) => {
     try {
-      await userAPI.deactivate(id);
+      if (rol === 'ASPIRANTE') {
+        await aspirantesApi.deactivate(id);
+      } else if (rol === 'RECLUTADOR') {
+        const reclutador = await reclutadoresApi.get(id);
+        await reclutadoresApi.updateAdmin(id, { ...reclutador, isActive: false });
+      } else if (rol === 'ADMIN') {
+        const admin = await administradorAPI.get(id);
+        await administradorAPI.update(id, { ...admin, isActive: false });
+      }
       cargarUsuarios();
     } catch (err) {
       setError('Error al desactivar usuario');
@@ -137,10 +280,16 @@ export default function AdminUsuarios() {
     }
   };
 
-  const handleEliminar = async (id) => {
+  const handleEliminar = async (id, rol) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
       try {
-        await userAPI.delete(id);
+        if (rol === 'ASPIRANTE') {
+          await aspirantesApi.delete(id);
+        } else if (rol === 'RECLUTADOR') {
+          await reclutadoresApi.delete(id, id);
+        } else if (rol === 'ADMIN') {
+          await administradorAPI.delete(id);
+        }
         cargarUsuarios();
       } catch (err) {
         setError('Error al eliminar usuario');
@@ -151,14 +300,17 @@ export default function AdminUsuarios() {
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setShowRoleSelector(false);
     setEditingUser(null);
+    setSelectedRole(null);
     setFormData({
       nombre: '',
       apellido: '',
       correo: '',
       telefono: '',
-      numeroDocumento: '',
-      tipoDocumento: 'CC',
+      fechaNacimiento: '',
+      genero: '',
+      password: '',
       rol: 'ASPIRANTE'
     });
   };
@@ -176,7 +328,6 @@ export default function AdminUsuarios() {
       <Sidebar />
       <div className="main-users-manage-UP">
         <div className="container-users-manage-UP">
-          {/* Header Section */}
           <div className="header-section-UP">
             <div>
               <h1 className="title-users-UP">Gestionar Usuarios</h1>
@@ -194,7 +345,6 @@ export default function AdminUsuarios() {
             </button>
           </div>
 
-          {/* Stats Section */}
           <div className="stats-section-UP">
             <div className="stat-card-UP stat-total-UP">
               <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -231,13 +381,12 @@ export default function AdminUsuarios() {
             </div>
           </div>
 
-          {/* Filters Section */}
           <div className="filters-section-UP">
             <div className="search-box-UP">
               <input
                 type="text"
                 className="search-input-UP"
-                placeholder="Buscar por nombre, correo o documento..."
+                placeholder="Buscar por nombre o correo..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
@@ -249,7 +398,6 @@ export default function AdminUsuarios() {
               </button>
             </div>
 
-            {/* Filter por Estado */}
             <div className="filter-buttons-UP">
               <button
                 className={`filter-btn-UP ${filtroEstado === 'todos' ? 'active' : ''}`}
@@ -271,7 +419,6 @@ export default function AdminUsuarios() {
               </button>
             </div>
 
-            {/* Filter por Rol */}
             <div className="filter-buttons-UP">
               <button
                 className={`filter-btn-UP ${filtroRol === 'todos' ? 'active' : ''}`}
@@ -300,45 +447,18 @@ export default function AdminUsuarios() {
             </div>
           </div>
 
-          {/* Error Message */}
           {error && (
-            <div
-              style={{
-                padding: '1.2rem 1.5rem',
-                background: 'linear-gradient(135deg, rgba(107, 114, 128, 0.12) 0%, rgba(107, 114, 128, 0.06) 100%)',
-                color: '#374151',
-                borderRadius: '10px',
-                borderLeft: '4px solid rgba(107, 114, 128, 0.5)',
-                fontWeight: '700',
-                fontSize: '0.95em',
-                letterSpacing: '0.3px',
-                marginBottom: '1rem'
-              }}
-            >
+            <div style={{padding: '1.2rem 1.5rem', background: editingUser ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.06) 100%)', color: editingUser ? '#3B82F6' : '#DC2626', borderRadius: '10px', borderLeft: '4px solid ' + (editingUser ? '#3B82F6' : '#DC2626'), fontWeight: '700', fontSize: '0.95em', letterSpacing: '0.3px', marginBottom: '1rem'}}>
               {error}
             </div>
           )}
 
-          {/* Loading Message */}
           {loading && (
-            <div
-              style={{
-                padding: '1.2rem 1.5rem',
-                background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)',
-                color: '#3B82F6',
-                borderRadius: '10px',
-                borderLeft: '4px solid rgba(59, 130, 246, 0.5)',
-                fontWeight: '700',
-                fontSize: '0.95em',
-                letterSpacing: '0.3px',
-                marginBottom: '1rem'
-              }}
-            >
+            <div style={{padding: '1.2rem 1.5rem', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)', color: '#3B82F6', borderRadius: '10px', borderLeft: '4px solid rgba(59, 130, 246, 0.5)', fontWeight: '700', fontSize: '0.95em', letterSpacing: '0.3px', marginBottom: '1rem'}}>
               Cargando usuarios...
             </div>
           )}
 
-          {/* Table Section */}
           <div className="table-container-UP">
             <table className="table-UP">
               <thead>
@@ -346,7 +466,6 @@ export default function AdminUsuarios() {
                   <th>Nombre</th>
                   <th>Correo</th>
                   <th>Teléfono</th>
-                  <th>Documento</th>
                   <th>Rol</th>
                   <th>Estado</th>
                   <th>Fecha Registro</th>
@@ -356,71 +475,35 @@ export default function AdminUsuarios() {
               <tbody>
                 {usuariosFiltrados.length > 0 ? (
                   usuariosFiltrados.map((usuario) => (
-                    <tr key={usuario.id}>
+                    <tr key={usuario.uniqueKey}>
                       <td className="nombre-cell-UP">{usuario.nombre}</td>
                       <td>{usuario.correo}</td>
                       <td>{usuario.telefono}</td>
-                      <td>
-                        <div className="contact-info-UP">
-                          <span>{usuario.documento}</span>
-                          <span className="doc-type-UP">{usuario.tipoDocumento}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span style={{ textTransform: 'capitalize', fontWeight: '600' }}>
-                          {usuario.rol.toLowerCase()}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`status-badge-UP ${
-                            usuario.estado === 'Activo' ? 'status-active-UP' : 'status-inactive-UP'
-                          }`}
-                        >
-                          {usuario.estado}
-                        </span>
-                      </td>
+                      <td><span style={{ textTransform: 'capitalize', fontWeight: '600' }}>{usuario.rol.toLowerCase()}</span></td>
+                      <td><span className={`status-badge-UP ${usuario.estado === 'Activo' ? 'status-active-UP' : 'status-inactive-UP'}`}>{usuario.estado}</span></td>
                       <td>{usuario.fechaRegistro}</td>
                       <td>
                         <div className="actions-UP">
-                          <button
-                            className="btn-action-UP btn-edit-UP"
-                            onClick={() => handleEditar(usuario.id)}
-                            title="Editar"
-                          >
+                          <button className="btn-action-UP btn-edit-UP" onClick={() => handleEditar(usuario.id, usuario.rol)} title="Editar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                           </button>
-
                           {usuario.estado === 'Activo' ? (
-                            <button
-                              className="btn-action-UP btn-deactivate-UP"
-                              onClick={() => handleDesactivar(usuario.id)}
-                              title="Desactivar"
-                            >
+                            <button className="btn-action-UP btn-deactivate-UP" onClick={() => handleDesactivar(usuario.id, usuario.rol)} title="Desactivar">
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                                 <path d="M18 6L6 18M6 6l12 12"></path>
                               </svg>
                             </button>
                           ) : (
-                            <button
-                              className="btn-action-UP btn-activate-UP"
-                              onClick={() => handleActivar(usuario.id)}
-                              title="Activar"
-                            >
+                            <button className="btn-action-UP btn-activate-UP" onClick={() => handleActivar(usuario.id, usuario.rol)} title="Activar">
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                               </svg>
                             </button>
                           )}
-
-                          <button
-                            className="btn-action-UP btn-delete-UP"
-                            onClick={() => handleEliminar(usuario.id)}
-                            title="Eliminar"
-                          >
+                          <button className="btn-action-UP btn-delete-UP" onClick={() => handleEliminar(usuario.id, usuario.rol)} title="Eliminar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                               <polyline points="3 6 5 6 21 6"></polyline>
                               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -434,9 +517,7 @@ export default function AdminUsuarios() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="no-results-UP">
-                      No hay usuarios que coincidan con los filtros
-                    </td>
+                    <td colSpan="7" className="no-results-UP">No hay usuarios que coincidan con los filtros</td>
                   </tr>
                 )}
               </tbody>
@@ -445,12 +526,11 @@ export default function AdminUsuarios() {
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal-overlay-UP" onClick={handleCloseModal}>
           <div className="modal-content-UP" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-UP">
-              <h2>{editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h2>
+              <h2>{editingUser ? 'Editar Usuario' : `Crear ${selectedRole === 'ASPIRANTE' ? 'Aspirante' : selectedRole === 'RECLUTADOR' ? 'Reclutador' : 'Administrador'}`}</h2>
               <button className="modal-close-UP" onClick={handleCloseModal}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -459,568 +539,161 @@ export default function AdminUsuarios() {
               </button>
             </div>
 
-            {error && (
-              <div className="error-message-UP">
-                {error}
-              </div>
-            )}
+            {error && <div className="error-message-UP">{error}</div>}
 
             <form className="modal-form-UP" onSubmit={handleGuardar}>
               <div className="form-row-UP">
                 <div className="form-group-UP">
                   <label>Nombre *</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Ej: Juan"
-                  />
+                  <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} required placeholder="Ej: Juan" />
                 </div>
                 <div className="form-group-UP">
                   <label>Apellido</label>
-                  <input
-                    type="text"
-                    name="apellido"
-                    value={formData.apellido}
-                    onChange={handleInputChange}
-                    placeholder="Ej: Pérez"
-                  />
+                  <input type="text" name="apellido" value={formData.apellido} onChange={handleInputChange} placeholder="Ej: Pérez" />
                 </div>
               </div>
 
               <div className="form-group-UP">
                 <label>Correo *</label>
-                <input
-                  type="email"
-                  name="correo"
-                  value={formData.correo}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Ej: juan@example.com"
-                />
+                <input type="email" name="correo" value={formData.correo} onChange={handleInputChange} required placeholder="Ej: juan@example.com" />
               </div>
 
-              <div className="form-row-UP">
-                <div className="form-group-UP">
-                  <label>Teléfono</label>
-                  <input
-                    type="tel"
-                    name="telefono"
-                    value={formData.telefono}
-                    onChange={handleInputChange}
-                    placeholder="Ej: 3001234567"
-                  />
-                </div>
-                <div className="form-group-UP">
-                  <label>Documento</label>
-                  <input
-                    type="text"
-                    name="numeroDocumento"
-                    value={formData.numeroDocumento}
-                    onChange={handleInputChange}
-                    placeholder="Ej: 12345678"
-                  />
-                </div>
+              <div className="form-group-UP">
+                <label>Teléfono</label>
+                <input type="tel" name="telefono" value={formData.telefono} onChange={handleInputChange} placeholder="Ej: 3001234567" />
               </div>
 
-              <div className="form-row-UP">
-                <div className="form-group-UP">
-                  <label>Tipo Documento</label>
-                  <select
-                    name="tipoDocumento"
-                    value={formData.tipoDocumento}
-                    onChange={handleInputChange}
-                  >
-                    <option value="CC">CC - Cédula de Ciudadanía</option>
-                    <option value="CE">CE - Cédula de Extranjería</option>
-                    <option value="NIT">NIT - Número de Identificación Tributaria</option>
-                    <option value="PP">PP - Pasaporte</option>
-                  </select>
-                </div>
-                <div className="form-group-UP">
-                  <label>Rol</label>
-                  <select
-                    name="rol"
-                    value={formData.rol}
-                    onChange={handleInputChange}
-                  >
-                    <option value="ASPIRANTE">Aspirante</option>
-                    <option value="RECLUTADOR">Reclutador</option>
-                    <option value="ADMIN">Administrador</option>
-                  </select>
-                </div>
-              </div>
+              {!editingUser && (
+                <>
+                  <div className="form-group-UP">
+                    <label>Fecha de Nacimiento *</label>
+                    <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required />
+                  </div>
+
+                  <div className="form-group-UP">
+                    <label>Género *</label>
+                    <select name="genero" value={formData.genero} onChange={handleInputChange} required>
+                      <option value="">Seleccionar género</option>
+                      <option value="MASCULINO">Masculino</option>
+                      <option value="FEMENINO">Femenino</option>
+                      <option value="OTRO">Otro</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group-UP">
+                    <label>Contraseña *</label>
+                    <input type="password" name="password" value={formData.password} onChange={handleInputChange} required placeholder="Mínimo 8 caracteres" />
+                  </div>
+                </>
+              )}
 
               <div className="modal-buttons-UP">
-                <button
-                  type="button"
-                  className="btn-cancel-UP"
-                  onClick={handleCloseModal}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="btn-submit-UP"
-                >
-                  {editingUser ? 'Actualizar' : 'Crear'}
-                </button>
+                <button type="button" className="btn-cancel-UP" onClick={handleCloseModal}>Cancelar</button>
+                <button type="submit" className="btn-submit-UP">{editingUser ? 'Actualizar' : 'Crear'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showRoleSelector && (
+        <div className="modal-overlay-UP" onClick={handleCloseModal}>
+          <div className="modal-content-UP" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-UP">
+              <h2>Seleccionar Tipo de Usuario</h2>
+              <button className="modal-close-UP" onClick={handleCloseModal}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div style={{ padding: '2rem', textAlign: 'center' }}>
+              <p style={{ marginBottom: '2rem', color: '#666', fontSize: '0.95rem' }}>Selecciona el tipo de usuario que deseas crear:</p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                <button
+                  onClick={() => handleSelectRole('ASPIRANTE')}
+                  style={{
+                    padding: '2rem 1rem',
+                    border: '2px solid #3B82F6',
+                    borderRadius: '12px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: '#3B82F6'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#3B82F6';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#fff';
+                    e.target.style.color = '#3B82F6';
+                  }}
+                >
+                  👤 Aspirante
+                </button>
+
+                <button
+                  onClick={() => handleSelectRole('RECLUTADOR')}
+                  style={{
+                    padding: '2rem 1rem',
+                    border: '2px solid #10B981',
+                    borderRadius: '12px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: '#10B981'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#10B981';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#fff';
+                    e.target.style.color = '#10B981';
+                  }}
+                >
+                  🔍 Reclutador
+                </button>
+
+                <button
+                  onClick={() => handleSelectRole('ADMIN')}
+                  style={{
+                    padding: '2rem 1rem',
+                    border: '2px solid #F59E0B',
+                    borderRadius: '12px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: '#F59E0B'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#F59E0B';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#fff';
+                    e.target.style.color = '#F59E0B';
+                  }}
+                >
+                  ⚙️ Administrador
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
       <Footer />
     </div>
-  );
-}
-
-import './AdminUsuarios.css';
-
-export default function AdminUsuarios() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [filtroEstado, setFiltroEstado] = useState('todos');
-  const [filtroRol, setFiltroRol] = useState('todos');
-  const [busqueda, setBusqueda] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [formData, setFormData] = useState({
-    nombre: '',
-    apellido: '',
-    correo: '',
-    telefono: '',
-    password: '',
-    fechaNacimiento: '',
-    genero: '',
-    numeroDocumento: '',
-    tipoDocumento: 'CC',
-    descripcion: ''
-  });
-
-  useEffect(() => { cargarUsuarios(); }, []);
-
-  const cargarUsuarios = async () => {
-    try {
-      setLoading(true);
-      const data = await userAPI.getAll();
-      const usuariosData = data.map((u) => ({
-        id: u.id,
-        nombre: `${u.nombre} ${u.apellido || ''}`.trim(),
-        correo: u.correo,
-        telefono: u.telefono || 'N/A',
-        documento: u.numeroDocumento || 'N/A',
-        tipoDocumento: u.tipoDocumento || 'CC',
-        estado: u.isActive ? 'Activo' : 'Inactivo',
-        rol: u.rol || 'No asignado',
-        fechaRegistro: u.fechaRegistro?.split('T')[0] || 'N/A'
-      }));
-      setUsuarios(usuariosData);
-      setError(null);
-    } catch (err) {
-      setError('Error al cargar usuarios');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const usuariosFiltrados = usuarios.filter(u => {
-    const pasaFiltro = filtroEstado === 'todos' || u.estado === filtroEstado;
-    const pasaBusqueda = u.nombre.toLowerCase().includes(busqueda.toLowerCase()) || u.correo.toLowerCase().includes(busqueda.toLowerCase());
-    return pasaFiltro && pasaBusqueda;
-  });
-
-  const handleCrear = () => {
-    setEditingUser(null);
-    setFormData({
-      nombre: '',
-      apellido: '',
-      correo: '',
-      telefono: '',
-      password: '',
-      fechaNacimiento: '',
-      genero: '',
-      numeroDocumento: '',
-      tipoDocumento: 'CC',
-      descripcion: ''
-    });
-    setShowModal(true);
-  };
-
-  const handleEditar = async (id) => {
-    try {
-      const user = await userAPI.get(id);
-      setEditingUser(id);
-      setFormData({
-        nombre: user.nombre,
-        apellido: user.apellido || '',
-        correo: user.correo,
-        telefono: user.telefono || '',
-        password: '',
-        fechaNacimiento: user.fechaNacimiento ? user.fechaNacimiento.split('T')[0] : '',
-        genero: user.genero || '',
-        numeroDocumento: user.numeroDocumento || '',
-        tipoDocumento: user.tipoDocumento || 'CC',
-        descripcion: user.descripcion || ''
-      });
-      setShowModal(true);
-    } catch {
-      setError('Error al cargar usuario');
-    }
-  };
-
-  const handleGuardar = async (e) => {
-    e.preventDefault();
-    if (!formData.nombre.trim() || !formData.apellido.trim() || !formData.correo.includes('@')) {
-      setError('Campos requeridos inválidos');
-      return;
-    }
-    if (!editingUser && !formData.password) {
-      setError('Contraseña obligatoria');
-      return;
-    }
-
-    try {
-      const payload = {
-        nombre: formData.nombre,
-        apellido: formData.apellido,
-        correo: formData.correo,
-        telefono: formData.telefono || null,
-        fechaNacimiento: formData.fechaNacimiento || '1990-01-01',
-        genero: formData.genero,
-        numeroDocumento: formData.numeroDocumento || null,
-        tipoDocumento: formData.tipoDocumento || 'CC',
-        descripcion: formData.descripcion || null
-      };
-
-      if (!editingUser) {
-        payload.password = formData.password;
-        await userAPI.create(payload);
-      } else {
-        await userAPI.update(editingUser, payload);
-      }
-
-      cargarUsuarios();
-      handleCloseModal();
-    } catch (err) {
-      setError('Error al guardar: ' + (err.response?.data?.message || err.message));
-    }
-  };
-
-  const handleActivar = async (id) => {
-    try {
-      await userAPI.activate(id);
-      cargarUsuarios();
-    } catch {
-      setError('Error al activar');
-    }
-  };
-
-  const handleDesactivar = async (id) => {
-    if (!window.confirm('¿Desactivar usuario?')) return;
-    try {
-      await userAPI.deactivate(id);
-      cargarUsuarios();
-    } catch {
-      setError('Error al desactivar');
-    }
-  };
-
-  const handleEliminar = async (id) => {
-    if (!window.confirm('¿Eliminar usuario? No se puede deshacer.')) return;
-    try {
-      await userAPI.delete(id);
-      cargarUsuarios();
-    } catch {
-      setError('Error al eliminar');
-    }
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setEditingUser(null);
-    setFormData({
-      nombre: '',
-      apellido: '',
-      correo: '',
-      telefono: '',
-      password: '',
-      fechaNacimiento: '',
-      genero: '',
-      numeroDocumento: '',
-      tipoDocumento: 'CC',
-      descripcion: ''
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  return (
-    <>
-      <div className="admin-layout">
-        <Sidebar />
-        <main className="main-users-manage-UP">
-          <div className="container-users-manage-UP">
-            <div className="header-section-UP">
-              <div>
-                <h1 className="title-users-UP">Gestión de Usuarios</h1>
-                <p className="subtitle-users-UP">Administra las cuentas de usuarios</p>
-              </div>
-              <button
-                className="btn-create-UP"
-                onClick={handleCrear}
-                style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
-                }}
-              >
-                + Crear Usuario
-              </button>
-            </div>
-
-            {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '6px', marginBottom: '16px' }}>{error}</div>}
-
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Cargando usuarios...</div>
-            ) : (
-              <>
-                <div className="stats-section-UP">
-                  <div className="stat-card-UP stat-total-UP">
-                    <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="9" cy="7" r="4"></circle>
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <div className="stat-info-UP">
-                      <div className="stat-number-UP">{usuarios.length}</div>
-                      <div className="stat-label-UP">Total Usuarios</div>
-                    </div>
-                  </div>
-                  <div className="stat-card-UP stat-activos-UP">
-                    <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <div className="stat-info-UP">
-                      <div className="stat-number-UP">{usuarios.filter(u => u.estado === 'Activo').length}</div>
-                      <div className="stat-label-UP">Activos</div>
-                    </div>
-                  </div>
-                  <div className="stat-card-UP stat-inactivos-UP">
-                    <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <div className="stat-info-UP">
-                      <div className="stat-number-UP">{usuarios.filter(u => u.estado === 'Inactivo').length}</div>
-                      <div className="stat-label-UP">Inactivos</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="filters-section-UP">
-                  <div className="search-box-UP">
-                    <input
-                      type="text"
-                      placeholder="Buscar usuarios..."
-                      value={busqueda}
-                      onChange={(e) => setBusqueda(e.target.value)}
-                      className="search-input-UP"
-                    />
-                    <button className="search-btn-UP" type="button">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="filter-buttons-UP">
-                    <button
-                      className={`filter-btn-UP ${filtroEstado === 'todos' ? 'active' : ''}`}
-                      onClick={() => setFiltroEstado('todos')}
-                    >
-                      TODOS
-                    </button>
-                    <button
-                      className={`filter-btn-UP ${filtroEstado === 'Activo' ? 'active' : ''}`}
-                      onClick={() => setFiltroEstado('Activo')}
-                    >
-                      ACTIVOS
-                    </button>
-                    <button
-                      className={`filter-btn-UP ${filtroEstado === 'Inactivo' ? 'active' : ''}`}
-                      onClick={() => setFiltroEstado('Inactivo')}
-                    >
-                      INACTIVOS
-                    </button>
-                  </div>
-                </div>
-
-                <div className="table-container-UP">
-                  <table className="table-UP">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Correo</th>
-                        <th>Teléfono</th>
-                        <th>Documento</th>
-                        <th>Estado</th>
-                        <th>Registro</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {usuariosFiltrados.length > 0 ? (
-                        usuariosFiltrados.map(u => (
-                          <tr key={u.id}>
-                            <td>{u.id}</td>
-                            <td className="nombre-cell-UP">{u.nombre}</td>
-                            <td>{u.correo}</td>
-                            <td>{u.telefono}</td>
-                            <td><span className="doc-type-UP">{u.tipoDocumento}</span> {u.documento}</td>
-                            <td>
-                              <span className={`status-badge-UP ${u.estado === 'Activo' ? 'status-active-UP' : 'status-inactive-UP'}`}>
-                                {u.estado}
-                              </span>
-                            </td>
-                            <td>{u.fechaRegistro}</td>
-                            <td>
-                              <div className="actions-UP">
-                                <button className="btn-action-UP btn-edit-UP" onClick={() => handleEditar(u.id)} title="Editar">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                  </svg>
-                                </button>
-                                {u.estado === 'Activo' ? (
-                                  <button className="btn-action-UP btn-deactivate-UP" onClick={() => handleDesactivar(u.id)} title="Desactivar">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                      <rect x="6" y="4" width="4" height="16"></rect>
-                                      <rect x="14" y="4" width="4" height="16"></rect>
-                                    </svg>
-                                  </button>
-                                ) : (
-                                  <button className="btn-action-UP btn-activate-UP" onClick={() => handleActivar(u.id)} title="Activar">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                    </svg>
-                                  </button>
-                                )}
-                                <button className="btn-action-UP btn-delete-UP" onClick={() => handleEliminar(u.id)} title="Eliminar">
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M3 6h18"></path>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                  </svg>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="8" className="no-results-UP">No hay resultados</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            )}
-          </div>
-        </main>
-      </div>
-
-      {showModal && (
-        <div className="modal-overlay-UP" onClick={handleCloseModal}>
-          <div className="modal-content-UP" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header-UP">
-              <h2>{editingUser ? 'Editar Usuario' : 'Crear Usuario'}</h2>
-              <button className="modal-close-UP" onClick={handleCloseModal}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-            <form onSubmit={handleGuardar} className="modal-form-UP">
-              <div className="form-row-UP">
-                <div className="form-group-UP">
-                  <label>Nombre *</label>
-                  <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Nombre" required />
-                </div>
-                <div className="form-group-UP">
-                  <label>Apellido *</label>
-                  <input type="text" name="apellido" value={formData.apellido} onChange={handleInputChange} placeholder="Apellido" required />
-                </div>
-              </div>
-              <div className="form-group-UP">
-                <label>Correo *</label>
-                <input type="email" name="correo" value={formData.correo} onChange={handleInputChange} placeholder="email@ejemplo.com" required />
-              </div>
-              <div className="form-row-UP">
-                <div className="form-group-UP">
-                  <label>Género *</label>
-                  <select name="genero" value={formData.genero} onChange={handleInputChange} required>
-                    <option value="">Seleccionar...</option>
-                    <option value="MASCULINO">Masculino</option>
-                    <option value="FEMENINO">Femenino</option>
-                    <option value="OTRO">Otro</option>
-                  </select>
-                </div>
-                <div className="form-group-UP">
-                  <label>Teléfono</label>
-                  <input type="text" name="telefono" value={formData.telefono} onChange={handleInputChange} placeholder="3101234567" />
-                </div>
-              </div>
-              <div className="form-row-UP">
-                <div className="form-group-UP">
-                  <label>Tipo Documento</label>
-                  <select name="tipoDocumento" value={formData.tipoDocumento} onChange={handleInputChange}>
-                    <option value="CC">C.C</option>
-                    <option value="PA">Pasaporte</option>
-                    <option value="CE">C.E</option>
-                    <option value="TI">T.I</option>
-                  </select>
-                </div>
-                <div className="form-group-UP">
-                  <label>Número Documento</label>
-                  <input type="text" name="numeroDocumento" value={formData.numeroDocumento} onChange={handleInputChange} placeholder="12345678" />
-                </div>
-              </div>
-              <div className="form-group-UP">
-                <label>Fecha de Nacimiento</label>
-                <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} />
-              </div>
-              <div className="form-group-UP">
-                <label>Descripción</label>
-                <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Breve descripción..." rows="3" />
-              </div>
-              {!editingUser && (
-                <div className="form-group-UP">
-                  <label>Contraseña *</label>
-                  <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="••••••••" required={!editingUser} />
-                </div>
-              )}
-              <div className="modal-buttons-UP">
-                <button type="button" className="btn-cancel-UP" onClick={handleCloseModal}>Cancelar</button>
-                <button type="submit" className="btn-submit-UP">{editingUser ? 'Guardar Cambios' : 'Crear Usuario'}</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      <Footer />
-    </>
   );
 }

@@ -1,128 +1,119 @@
-// src/api/reclutadorAPI.js
+import API from './axiosConfig';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  return {
-    "Content-Type": "application/json",
-    ...(token && { "Authorization": `Bearer ${token}` })
-  };
-};
-
-export const getAllReclutadores = async () => {
-  try {
-    const response = await fetch("http://localhost:8080/api/reclutador", {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
-    if (!response.ok) {
-      throw new Error("error al obtener reclutadores");
+const reclutadoresApi = {
+  // Obtener todos los reclutadores
+  getAll: async () => {
+    try {
+      const response = await API.get('/api/reclutador');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching reclutadores:', error);
+      throw error;
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
-      throw new Error("no se pudo conectar con el servidor");
+  },
+
+  // Obtener un reclutador por ID
+  get: async (id) => {
+    try {
+      const response = await API.get(`/api/reclutador/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching reclutador ${id}:`, error);
+      throw error;
     }
-    throw error;
+  },
+
+  // Obtener reclutador público por ID
+  getPublic: async (id) => {
+    try {
+      const response = await API.get(`/api/reclutador/public/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching public reclutador ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Obtener mi perfil
+  getMyProfile: async () => {
+    try {
+      const response = await API.get('/api/reclutador/me');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching my profile:', error);
+      throw error;
+    }
+  },
+
+  // Obtener reclutadores de una empresa
+  getByEmpresa: async (empresaId) => {
+    try {
+      const response = await API.get(`/api/reclutador/empresa/${empresaId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching reclutadores for empresa ${empresaId}:`, error);
+      throw error;
+    }
+  },
+
+  // Obtener reclutador por correo
+  getByCorreo: async (correo) => {
+    try {
+      const response = await API.get(`/api/reclutador/correo/${correo}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching reclutador by correo ${correo}:`, error);
+      throw error;
+    }
+  },
+
+  // Crear un nuevo reclutador
+  create: async (data) => {
+    try {
+      console.log('Payload enviado a /api/reclutador:', JSON.stringify(data, null, 2));
+      const response = await API.post('/api/reclutador', data);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating reclutador:', error);
+      if (error.response?.data) {
+        console.error('Respuesta del servidor:', error.response.data);
+      }
+      throw error;
+    }
+  },
+
+  // Actualizar un reclutador
+  update: async (id, data, reclutadorIdActual) => {
+    try {
+      const response = await API.put(`/api/reclutador/${id}?reclutadorIdActual=${reclutadorIdActual}`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating reclutador ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Actualizar reclutador como ADMIN
+  updateAdmin: async (id, data) => {
+    try {
+      const response = await API.put(`/api/reclutador/admin/${id}`, data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating reclutador ${id} as admin:`, error);
+      throw error;
+    }
+  },
+
+  // Eliminar un reclutador
+  delete: async (id, reclutadorIdActual) => {
+    try {
+      const response = await API.delete(`/api/reclutador/${id}?reclutadorIdActual=${reclutadorIdActual}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error deleting reclutador ${id}:`, error);
+      throw error;
+    }
   }
 };
 
-export const getReclutadorById = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error("reclutador no encontrado");
-  }
-  const data = await response.json();
-  return data;
-};
-
-export const getReclutadorPublicById = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/public/${id}`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error("reclutador no encontrado");
-  }
-  const data = await response.json();
-  return data;
-};
-
-export const getReclutadorPorCorreo = async (correo) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/correo/${correo}`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error("reclutador no encontrado");
-  }
-  const data = await response.json();
-  return data;
-};
-
-export const getReclutadoresPorEmpresa = async (empresaId) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/empresa/${empresaId}`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error("error al obtener reclutadores");
-  }
-  const data = await response.json();
-  return data;
-};
-
-export const crearReclutador = async (objeto) => {
-  const response = await fetch("http://localhost:8080/api/reclutador", {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(objeto)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "error al crear reclutador");
-  }
-  const data = await response.json();
-  return data;
-};
-
-export const actualizarReclutador = async (id, datos) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(datos)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || "error al actualizar reclutador");
-  }
-  const data = await response.json();
-  return data;
-};
-
-export const eliminarReclutador = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/reclutador/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error("error al eliminar reclutador");
-  }
-  return null;
-};
-
-export default {
-  getAllReclutadores,
-  getReclutadorById,
-  getReclutadorPublicById,
-  getReclutadorPorCorreo,
-  getReclutadoresPorEmpresa,
-  crearReclutador,
-  actualizarReclutador,
-  eliminarReclutador
-};
+export default reclutadoresApi;

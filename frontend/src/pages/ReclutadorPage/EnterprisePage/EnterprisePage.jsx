@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getOfertasPorEmpresa } from "../../../api/ofertasAPI";
 import { getEmpresaById } from "../../../api/empresaAPI";
-import { getReclutadorPorCorreo } from "../../../api/reclutadoresApi";
+import reclutadoresApi from "../../../api/reclutadoresApi";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import Footer from "../../../components/Footer/footer";
 import "./EnterprisePage.css";
@@ -31,7 +31,7 @@ function EnterprisePage() {
       
       if (!empresaId && user.correo) {
         try {
-          const reclutador = await getReclutadorPorCorreo(user.correo);
+          const reclutador = await reclutadoresApi.getByCorreo(user.correo);
           empresaId = reclutador.empresa?.id;
           
           // Actualizar localStorage

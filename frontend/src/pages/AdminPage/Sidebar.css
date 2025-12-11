@@ -1,13 +1,13 @@
 .admin-sidebar {
   width: 240px;
-  background: linear-gradient(180deg, #0f172a 0%, #111c2e 100%);
+  background: #1a2332;
   color: #fff;
   position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
   padding: 20px;
-  box-shadow: 2px 0 12px rgba(2, 6, 23, 0.3);
+  border-right: 2px solid #3B82F6;
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -19,8 +19,9 @@
   font-size: 1.1rem;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid #3B82F6;
   letter-spacing: 0.5px;
+  color: #3B82F6;
 }
 
 .sidebar-nav {
@@ -41,26 +42,50 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  border-left: 3px solid transparent;
+}
+
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-link::before {
+  content: '';
+  display: none;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: #3B82F6;
   color: #fff;
+  border-left-color: #fff;
+}
+
+.nav-link:hover::before {
+  display: none;
 }
 
 .nav-link.active {
-  background: rgba(99, 102, 241, 0.2);
+  background: #3B82F6;
   color: #fff;
-  border-left: 3px solid #6366f1;
+  border-left: 3px solid #fff;
   padding-left: 10px;
+}
+
+.nav-link.active::before {
+  display: none;
 }
 
 .sidebar-footer {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 2px solid #3B82F6;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Space for sidebar on main layout */
@@ -73,6 +98,7 @@
 @media (max-width: 1024px) {
   .admin-sidebar {
     width: 220px;
+    border-right-width: 2px;
   }
   .admin-content {
     margin-left: 220px;
@@ -84,6 +110,7 @@
   .admin-sidebar {
     width: 180px;
     padding: 16px;
+    border-right-width: 2px;
   }
   .sidebar-brand {
     font-size: 0.95rem;
@@ -110,6 +137,8 @@
     align-items: center;
     top: 0;
     z-index: 1001;
+    border-right: none;
+    border-bottom: 2px solid #3B82F6;
   }
   .sidebar-brand {
     margin-bottom: 0;
