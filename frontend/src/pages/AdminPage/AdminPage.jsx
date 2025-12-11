@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import UserManagement from './UserManagement';
 import AdminEmpresa from './AdminEmpresas/AdminEmpresas';
-import OffersPage from './OffersPage/OffersPage';
+import OffersPage from './AdminOfertas/AdminOfertas';
 import './AdminPage.css';
 
 function AdminPage() {
