@@ -21,6 +21,7 @@ public class ReclutadorController {
     private ReclutadorService reclutadorService;
 
     // ===== CREATE =====
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> crearReclutador(@RequestBody Reclutador reclutador) {
         try {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { getReclutadorPorCorreo } from "../../../api/reclutadoresApi";
+import reclutadoresApi from "../../../api/reclutadoresApi";
 import { getEmpresaById } from "../../../api/empresaAPI";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import Footer from "../../../components/Footer/footer";
@@ -32,7 +32,7 @@ function ReclutadorProfile() {
         throw new Error("No se encontró información del usuario");
       }
 
-      const reclutadorData = await getReclutadorPorCorreo(correo);
+      const reclutadorData = await reclutadoresApi.getByCorreo(correo);
 
       let empresaData = null;
       if (reclutadorData.empresa?.id) {

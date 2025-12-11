@@ -27,6 +27,7 @@ public class AspiranteController {
     }
 
     // - CREATE (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Aspirante> create(@RequestBody Aspirante aspirante) {
         return ResponseEntity.ok(aspiranteService.create(aspirante));

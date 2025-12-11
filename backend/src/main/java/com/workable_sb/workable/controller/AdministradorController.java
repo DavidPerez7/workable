@@ -19,6 +19,7 @@ public class AdministradorController {
     private AdministradorService administradorService;
 
     // ===== CREATE =====
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> crearAdministrador(@RequestBody Administrador administrador) {
         try {

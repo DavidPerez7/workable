@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../../components/Footer/footer';
+import Sidebar from '../Sidebar';
 import { getAllEmpresasDto, actualizarEmpresa, eliminarEmpresa, crearEmpresa } from '../../../api/empresaAPI';
 import './AdminEmpresas.css';
 
@@ -241,8 +242,10 @@ function AdminEmpresas() {
 
   return (
     <>
-      <main className="main-companies-page-CP">
-        <div className="container-companies-page-CP">
+      <div className="admin-layout">
+        <Sidebar />
+        <main className="main-companies-page-CP">
+          <div className="container-companies-page-CP">
           
           <div className="header-section-CP">
             <div>
@@ -260,13 +263,7 @@ function AdminEmpresas() {
                   boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
                 }}
               >
-                ✨ Nueva Empresa
-              </button>
-              <button 
-                className="btn-back-CP"
-                onClick={() => navigate('/Administrador')}
-              >
-                ← Volver al Panel
+                + Nueva Empresa
               </button>
             </div>
           </div>
@@ -700,6 +697,7 @@ function AdminEmpresas() {
           </div>
         )}
       </main>
+      </div>
       <Footer />
     </>
   );
