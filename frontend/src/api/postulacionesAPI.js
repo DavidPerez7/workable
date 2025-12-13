@@ -79,13 +79,13 @@ export const actualizarPostulacion = async (id, postulacionData) => {
 // Eliminar postulación
 export const eliminarPostulacion = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`, {
+    const response = await axios.delete(`${API_URL}/${id}/eliminar`, {
       headers: getAuthHeaders(),
     });
     return response.data;
   } catch (error) {
     console.error("Error al eliminar postulación:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar postulación");
+    throw new Error(error.response?.data?.error || error.response?.data?.message || "Error al eliminar postulación");
   }
 };
 

@@ -71,6 +71,7 @@ const AspirantePage = () => {
   // FILTRADO COMPLETO
   // ============================================
   let filteredJobListings = ofertas.filter((job) => {
+    // Filtro por URL (búsqueda general)
     const matchCargo = filterCargo
       ? (job.titulo || "").toLowerCase().includes(filterCargo)
       : true;
@@ -85,7 +86,57 @@ const AspirantePage = () => {
       (job.ubicacion || "").toLowerCase().includes(generalQuery) ||
       (job.empresa?.nombre || "").toLowerCase().includes(generalQuery);
 
-    return matchCargo && matchCiudad && matchesGeneral;
+    // Filtro por experiencia (requerida)
+    const matchExperiencia = filters.experiencia
+      ? (job.nivelExperiencia || "").toLowerCase().includes(filters.experiencia.toLowerCase())
+      : true;
+
+    // Filtro por salario (rango mínimo)
+    const matchSalario = filters.salario
+      ? Number(job.salario || 0) >= Number(filters.salario)
+      : true;
+
+    // Filtro por jornada
+    const matchJornada = filters.jornada
+      ? (job.jornada || "").toLowerCase() === filters.jornada.toLowerCase()
+      : true;
+
+    // Filtro por tipo de contrato
+    const matchContrato = filters.contrato
+      ? (job.tipoContrato || "").toLowerCase() === filters.contrato.toLowerCase()
+      : true;
+
+    // Filtro por modalidad
+    const matchModalidad = filters.modalidad
+      ? (job.modalidad || "").toLowerCase() === filters.modalidad.toLowerCase()
+      : true;
+
+    // Filtro por ciudad
+    const matchCityFilter = filters.ciudad
+      ? (job.municipio?.nombre || "").toLowerCase().includes(filters.ciudad.toLowerCase())
+      : true;
+
+    // Filtro por fecha de creación (últimos X días)
+    const matchFecha = filters.fecha ? (() => {
+      const jobDate = new Date(job.fechaPublicacion);
+      const today = new Date();
+      const daysAgo = parseInt(filters.fecha);
+      const dateLimit = new Date(today.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+      return jobDate >= dateLimit;
+    })() : true;
+
+    return (
+      matchCargo &&
+      matchCiudad &&
+      matchesGeneral &&
+      matchExperiencia &&
+      matchSalario &&
+      matchJornada &&
+      matchContrato &&
+      matchModalidad &&
+      matchCityFilter &&
+      matchFecha
+    );
   });
 
   // ============================================
@@ -93,13 +144,13 @@ const AspirantePage = () => {
   // ============================================
   if (filters.ordenar === "recientes") {
     filteredJobListings = filteredJobListings.sort((a, b) => {
-      return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
+      return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion);
     });
   }
 
   if (filters.ordenar === "salario") {
     filteredJobListings = filteredJobListings.sort(
-      (a, b) => Number(b.salarioMinimo || 0) - Number(a.salarioMinimo || 0)
+      (a, b) => Number(b.salario || 0) - Number(a.salario || 0)
     );
   }
 
@@ -245,6 +296,68 @@ const AspirantePage = () => {
               <option value="Aprendiz">Aprendiz</option>
             </select>
           </div>
+
+          {/* Jornada */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Jornada</label>
+            <select
+              className="filter-select-AP"
+              value={filters.jornada}
+              onChange={(e) =>
+                setFilters({ ...filters, jornada: e.target.value })
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="Completa">Completa</option>
+              <option value="Media Tiempo">Media Tiempo</option>
+              <option value="Por Horas">Por Horas</option>
+            </select>
+          </div>
+
+          {/* Salario mínimo */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Salario mínimo</label>
+            <input
+              className="filter-input-AP"
+              type="number"
+              placeholder="Ej: 1000000"
+              value={filters.salario}
+              onChange={(e) =>
+                setFilters({ ...filters, salario: e.target.value })
+              }
+            />
+          </div>
+
+          {/* Ciudad */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Ciudad</label>
+            <input
+              className="filter-input-AP"
+              type="text"
+              placeholder="Ej: Bogotá, Medellín"
+              value={filters.ciudad}
+              onChange={(e) =>
+                setFilters({ ...filters, ciudad: e.target.value })
+              }
+            />
+          </div>
+
+          {/* Fecha de publicación */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Publicado hace</label>
+            <select
+              className="filter-select-AP"
+              value={filters.fecha}
+              onChange={(e) =>
+                setFilters({ ...filters, fecha: e.target.value })
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="1">Últimas 24 horas</option>
+              <option value="7">Últimos 7 días</option>
+              <option value="30">Últimos 30 días</option>
+            </select>
+          </div>
         </aside>
 
         {/* CONTENIDO */}
@@ -290,12 +403,12 @@ const AspirantePage = () => {
                     <div className="job-card-header-AP">
                       <h3 className="job-card-title-AP">{job.titulo || "Sin título"}</h3>
                       <span className="job-time-badge-AP">
-                        {job.fechaCreacion ? new Date(job.fechaCreacion).toLocaleDateString("es-CO") : "Reciente"}
+                        {job.fechaPublicacion ? new Date(job.fechaPublicacion).toLocaleDateString("es-CO") : "Reciente"}
                       </span>
                     </div>
 
                     <p className="job-company-AP">{job.empresa?.nombre || "Empresa"}</p>
-                    <p className="job-location-AP">{job.ubicacion || "Sin ubicación"}</p>
+                    <p className="job-location-AP">{job.municipio?.nombre || "Sin ubicación"}</p>
 
                     <div className="job-tags-AP">
                       <span className="job-tag-AP tag-modalidad-AP">
@@ -308,10 +421,10 @@ const AspirantePage = () => {
 
                     <div className="job-card-footer-AP">
                       <p className="job-salary-AP">
-                        {job.salarioMinimo ? formatSalary(job.salarioMinimo) : "No especificado"}
+                        {job.salario ? formatSalary(job.salario) : "No especificado"}
                       </p>
                       <p className="job-deadline-AP">
-                        {job.fechaCierre ? new Date(job.fechaCierre).toLocaleDateString("es-CO") : "Sin fecha"}
+                        {job.fechaLimite ? new Date(job.fechaLimite).toLocaleDateString("es-CO") : "Sin fecha"}
                       </p>
                     </div>
                   </article>
@@ -337,25 +450,17 @@ const AspirantePage = () => {
                   </div>
 
                   <div className="job-detail-info-AP">
-                    <div className="info-item-AP">{selectedJob.ubicacion || "Sin ubicación"}</div>
+                    <div className="info-item-AP">{selectedJob.municipio?.nombre || "Sin ubicación"}</div>
                     <div className="info-item-AP">{selectedJob.modalidad || "Híbrida"}</div>
                     <div className="info-item-AP">{selectedJob.tipoContrato || "Indefinido"}</div>
-                    <div className="info-item-AP">{selectedJob.jornada || "Completa"}</div>
+                    <div className="info-item-AP">{selectedJob.nivelExperiencia || "Intermedio"}</div>
                   </div>
 
                   <div className="job-detail-salary-AP">
                     <span className="salary-label-AP">Salario: </span>
                     <span className="salary-value-AP">
-                      {selectedJob.salarioMinimo ? formatSalary(selectedJob.salarioMinimo) : "No especificado"}
+                      {selectedJob.salario ? formatSalary(selectedJob.salario) : "No especificado"}
                     </span>
-                    {selectedJob.salarioMaximo && (
-                      <>
-                        <span className="salary-label-AP"> - </span>
-                        <span className="salary-value-AP">
-                          {formatSalary(selectedJob.salarioMaximo)}
-                        </span>
-                      </>
-                    )}
                     <span className="salary-period-AP">/ mensual</span>
                   </div>
 

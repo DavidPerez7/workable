@@ -3,6 +3,37 @@ import axios from "axios";
 const API_URL_ASPIRANTE = "http://localhost:8080/api/aspirante";
 const API_URL_RECLUTADOR = "http://localhost:8080/api/reclutador";
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+};
+
+// obtener usuario actual (por JWT)
+export const getUsuarioActual = async (rol) => {
+	try {
+		const endpoint = rol === "ASPIRANTE" 
+			? `${API_URL_ASPIRANTE}/me` 
+			: `${API_URL_RECLUTADOR}/me`;
+		
+		const response = await axios.get(endpoint, {
+			headers: getAuthHeaders()
+		});
+		return response.data;
+	} catch (error) {
+		console.error("Error al obtener usuario actual:", error.response?.data || error.message);
+		if (error.response?.status === 401) {
+			throw new Error("Sesión expirada. Por favor, inicia sesión de nuevo");
+		}
+		if (error.response?.status === 404) {
+			throw new Error("Usuario no encontrado");
+		}
+		throw new Error(error.response?.data?.message || error.response?.data?.error || "Error al obtener usuario");
+	}
+}
+
 // obtener usuario por ID (funciona para Aspirante o Reclutador)
 export const getUsuarioById = async (userId, TOKEN, rol) => {
 	try {

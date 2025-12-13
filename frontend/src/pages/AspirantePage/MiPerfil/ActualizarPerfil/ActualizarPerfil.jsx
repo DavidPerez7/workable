@@ -17,12 +17,13 @@ Loader
 } from "lucide-react";
 import Header from "../../../../components/Header/Header";
 import footer from "../../../../components/Footer/footer";
+import { getUsuarioActual } from "../../../../api/usuarioAPI";
 import "./ActualizarPerfil.css";
 
 const ActualizarPerfil = () => {
 const navigate = useNavigate();
-const idAspirante = localStorage.getItem("idAspirante");
 const token = localStorage.getItem("token");
+const rol = localStorage.getItem("rol");
 
 // Estados del formulario
 const [formData, setFormData] = useState({
@@ -49,34 +50,18 @@ const [previewImage, setPreviewImage] = useState(null);
 
 const cargarDatosPerfil = async () => {
 	try {
-	const data = {
-		id: idAspirante || "1",
-		nom: "Juan Carlos",
-		ape: "Pérez González",
-		tel: "3001234567",
-		ubi: "Calle 123 #45-67",
-		feNa: "1995-06-15",
-		cargo: "Desarrollador Full Stack",
-		descripcion: "Desarrollador apasionado por crear soluciones tecnológicas inclusivas y accesibles.",
-		resumen: "5 años de experiencia en desarrollo web",
-		municipioId: 1,
-		nombreMunicipio: "Bogotá D.C",
-		fotoPerfilUrl: null
-	};
-
-	// Simular delay de red
-	await new Promise(resolve => setTimeout(resolve, 800));
+	const data = await getUsuarioActual(rol);
 
 	const formattedData = {
-		nombre: data.nom || "",
-		apellido: data.ape || "",
-		telefono: data.tel || "",
-		ubicacion: data.ubi || "",
-		fechaNacimiento: data.feNa || "",
+		nombre: data.nombre || "",
+		apellido: data.apellido || "",
+		telefono: data.telefono || "",
+		ubicacion: data.municipio?.nombre || "",
+		fechaNacimiento: data.fechaNacimiento || "",
 		cargo: data.cargo || "",
 		descripcion: data.descripcion || "",
 		resumen: data.resumen || "",
-		municipioId: data.municipioId || "",
+		municipioId: data.municipio?.id || "",
 		fotoPerfilUrl: data.fotoPerfilUrl || ""
 	};
 
@@ -86,7 +71,7 @@ const cargarDatosPerfil = async () => {
 	setLoading(false);
 	} catch (err) {
 	console.error("Error cargando perfil:", err);
-	setError("No se pudo cargar tu perfil");
+	setError("No se pudo cargar tu perfil: " + err.message);
 	setLoading(false);
 	}
 };

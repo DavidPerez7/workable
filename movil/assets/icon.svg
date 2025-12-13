@@ -1,0 +1,5 @@
+<!-- Simple SVG placeholder -->
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#1e6ff1"/>
+  <text x="512" y="550" font-size="300" fill="white" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">W</text>
+</svg>

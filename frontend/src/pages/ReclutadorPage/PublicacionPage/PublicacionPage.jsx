@@ -15,10 +15,10 @@ const PublicacionPage = () => {
     descripcionTrabajo: "",
     salario: "",
     direccion: "",
-    fechaPublicacion: "",
     fechaLimite: "",
     modalidadTrabajo: "",
     tipoContrato: "",
+    nivelExperiencia: "",
     municipio: "",
     empresaId: "",
   });
@@ -83,20 +83,13 @@ const PublicacionPage = () => {
         descripcion: formData.descripcionTrabajo,
         salario: parseFloat(formData.salario),
         ubicacion: formData.direccion,
-        fechaPublicacion: formData.fechaPublicacion,
         fechaLimite: formData.fechaLimite,
-        modalidad: formData.modalidadTrabajo,
-        tipoContrato: formData.tipoContrato,
-        estadoOferta: "ABIERTA",
-        empresa: {
-          id: formData.empresaId
-        },
-        municipio: {
-          id: parseInt(formData.municipio)
-        },
-        habilidadesRequeridas: [],
-        requisitos: [],
-        beneficios: []
+        modalidad: formData.modalidadTrabajo, // Enum string
+        tipoContrato: formData.tipoContrato,  // Enum string
+        nivelExperiencia: formData.nivelExperiencia, // Enum string
+        estadoOferta: "ABIERTA", // Enum string
+        empresa: { id: formData.empresaId },
+        municipio: formData.municipio ? { id: parseInt(formData.municipio) } : undefined
       };
 
       console.log("Creando oferta:", ofertaData);
@@ -111,10 +104,10 @@ const PublicacionPage = () => {
         descripcionTrabajo: "",
         salario: "",
         direccion: "",
-        fechaPublicacion: "",
         fechaLimite: "",
         modalidadTrabajo: "",
         tipoContrato: "",
+        nivelExperiencia: "",
         municipio: "",
         empresaId: formData.empresaId // Mantener empresaId
       });
@@ -193,19 +186,6 @@ const PublicacionPage = () => {
             </div>
 
             <div className="pb-field">
-              <label htmlFor="fechaPublicacion">Fecha de publicación *</label>
-              <input
-                type="date"
-                id="fechaPublicacion"
-                name="fechaPublicacion"
-                value={formData.fechaPublicacion}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
-
-            <div className="pb-field">
               <label htmlFor="fechaLimite">Fecha límite *</label>
               <input
                 type="date"
@@ -272,6 +252,25 @@ const PublicacionPage = () => {
                     {mun.nombre} - {mun.departamento?.nombre || ''}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            <div className="pb-field">
+              <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
+              <select
+                id="nivelExperiencia"
+                name="nivelExperiencia"
+                value={formData.nivelExperiencia}
+                onChange={handleChange}
+                required
+                className="pb-select"
+              >
+                <option value="">Selecciona un nivel</option>
+                <option value="SIN_EXPERIENCIA">Sin experiencia</option>
+                <option value="BASICO">Básico</option>
+                <option value="INTERMEDIO">Intermedio</option>
+                <option value="AVANZADO">Avanzado</option>
+                <option value="EXPERTO">Experto</option>
               </select>
             </div>
 

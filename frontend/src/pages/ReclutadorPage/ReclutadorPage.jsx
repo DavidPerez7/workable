@@ -6,7 +6,7 @@ import OfertaCard from "../../components/OfertaCard/ofertaCard";
 import VerPostulacionesRecibidas from "../../components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import "./ReclutadorPage.css";
 import { getAllOfertas, getOfertasPorReclutador } from "../../api/ofertasAPI";
-import { getReclutadorPorCorreo } from "../../api/reclutadoresApi";
+import reclutadoresApi from "../../api/reclutadoresApi";
 import { getEmpresaById } from "../../api/empresaAPI";
 
 function ReclutadorPage() {
@@ -28,7 +28,7 @@ function ReclutadorPage() {
       
       // Cargar datos del reclutador
       if (user.correo) {
-        const reclutador = await getReclutadorPorCorreo(user.correo);
+        const reclutador = await reclutadoresApi.getByCorreo(user.correo);
         setReclutadorData(reclutador);
         
         // Cargar empresa si existe

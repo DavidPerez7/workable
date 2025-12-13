@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
-import { getUsuarioById } from "../../../../api/usuarioAPI";
+import { getUsuarioActual } from "../../../../api/usuarioAPI";
 import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
 import { obtenerExperienciasAspirante, crearExperiencia, eliminarExperiencia } from "../../../../api/experienciaAPI";
 import { obtenerEstudiosAspirante, crearEstudio, eliminarEstudio } from "../../../../api/estudioAPI";
 
 const HojaDeVida = () => {
   const [perfil, setPerfil] = useState(null);
+  const [editandoDescripcion, setEditandoDescripcion] = useState(false);
+  const [descripcionTemporal, setDescripcionTemporal] = useState("");
   const [habilidades, setHabilidades] = useState([]);
   const [experiencias, setExperiencias] = useState([]);
   const [estudios, setEstudios] = useState([]);
@@ -28,7 +30,9 @@ const HojaDeVida = () => {
     institucion: "",
     titulo: "",
     fechaInicio: "",
-    estado: "EN_CURSO",
+    fechaFin: "",
+    nivelEducativo: "UNIVERSITARIO",
+    enCurso: true,
   });
 
   const navigate = useNavigate();
@@ -43,12 +47,12 @@ const HojaDeVida = () => {
     setError("");
     try {
       const token = localStorage.getItem("token");
-      const usuarioId = localStorage.getItem("usuarioId");
       const rol = localStorage.getItem("rol");
 
-      // Cargar perfil
-      const usuarioData = await getUsuarioById(usuarioId, token, rol);
+      // Cargar perfil usando el nuevo endpoint /me
+      const usuarioData = await getUsuarioActual(rol);
       setPerfil(usuarioData);
+      setDescripcionTemporal(usuarioData.descripcion || "");
 
       // Cargar habilidades
       const habilidadesData = await obtenerHabilidadesAspirante();
@@ -84,6 +88,41 @@ const HojaDeVida = () => {
       </div>
     );
   }
+
+  /* ============================
+        DESCRIPCIÓN
+  ============================ */
+
+  const guardarDescripcion = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const rol = localStorage.getItem("rol");
+      
+      if (rol === "ASPIRANTE") {
+        const response = await fetch("http://localhost:8080/api/aspirante/actualizar", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            descripcion: descripcionTemporal,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error("Error al guardar descripción");
+        }
+        
+        const perfilActualizado = await response.json();
+        setPerfil(perfilActualizado);
+        setEditandoDescripcion(false);
+      }
+    } catch (err) {
+      console.error("Error al guardar descripción:", err);
+      alert("Error al guardar: " + err.message);
+    }
+  };
 
   /* ============================
         HABILIDADES
@@ -158,10 +197,15 @@ const HojaDeVida = () => {
   ============================ */
 
   const agregarEstudio = async () => {
-    const { institucion, titulo, fechaInicio, estado } = nuevoEstudio;
+    const { institucion, titulo, fechaInicio, nivelEducativo, enCurso } = nuevoEstudio;
 
-    if (!institucion || !titulo || !fechaInicio) {
+
+    if (!institucion || !titulo || !fechaInicio || !nivelEducativo) {
       alert("Por favor rellena todos los campos requeridos");
+      return;
+    }
+    if (!enCurso && !nuevoEstudio.fechaFin) {
+      alert("Si el estudio está finalizado, debes ingresar la fecha de fin.");
       return;
     }
 
@@ -170,11 +214,16 @@ const HojaDeVida = () => {
         institucion,
         titulo,
         fechaInicio,
-        estado,
+        nivelEducativo,
+        enCurso,
       };
+      // Solo enviar fechaFin si enCurso es false y hay valor
+      if (!enCurso && nuevoEstudio.fechaFin) {
+        estudioData.fechaFin = nuevoEstudio.fechaFin;
+      }
       const nuevoEstudioData = await crearEstudio(estudioData);
       setEstudios([...estudios, nuevoEstudioData]);
-      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", estado: "EN_CURSO" });
+      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", fechaFin: "", nivelEducativo: "UNIVERSITARIO", enCurso: true });
       const form = document.getElementById("add-edu-form");
       if (form) form.style.display = "none";
     } catch (err) {
@@ -215,8 +264,47 @@ const HojaDeVida = () => {
 
         {/* DESCRIPCION */}
         <div className="perfil-bloque-PF">
-          <h3 className="perfil-bloque-titulo-PF">Sobre mí</h3>
-          <p>{perfil?.descripcion || "Sin información"}</p>
+          <div className="perfil-bloque-top-PF">
+            <h3 className="perfil-bloque-titulo-PF">Sobre mí</h3>
+          </div>
+          
+          {editandoDescripcion ? (
+            <div className="perfil-desc-edit-PF">
+              <textarea
+                value={descripcionTemporal}
+                onChange={(e) => setDescripcionTemporal(e.target.value)}
+                placeholder="Escribe tu descripción aquí..."
+                className="perfil-desc-textarea-PF"
+              />
+              <div className="perfil-desc-buttons-PF">
+                <button 
+                  className="perfil-desc-save-btn-PF"
+                  onClick={guardarDescripcion}
+                >
+                  Guardar
+                </button>
+                <button 
+                  className="perfil-desc-cancel-btn-PF"
+                  onClick={() => {
+                    setEditandoDescripcion(false);
+                    setDescripcionTemporal(perfil?.descripcion || "");
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="perfil-desc-view-PF">
+              <p>{perfil?.descripcion || "Sin información"}</p>
+              <button 
+                className="perfil-desc-edit-btn-PF"
+                onClick={() => setEditandoDescripcion(true)}
+              >
+                Editar descripción
+              </button>
+            </div>
+          )}
         </div>
 
         {/* HABILIDADES */}
@@ -237,7 +325,7 @@ const HojaDeVida = () => {
             </button>
           </div>
 
-          {/* FORMULARIO INLINE */}
+          {/* FORMULARIO INLINE PARA NUEVA HABILIDAD */}
           <div
             id="add-skill-form"
             className="perfil-form-inline-PF"
@@ -245,28 +333,49 @@ const HojaDeVida = () => {
           >
             <input
               type="text"
-              placeholder="Nueva habilidad..."
+              placeholder="Ej: JavaScript (máx 20 caracteres)"
+              maxLength="20"
               value={nuevaHabilidad}
               onChange={(e) => setNuevaHabilidad(e.target.value)}
             />
-            <button onClick={agregarHabilidad}>Añadir</button>
+            <button 
+              className="perfil-skill-add-btn-PF"
+              onClick={agregarHabilidad}
+            >
+              Añadir
+            </button>
+            <button 
+              className="perfil-skill-cancel-btn-PF"
+              onClick={() => {
+                const form = document.getElementById("add-skill-form");
+                form.style.display = "none";
+                setNuevaHabilidad("");
+              }}
+            >
+              Cancelar
+            </button>
           </div>
 
-          {/* LISTA DE HABILIDADES */}
+          {/* LISTA DE HABILIDADES EDITABLE */}
           <div className="perfil-habilidades-PF">
             {habilidades.length === 0 ? (
-              <p>No tienes habilidades registradas</p>
+              <p className="perfil-no-habilidades-PF">No tienes habilidades registradas</p>
             ) : (
               habilidades.map((skill) => (
-                <span key={skill.id} className="perfil-skill-PF">
-                  {skill.nombre}
+                <div key={skill.id} className="perfil-skill-item-PF">
+                  <span className="perfil-skill-nombre-PF">{skill.nombre}</span>
                   <button
                     className="perfil-skill-delete-PF"
-                    onClick={() => borrarHabilidad(skill.id)}
+                    onClick={() => {
+                      if (window.confirm(`¿Eliminar habilidad "${skill.nombre}"?`)) {
+                        borrarHabilidad(skill.id);
+                      }
+                    }}
+                    title="Eliminar habilidad"
                   >
                     ✕
                   </button>
-                </span>
+                </div>
               ))
             )}
           </div>
@@ -399,15 +508,41 @@ const HojaDeVida = () => {
               }
             />
             <select
-              value={nuevoEstudio.estado}
+              value={nuevoEstudio.nivelEducativo}
               onChange={(e) =>
-                setNuevoEstudio({ ...nuevoEstudio, estado: e.target.value })
+                setNuevoEstudio({ ...nuevoEstudio, nivelEducativo: e.target.value })
               }
             >
-              <option value="EN_CURSO">En curso</option>
-              <option value="COMPLETADO">Completado</option>
-              <option value="PAUSADO">Pausado</option>
+              <option value="PRIMARIA">Primaria</option>
+              <option value="BACHILLERATO">Bachillerato</option>
+              <option value="TECNICO">Técnico</option>
+              <option value="TECNOLOGO">Tecnólogo</option>
+              <option value="UNIVERSITARIO">Universitario</option>
+              <option value="MAESTRIA">Maestría</option>
+              <option value="DOCTORADO">Doctorado</option>
+              <option value="ESPECIALIZACION">Especialización</option>
             </select>
+            {/* Campo fechaFin solo si no está en curso */}
+            {!nuevoEstudio.enCurso && (
+              <input
+                type="text"
+                placeholder="Fecha fin (ej: 2024-12-15)"
+                value={nuevoEstudio.fechaFin}
+                onChange={(e) =>
+                  setNuevoEstudio({ ...nuevoEstudio, fechaFin: e.target.value })
+                }
+              />
+            )}
+            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <input
+                type="checkbox"
+                checked={nuevoEstudio.enCurso}
+                onChange={(e) =>
+                  setNuevoEstudio({ ...nuevoEstudio, enCurso: e.target.checked })
+                }
+              />
+              En curso
+            </label>
             <button onClick={() => agregarEstudio()}>Añadir educación</button>
           </div>
 

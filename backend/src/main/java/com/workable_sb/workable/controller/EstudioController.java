@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -47,7 +48,13 @@ public class EstudioController {
                 return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
             }
             
-            Long aspiranteId = estudio.getAspirante().getId();
+            // Si el aspirante no viene en el request, usar el del token
+            Long aspiranteId;
+            if (estudio.getAspirante() == null || estudio.getAspirante().getId() == null) {
+                aspiranteId = usuarioIdActual;
+            } else {
+                aspiranteId = estudio.getAspirante().getId();
+            }
             
             // Validar que el usuario solo puede crear estudios para sí mismo (ADMIN puede crear para cualquiera)
             if (!isAdmin && !aspiranteId.equals(usuarioIdActual)) {
@@ -94,6 +101,20 @@ public class EstudioController {
     @GetMapping
     public ResponseEntity<List<Estudio>> listarTodos() {
         return ResponseEntity.ok(estudioService.listarTodos());
+    }
+
+    // ===== READ estudios del aspirante autenticado =====
+    @PreAuthorize("hasRole('ASPIRANTE')")
+    @GetMapping("/aspirante")
+    public ResponseEntity<?> obtenerMisEstudios(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        try {
+            Long aspiranteId = userDetails.getUsuarioId();
+            List<Estudio> estudios = estudioService.obtenerEstudiosPorUsuario(aspiranteId);
+            return ResponseEntity.ok(estudios);
+        } catch (Exception e) {
+            log.error("Error al obtener estudios", e);
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener estudios: " + e.getMessage()));
+        }
     }
 
     // ===== UPDATE - Solo ASPIRANTE sus propios estudios o ADMIN =====

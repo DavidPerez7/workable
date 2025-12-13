@@ -1,5 +1,5 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useState } from "react";
 import {HomeIcon, FileText, Send, Star} from 'lucide-react'
 import { Menu as MenuIcon, X } from "lucide-react";
@@ -7,9 +7,14 @@ import '../Menu/Menu.css';
 
 const Menu = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const location = useLocation();
 
     const toggleMenu = () => {
     setIsOpen(!isOpen);
+    }
+
+    const isActive = (path) => {
+        return location.pathname === path;
     }
 
     return (
@@ -22,7 +27,7 @@ const Menu = () => {
                         ☰
                     </button>
                     <ul className={`menu-links ${isOpen ? "open" : ""}`}>
-                        <li className='selec'>
+                        <li className={`selec ${isActive('/Aspirante/MiPerfil') ? 'active' : ''}`}>
                 <div className='Icons'>
                     <Link to='/Aspirante/MiPerfil' className="link">
                     <div className='Icon'>
@@ -32,7 +37,7 @@ const Menu = () => {
                     </Link>
                 </div>
                 </li>
-                <li className='selec'>
+                <li className={`selec ${isActive('/MiPerfil/HojaDeVida') ? 'active' : ''}`}>
                 <div className='Icons'>
                     <Link to='/MiPerfil/HojaDeVida' className="link">
                     <div className='Icon'>
@@ -42,7 +47,7 @@ const Menu = () => {
                     </Link>
                 </div>
                 </li>
-                <li className='selec'>
+                <li className={`selec ${isActive('/MiPerfil/MisPostulaciones') ? 'active' : ''}`}>
                 <div className='Icons'>
                     <Link to='/MiPerfil/MisPostulaciones' className="link">
                     <div className='Icon'>

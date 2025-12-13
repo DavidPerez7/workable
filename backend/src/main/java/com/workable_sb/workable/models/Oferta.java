@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -103,16 +104,6 @@ public class Oferta {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "beneficio", length = 30, nullable = false)
 	private Set<Beneficio> beneficios = new HashSet<>();
-
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(
-		name = "oferta_habilidades_requeridas",
-		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
-	)
-	@Enumerated(EnumType.STRING)
-	@Column(name = "habilidad", length = 30, nullable = false)
-	private Set<Aspirante.HabilidadEnum> habilidadesRequeridas = new HashSet<>();
-
 
 	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
 	@com.fasterxml.jackson.annotation.JsonIgnore

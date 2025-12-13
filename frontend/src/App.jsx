@@ -18,16 +18,16 @@ import InfoRecPage from "./pages/ReclutadorPage/InfoReclutadorPage/InfoRecPage";
 import MiPerfil from "./pages/AspirantePage/MiPerfil/MiPerfil";
 import GestigOfertsPage from "./pages/ReclutadorPage/GestigOfertsPage/GestigOferts";
 import AdminPage from "./pages/AdminPage/AdminPage";
-import AdminAccountsPage from "./pages/AdminPage/AdminAccountPage/AdminAccountPage";
-import CompaniesPage from "./pages/AdminPage/CompaniesPage/CompaniesPage";
-import FeedBackPage from "./pages/AdminPage/FeedBackPage/FeedBackPage";
-import OffersPage from "./pages/AdminPage/OffersPage/OffersPage";
-import ReportPage from "./pages/AdminPage/ReportPage/ReportPage";
-import UsersManagePage from "./pages/AdminPage/UsersManagePage/UsersManagePage";
+import AdminAccountsPage from "./pages/AdminPage/AdminPerfil/AdminAccountPage";
+import AdminEmpresas from "./pages/AdminPage/AdminEmpresas/AdminEmpresas";
+import OffersPage from "./pages/AdminPage/AdminOfertas/AdminOfertas";;
+import UsersManagePage from "./pages/AdminPage/AdminUsuarios/AdminUsuarios";
 import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
 import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
+import EmpresaCreatePage from "./pages/ReclutadorPage/EnterprisePage/EmpresaCreatePage";
+import EmpresaEditPage from "./pages/ReclutadorPage/EnterprisePage/EmpresaEditPage";
 import ReclutadorForm from "./components/Registro/reclutadorForm/reclutadorForm";
 import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
 import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
@@ -37,6 +37,7 @@ import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 import NewReclutador from "./components/Empresa/NewReclutador";
 import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEmpresa";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import HojaDeVidaPage from "./pages/AdminPage/HojaDeVidaPage";
 
 function App() {
   return (
@@ -58,6 +59,8 @@ function App() {
         <Route path="/Reclutador/GestigOferts" element={<ProtectedRoute requiredRole="RECLUTADOR"><GestigOfertsPage /></ProtectedRoute>} />
         <Route path="/Reclutador/ReclutadorProfile" element={<ProtectedRoute requiredRole="RECLUTADOR"><ReclutadorProfile /></ProtectedRoute>} />
         <Route path="/Reclutador/EnterprisePage" element={<ProtectedRoute requiredRole="RECLUTADOR"><EnterprisePage /></ProtectedRoute>} />
+        <Route path="/Reclutador/EnterprisePage/Create" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaCreatePage /></ProtectedRoute>} />
+        <Route path="/Reclutador/EnterprisePage/Edit" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaEditPage /></ProtectedRoute>} />
         <Route path="/Reclutador/EditarOfertaLaboral" element={<ProtectedRoute requiredRole="RECLUTADOR"><EditarOfertaLaboral /></ProtectedRoute>} />
         <Route path="/Reclutador/VerPostulacionesRecibidas" element={<ProtectedRoute requiredRole="RECLUTADOR"><VerPostulacionesRecibidas /></ProtectedRoute>} />
         <Route path="/Reclutador/RegistrarEmpresa" element={<ProtectedRoute requiredRole="RECLUTADOR"><RegistrarEmpresa /></ProtectedRoute>} />
@@ -72,11 +75,10 @@ function App() {
         {/* Rutas protegidas de Administrador */}
         <Route path="/Administrador" element={<ProtectedRoute requiredRole="ADMIN"><AdminPage /></ProtectedRoute>} />
         <Route path="/Administrador/CuentasInternas" element={<ProtectedRoute requiredRole="ADMIN"><AdminAccountsPage /></ProtectedRoute>} />
-        <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><CompaniesPage /></ProtectedRoute>} />
-        <Route path="/Administrador/Reportes" element={<ProtectedRoute requiredRole="ADMIN"><ReportPage /></ProtectedRoute>} />
-        <Route path="/Administrador/Retroalimentacion" element={<ProtectedRoute requiredRole="ADMIN"><FeedBackPage /></ProtectedRoute>} />
+        <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><AdminEmpresas/></ProtectedRoute>} />
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />
+        <Route path="/Administrador/HojaDeVida" element={<ProtectedRoute requiredRole="ADMIN"><HojaDeVidaPage /></ProtectedRoute>} />
         
         <Route path="/Administrador" element={<AdminPage />} />
         <Route path="/articulo1" element={<Articulo1 />} />

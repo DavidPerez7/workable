@@ -100,39 +100,63 @@
 .perfil-habilidades-PF {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 15px;
 }
 
-.perfil-skill-PF {
-  background: #eff6ff;
+.perfil-no-habilidades-PF {
+  color: #94a3b8;
+  font-style: italic;
+  padding: 10px 0;
+}
+
+.perfil-skill-item-PF {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
   color: #1d4ed8;
-  padding: 6px 12px;
+  padding: 8px 12px;
   border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  border: 1px solid #bfdbfe;
+  transition: 0.2s ease;
+}
+
+.perfil-skill-item-PF:hover {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.15);
+}
+
+.perfil-skill-nombre-PF {
+  flex: 1;
+  word-break: break-word;
 }
 
 /* BOTÓN ELIMINAR HABILIDAD */
 .perfil-skill-delete-PF {
-  background: #1e6ff1;
+  background: #ef4444;
   color: white;
   border: none;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 0.75rem;
-  line-height: 18px;
+  font-size: 0.85rem;
+  line-height: 22px;
   text-align: center;
   padding: 0;
   transition: 0.3s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .perfil-skill-delete-PF:hover {
-  background: #0052d6;
+  background: #dc2626;
+  transform: scale(1.1);
 }
 
 /* BOTÓN AÑADIR */
@@ -157,22 +181,54 @@
   display: flex;
   gap: 10px;
   margin: 12px 0;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .perfil-form-inline-PF input {
   flex: 1;
+  min-width: 200px;
   padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
+  border: 2px solid #cbd5e1;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
 }
 
-.perfil-form-inline-PF button {
-  background: #1d4ed8;
+.perfil-form-inline-PF input:focus {
+  outline: none;
+  border-color: #1d4ed8;
+}
+
+.perfil-skill-add-btn-PF {
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
   color: white;
   border: none;
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.perfil-skill-add-btn-PF:hover {
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  transform: scale(1.02);
+}
+
+.perfil-skill-cancel-btn-PF {
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.perfil-skill-cancel-btn-PF:hover {
+  background: #e2e8f0;
 }
 
 /* ============================
@@ -215,17 +271,41 @@
 }
 
 .perfil-form-exp-PF input,
+.perfil-form-exp-PF select,
 .perfil-form-exp-PF textarea {
   width: 100%;
   padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid #cbd5e1;
   font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.perfil-form-exp-PF select {
+  background-color: white;
+  cursor: pointer;
 }
 
 .perfil-form-exp-PF textarea {
   grid-column: 1 / -1;
   min-height: 90px;
+}
+
+.perfil-form-exp-PF label {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #475569;
+  padding: 8px 0;
+}
+
+.perfil-form-exp-PF label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #1d4ed8;
 }
 
 .perfil-form-exp-PF button {
@@ -237,6 +317,12 @@
   border: none;
   font-weight: 600;
   cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.perfil-form-exp-PF button:hover {
+  background: #1e6ff1;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
 }
 
 /* ============================
@@ -246,6 +332,98 @@
 .perfil-bloque-PF p {
   font-size: 0.95rem;
   color: #475569;
+}
+
+
+/* ============================
+   EDICION DESCRIPCIÓN
+===============================*/
+.perfil-desc-view-PF {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-desc-view-PF p {
+  color: #475569;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.perfil-desc-edit-btn-PF {
+  align-self: flex-start;
+  background: transparent;
+  color: #1d4ed8;
+  border: 1px solid #1d4ed8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.perfil-desc-edit-btn-PF:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+.perfil-desc-edit-PF {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-desc-textarea-PF {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #1e293b;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.perfil-desc-textarea-PF:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+.perfil-desc-buttons-PF {
+  display: flex;
+  gap: 10px;
+}
+
+.perfil-desc-save-btn-PF,
+.perfil-desc-cancel-btn-PF {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: none;
+}
+
+.perfil-desc-save-btn-PF {
+  background: linear-gradient(135deg, #1e6ff1, #1d4ed8);
+  color: white;
+}
+
+.perfil-desc-save-btn-PF:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+.perfil-desc-cancel-btn-PF {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.perfil-desc-cancel-btn-PF:hover {
+  background: #e2e8f0;
 }
 
 /* ============================
@@ -265,3 +443,4 @@
     grid-template-columns: 1fr;
   }
 }
+

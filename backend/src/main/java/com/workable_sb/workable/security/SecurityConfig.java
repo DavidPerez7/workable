@@ -58,6 +58,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // ===== RUTAS PÚBLICAS =====
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/health").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 
                 // ===== ADMIN - ACCESO TOTAL A TODO (DEBE IR PRIMERO) =====

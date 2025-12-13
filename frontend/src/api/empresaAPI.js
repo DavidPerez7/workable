@@ -22,7 +22,9 @@ export const getAllEmpresas = async () => {
 };
 
 export const getEmpresaById = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/empresa/${id}`);
+  const response = await fetch(`http://localhost:8080/api/empresa/${id}`, {
+    headers: getAuthHeaders()
+  });
   if (!response.ok) {
     throw new Error("Empresa no encontrada");
   }
@@ -30,7 +32,9 @@ export const getEmpresaById = async (id) => {
 };
 
 export const getEmpresaPorNit = async (nit) => {
-  const response = await fetch(`http://localhost:8080/api/empresa/nit/${nit}`);
+  const response = await fetch(`http://localhost:8080/api/empresa/nit/${nit}`, {
+    headers: getAuthHeaders()
+  });
   if (!response.ok) {
     throw new Error("Empresa no encontrada");
   }
@@ -48,7 +52,9 @@ export const getReclutadoresEmpresa = async (empresaId) => {
 };
 
 export const getAllEmpresasDto = async () => {
-  const response = await fetch("http://localhost:8080/api/empresa");
+  const response = await fetch("http://localhost:8080/api/empresa", {
+    headers: getAuthHeaders()
+  });
   if (!response.ok) {
     throw new Error("Error al obtener empresas");
   }

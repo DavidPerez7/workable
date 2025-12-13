@@ -228,6 +228,14 @@ public class AuthController {
                 response.setApellido(user.getApellido());
                 response.setCorreo(user.getCorreo());
                 
+                // Agregar información de empresa si existe
+                if (user.getEmpresa() != null) {
+                    Map<String, Object> empresa = new java.util.HashMap<>();
+                    empresa.put("id", user.getEmpresa().getId());
+                    empresa.put("nombre", user.getEmpresa().getNombre());
+                    response.setEmpresa(empresa);
+                }
+                
                 log.info("Login exitoso para reclutador: {} (ID: {})", user.getCorreo(), user.getId());
                 return ResponseEntity.ok(response);
             }
