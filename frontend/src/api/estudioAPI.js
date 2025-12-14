@@ -74,3 +74,16 @@ export const eliminarEstudio = async (id) => {
     throw new Error(error.response?.data?.message || "Error al eliminar estudio");
   }
 };
+
+// Obtener estudios por aspirante (para ADMIN y vista de otros usuarios)
+export const obtenerEstudiosPorUsuario = async (aspiranteId) => {
+  try {
+    const response = await axios.get(`${API_URL}/usuario/${aspiranteId}`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener estudios por usuario:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Error al obtener estudios por usuario");
+  }
+};

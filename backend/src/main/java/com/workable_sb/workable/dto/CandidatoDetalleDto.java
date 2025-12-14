@@ -41,7 +41,6 @@ public class CandidatoDetalleDto {
 
     // Información profesional
     private String nivelExperiencia;
-    private Long salarioEsperado;
     private String disponibilidad;
     private String idiomas;
 

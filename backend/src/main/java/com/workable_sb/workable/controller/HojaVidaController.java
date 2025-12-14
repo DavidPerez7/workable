@@ -84,9 +84,9 @@ public class HojaVidaController {
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody HojaVida hojaVida, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody HojaVida hojaVida) {
         try {
-            HojaVida actualizada = hojaVidaService.actualizarHojaVida(id, hojaVida, usuarioIdActual);
+            HojaVida actualizada = hojaVidaService.actualizarHojaVida(id, hojaVida);
             return ResponseEntity.ok(actualizada);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
@@ -100,9 +100,9 @@ public class HojaVidaController {
     // ===== DELETE =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id, @RequestParam Long usuarioIdActual) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
-            hojaVidaService.eliminarHojaVida(id, usuarioIdActual);
+            hojaVidaService.eliminarHojaVida(id);
             return ResponseEntity.ok(Map.of("message", "Hoja de vida eliminada correctamente"));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));

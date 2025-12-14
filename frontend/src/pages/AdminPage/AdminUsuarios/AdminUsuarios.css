@@ -85,6 +85,51 @@
 
 .btn-create-UP:hover {
   background: var(--gradient-primary);
+
+.modal-header-UP {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.06);
+}
+.modal-header-UP .title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.modal-header-UP .accent-dot {
+  width: 10px;
+  height: 40px;
+  border-radius: 6px;
+  background: var(--gradient-primary);
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.18);
+}
+.modal-subtitle {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.btn-small.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-heavy);
+}
+.btn-small.ghost:hover {
+  transform: translateY(-1px);
+  background: rgba(14, 165, 233, 0.03);
+}
+.btn-small.danger:hover {
+  transform: translateY(-1px);
+}
+
+.form-inline input:focus,
+.form-inline textarea:focus {
+  outline: none;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.06);
+  border-color: #60A5FA;
+}
   transform: translateY(-2px);
   box-shadow: var(--shadow-heavy);
 }
@@ -608,10 +653,6 @@
 .modal-header-UP {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  border-bottom: 1.5px solid var(--border-color);
-  padding-bottom: 1.2rem;
 }
 
 .modal-header-UP h2 {

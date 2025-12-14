@@ -65,18 +65,19 @@ public class DataInitializer implements CommandLineRunner {
 
     private void cleanupExistingData() {
         try {
-            // Limpiar datos en orden inverso a las dependencias
-            feedbackRepo.deleteAll();
-            notificacionRepo.deleteAll();
-            postulacionRepo.deleteAll();
-            ofertaRepo.deleteAll();
-            estudioRepo.deleteAll();
-            experienciaRepo.deleteAll();
-            habilidadRepo.deleteAll();
-            reclutadorRepo.deleteAll();
-            aspiranteRepo.deleteAll();
-            administradorRepo.deleteAll();
-            empresaRepo.deleteAll();
+            // Limpiar datos en orden inverso a las dependencias (entidades dependientes primero)
+            // Usar try-catch individual para cada eliminación para evitar que un error bloquee todo
+            try { feedbackRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando feedback: " + e.getMessage()); }
+            try { notificacionRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando notificaciones: " + e.getMessage()); }
+            try { postulacionRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando postulaciones: " + e.getMessage()); }
+            try { ofertaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando ofertas: " + e.getMessage()); }
+            try { estudioRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando estudios: " + e.getMessage()); }
+            try { experienciaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando experiencias: " + e.getMessage()); }
+            try { habilidadRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando habilidades: " + e.getMessage()); }
+            try { reclutadorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando reclutadores: " + e.getMessage()); }
+            try { aspiranteRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando aspirantes: " + e.getMessage()); }
+            try { administradorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando administradores: " + e.getMessage()); }
+            try { empresaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando empresas: " + e.getMessage()); }
             
             System.out.println("✓ Datos existentes limpiados");
         } catch (Exception e) {
@@ -794,11 +795,9 @@ public class DataInitializer implements CommandLineRunner {
         // Obtener un municipio por defecto
         Municipio municipio = municipioRepo.findByNombre("Bogotá").orElse(municipioRepo.findAll().stream().findFirst().orElse(null));
 
-        // Crear 3 aspirantes genéricos adicionales
+        // Crear 1 aspirante genérico adicional
         Object[][] aspirantesData = {
-            {"Carlos", "García", "carlos.garcia@example.com", "3105555556", Aspirante.Genero.MASCULINO},
-            {"María", "Rodríguez", "maria.rodriguez@example.com", "3105555557", Aspirante.Genero.FEMENINO},
-            {"Juan", "Martínez", "juan.martinez@example.com", "3105555558", Aspirante.Genero.MASCULINO}
+            {"María", "Rodríguez", "maria.rodriguez@example.com", "3105555557", Aspirante.Genero.FEMENINO}
         };
 
         for (int i = 0; i < aspirantesData.length; i++) {
@@ -819,7 +818,7 @@ public class DataInitializer implements CommandLineRunner {
             aspirante.setIsActive(true);
             aspiranteRepo.save(aspirante);
         }
-        System.out.println("✓ 3 Aspirantes genéricos adicionales creados");
+        System.out.println("✓ 1 Aspirante genérico adicional creado");
     }
 
     private void createGenericOfertas() {

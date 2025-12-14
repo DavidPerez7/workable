@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../../components/Footer/footer';
-import Sidebar from '../Sidebar';
+import Sidebar from '../SideBar/Sidebar';
 import { getAllOfertas, crearOferta, actualizarOferta, eliminarOferta, cambiarEstadoOferta } from '../../../api/ofertasAPI';
 import { getAllEmpresasDto } from '../../../api/empresaAPI';
 import './AdminOfertas.css';

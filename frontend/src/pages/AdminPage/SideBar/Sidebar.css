@@ -1,5 +1,5 @@
 .admin-sidebar {
-  width: 240px;
+  width: 260px;
   background: #1a2332;
   color: #fff;
   position: fixed;
@@ -47,8 +47,8 @@
 }
 
 .nav-icon {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -90,25 +90,25 @@
 
 /* Space for sidebar on main layout */
 .admin-content {
-  margin-left: 240px;
-  width: calc(100% - 240px);
+  margin-left: 260px;
+  width: calc(100% - 260px);
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
   .admin-sidebar {
-    width: 220px;
+    width: 240px;
     border-right-width: 2px;
   }
   .admin-content {
-    margin-left: 220px;
-    width: calc(100% - 220px);
+    margin-left: 240px;
+    width: calc(100% - 240px);
   }
 }
 
 @media (max-width: 768px) {
   .admin-sidebar {
-    width: 180px;
+    width: 200px;
     padding: 16px;
     border-right-width: 2px;
   }
@@ -121,8 +121,8 @@
     padding: 9px 11px;
   }
   .admin-content {
-    margin-left: 180px;
-    width: calc(100% - 180px);
+    margin-left: 200px;
+    width: calc(100% - 200px);
   }
 }
 

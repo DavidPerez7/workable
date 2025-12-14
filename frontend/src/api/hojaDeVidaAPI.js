@@ -1,39 +1,64 @@
-const API_URL = "http://localhost:8080/api/hojasdevida";
+import API from './axiosConfig';
 
+// Exportar funciones por nombre además del objeto por defecto para evitar problemas
+// con ciertas resoluciones de módulos/HMR donde las propiedades del objeto pueden
+// no ser directamente invocables.
 export const getHojasDeVidaPorAspirante = async (aspiranteId) => {
-  const res = await fetch(`${API_URL}/aspirante/${aspiranteId}`);
-  if (!res.ok) throw new Error("Error al obtener hojas de vida");
-  return await res.json();
+  try {
+    const response = await API.get(`/api/hoja-vida/aspirante/${aspiranteId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching hojas de vida for aspirante ${aspiranteId}:`, error);
+    throw error;
+  }
 };
 
 export const getHojaDeVida = async (id) => {
-  const res = await fetch(`${API_URL}/${id}`);
-  if (!res.ok) throw new Error("Error al obtener hoja de vida");
-  return await res.json();
+  try {
+    const response = await API.get(`/api/hoja-vida/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching hoja de vida ${id}:`, error);
+    throw error;
+  }
 };
 
 export const crearHojaDeVida = async (hoja) => {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(hoja),
-  });
-  if (!res.ok) throw new Error("Error al crear hoja de vida");
-  return await res.json();
+  try {
+    const response = await API.post('/api/hoja-vida', hoja);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating hoja de vida:', error);
+    throw error;
+  }
 };
 
 export const actualizarHojaDeVida = async (id, hoja) => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(hoja),
-  });
-  if (!res.ok) throw new Error("Error al actualizar hoja de vida");
-  return await res.json();
+  try {
+    const response = await API.put(`/api/hoja-vida/${id}`, hoja);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating hoja de vida ${id}:`, error);
+    throw error;
+  }
 };
 
 export const eliminarHojaDeVida = async (id) => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE" });
-  if (!res.ok) throw new Error("Error al eliminar hoja de vida");
+  try {
+    const response = await API.delete(`/api/hoja-vida/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting hoja de vida ${id}:`, error);
+    throw error;
+  }
 };
+
+const hojaDeVidaApi = {
+  getHojasDeVidaPorAspirante,
+  getHojaDeVida,
+  crearHojaDeVida,
+  actualizarHojaDeVida,
+  eliminarHojaDeVida
+};
+
+export default hojaDeVidaApi;

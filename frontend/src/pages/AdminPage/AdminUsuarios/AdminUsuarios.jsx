@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../Sidebar';
+import Sidebar from '../SideBar/Sidebar';
 import Footer from '../../../components/Footer/footer';
 import aspirantesApi from '../../../api/aspirantesApi';
 import reclutadoresApi from '../../../api/reclutadoresApi';
 import administradorAPI from '../../../api/administradorAPI';
+import hojaDeVidaApi, { actualizarHojaDeVida as actualizarHojaDeVidaNamed } from '/src/api/hojaDeVidaAPI.js';
+import API from '/src/api/axiosConfig.js';
+import { obtenerEstudiosPorUsuario, crearEstudio, actualizarEstudio, eliminarEstudio } from '../../../api/estudioAPI';
+import { obtenerExperienciasPorUsuario, crearExperiencia, actualizarExperiencia, eliminarExperiencia } from '../../../api/experienciaAPI';
 import './AdminUsuarios.css';
+import HojaDeVidaModal from './components/HojaDeVidaModal';
+import UsersTable from './components/UsersTable';
+import FiltersBar from './components/FiltersBar';
+import StatsCards from './components/StatsCards';
 
 export default function AdminUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [filtroEstado, setFiltroEstado] = useState('todos');
-  const [filtroRol, setFiltroRol] = useState('todos');
+  const [filtroRol, setFiltroRol] = useState('aspirante');
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,6 +25,18 @@ export default function AdminUsuarios() {
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [showHojaVidaModal, setShowHojaVidaModal] = useState(false);
+  const [selectedHojaDeVida, setSelectedHojaDeVida] = useState(null);
+  const [isEditingHojaVida, setIsEditingHojaVida] = useState(false);
+  const [hojaVidaFormData, setHojaVidaFormData] = useState({
+    resumenProfesional: '',
+    objetivoProfesional: '',
+    redSocial1: '',
+    redSocial2: '',
+    idiomas: '',
+    esPublica: false
+  });
+  // Estudios & Experiencias forms moved into HojaDeVidaModal to simplify the page state.
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -52,6 +72,12 @@ export default function AdminUsuarios() {
           estado: a.isActive ? 'Activo' : 'Inactivo',
           rol: 'ASPIRANTE',
           fechaRegistro: a.fechaCreacion?.split('T')[0] || 'N/A',
+          fechaNacimiento: a.fechaNacimiento,
+          municipio: a.municipio ? a.municipio.nombre : '-',
+          genero: a.genero,
+          descripcion: a.descripcion || '-',
+          ubicacion: a.ubicacion || '-',
+          urlFotoPerfil: a.urlFotoPerfil,
           originalData: a
         }));
         usuariosData = [...usuariosData, ...aspirantesFormateados];
@@ -71,6 +97,11 @@ export default function AdminUsuarios() {
           estado: r.isActive ? 'Activo' : 'Inactivo',
           rol: 'RECLUTADOR',
           fechaRegistro: r.fechaCreacion?.split('T')[0] || 'N/A',
+          fechaNacimiento: r.fechaNacimiento,
+          municipio: r.municipio ? r.municipio.nombre : '-',
+          urlFotoPerfil: r.urlFotoPerfil,
+          urlBanner: r.urlBanner,
+          empresa: r.empresa ? r.empresa.nombre : '-',
           originalData: r
         }));
         usuariosData = [...usuariosData, ...reclutadoresFormateados];
@@ -90,6 +121,9 @@ export default function AdminUsuarios() {
           estado: ad.isActive ? 'Activo' : 'Inactivo',
           rol: 'ADMIN',
           fechaRegistro: ad.fechaCreacion?.split('T')[0] || 'N/A',
+          fechaNacimiento: ad.fechaNacimiento,
+          municipio: ad.municipio ? ad.municipio.nombre : '-',
+          ultimoAcceso: ad.ultimoAcceso,
           originalData: ad
         }));
         usuariosData = [...usuariosData, ...administradoresFormateados];
@@ -103,6 +137,160 @@ export default function AdminUsuarios() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // --- Estudios handlers ---
+  const handleDeleteEstudio = async (id) => {
+    if (!confirm('¿Eliminar este estudio?')) return;
+    try {
+      await eliminarEstudio(id);
+      const aspiranteId = selectedHojaDeVida?.aspirante?.id;
+      if (aspiranteId) {
+        const estudios = await obtenerEstudiosPorUsuario(aspiranteId);
+        setSelectedHojaDeVida((prev) => ({ ...prev, estudios }));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error al eliminar estudio: ' + e.message);
+    }
+  };
+
+  const saveEstudio = async (payload, editingId = null) => {
+    try {
+      const aspiranteId = selectedHojaDeVida?.aspirante?.id;
+      if (!aspiranteId) throw new Error('Aspirante no definido');
+      const finalPayload = { ...payload, aspirante: { id: aspiranteId } };
+      if (editingId) {
+        await actualizarEstudio(editingId, finalPayload);
+      } else {
+        await crearEstudio(finalPayload);
+      }
+      const estudios = await obtenerEstudiosPorUsuario(aspiranteId);
+      setSelectedHojaDeVida((prev) => ({ ...prev, estudios }));
+      return estudios;
+    } catch (e) {
+      console.error('Error guardando estudio:', e);
+      throw e;
+    }
+  };
+
+  // --- Experiencias helpers ---
+  const handleDeleteExperiencia = async (id) => {
+    if (!confirm('¿Eliminar esta experiencia?')) return;
+    try {
+      await eliminarExperiencia(id);
+      const aspiranteId = selectedHojaDeVida?.aspirante?.id;
+      if (aspiranteId) {
+        const experiencias = await obtenerExperienciasPorUsuario(aspiranteId);
+        setSelectedHojaDeVida((prev) => ({ ...prev, experiencias }));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error al eliminar experiencia: ' + e.message);
+    }
+  };
+
+  const saveExperiencia = async (payload, editingId = null) => {
+    try {
+      const aspiranteId = selectedHojaDeVida?.aspirante?.id;
+      if (!aspiranteId) throw new Error('Aspirante no definido');
+      const finalPayload = { ...payload, aspirante: { id: aspiranteId } };
+      if (editingId) {
+        await actualizarExperiencia(editingId, finalPayload);
+      } else {
+        await crearExperiencia(finalPayload);
+      }
+      const experiencias = await obtenerExperienciasPorUsuario(aspiranteId);
+      setSelectedHojaDeVida((prev) => ({ ...prev, experiencias }));
+      return experiencias;
+    } catch (e) {
+      console.error('Error guardando experiencia:', e);
+      throw e;
+    }
+  };
+
+  const getColumns = () => {
+    if (filtroRol === 'aspirante') {
+      return ['Nombre', 'Correo', 'Teléfono', 'Fecha Nacimiento', 'Municipio', 'Género', 'Descripción', 'Ubicación', 'Foto Perfil', 'Hoja de Vida', 'Rol', 'Estado', 'Fecha Registro', 'Acciones'];
+    } else if (filtroRol === 'reclutador') {
+      return ['Nombre', 'Correo', 'Teléfono', 'Fecha Nacimiento', 'Municipio', 'Foto Perfil', 'Banner', 'Empresa', 'Rol', 'Estado', 'Fecha Registro', 'Acciones'];
+    } else if (filtroRol === 'admin') {
+      return ['Nombre', 'Correo', 'Teléfono', 'Fecha Nacimiento', 'Municipio', 'Último Acceso', 'Rol', 'Estado', 'Fecha Registro', 'Acciones'];
+    }
+    return [];
+  };
+
+  const getColumnValue = (usuario, column) => {
+    switch (column) {
+      case 'Nombre':
+        return <td className="nombre-cell-UP" key={column}>{usuario.nombre}</td>;
+      case 'Correo':
+        return <td key={column}>{usuario.correo}</td>;
+      case 'Teléfono':
+        return <td key={column}>{usuario.telefono || '-'}</td>;
+      case 'Fecha Nacimiento':
+        return <td key={column}>{usuario.fechaNacimiento || '-'}</td>;
+      case 'Municipio':
+        return <td key={column}>{usuario.municipio}</td>;
+      case 'Género':
+        return <td key={column}>{usuario.genero ? usuario.genero.charAt(0).toUpperCase() + usuario.genero.slice(1).toLowerCase() : '-'}</td>;
+      case 'Descripción':
+        return <td key={column}>{usuario.descripcion || '-'}</td>;
+      case 'Ubicación':
+        return <td key={column}>{usuario.ubicacion || '-'}</td>;
+      case 'Foto Perfil':
+        return <td key={column}>{usuario.urlFotoPerfil ? <a href={usuario.urlFotoPerfil} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>;
+      case 'Hoja de Vida':
+        return <td key={column}><button className="btn-action-UP" onClick={() => handleVerHojaVida(usuario.id)} title="Ver Hoja de Vida">Ver</button></td>;
+      case 'Banner':
+        return <td key={column}>{usuario.urlBanner ? <a href={usuario.urlBanner} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>;
+      case 'Empresa':
+        return <td key={column}>{usuario.empresa || '-'}</td>;
+      case 'Último Acceso':
+        return <td key={column}>{usuario.ultimoAcceso || '-'}</td>;
+      case 'Rol':
+        return <td key={column}><span style={{ textTransform: 'capitalize', fontWeight: '600' }}>{usuario.rol.toLowerCase()}</span></td>;
+      case 'Estado':
+        return <td key={column}><span className={`status-badge-UP ${usuario.estado === 'Activo' ? 'status-active-UP' : 'status-inactive-UP'}`}>{usuario.estado}</span></td>;
+      case 'Fecha Registro':
+        return <td key={column}>{usuario.fechaRegistro}</td>;
+      case 'Acciones':
+        return (
+          <td key={column}>
+            <div className="actions-UP">
+              <button className="btn-action-UP btn-edit-UP" onClick={() => handleEditar(usuario.id, usuario.rol)} title="Editar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              {usuario.estado === 'Activo' ? (
+                <button className="btn-action-UP btn-deactivate-UP" onClick={() => handleDesactivar(usuario.id, usuario.rol)} title="Desactivar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                  </svg>
+                </button>
+              ) : (
+                <button className="btn-action-UP btn-activate-UP" onClick={() => handleActivar(usuario.id, usuario.rol)} title="Activar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+              )}
+              <button className="btn-action-UP btn-delete-UP" onClick={() => handleEliminar(usuario.id, usuario.rol)} title="Eliminar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </td>
+        );
+      default:
+        return <td key={column}>-</td>;
     }
   };
 
@@ -162,7 +350,9 @@ export default function AdminUsuarios() {
         fechaNacimiento: usuario.fechaNacimiento || '',
         genero: usuario.genero || '',
         password: '',
-        rol: rol
+        rol: rol,
+        descripcion: usuario.descripcion || '',
+        ubicacion: usuario.ubicacion || ''
       });
       setShowModal(true);
     } catch (err) {
@@ -216,6 +406,12 @@ export default function AdminUsuarios() {
           if (formData.urlFotoPerfil) {
             updateData.urlFotoPerfil = formData.urlFotoPerfil;
           }
+          if (formData.descripcion) {
+            updateData.descripcion = formData.descripcion;
+          }
+          if (formData.ubicacion) {
+            updateData.ubicacion = formData.ubicacion;
+          }
         } else if (rol === 'RECLUTADOR') {
           // Reclutador: puede tener urlFotoPerfil y urlBanner
           if (formData.urlFotoPerfil) {
@@ -257,6 +453,12 @@ export default function AdminUsuarios() {
           updateData.genero = formData.genero;
           if (formData.urlFotoPerfil) {
             updateData.urlFotoPerfil = formData.urlFotoPerfil;
+          }
+          if (formData.descripcion) {
+            updateData.descripcion = formData.descripcion;
+          }
+          if (formData.ubicacion) {
+            updateData.ubicacion = formData.ubicacion;
           }
         } else if (rol === 'RECLUTADOR') {
           // Reclutador: agregar urlFotoPerfil y urlBanner
@@ -369,16 +571,109 @@ export default function AdminUsuarios() {
       fechaNacimiento: '',
       genero: '',
       password: '',
-      rol: 'ASPIRANTE'
+      rol: 'ASPIRANTE',
+      descripcion: '',
+      ubicacion: ''
     });
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+  const handleVerHojaVida = async (aspiranteId) => {
+    try {
+      const hoja = await hojaDeVidaApi.getHojasDeVidaPorAspirante(aspiranteId);
+      setSelectedHojaDeVida(hoja);
+      try {
+        const estudios = await obtenerEstudiosPorUsuario(aspiranteId);
+        const experiencias = await obtenerExperienciasPorUsuario(aspiranteId);
+        setSelectedHojaDeVida((prev) => ({ ...prev, estudios, experiencias }));
+      } catch (e) {
+        console.warn('No se pudieron cargar estudios/experiencias:', e);
+      }
+      setShowHojaVidaModal(true);
+    } catch (err) {
+      setError('Error al cargar hoja de vida');
+      console.error(err);
+    }
+  };
+
+  const handleHojaVidaInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setHojaVidaFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
+  };
+
+  const handleEditHojaVida = () => {
+    if (selectedHojaDeVida) {
+      setHojaVidaFormData({
+        resumenProfesional: selectedHojaDeVida.resumenProfesional || '',
+        objetivoProfesional: selectedHojaDeVida.objetivoProfesional || '',
+        redSocial1: selectedHojaDeVida.redSocial1 || '',
+        redSocial2: selectedHojaDeVida.redSocial2 || '',
+        // salarioEsperado removed from backend model
+        idiomas: selectedHojaDeVida.idiomas || '',
+        esPublica: selectedHojaDeVida.esPublica || false
+      });
+      setIsEditingHojaVida(true);
+    }
+  };
+
+  const handleSaveHojaVida = async () => {
+    console.log('hojaDeVidaApi:', hojaDeVidaApi);
+    console.log('selectedHojaDeVida:', selectedHojaDeVida);
+    if (!selectedHojaDeVida) {
+      setError('No hay hoja de vida seleccionada');
+      return;
+    }
+    try {
+      console.log('typeof actualizarHojaVida:', typeof hojaDeVidaApi.actualizarHojaVida);
+      try {
+        console.log('actualizarHojaDeVida.toString():', hojaDeVidaApi.actualizarHojaDeVida?.toString?.());
+      } catch (e) {
+        console.warn('Could not stringify actualizarHojaDeVida:', e);
+      }
+
+      // Sanity-check: try calling a read-only method to ensure API object is usable
+      try {
+        const sanity = await hojaDeVidaApi.getHojaDeVida(selectedHojaDeVida.id);
+        console.log('sanity getHojaDeVida result:', sanity);
+      } catch (e) {
+        console.warn('sanity getHojaDeVida failed:', e);
+      }
+
+      // Try extracting the function to debug unexpected "not a function" errors
+      const fn = hojaDeVidaApi.actualizarHojaVida;
+      console.log('fn value:', fn, 'typeof:', typeof fn, 'isOwnProp:', Object.prototype.hasOwnProperty.call(hojaDeVidaApi, 'actualizarHojaDeVida'), 'keys:', Object.keys(hojaDeVidaApi));
+
+      // Some module resolution issues can wrap the default export; try common fallbacks
+      const resolvedFn = fn ?? actualizarHojaDeVidaNamed ?? hojaDeVidaApi.default?.actualizarHojaDeVida ?? hojaDeVidaApi?.default?.default?.actualizarHojaDeVida;
+      console.log('resolvedFn:', resolvedFn, 'typeof resolvedFn:', typeof resolvedFn);
+
+      let updatedHoja;
+      if (typeof resolvedFn !== 'function') {
+        console.warn('actualizarHojaVida is not callable - trying direct axios.PUT fallback', { fn, resolvedFn });
+        const resp = await API.put(`/api/hoja-vida/${selectedHojaDeVida.id}`, hojaVidaFormData);
+        updatedHoja = resp.data;
+      } else {
+        try {
+          updatedHoja = await resolvedFn(selectedHojaDeVida.id, hojaVidaFormData);
+        } catch (e) {
+          console.warn('wrapper call failed, trying direct axios.PUT fallback', e);
+          const resp = await API.put(`/api/hoja-vida/${selectedHojaDeVida.id}`, hojaVidaFormData);
+          updatedHoja = resp.data;
+        }
+      }
+      setSelectedHojaDeVida(updatedHoja);
+      setIsEditingHojaVida(false);
+      setError('');
+    } catch (err) {
+      setError('Error al actualizar hoja de vida');
+      console.error(err);
+    }
+  };
+
+  const handleCancelEditHojaVida = () => {
+    setIsEditingHojaVida(false);
   };
 
   return (
@@ -403,107 +698,16 @@ export default function AdminUsuarios() {
             </button>
           </div>
 
-          <div className="stats-section-UP">
-            <div className="stat-card-UP stat-total-UP">
-              <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-              <div className="stat-info-UP">
-                <div className="stat-number-UP">{usuarios.length}</div>
-                <div className="stat-label-UP">Total Usuarios</div>
-              </div>
-            </div>
+          <StatsCards usuarios={usuarios} />
 
-            <div className="stat-card-UP stat-activos-UP">
-              <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <div className="stat-info-UP">
-                <div className="stat-number-UP">{usuarios.filter(u => u.estado === 'Activo').length}</div>
-                <div className="stat-label-UP">Activos</div>
-              </div>
-            </div>
-
-            <div className="stat-card-UP stat-inactivos-UP">
-              <svg className="stat-icon-UP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <div className="stat-info-UP">
-                <div className="stat-number-UP">{usuarios.filter(u => u.estado === 'Inactivo').length}</div>
-                <div className="stat-label-UP">Inactivos</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="filters-section-UP">
-            <div className="search-box-UP">
-              <input
-                type="text"
-                className="search-input-UP"
-                placeholder="Buscar por nombre o correo..."
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
-              <button className="search-btn-UP">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
-              </button>
-            </div>
-
-            <div className="filter-buttons-UP">
-              <button
-                className={`filter-btn-UP ${filtroEstado === 'todos' ? 'active' : ''}`}
-                onClick={() => setFiltroEstado('todos')}
-              >
-                Todos
-              </button>
-              <button
-                className={`filter-btn-UP ${filtroEstado === 'activos' ? 'active' : ''}`}
-                onClick={() => setFiltroEstado('activos')}
-              >
-                Activos
-              </button>
-              <button
-                className={`filter-btn-UP ${filtroEstado === 'inactivos' ? 'active' : ''}`}
-                onClick={() => setFiltroEstado('inactivos')}
-              >
-                Inactivos
-              </button>
-            </div>
-
-            <div className="filter-buttons-UP">
-              <button
-                className={`filter-btn-UP ${filtroRol === 'todos' ? 'active' : ''}`}
-                onClick={() => setFiltroRol('todos')}
-              >
-                Todos los Roles
-              </button>
-              <button
-                className={`filter-btn-UP ${filtroRol === 'aspirante' ? 'active' : ''}`}
-                onClick={() => setFiltroRol('aspirante')}
-              >
-                Aspirantes
-              </button>
-              <button
-                className={`filter-btn-UP ${filtroRol === 'reclutador' ? 'active' : ''}`}
-                onClick={() => setFiltroRol('reclutador')}
-              >
-                Reclutadores
-              </button>
-              <button
-                className={`filter-btn-UP ${filtroRol === 'admin' ? 'active' : ''}`}
-                onClick={() => setFiltroRol('admin')}
-              >
-                Administradores
-              </button>
-            </div>
-          </div>
+          <FiltersBar
+            busqueda={busqueda}
+            setBusqueda={setBusqueda}
+            filtroEstado={filtroEstado}
+            setFiltroEstado={setFiltroEstado}
+            filtroRol={filtroRol}
+            setFiltroRol={setFiltroRol}
+          />
 
           {error && (
             <div style={{padding: '1.2rem 1.5rem', background: editingUser ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.06) 100%)', color: editingUser ? '#3B82F6' : '#DC2626', borderRadius: '10px', borderLeft: '4px solid ' + (editingUser ? '#3B82F6' : '#DC2626'), fontWeight: '700', fontSize: '0.95em', letterSpacing: '0.3px', marginBottom: '1rem'}}>
@@ -517,87 +721,26 @@ export default function AdminUsuarios() {
             </div>
           )}
 
-          <div className="table-container-UP">
-            <table className="table-UP">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Correo</th>
-                  <th>Teléfono</th>
-                  <th>Fecha Nacimiento</th>
-                  <th>Género</th>
-                  <th>Foto Perfil</th>
-                  <th>Banner</th>
-                  <th>Rol</th>
-                  <th>Estado</th>
-                  <th>Fecha Registro</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {usuariosFiltrados.length > 0 ? (
-                  usuariosFiltrados.map((usuario) => (
-                    <tr key={usuario.uniqueKey}>
-                      <td className="nombre-cell-UP">{usuario.nombre}</td>
-                      <td>{usuario.correo}</td>
-                      <td>{usuario.telefono || '-'}</td>
-                      <td>{usuario.fechaNacimiento || '-'}</td>
-                      <td>{usuario.genero ? usuario.genero.charAt(0).toUpperCase() + usuario.genero.slice(1).toLowerCase() : '-'}</td>
-                      <td>{usuario.urlFotoPerfil ? <a href={usuario.urlFotoPerfil} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>
-                      <td>{usuario.urlBanner ? <a href={usuario.urlBanner} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>
-                      <td><span style={{ textTransform: 'capitalize', fontWeight: '600' }}>{usuario.rol.toLowerCase()}</span></td>
-                      <td><span className={`status-badge-UP ${usuario.estado === 'Activo' ? 'status-active-UP' : 'status-inactive-UP'}`}>{usuario.estado}</span></td>
-                      <td>{usuario.fechaRegistro}</td>
-                      <td>
-                        <div className="actions-UP">
-                          <button className="btn-action-UP btn-edit-UP" onClick={() => handleEditar(usuario.id, usuario.rol)} title="Editar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                          </button>
-                          {usuario.estado === 'Activo' ? (
-                            <button className="btn-action-UP btn-deactivate-UP" onClick={() => handleDesactivar(usuario.id, usuario.rol)} title="Desactivar">
-                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                <path d="M18 6L6 18M6 6l12 12"></path>
-                              </svg>
-                            </button>
-                          ) : (
-                            <button className="btn-action-UP btn-activate-UP" onClick={() => handleActivar(usuario.id, usuario.rol)} title="Activar">
-                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                              </svg>
-                            </button>
-                          )}
-                          <button className="btn-action-UP btn-delete-UP" onClick={() => handleEliminar(usuario.id, usuario.rol)} title="Eliminar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                              <polyline points="3 6 5 6 21 6"></polyline>
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                              <line x1="10" y1="11" x2="10" y2="17"></line>
-                              <line x1="14" y1="11" x2="14" y2="17"></line>
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="11" className="no-results-UP">No hay usuarios que coincidan con los filtros</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <UsersTable
+            columns={getColumns()}
+            data={usuariosFiltrados}
+            renderCell={(usuario, col) => getColumnValue(usuario, col)}
+          />
         </div>
       </div>
 
       {showModal && (
         <div className="modal-overlay-UP" onClick={handleCloseModal}>
-          <div className="modal-content-UP" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content-UP hoja-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-UP">
-              <h2>{editingUser ? 'Editar Usuario' : `Crear ${selectedRole === 'ASPIRANTE' ? 'Aspirante' : selectedRole === 'RECLUTADOR' ? 'Reclutador' : 'Administrador'}`}</h2>
-              <button className="modal-close-UP" onClick={handleCloseModal}>
+              <div className="title-wrap">
+                <div className="accent-dot" aria-hidden="true" />
+                <div>
+                  <h2>{editingUser ? 'Editar Usuario' : `Crear ${selectedRole === 'ASPIRANTE' ? 'Aspirante' : selectedRole === 'RECLUTADOR' ? 'Reclutador' : 'Administrador'}`}</h2>
+                  <div className="modal-subtitle">{editingUser ? 'Actualiza los datos del usuario' : 'Introduce los datos para crear un usuario'}</div>
+                </div>
+              </div>
+              <button className="modal-close-UP" onClick={handleCloseModal} aria-label="Cerrar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -629,6 +772,19 @@ export default function AdminUsuarios() {
                 <input type="tel" name="telefono" value={formData.telefono} onChange={handleInputChange} placeholder="Ej: 3001234567" />
               </div>
 
+              {formData.rol === 'ASPIRANTE' && (
+                <>
+                  <div className="form-group-UP">
+                    <label>Descripción</label>
+                    <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Descripción del aspirante" rows="3" />
+                  </div>
+                  <div className="form-group-UP">
+                    <label>Ubicación</label>
+                    <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ubicación" />
+                  </div>
+                </>
+              )}
+
               {!editingUser && (
                 <>
                   <div className="form-group-UP">
@@ -637,15 +793,16 @@ export default function AdminUsuarios() {
                   </div>
 
                   {formData.rol === 'ASPIRANTE' && (
-                    <div className="form-group-UP">
-                      <label>Género *</label>
-                      <select name="genero" value={formData.genero} onChange={handleInputChange} required>
-                        <option value="">Seleccionar género</option>
-                        <option value="MASCULINO">Masculino</option>
-                        <option value="FEMENINO">Femenino</option>
-                        <option value="OTRO">Otro</option>
-                      </select>
-                    </div>
+                    <>
+                      <div className="form-group-UP">
+                        <label>Descripción</label>
+                        <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Descripción del aspirante" rows="3" />
+                      </div>
+                      <div className="form-group-UP">
+                        <label>Ubicación</label>
+                        <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ubicación" />
+                      </div>
+                    </>
                   )}
 
                   {(formData.rol === 'ASPIRANTE' || formData.rol === 'RECLUTADOR') && (
@@ -682,8 +839,14 @@ export default function AdminUsuarios() {
         <div className="modal-overlay-UP" onClick={handleCloseModal}>
           <div className="modal-content-UP" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-UP">
-              <h2>Seleccionar Tipo de Usuario</h2>
-              <button className="modal-close-UP" onClick={handleCloseModal}>
+              <div className="title-wrap">
+                <div className="accent-dot" aria-hidden="true" />
+                <div>
+                  <h2>Seleccionar Tipo de Usuario</h2>
+                  <div className="modal-subtitle">Elige un rol para comenzar</div>
+                </div>
+              </div>
+              <button className="modal-close-UP" onClick={handleCloseModal} aria-label="Cerrar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -744,37 +907,45 @@ export default function AdminUsuarios() {
                 >
                   🔍 Reclutador
                 </button>
-
-                <button
-                  onClick={() => handleSelectRole('ADMIN')}
-                  style={{
-                    padding: '2rem 1rem',
-                    border: '2px solid #F59E0B',
-                    borderRadius: '12px',
-                    background: '#fff',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    color: '#F59E0B'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = '#F59E0B';
-                    e.target.style.color = '#fff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = '#fff';
-                    e.target.style.color = '#F59E0B';
-                  }}
-                >
-                  ⚙️ Administrador
-                </button>
-              </div>
+                {selectedHojaDeVida ? (
+                  <div className="hdv-summary-mini" style={{gridColumn: '1 / -1', textAlign: 'left'}}>
+                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                      <div>
+                        <div style={{fontWeight:800}}>{selectedHojaDeVida?.aspirante?.nombre || 'Aspirante'}</div>
+                        <div style={{color:'var(--text-secondary)'}}>Hoja ID: {selectedHojaDeVida.id} · {selectedHojaDeVida.fechaCreacion}</div>
+                      </div>
+                      <div style={{display:'flex', gap:'0.6rem'}}>
+                        <button className="btn-small primary" onClick={() => setShowHojaVidaModal(true)}>Abrir Hoja</button>
+                        <button className="btn-small ghost" onClick={() => setSelectedHojaDeVida(null)}>Cerrar</button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{gridColumn: '1 / -1', color:'var(--text-secondary)'}}>No hay hoja seleccionada</div>
+                )}
+                </div>
             </div>
           </div>
         </div>
       )}
 
+      {showHojaVidaModal && selectedHojaDeVida && (
+        <HojaDeVidaModal
+          show={showHojaVidaModal}
+          onClose={() => setShowHojaVidaModal(false)}
+          selectedHojaDeVida={selectedHojaDeVida}
+          isEditing={isEditingHojaVida}
+          hojaVidaFormData={hojaVidaFormData}
+          onHojaVidaInputChange={handleHojaVidaInputChange}
+          handleEditHojaVida={handleEditHojaVida}
+          handleSaveHojaVida={handleSaveHojaVida}
+          handleCancelEditHojaVida={handleCancelEditHojaVida}
+          handleSaveEstudio={saveEstudio}
+          handleDeleteEstudio={handleDeleteEstudio}
+          handleSaveExperiencia={saveExperiencia}
+          handleDeleteExperiencia={handleDeleteExperiencia}
+        />
+      )}
       <Footer />
     </div>
   );

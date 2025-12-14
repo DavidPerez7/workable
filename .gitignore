@@ -90,4 +90,4 @@ dist-ssr/
 .vscode/tasks.json
 
 #Ignore vscode AI rules
-.github\instructions\codacy.instructions.md
+*.github

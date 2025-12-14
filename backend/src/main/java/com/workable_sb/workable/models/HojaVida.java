@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -49,8 +50,15 @@ public class HojaVida {
     @Column(length = 500)
     private String objetivoProfesional;
 
-    @Min(value = 0)
-    private Long salarioEsperado;
+    // Estudios y experiencias se exponen en la Hoja de Vida para conveniencia,
+    // pero NO se persisten directamente aquí (se almacenan en sus propias tablas
+    // y se relacionan con el aspirante). Marcamos @Transient para que JPA no
+    // intente mapear estas listas.
+    @Transient
+    private List<Estudio> estudios;
+
+    @Transient
+    private List<Experiencia> experiencias;
 
     @Size(max = 500)
     @Column(length = 500)
