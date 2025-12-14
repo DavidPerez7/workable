@@ -1,0 +1,96 @@
+/* Using solid colors directly (no CSS variables) to avoid style breakage */
+
+.dashboard-wrapper{
+  padding: 24px;
+  background: #eef3f7;
+  min-height: calc(100vh - 120px);
+}
+
+.dashboard-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 18px;
+}
+
+.dashboard-subtitle{ color:#475569; font-size:0.95rem }
+
+.quick-actions{ display:flex; gap:8px }
+.btn-quick{ background: linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:white; border:none; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:700; box-shadow: 0 4px 16px rgba(59,130,246,0.25); }
+.btn-quick.secondary{ background:#f8fafc; color:#3F4651; border:1.5px solid #A8B3C1; border-radius:10px }
+.btn-quick:hover{ transform: translateY(-2px); filter:brightness(1.02); }
+.btn-quick:hover{ transform: translateY(-2px); filter:brightness(1.02); box-shadow: 0 8px 28px rgba(59,130,246,0.18); }
+
+/* Highlights mini-grid */
+.highlights-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-top:10px }
+.highlight-card{ background:#ffffff; border:2px solid #CBD5E1; padding:16px; border-radius:14px; box-shadow:0 4px 12px rgba(0,0,0,0.04); display:flex; flex-direction:column }
+.highlight-card::before{ content:''; width:8px; height:40px; background:#3B82F6; border-radius:6px; display:block; margin-bottom:8px }
+.highlight-card .title{ color:#3F4651; font-weight:700 }
+.highlight-card .value{ font-size:26px; font-weight:900; margin-top:6px; color:#3B82F6 }
+.highlight-card .subtext{ color:#64748B; margin-top:6px; font-size:12px }
+.highlight-card:hover{ transform: translateY(-6px); box-shadow: 0 12px 32px rgba(59,130,246,0.15); border-color: #3B82F6; }
+
+/* section body spacing */
+.section-body{ margin-top:12px }
+
+/* Chart placeholder */
+.chart-placeholder{ height:160px; border-radius:8px; background: linear-gradient(90deg,#eef2ff,#fff); display:flex; align-items:center; justify-content:center; color:#334155 }
+
+/* Error message */
+.error-message{ color: #ef4444; margin-left: 12px; font-weight:700 }
+
+.metrics-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.kpi-card{
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 14px;
+  border: 2px solid #CBD5E1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transition: transform .18s ease, box-shadow .18s ease;
+  display:flex; flex-direction:column; justify-content:center;
+  position: relative;
+}
+
+.kpi-card:hover{ transform: translateY(-6px); box-shadow: 0 12px 32px rgba(59,130,246,0.15); border-color:#3B82F6 }
+
+.kpi-card.accent{ border-left: 8px solid #3B82F6; padding-left: 14px; background: linear-gradient(90deg, rgba(59,130,246,0.04), #ffffff); }
+
+.kpi-label{ color: #3F4651; font-weight:700; }
+.kpi-number{ font-size:34px; font-weight:900; margin-top:8px; color:#3B82F6; letter-spacing:-0.4px }
+
+.section{
+  margin-top: 28px;
+  padding: 18px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F7FA 100%);
+  border-radius: 14px;
+  border: 1.5px solid #A8B3C1;
+  box-shadow: 0 4px 16px rgba(59,130,246,0.12);
+}
+
+.section-title{ font-size:18px; margin-bottom:12px; color:#0A0E27; display:flex; align-items:center; gap:12px; font-weight:800 }
+.section-title::after{ content:''; flex:1; height:1px; background: linear-gradient(90deg, rgba(14,165,233,0.06), rgba(14,165,233,0)); }
+.section-title .tag{ background:#3B82F6; color:white; padding:4px 8px; border-radius:6px; font-size:12px; box-shadow: 0 2px 8px rgba(59,130,246,0.12) }
+.section-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px }
+
+.logs-list{ display:grid; gap:8px }
+.log-entry{ padding:12px; border-radius:8px; background:#ffffff; border:1px solid rgba(37,99,235,0.07) }
+.log-entry:hover{ background: linear-gradient(90deg, #fff, #f7fbff) }
+.log-entry .meta{ font-weight:700; font-size:13px; color:#1e40af }
+.log-entry .message{ color: #0f172a }
+.log-entry .details{ color:#475569; margin-top:6px; font-size:12px }
+
+/* Level accents */
+.log-entry.error{ border-left: 6px solid #ef4444; }
+.log-entry.warn{ border-left: 6px solid #f59e0b; }
+.log-entry.info{ border-left: 6px solid #2563eb; }
+
+.placeholder{ color:#475569 }
+
+@media (max-width: 640px){
+  .dashboard-wrapper{ padding:12px }
+}

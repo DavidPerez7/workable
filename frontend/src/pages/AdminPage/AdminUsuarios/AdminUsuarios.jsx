@@ -347,7 +347,8 @@ export default function AdminUsuarios() {
       fechaNacimiento: '',
       genero: '',
       password: '',
-      rol: role
+      rol: role,
+      empresaId: ''
     });
     setShowRoleSelector(false);
     setShowModal(true);
@@ -359,7 +360,8 @@ export default function AdminUsuarios() {
       setError('');
       setSuccess('');
       // Try to reuse already-loaded user data to avoid extra API calls and race conditions
-      const existing = usuarios.find((u) => u.id === id);
+      // Prefer to find an already-loaded user by both id and role to avoid collisions
+      const existing = usuarios.find((u) => u.id === id && u.rol === rol);
       let usuario = existing?.originalData || null;
 
       // If not present, fetch from API as fallback
@@ -401,6 +403,7 @@ export default function AdminUsuarios() {
         password: '',
         rol: rol,
         descripcion: usuario.descripcion || '',
+        empresaId: usuario.empresa?.id || '',
         ubicacion: usuario.ubicacion || ''
       });
       setShowModal(true);
@@ -469,6 +472,9 @@ export default function AdminUsuarios() {
           if (formData.urlBanner) {
             updateData.urlBanner = formData.urlBanner;
           }
+          if (formData.empresaId) {
+            updateData.empresa = { id: Number(formData.empresaId) };
+          }
         }
         // Administrador: solo campos básicos
         
@@ -516,6 +522,9 @@ export default function AdminUsuarios() {
           }
           if (formData.urlBanner) {
             updateData.urlBanner = formData.urlBanner;
+          }
+          if (formData.empresaId) {
+            updateData.empresa = { id: Number(formData.empresaId) };
           }
         }
         // Administrador: sin campos adicionales especiales
@@ -638,7 +647,8 @@ export default function AdminUsuarios() {
       password: '',
       rol: 'ASPIRANTE',
       descripcion: '',
-      ubicacion: ''
+      ubicacion: '',
+      empresaId: ''
     });
   };
 
@@ -889,45 +899,67 @@ export default function AdminUsuarios() {
                 </>
               )}
 
-              {!editingUser && (
+              {formData.rol === 'RECLUTADOR' && (
                 <>
                   <div className="form-group-UP">
-                    <label>Fecha de Nacimiento *</label>
-                    <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required />
+                    <label>Empresa (nombre)</label>
+                    <input type="text" name="empresaNombre" value={formData.empresaNombre || (editingUser && editingUser.data?.empresa?.nombre) || ''} disabled placeholder="Empresa asociada (solo lectura)" />
                   </div>
-
-                  {formData.rol === 'ASPIRANTE' && (
-                    <>
-                      <div className="form-group-UP">
-                        <label>Descripción</label>
-                        <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Descripción del aspirante" rows="3" />
-                      </div>
-                      <div className="form-group-UP">
-                        <label>Ubicación</label>
-                        <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ubicación" />
-                      </div>
-                    </>
-                  )}
-
-                  {(formData.rol === 'ASPIRANTE' || formData.rol === 'RECLUTADOR') && (
-                    <div className="form-group-UP">
-                      <label>URL Foto de Perfil</label>
-                      <input type="text" name="urlFotoPerfil" value={formData.urlFotoPerfil} onChange={handleInputChange} placeholder="Ej: https://example.com/foto.jpg" />
-                    </div>
-                  )}
-
-                  {formData.rol === 'RECLUTADOR' && (
-                    <div className="form-group-UP">
-                      <label>URL Banner</label>
-                      <input type="text" name="urlBanner" value={formData.urlBanner} onChange={handleInputChange} placeholder="Ej: https://example.com/banner.jpg" />
-                    </div>
-                  )}
-
                   <div className="form-group-UP">
-                    <label>Contraseña *</label>
-                    <input type="password" name="password" value={formData.password} onChange={handleInputChange} required placeholder="Mínimo 8 caracteres" />
+                    <label>Empresa ID (para reasignar)</label>
+                    <input type="number" name="empresaId" value={formData.empresaId || ''} onChange={handleInputChange} placeholder="ID empresa (opcional)" />
                   </div>
                 </>
+              )}
+
+              {formData.rol === 'ADMIN' && editingUser && editingUser.data?.ultimoAcceso && (
+                <div className="form-group-UP">
+                  <label>Último acceso</label>
+                  <input type="text" value={editingUser.data.ultimoAcceso} disabled />
+                </div>
+              )}
+
+              {/* Show fields that are relevant to the role. Fecha de nacimiento is shown for aspirantes (required only on create),
+                  urlFotoPerfil and urlBanner are shown for aspirantes/reclutadores even when editing, and password only on create. */}
+
+              {formData.rol === 'ASPIRANTE' && (
+                <>
+                  <div className="form-group-UP">
+                    <label>Fecha de Nacimiento {editingUser ? '' : '*'}</label>
+                    <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required={!editingUser} />
+                  </div>
+                  <div className="form-group-UP">
+                    <label>Descripción</label>
+                    <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Descripción del aspirante" rows="3" />
+                  </div>
+                  <div className="form-group-UP">
+                    <label>Ubicación</label>
+                    <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ubicación" />
+                  </div>
+                </>
+              )}
+
+              {(formData.rol === 'ASPIRANTE' || formData.rol === 'RECLUTADOR') && (
+                <div className="form-group-UP">
+                  <label>URL Foto de Perfil</label>
+                  <input type="text" name="urlFotoPerfil" value={formData.urlFotoPerfil} onChange={handleInputChange} placeholder="Ej: https://example.com/foto.jpg" />
+                </div>
+              )}
+
+              {formData.rol === 'RECLUTADOR' && (
+                <>
+                  <div className="form-group-UP">
+                    <label>URL Banner</label>
+                    <input type="text" name="urlBanner" value={formData.urlBanner} onChange={handleInputChange} placeholder="Ej: https://example.com/banner.jpg" />
+                  </div>
+                </>
+              )}
+
+              {!editingUser && (
+                <div className="form-group-UP">
+                  <label>Contraseña *</label>
+                  <input type="password" name="password" value={formData.password} onChange={handleInputChange} required placeholder="Mínimo 8 caracteres" />
+                </div>
               )}
 
               <div className="modal-buttons-UP">

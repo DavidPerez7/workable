@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Footer from '../../components/Footer/footer';
 import Sidebar from './SideBar/Sidebar';
-import Dashboard from './Dashboard';
+import Dashboard from './DashBoard/Dashboard';
 import UserManagement from './UserManagement';
 import AdminEmpresa from './AdminEmpresas/AdminEmpresas';
 import OffersPage from './AdminOfertas/AdminOfertas';

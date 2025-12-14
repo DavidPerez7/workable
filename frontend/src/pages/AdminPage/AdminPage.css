@@ -22,6 +22,9 @@
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  background: #eef3f7; /* slightly darker subtle gray-blue for better contrast */
+  padding: 18px;
+  border-radius: 8px;
 }
 
 /* Cards & Stats (kept simple and consistent) */
@@ -36,16 +39,16 @@
   background-color: #ffffff;
   border-radius: 10px;
   padding: 18px;
-  box-shadow: 0 8px 20px rgba(2,6,23,0.06);
+  box-shadow: 0 8px 20px rgba(54, 80, 195, 0.06);
 }
 
-.card-title-AP { font-size: 1.15rem; font-weight: 700; color: #111827; }
-.card-description-AP { color: #6b7280; font-size: 0.95rem; }
+.card-title-AP { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
+.card-description-AP { color: #475569; font-size: 0.95rem; }
 
 .stats-grid-AP { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 16px; }
-.stat-item-AP { text-align: center; padding: 14px; border-radius: 8px; background: linear-gradient(135deg,#fff,#f8fafc); }
-.stat-number-AP { font-size: 1.8rem; font-weight: 800; color: #111827; }
-.stat-label-AP { color: #6b7280; font-weight: 600; }
+.stat-item-AP { text-align: center; padding: 14px; border-radius: 8px; background: linear-gradient(135deg,#fff,#f8fafc); border:1px solid rgba(37,99,235,0.06); }
+.stat-number-AP { font-size: 1.8rem; font-weight: 800; color: #2563eb; }
+.stat-label-AP { color: #475569; font-weight: 600; }
 
 /* Layout helpers */
 .page-row { display:flex; gap:12px; align-items:center; justify-content:space-between }

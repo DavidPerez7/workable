@@ -21,21 +21,65 @@ adminApi.interceptors.request.use((config) => {
 export const dashboardAPI = {
   getMetrics: async () => {
     try {
-      const [aspirantes, ofertas] = await Promise.all([
-        adminApi.get('/aspirante'),
-        adminApi.get('/oferta'),
-      ]);
-      return {
-        users: aspirantes.data?.length || 0,
-        orders: ofertas.data?.length || 0,
-        avgResponse: 210,
-      };
+      // New consolidated endpoint provided by backend
+      const resp = await adminApi.get('/admin/stats');
+      return resp.data || {};
     } catch (error) {
-      console.error('Error fetching metrics:', error);
-      return { users: 0, orders: 0, avgResponse: 210 };
+      console.error('Error fetching metrics (admin/stats):', error);
+      // If the error is an auth issue (not an admin), try the public stats endpoint
+      const status = error?.response?.status;
+      if (status === 401 || status === 403) {
+        try {
+          const resp = await adminApi.get('/stats/public');
+          // mark as public so UI can display a hint if desired
+          return { ...(resp.data || {}), _public: true };
+        } catch (exPublic) {
+          console.error('Public stats fallback failed:', exPublic);
+          throw error; // rethrow original to let UI show an auth-related message
+        }
+      }
+
+      // Fallback to older behavior if admin/stats is not available for other reasons
+      try {
+        const [aspirantes, ofertas] = await Promise.all([
+          adminApi.get('/aspirante'),
+          adminApi.get('/oferta'),
+        ]);
+        return {
+          totalAspirantes: aspirantes.data?.length || 0,
+          totalOfertas: ofertas.data?.length || 0,
+          avgResponse: 210,
+        };
+      } catch (ex) {
+        console.error('Fallback metrics fetch also failed:', ex);
+        return { totalAspirantes: 0, totalOfertas: 0, avgResponse: 210 };
+      }
     }
   },
 };
+
+export const logsAPI = {
+  getLogs: async () => {
+    try {
+      const resp = await adminApi.get('/admin/logs');
+      return resp.data || [];
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+      return [];
+    }
+  },
+
+  postLog: async (payload) => {
+    try {
+      await adminApi.post('/admin/logs', payload);
+      return true;
+    } catch (error) {
+      console.error('Error posting log:', error);
+      return false;
+    }
+  }
+};
+
 
 export const userAPI = {
   getAll: async () => {
