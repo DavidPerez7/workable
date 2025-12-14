@@ -32,7 +32,7 @@ export default function AdminUsuarios() {
     resumenProfesional: '',
     objetivoProfesional: '',
     redSocial1: '',
-    redSocial2: '',
+    // redSocial2 replaced by contactoEmail (autocompletado desde Aspirante)
     idiomas: '',
     esPublica: false
   });
@@ -59,7 +59,6 @@ export default function AdminUsuarios() {
     setError('');
     try {
       let usuariosData = [];
-
       // Cargar aspirantes
       try {
         const aspirantes = await aspirantesApi.getAll();
@@ -83,6 +82,12 @@ export default function AdminUsuarios() {
         usuariosData = [...usuariosData, ...aspirantesFormateados];
       } catch (err) {
         console.error('Error cargando aspirantes:', err);
+        const status = err?.response?.status;
+        if (status === 401) {
+          setError('No autorizado. Por favor inicia sesión como administrador para ver usuarios.');
+        } else {
+          setError(err?.response?.data?.error || err?.message || 'Error cargando aspirantes');
+        }
       }
 
       // Cargar reclutadores
@@ -107,6 +112,12 @@ export default function AdminUsuarios() {
         usuariosData = [...usuariosData, ...reclutadoresFormateados];
       } catch (err) {
         console.error('Error cargando reclutadores:', err);
+        const status = err?.response?.status;
+        if (status === 401) {
+          setError('No autorizado. Por favor inicia sesión como administrador para ver usuarios.');
+        } else {
+          setError(err?.response?.data?.error || err?.message || 'Error cargando reclutadores');
+        }
       }
 
       // Cargar administradores
@@ -129,6 +140,12 @@ export default function AdminUsuarios() {
         usuariosData = [...usuariosData, ...administradoresFormateados];
       } catch (err) {
         console.error('Error cargando administradores:', err);
+        const status = err?.response?.status;
+        if (status === 401) {
+          setError('No autorizado. Por favor inicia sesión como administrador para ver usuarios.');
+        } else {
+          setError(err?.response?.data?.error || err?.message || 'Error cargando administradores');
+        }
       }
 
       setUsuarios(usuariosData);
@@ -609,7 +626,6 @@ export default function AdminUsuarios() {
         resumenProfesional: selectedHojaDeVida.resumenProfesional || '',
         objetivoProfesional: selectedHojaDeVida.objetivoProfesional || '',
         redSocial1: selectedHojaDeVida.redSocial1 || '',
-        redSocial2: selectedHojaDeVida.redSocial2 || '',
         // salarioEsperado removed from backend model
         idiomas: selectedHojaDeVida.idiomas || '',
         esPublica: selectedHojaDeVida.esPublica || false
@@ -670,6 +686,40 @@ export default function AdminUsuarios() {
       setError('Error al actualizar hoja de vida');
       console.error(err);
     }
+  };
+
+  const handleDeleteHojaVida = async () => {
+    if (!selectedHojaDeVida) {
+      setError('No hay hoja de vida seleccionada');
+      return;
+    }
+    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar esta Hoja de Vida? Esta acción no se puede deshacer.');
+    if (!confirmed) return;
+    try {
+      // Prefer named function if available, otherwise try default export method or direct axios fallback
+      const fn = hojaDeVidaApi.eliminarHojaDeVida;
+      let result;
+      if (typeof fn === 'function') {
+        result = await fn(selectedHojaDeVida.id);
+      } else {
+        // fallback
+        await API.delete(`/api/hoja-vida/${selectedHojaDeVida.id}`);
+      }
+      // Close modal and clear selected
+      setShowHojaVidaModal(false);
+      setSelectedHojaDeVida(null);
+      setError('Hoja de vida eliminada correctamente');
+      setTimeout(() => setError(''), 3000);
+    } catch (err) {
+      console.error('Error eliminando hoja de vida:', err);
+      setError('No se pudo eliminar la hoja de vida');
+    }
+  };
+
+  const handleUpdateHojaDeVida = (updatedHoja) => {
+    setSelectedHojaDeVida(updatedHoja);
+    // Refresh user list so changes to contacto/telefono are reflected in the table
+    cargarUsuarios();
   };
 
   const handleCancelEditHojaVida = () => {
@@ -911,7 +961,7 @@ export default function AdminUsuarios() {
                   <div className="hdv-summary-mini" style={{gridColumn: '1 / -1', textAlign: 'left'}}>
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
                       <div>
-                        <div style={{fontWeight:800}}>{selectedHojaDeVida?.aspirante?.nombre || 'Aspirante'}</div>
+                        <div style={{fontWeight:800}}>{(selectedHojaDeVida?.aspirante && `${selectedHojaDeVida.aspirante.nombre || ''} ${selectedHojaDeVida.aspirante.apellido || ''}`).trim() || 'Aspirante'}</div>
                         <div style={{color:'var(--text-secondary)'}}>Hoja ID: {selectedHojaDeVida.id} · {selectedHojaDeVida.fechaCreacion}</div>
                       </div>
                       <div style={{display:'flex', gap:'0.6rem'}}>
@@ -940,6 +990,8 @@ export default function AdminUsuarios() {
           handleEditHojaVida={handleEditHojaVida}
           handleSaveHojaVida={handleSaveHojaVida}
           handleCancelEditHojaVida={handleCancelEditHojaVida}
+          handleDeleteHojaVida={handleDeleteHojaVida}
+          handleUpdateHojaDeVida={handleUpdateHojaDeVida}
           handleSaveEstudio={saveEstudio}
           handleDeleteEstudio={handleDeleteEstudio}
           handleSaveExperiencia={saveExperiencia}

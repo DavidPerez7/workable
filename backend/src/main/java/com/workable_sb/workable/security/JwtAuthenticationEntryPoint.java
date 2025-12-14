@@ -24,10 +24,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                         AuthenticationException authException) throws IOException, ServletException {
-        
+        // Use OutputStream (bytes) to avoid triggering Tomcat character converter lazily
+        // which in some environments throws ClassNotFoundException for internal classes
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=UTF-8");
 
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("error", "No autorizado");
@@ -36,6 +36,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         errorDetails.put("timestamp", System.currentTimeMillis());
 
         ObjectMapper mapper = new ObjectMapper();
-        response.getWriter().write(mapper.writeValueAsString(errorDetails));
+        byte[] bytes = mapper.writeValueAsBytes(errorDetails);
+        try {
+            response.getOutputStream().write(bytes);
+            response.getOutputStream().flush();
+        } catch (IOException e) {
+            // If writing fails, log minimally and rethrow to allow container to handle
+            System.err.println("Error writing auth error response: " + e.getMessage());
+            throw e;
+        }
     }
 }

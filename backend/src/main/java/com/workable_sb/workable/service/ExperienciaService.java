@@ -102,6 +102,7 @@ public class ExperienciaService {
         existente.setDescripcion(experienciaActualizada.getDescripcion());
         existente.setFechaInicio(experienciaActualizada.getFechaInicio());
         existente.setFechaFin(experienciaActualizada.getFechaFin());
+        existente.setCertificadoUrl(experienciaActualizada.getCertificadoUrl());
 
         if (experienciaActualizada.getMunicipio() != null) {
             municipioRepo.findById(experienciaActualizada.getMunicipio().getId())

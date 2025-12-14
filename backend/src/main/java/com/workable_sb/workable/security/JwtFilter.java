@@ -57,7 +57,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 // Validar que sea un access token (no refresh token)
                 if (!jwtUtil.isAccessToken(jwt)) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("{\"error\": \"Token inválido. Usa un access token.\"}");
+                    response.setContentType("application/json;charset=UTF-8");
+                    var os = response.getOutputStream();
+                    os.write("{\"error\": \"Token inválido. Usa un access token.\"}".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    os.flush();
                     return;
                 }
                 
@@ -67,8 +70,10 @@ public class JwtFilter extends OncePerRequestFilter {
             } catch (JwtAuthenticationException e) {
                 // Token malformado, expirado, etc.
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+                response.setContentType("application/json;charset=UTF-8");
+                var os = response.getOutputStream();
+                os.write(("{\"error\": \"" + e.getMessage() + "\"}").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                os.flush();
                 return;
             }
         }

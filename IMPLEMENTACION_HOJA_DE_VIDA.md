@@ -50,6 +50,7 @@
   - Modo vista (read-only) con texto y botón "Editar descripción"
   - Modo edición con textarea grande y botones Guardar/Cancelar
   - Transiciones suaves entre modos
+   - ✅ UX: los inputs de edición se muestran **inline**, justo debajo del elemento que editan (por ejemplo: Idiomas, Pública, Resumen, Objetivo, Contacto, Teléfono). Cuando se edita un estudio/experiencia, el formulario de edición aparece directamente dentro del ítem correspondiente (edición in-place), evitando formularios globales fuera de contexto.
 
 #### **HojaDeVida.css**
 - ✅ Nuevas clases para edición:

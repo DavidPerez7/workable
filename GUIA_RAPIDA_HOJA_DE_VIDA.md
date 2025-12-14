@@ -17,6 +17,12 @@ He implementado **edición en tiempo real** de la página HojaDeVida del aspiran
 
 ---
 
+### Nota de UX importante
+
+- Los campos de edición aparecen **inline** debajo del elemento que están editando (p. ej. debajo de "Idiomas", "Pública", "Contacto", "Resumen" o "Objetivo").
+- Para **Estudios** y **Experiencias**, la edición ocurre *in-place*: al hacer clic en "Editar" el formulario se despliega dentro del propio ítem en lugar de mostrarse en un área separada.
+
+
 ## 🔧 CAMBIOS TÉCNICOS
 
 ### Backend - 4 Nuevos Archivos

@@ -63,6 +63,7 @@ const guardarDescripcion = async () => {
 // ✅ UI interactiva:
 // - Modo lectura: texto + botón "Editar"
 // - Modo edición: textarea + botones Guardar/Cancelar
+// - Nota UX: Los inputs de edición aparecen inline, directamente debajo del elemento que editan (Idiomas, Pública, Contacto, Resumen, Objetivo). Los formularios de edición de Estudios/Experiencias se despliegan *in-place* dentro del ítem correspondiente.
 ```
 
 ### Frontend (Nuevos Estilos en HojaDeVida.css)

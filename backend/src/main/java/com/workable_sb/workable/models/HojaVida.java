@@ -44,7 +44,11 @@ public class HojaVida {
 
     @Size(max = 255)
     @Column(length = 255)
-    private String redSocial2;
+    private String contactoEmail;
+
+    @Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
+    @Column(length = 20)
+    private String telefono;
 
     @Size(max = 500)
     @Column(length = 500)

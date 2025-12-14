@@ -117,8 +117,31 @@ public class HojaVidaService {
         if (hojaVidaActualizada.getRedSocial1() != null) {
             existente.setRedSocial1(hojaVidaActualizada.getRedSocial1());
         }
-        if (hojaVidaActualizada.getRedSocial2() != null) {
-            existente.setRedSocial2(hojaVidaActualizada.getRedSocial2());
+        // Allow updating contactoEmail and telefono through the Hoja de Vida editor.
+        // When a user edits the contact info from the UI we propagate changes to the related Aspirante
+        // so that autocompletion remains consistent.
+        if (hojaVidaActualizada.getContactoEmail() != null) {
+            String nuevoCorreo = hojaVidaActualizada.getContactoEmail();
+            Aspirante aspirante = existente.getAspirante();
+            if (aspirante == null) throw new RuntimeException("Aspirante asociado no encontrado");
+            // If correo cambia, validate uniqueness among aspirantes
+            if (!nuevoCorreo.equals(aspirante.getCorreo())) {
+                if (aspiranteRepo.findByCorreo(nuevoCorreo).isPresent()) {
+                    throw new RuntimeException("El correo ya está en uso por otro aspirante");
+                }
+                aspirante.setCorreo(nuevoCorreo);
+            }
+            // Update Hoja de Vida contact field as well
+            existente.setContactoEmail(nuevoCorreo);
+            aspiranteRepo.save(aspirante);
+        }
+        if (hojaVidaActualizada.getTelefono() != null) {
+            String nuevoTelefono = hojaVidaActualizada.getTelefono();
+            Aspirante aspirante = existente.getAspirante();
+            if (aspirante == null) throw new RuntimeException("Aspirante asociado no encontrado");
+            aspirante.setTelefono(nuevoTelefono);
+            existente.setTelefono(nuevoTelefono);
+            aspiranteRepo.save(aspirante);
         }
         // Nota: `salarioEsperado` fue removido del modelo. Si hace falta, usar
         // una entidad separada o un campo en Aspirante.
@@ -189,6 +212,10 @@ public class HojaVidaService {
         hojaVida.setEstudios(estudios);
         hojaVida.setExperiencias(experiencias);
 
+        // Autocompletar contacto desde el aspirante
+        hojaVida.setContactoEmail(aspirante.getCorreo());
+        hojaVida.setTelefono(aspirante.getTelefono());
+
         // Generar resumen profesional si no existe
         if (hojaVida.getResumenProfesional() == null || hojaVida.getResumenProfesional().isEmpty()) {
             StringBuilder resumen = new StringBuilder();
@@ -213,5 +240,10 @@ public class HojaVidaService {
         List<Experiencia> experiencias = experienciaRepo.findByAspiranteId(aspiranteId);
         hoja.setEstudios(estudios);
         hoja.setExperiencias(experiencias);
+        // Autocompletar contacto desde aspirante
+        if (hoja.getAspirante() != null) {
+            hoja.setContactoEmail(hoja.getAspirante().getCorreo());
+            hoja.setTelefono(hoja.getAspirante().getTelefono());
+        }
     }
 }

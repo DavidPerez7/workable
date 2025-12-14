@@ -1,84 +1,505 @@
-/* Compact, scoped HojaDeVida modal styles */
-.modal-overlay-UP{display:flex;align-items:center;justify-content:center;position:fixed;inset:0;z-index:1000;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-.modal-content-UP{background:var(--background-card);border-radius:var(--border-radius);padding:2.5rem;max-width:650px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-heavy);border:1.5px solid var(--border-color);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
-.modal-content-UP.hoja-modal{max-width:min(1400px,98vw);width:98%;padding:2.2rem 2.4rem;border-radius:14px;display:grid;grid-template-rows:auto 1fr;align-items:stretch}
+/* HojaDeVidaModal.css
+   Estilos para el modal tipo tarjeta / CV
+*/
+
+/* Reset visual mínimo */
+:root {
+  --bg-overlay: rgba(0,0,0,0.35);
+  --card-bg: #fff;
+  --muted: #777;
+  --line: #e6e6e6;
+  --accent: #111;
+  --primary: #0b66ff;
+  --danger: #d9534f;
+  --ghost-bg: transparent;
+  --chip-bg: #f3f3f3;
+  --radius: 8px;
+  --card-width: 720px;
+  --pad-vertical: 48px;
+  --pad-horizontal: 56px;
+  --shadow: 0 8px 30px rgba(0,0,0,0.08);
+  --text-base: 15px;
+}
+
+/* Overlay */
+.modal-overlay-UP {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+}
+
+/* Modal card */
+.modal-content-UP.hoja-modal {
+  width: var(--card-width);
+  max-width: calc(100% - 40px);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: var(--pad-vertical) var(--pad-horizontal);
+  box-shadow: var(--shadow);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #111;
+  max-height: calc(100vh - 80px);
+  overflow: auto;
+}
 
 /* Header */
-.modal-header-UP{display:flex;justify-content:space-between}
-.modal-header-UP .title-wrap{display:flex;align-items:center;gap:.8rem}
-.modal-header-UP .accent-dot{width:10px;height:40px;border-radius:6px;background:var(--gradient-primary);box-shadow:0 6px 18px rgba(59,130,246,.18)}
-.modal-subtitle{color:var(--text-secondary);font-weight:600;font-size:.95rem}
-.modal-close-UP{background:none;border:none;font-size:1.5em;cursor:pointer;color:var(--text-secondary);transition:var(--transition);display:flex;align-items:center;justify-content:center;padding:.5rem}
-.modal-close-UP:hover{color:var(--text-primary);transform:rotate(90deg)}
+.modal-header-UP.hoja-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
 
-/* Body: two-column layout */
-.hoja-body-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.6rem;align-items:stretch;width:100%;margin:0 auto;justify-items:stretch}
+/* Separator line between header and body to visually divide sections */
+.modal-header-UP.hoja-modal-header{
+  border-bottom: 1px slategray solid;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
 
-/* Summary and meta */
-.modal-content-UP.hoja-modal .hoja-summary-card{background:linear-gradient(180deg,#fff,#f8fafc);border:1px solid rgba(14,165,233,.08);padding:1rem 1.2rem;border-radius:12px;box-shadow:0 8px 20px rgba(2,6,23,.06);width:100%;align-self:stretch;box-sizing:border-box;height:100%}
-.modal-content-UP.hoja-modal .hoja-summary-card h3{margin:0 0 .6rem;font-size:1.05rem;color:var(--primary-color);font-weight:900}
-.modal-content-UP.hoja-modal .hoja-meta{display:flex;flex-direction:column;gap:.6rem;color:var(--text-secondary);font-size:.95rem}
-.modal-content-UP.hoja-modal .hoja-meta .meta-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.modal-header-UP.hoja-modal-header .hoja-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-/* Details */
-.modal-content-UP.hoja-modal .hoja-details-card{background:var(--background-card);border-radius:12px;padding:1rem;border:1px solid var(--border-color);box-shadow:0 6px 18px rgba(15,23,42,.04);width:100%;align-self:stretch;box-sizing:border-box;height:100%}
-.modal-content-UP.hoja-modal .section-title{font-weight:800;color:var(--text-primary);margin-bottom:.6rem}
-.modal-content-UP.hoja-modal .text-muted{color:var(--text-secondary)}
+/* actions placed on the header (edit/delete + close) */
+.modal-header-UP.hoja-modal-header .hoja-header-actions{
+  display:flex;
+  gap:.6rem;
+  align-items:center;
+}
+.modal-header-UP.hoja-modal-header .hoja-header-actions .btn-small{padding:.4rem .75rem}
 
-/* Grid, utility and lists */
-.modal-content-UP.hoja-modal .hoja-view{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;width:100%;align-items:stretch;justify-items:stretch}
+/* Avatar in header */
+.hoja-summary-header{display:flex;gap:16px;align-items:center}
+.hoja-summary-header > div{min-width:0;flex:1}
+.hoja-avatar{flex:0 0 56px;display:flex;align-items:center;justify-content:center;margin-right:12px;border-radius:8px;overflow:hidden;border:1px solid #c6ccd3;padding:2px;background:#fff;width:56px;height:56px}
+.hoja-avatar img{width:52px;height:52px;border-radius:6px;object-fit:cover;display:block}
+.hoja-avatar-placeholder{width:52px;height:52px;border-radius:6px;background:#eef2ff;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800}
 
-/* Ensure children fill width and height of the modal */
-.modal-content-UP.hoja-modal .hoja-body-grid, .modal-content-UP.hoja-modal .hoja-view{width:100%;height:100%}
-.modal-content-UP.hoja-modal .hoja-body-grid > *{width:100%;height:100%}
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple{width:100%}
-.hoja-body-grid > *{justify-self:stretch}
-.modal-content-UP.hoja-modal .hoja-summary-card, .modal-content-UP.hoja-modal .hoja-details-card{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
-.modal-content-UP.hoja-modal .hoja-summary-card *, .modal-content-UP.hoja-modal .hoja-details-card *{max-width:100%}
-.modal-content-UP.hoja-modal .hoja-meta, .modal-content-UP.hoja-modal .hoja-contacts{width:100%;box-sizing:border-box}
-.modal-content-UP.hoja-modal .hoja-form-grid{display:grid;grid-template-columns:1fr;gap:.8rem}
-.modal-content-UP.hoja-modal .hoja-two-cols{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
-.modal-content-UP.hoja-modal .hoja-form-row,.modal-content-UP.hoja-modal .hoja-actions-row{display:flex;gap:.8rem;align-items:center}
-.modal-content-UP.hoja-modal .hoja-actions-row{gap:.6rem;margin-top:1rem}
-.modal-content-UP.hoja-modal .flex-1{flex:1}
-.modal-content-UP.hoja-modal .hoja-summary-header{display:flex;justify-content:space-between;align-items:center}
-.modal-content-UP.hoja-modal .hoja-right-stack{display:grid;gap:.85rem}
-.modal-content-UP.hoja-modal .hoja-contacts{margin-top:.4rem;color:var(--text-secondary)}
-.modal-content-UP.hoja-modal .list-actions,.modal-content-UP.hoja-modal .hoja-summary-actions,.modal-content-UP.hoja-modal .hoja-list-actions{display:flex;gap:.5rem}
+.ml-04{margin-left:.4rem}
 
-.mt-04{margin-top:.4rem}.mt-06{margin-top:.6rem}.mt-08{margin-top:.8rem}
+/* Inline textareas/inputs sizing */
+.hoja-details-card textarea{width:100%;padding:.6rem;border-radius:8px;border:1px solid #c6ccd3}
+.hoja-details-card input{padding:.5rem;border-radius:8px;border:1px solid #c6ccd3}
 
-.modal-content-UP.hoja-modal .hoja-list-input{margin-top:.6rem;display:grid;gap:.5rem}
-.modal-content-UP.hoja-modal .hoja-input{padding:.6rem;border-radius:8px;border:1px solid #e6eef6;font-size:.95rem}
-.modal-content-UP.hoja-modal .hoja-checkbox-row{display:flex;align-items:center;gap:.6rem}
-.modal-content-UP.hoja-modal .m-0{margin:0!important}
-.modal-content-UP.hoja-modal .hoja-strong{font-weight:800}
-.modal-content-UP.hoja-modal .hoja-subtitle{font-weight:700;margin-top:.8rem}
-.modal-content-UP.hoja-modal .hoja-card-title{font-weight:700;margin-bottom:.4rem}
+/* Estudios form styling */
+.hoja-list-input.estudio-form{
+  border:1px solid #c6ccd3;
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.03);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.hoja-list-input.estudio-form .hoja-list-actions{justify-content:flex-end}
+.hoja-list-input.estudio-form input[type="date"],
+.hoja-list-input.estudio-form select,
+.hoja-list-input.estudio-form textarea{
+  border:1px solid #c6ccd3;
+  padding:8px;
+  border-radius:8px;
+}
+.hoja-list-input.experiencia-form input[type="date"],
+.hoja-list-input.experiencia-form select,
+.hoja-list-input.experiencia-form textarea,
+.hoja-list-input.experiencia-form input{
+  border:1px solid #c6ccd3;
+  padding:8px;
+  border-radius:8px;
+}
+.hoja-list-input.estudio-form .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hoja-list-input.estudio-form .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hoja-list-input.estudio-form label{font-weight:700;color:#222;display:block;margin-bottom:6px}
 
-/* Inputs */
-.modal-content-UP.hoja-modal input,.modal-content-UP.hoja-modal textarea,.modal-content-UP.hoja-modal select{width:100%;padding:.6rem;border-radius:8px;border:1px solid #e6eef6;box-sizing:border-box;font-size:.95rem;background:var(--background-card)}
-.modal-content-UP.hoja-modal textarea{min-height:80px;resize:vertical}
+/* Grid helpers for estudio form */
+.estudio-grid{display:grid;gap:12px}
+.estudio-grid.two-col{grid-template-columns:1fr 1fr}
+.two-col.full-width{grid-column:1 / -1}
+.full-width{grid-column:1 / -1}
+.checkbox-row{display:flex;align-items:center}
 
-/* Buttons and spacing */
-.modal-content-UP.hoja-modal .btn-small{padding:.45rem .8rem;border-radius:8px;font-weight:700}
+/* Inline checkbox label helper used in forms */
+.checkbox-inline-label{display:flex;align-items:center;gap:6px}
 
-/* List items layout for details (table-like) */
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple{display:grid;grid-template-columns:2.6fr 1fr 1fr 140px;gap:1.4rem;align-items:center;padding:1rem}
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple .hoja-subtitle{margin:0;font-weight:700}
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple .hoja-small-txt{margin:.12rem 0 0;color:var(--text-secondary)}
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple .hoja-list-actions{display:flex;justify-content:flex-end;gap:.5rem}
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple:nth-child(odd){background:#3b82f605}
-.modal-content-UP.hoja-modal .hoja-details-card .list-item-simple:hover{background:#3b82f60a}
+@media (max-width:720px){
+  .hoja-list-input.estudio-form .two-col{grid-template-columns:1fr}
+}
 
-/* Simple tweaks */
-.modal-content-UP.hoja-modal{font-size:.95rem}
+/* Edit pencil buttons: solid-color borders (no CSS vars) */
+.btn-edit{
+  border: 1px solid #0b66ff !important;
+  color: #0b66ff !important;
+  background: transparent !important;
+  border-radius: 8px;
+}
+.btn-edit:hover{
+  background: #0b66ff !important;
+  color: #ffffff !important;
+}
+.btn-edit[disabled], .btn-edit[aria-disabled="true"]{opacity:.6;pointer-events:none}
 
-/* Responsive */
-@media(max-width:720px){
-  .hoja-details-card .list-item-simple{grid-template-columns:1fr}
-  .hoja-details-card .list-item-simple .hoja-list-actions{justify-content:flex-start;margin-top:.5rem}
-  .modal-content-UP.hoja-modal{max-width:760px}
-  .hoja-view,.hoja-meta{grid-template-columns:1fr}
-  .hoja-details-card .section-title::after{display:none}
+.accent-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--chip-bg);
+  flex: 0 0 12px;
+}
+
+/* Title + subtitle */
+.modal-header-UP h2 {
+  font-size: 28px;
+  letter-spacing: 1px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.modal-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Close button */
+.modal-close-UP {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.modal-close-UP:hover { background: #f6f6f6; color: #000; }
+
+/* Body grid (contenido del modal) */
+.modal-body-simple.hoja-body-grid {
+  display: block;
+  font-size: var(--text-base);
+  line-height: 1.5;
+}
+
+/* Separador fino */
+.modal-body-simple hr,
+.modal-content-UP hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 20px 0;
+}
+
+/* Form / View containers */
+.hoja-edit-form .hoja-form-grid,
+.hoja-form-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Two columns row */
+.hoja-two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Form row with checkbox */
+.hoja-form-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* simple flex helper */
+.flex-1 { flex: 1; }
+
+/* checkbox column */
+.hoja-checkbox-row { display:flex; align-items:center; }
+
+/* Inputs and textarea */
+.hoja-edit-form input[type="text"],
+.hoja-edit-form input[type="email"],
+.hoja-edit-form textarea,
+.hoja-list-input input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: box-shadow .12s, border-color .12s;
+}
+.hoja-edit-form textarea { resize: vertical; min-height: 72px; }
+.hoja-edit-form input:focus,
+.hoja-edit-form textarea:focus {
+  border-color: rgba(11,102,255,0.18);
+  box-shadow: 0 0 0 4px rgba(11,102,255,0.06);
+}
+
+/* Actions row */
+.hoja-actions-row,
+.hoja-list-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Buttons small */
+.btn-small {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: var(--ghost-bg);
+}
+
+/* Primary / ghost / danger */
+.btn-small.primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: rgba(11,102,255,0.15);
+}
+.btn-small.ghost {
+  background: #fff;
+  color: #111;
+  border: 1px solid #e6e6e6;
+}
+.btn-small.danger {
+  background: var(--danger);
+  color: #fff;
+  border-color: rgba(217,83,79,0.15);
+}
+
+/* VIEW (tarjeta resumen) */
+.hoja-view { display: block; }
+
+.hoja-summary-card {
+  display: flex;
+  flex-direction: column; /* stack header + meta below it */
+  gap: 12px;
+  align-items: stretch;
+  padding: 16px;
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(10,10,10,0.03);
+}
+
+/* left side */
+.hoja-summary-header { display:flex; gap:16px; align-items:flex-start; justify-content:space-between; }
+
+/* aspirante name */
+.hoja-strong {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* small meta */
+.hoja-small-txt {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* actions on summary */
+.hoja-summary-actions { display:flex; gap:8px; align-items:center; }
+
+/* right column stack */
+.hoja-right-stack { display:flex; flex-direction:column; gap:6px; font-size:14px; color:#222; margin-top: 8px; }
+
+/* meta rows */
+.meta-row { display:flex; gap:8px; font-size:14px; }
+.meta-row strong { min-width: 80px; font-weight:700; }
+
+/* Details cards */
+.hoja-details-card {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(10,10,10,0.02);
+}
+
+/* Slight separation between stacked detail cards */
+.hoja-details-card + .hoja-details-card{ margin-top:12px }
+
+/* Accent for section titles to make structure clearer */
+.section-title{
+  position: relative;
+  padding-left: 12px;
+}
+.section-title::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 56%;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* Improve paragraph/text spacing inside cards */
+.hoja-details-card .hoja-small-txt{ margin-top:8px; color:#222; line-height:1.6 }
+
+/* List items more card-like for readability */
+.list-item-simple{
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #f1f1f1;
+  margin-bottom: 8px;
+  background: linear-gradient(180deg, #fff, #fbfbfb);
+}
+.list-item-simple:last-child{ margin-bottom:0 }
+
+/* When rendering an inline form inside a list item, switch to block layout so the form stacks properly */
+.list-item-simple.form-inline{ display:block; padding:12px; }
+.list-item-simple.form-inline .hoja-list-input.estudio-form{ margin-top:8px; }
+
+/* Make 'Resumen' block visually distinct when it appears alone */
+.hoja-details-card:has(.hoja-card-title + .hoja-small-txt){
+  padding-top: 12px;
+}
+
+/* Separator between 'Resumen' text and the following 'Objetivo' subtitle */
+.hoja-details-card > .hoja-small-txt + .hoja-subtitle{
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+/* Separators between stacked detail cards (semantic + fallbacks):
+   - objetivos (first details card) -> contacto (next details card)
+   - contacto -> estudios
+   - estudios -> experiencias
+*/
+.hoja-details-card:has(.hoja-subtitle) + .hoja-details-card,
+.hoja-details-card:has(.hoja-contacts) + .hoja-details-card,
+.hoja-details-card:has(.section-title) + .hoja-details-card{
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+/* Fallbacks using positional selectors in case :has() is not supported */
+.modal-content-UP.hoja-modal .hoja-view > :nth-child(3),
+.modal-content-UP.hoja-modal .hoja-view > :nth-child(4),
+.modal-content-UP.hoja-modal .hoja-view > :nth-child(5){
+  border-top: 1px slategray solid;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+/* Reduce separator spacing on small screens to save space */
+@media (max-width: 720px) {
+  .hoja-details-card:has(.hoja-subtitle) + .hoja-details-card,
+  .hoja-details-card:has(.hoja-contacts) + .hoja-details-card,
+  .hoja-details-card:has(.section-title) + .hoja-details-card,
+  .modal-content-UP.hoja-modal .hoja-view > :nth-child(3),
+  .modal-content-UP.hoja-modal .hoja-view > :nth-child(4),
+  .modal-content-UP.hoja-modal .hoja-view > :nth-child(5){
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+}
+
+
+/* Card titles */
+.hoja-card-title,
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .6px;
+  margin-bottom: 8px;
+}
+
+/* Make the left label in the Resumen card bold (target second details card)
+   This keeps the change CSS-only and avoids modifying JSX. */
+.modal-content-UP.hoja-modal .hoja-view > .hoja-details-card:nth-of-type(2) > div > div:first-child {
+  font-weight: 700;
+}
+
+/* Common meta layout helpers for two-column label/action rows used inside detail cards */
+.meta-column { display:flex; flex-direction:column; gap:8px; align-items:flex-start; width:100%; }
+.meta-row { display:flex; align-items:center; gap:12px; width:100%; }
+.meta-row-compact { display:flex; align-items:center; gap:8px; width:100%; }
+.meta-row-left { flex: 1 1 auto; min-width:0; }
+.meta-row-action { flex: 0 0 auto; }
+
+/* subtitle inside lists */
+.hoja-subtitle { font-weight:600; font-size:15px; margin-bottom:4px; }
+.hoja-contacts div { font-size:14px; color:#222; }
+
+/* Force solid, high-contrast colors for study & experience subtitles
+   (override accidental transparent/variable values). */
+.hoja-details-card .hoja-subtitle{
+  color: #111 !important;
+}
+.hoja-details-card .hoja-card-title,
+.hoja-details-card .section-title{
+  color: #111 !important;
+}
+.hoja-details-card .hoja-small-txt{
+  color: #333 !important;
+}
+
+/* List item row */
+.list-item-simple {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+/* list actions align */
+.hoja-list-actions { display:flex; gap:8px; align-items:center; }
+
+/* muted text fallback */
+.text-muted,
+.muted { color: var(--muted); font-size:14px; }
+
+/* Inline input area used for add/edit estudio/exp */
+.hoja-list-input {
+  display:flex;
+  gap: 8px;
+  align-items:center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* Chips (skills) */
+.skill, .chip {
+  display:inline-block;
+  background: var(--chip-bg);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* small spacing helpers */
+.mt-04 { margin-top: .4rem; }
+.mt-06 { margin-top: .6rem; }
+
+/* Responsive adjustments */
+@media (max-width: 720px) {
+  .modal-content-UP.hoja-modal { padding: 28px 20px; }
+  .hoja-two-cols { grid-template-columns: 1fr; }
+  .hoja-summary-card { flex-direction: column; align-items: flex-start; }
+  .hoja-summary-actions { align-self: stretch; justify-content: flex-start; }
+  .modal-header-UP.hoja-modal-header{ padding-bottom: 10px; margin-bottom: 12px }
 }

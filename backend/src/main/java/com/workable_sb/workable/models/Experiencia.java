@@ -40,6 +40,10 @@ public class Experiencia {
     @Column(length = 1000)
     private String descripcion;
 
+    @Size(max = 500, message = "La URL del certificado no puede exceder 500 caracteres")
+    @Column(length = 500)
+    private String certificadoUrl;
+
     @NotNull(message = "La fecha de inicio es obligatoria")
     @PastOrPresent(message = "La fecha de inicio no puede ser futura")
     @Column(nullable = false)
