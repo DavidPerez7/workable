@@ -21,6 +21,14 @@ export default function AdminUsuarios() {
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  // Clear success messages after a short timeout
+  useEffect(() => {
+    if (!success) return;
+    const t = setTimeout(() => setSuccess(''), 3500);
+    return () => clearTimeout(t);
+  }, [success]);
   const [showModal, setShowModal] = useState(false);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -347,13 +355,37 @@ export default function AdminUsuarios() {
 
   const handleEditar = async (id, rol) => {
     try {
-      let usuario;
-      if (rol === 'ASPIRANTE') {
-        usuario = await aspirantesApi.getPublic(id);
-      } else if (rol === 'RECLUTADOR') {
-        usuario = await reclutadoresApi.getPublic(id);
-      } else if (rol === 'ADMIN') {
-        usuario = await administradorAPI.get(id);
+      // clear previous messages
+      setError('');
+      setSuccess('');
+      // Try to reuse already-loaded user data to avoid extra API calls and race conditions
+      const existing = usuarios.find((u) => u.id === id);
+      let usuario = existing?.originalData || null;
+
+      // If not present, fetch from API as fallback
+      if (!usuario) {
+        if (rol === 'ASPIRANTE') {
+          usuario = await aspirantesApi.getPublic(id);
+        } else if (rol === 'RECLUTADOR') {
+          usuario = await reclutadoresApi.getPublic(id);
+        } else if (rol === 'ADMIN') {
+          usuario = await administradorAPI.get(id);
+        }
+      }
+
+      if (!usuario) {
+        setError('Usuario no encontrado');
+        return;
+      }
+
+      // Normalize fechaNacimiento to yyyy-mm-dd if it's an ISO string
+      let fechaNacimiento = '';
+      if (usuario.fechaNacimiento) {
+        if (typeof usuario.fechaNacimiento === 'string') {
+          fechaNacimiento = usuario.fechaNacimiento.split('T')[0];
+        } else {
+          fechaNacimiento = String(usuario.fechaNacimiento);
+        }
       }
 
       setEditingUser({ id, rol, data: usuario });
@@ -364,7 +396,7 @@ export default function AdminUsuarios() {
         telefono: usuario.telefono || '',
         urlFotoPerfil: usuario.urlFotoPerfil || '',
         urlBanner: usuario.urlBanner || '',
-        fechaNacimiento: usuario.fechaNacimiento || '',
+        fechaNacimiento: fechaNacimiento,
         genero: usuario.genero || '',
         password: '',
         rol: rol,
@@ -374,7 +406,7 @@ export default function AdminUsuarios() {
       setShowModal(true);
     } catch (err) {
       setError('Error al cargar usuario');
-      console.error(err);
+      console.error('handleEditar error:', err);
     }
   };
 
@@ -448,7 +480,7 @@ export default function AdminUsuarios() {
         } else if (rol === 'ADMIN') {
           await administradorAPI.update(id, updateData);
         }
-        setError('Usuario actualizado correctamente');
+        setSuccess('Usuario actualizado correctamente');
       } else {
         // Crear nuevo usuario
         if (!formData.password) {
@@ -498,7 +530,7 @@ export default function AdminUsuarios() {
           respuesta = await administradorAPI.create(updateData);
         }
         console.log('Respuesta de creación:', respuesta);
-        setError('Usuario creado correctamente');
+        setSuccess('Usuario creado correctamente');
       }
       
       setTimeout(() => {
@@ -515,8 +547,18 @@ export default function AdminUsuarios() {
     }
   };
 
+  // Handle form input changes for create/edit user modal
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
   const handleActivar = async (id, rol) => {
     try {
+      if (!window.confirm('¿Estás seguro de activar este usuario?')) return;
       if (rol === 'ASPIRANTE') {
         await aspirantesApi.activate(id);
       } else if (rol === 'RECLUTADOR') {
@@ -526,6 +568,7 @@ export default function AdminUsuarios() {
         const admin = await administradorAPI.get(id);
         await administradorAPI.update(id, { ...admin, isActive: true });
       }
+      setSuccess('Usuario activado correctamente');
       cargarUsuarios();
     } catch (err) {
       setError('Error al activar usuario');
@@ -535,6 +578,7 @@ export default function AdminUsuarios() {
 
   const handleDesactivar = async (id, rol) => {
     try {
+      if (!window.confirm('¿Estás seguro de desactivar este usuario?')) return;
       if (rol === 'ASPIRANTE') {
         await aspirantesApi.deactivate(id);
       } else if (rol === 'RECLUTADOR') {
@@ -544,6 +588,7 @@ export default function AdminUsuarios() {
         const admin = await administradorAPI.get(id);
         await administradorAPI.update(id, { ...admin, isActive: false });
       }
+      setSuccess('Usuario desactivado correctamente');
       cargarUsuarios();
     } catch (err) {
       setError('Error al desactivar usuario');
@@ -557,10 +602,13 @@ export default function AdminUsuarios() {
         if (rol === 'ASPIRANTE') {
           await aspirantesApi.delete(id);
         } else if (rol === 'RECLUTADOR') {
-          await reclutadoresApi.delete(id, id); // reclutadorIdActual = id
+          // Use current admin id as the "reclutadorIdActual" parameter to avoid accidental permission issues
+          const adminId = Number(localStorage.getItem('usuarioId')) || id;
+          await reclutadoresApi.delete(id, adminId);
         } else if (rol === 'ADMIN') {
           await administradorAPI.delete(id);
         }
+        setSuccess('Usuario eliminado correctamente');
         cargarUsuarios();
       } catch (err) {
         if (err.response && err.response.data && err.response.data.error) {
@@ -762,6 +810,12 @@ export default function AdminUsuarios() {
           {error && (
             <div style={{padding: '1.2rem 1.5rem', background: editingUser ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%)' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.06) 100%)', color: editingUser ? '#3B82F6' : '#DC2626', borderRadius: '10px', borderLeft: '4px solid ' + (editingUser ? '#3B82F6' : '#DC2626'), fontWeight: '700', fontSize: '0.95em', letterSpacing: '0.3px', marginBottom: '1rem'}}>
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div style={{padding: '1.2rem 1.5rem', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%)', color: '#059669', borderRadius: '10px', borderLeft: '4px solid #10B981', fontWeight: '700', fontSize: '0.95em', letterSpacing: '0.3px', marginBottom: '1rem'}}>
+              {success}
             </div>
           )}
 
