@@ -97,6 +97,23 @@ export const obtenerPostulacionesPorOferta = async (ofertaId, usuarioIdActual) =
   }
 };
 
+// Obtener conteo de postulaciones de una oferta
+export const obtenerConteoPostulacionesPorOferta = async (ofertaId) => {
+  try {
+    const response = await axios.get(`${API_URL}/oferta/${ofertaId}/count`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data.count;
+  } catch (error) {
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al obtener conteo de postulaciones:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
+  }
+};
+
 // Cambiar estado de postulación (para reclutadores)
 export const cambiarEstadoPostulacion = async (postulacionId, estado) => {
   try {
@@ -135,6 +152,7 @@ export default {
   obtenerPostulacionesAspirante,
   obtenerPostulacionPorId,
   obtenerPostulacionesPorOferta,
+  obtenerConteoPostulacionesPorOferta,
   crearPostulacion,
   cambiarEstadoPostulacion,
   actualizarPostulacion,

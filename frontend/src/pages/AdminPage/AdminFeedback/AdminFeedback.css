@@ -1,0 +1,252 @@
+/* AdminFeedback Styles */
+
+/* Tabla feedback */
+.tabla-feedback-header {
+  background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+}
+
+/* Estrellas de puntuación */
+.stars-container {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.star {
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: var(--transition);
+  color: #D1D5DB;
+}
+
+.star.filled {
+  color: #FBBF24;
+}
+
+.star.half {
+  background: linear-gradient(
+    90deg,
+    #FBBF24 0%,
+    #FBBF24 50%,
+    #D1D5DB 50%,
+    #D1D5DB 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.star:hover {
+  color: #FBBF24;
+  transform: scale(1.2);
+}
+
+.puntuacion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FEF3C7;
+  color: #92400E;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.puntuacion-valor {
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+/* Comentario feedback */
+.feedback-comentario {
+  background: #F9FAFB;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  color: var(--text-primary);
+  font-style: italic;
+  line-height: 1.6;
+  margin-top: 1rem;
+}
+
+.feedback-comentario-vacio {
+  color: var(--text-secondary);
+  font-style: normal;
+}
+
+/* Información empresa y oferta */
+.feedback-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.feedback-info-item {
+  padding: 0.75rem;
+  background: #F3F4F6;
+  border-radius: 6px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.feedback-info-label {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.feedback-info-valor {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Rating input */
+.rating-input-container {
+  margin: 1rem 0;
+}
+
+.rating-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.rating-stars-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rating-star-btn {
+  background: none;
+  border: none;
+  font-size: 2em;
+  cursor: pointer;
+  color: #D1D5DB;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.rating-star-btn:hover,
+.rating-star-btn.active {
+  color: #FBBF24;
+  transform: scale(1.2);
+}
+
+.rating-value-display {
+  font-size: 0.95em;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/* Comentario textarea */
+.comentario-textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+  transition: var(--transition);
+}
+
+.comentario-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Formulario feedback */
+.feedback-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.feedback-form-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Botones feedback */
+.btn-feedback-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-light);
+}
+
+.btn-feedback-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-feedback-secondary {
+  background: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-feedback-secondary:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-feedback-danger {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-feedback-danger:hover {
+  background: #FCA5A5;
+  color: white;
+}
+
+/* Modal acciones */
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: flex-end;
+}
+
+/* Estado vacío */
+.sin-feedback {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-secondary);
+}
+
+.sin-feedback-icon {
+  font-size: 4em;
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}

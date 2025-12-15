@@ -1,0 +1,192 @@
+/* AdminNotificaciones Styles */
+
+/* Badge para tipos de notificación */
+.badge-tipo-oferta {
+  background-color: #DBEAFE;
+  color: #0C4A6E;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-tipo-postulacion {
+  background-color: #E9D5FF;
+  color: #581C87;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-tipo-citacion {
+  background-color: #FED7AA;
+  color: #92400E;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-tipo-sistema {
+  background-color: #E0E7FF;
+  color: #312E81;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-tipo-otro {
+  background-color: #F3F4F6;
+  color: #374151;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* Estado leída/no leída */
+.badge-leida {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #10B981;
+  margin-right: 0.5rem;
+}
+
+.badge-no-leida {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #F59E0B;
+  margin-right: 0.5rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Tabla notificaciones */
+.tabla-notificaciones-header {
+  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+}
+
+.notificacion-mensaje {
+  color: var(--text-primary);
+  font-size: 0.95em;
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+.notificacion-timestamp {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+}
+
+/* Botón marcar como leída */
+.btn-marcar-leida {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-marcar-leida:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+/* Modal notificación */
+.modal-notificacion-content {
+  padding: 1.5rem;
+}
+
+.modal-titulo {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.modal-detalle {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.detalle-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+}
+
+.detalle-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.detalle-valor {
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+/* Filtro tipo notificación */
+.filter-tipo-notificacion {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.filter-btn-tipo {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid var(--border-color);
+  background: white;
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+}
+
+.filter-btn-tipo.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.filter-btn-tipo:hover {
+  border-color: var(--primary-color);
+}
+
+/* No hay notificaciones */
+.sin-notificaciones {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.sin-notificaciones-icon {
+  font-size: 3em;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}

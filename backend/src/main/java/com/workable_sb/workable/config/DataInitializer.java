@@ -207,41 +207,23 @@ public class DataInitializer implements CommandLineRunner {
             empresa1.setEmailContacto("contacto@bancolombia.com.co");
             empresa1.setTelefonoContacto("6013078000");
             empresa1.setNumeroTrabajadores(5000);
+            empresa1.setPuntuacion(4.5f);
             empresa1.setWebsite("www.bancolombia.com");
+            empresa1.setLogoUrl("https://www.bancolombia.com/wcm/connect/www.bancolombia.com-1.0.0/hogar/imagenes/logo-bancolombia.png");
+            empresa1.getRedesSociales().add("https://www.facebook.com/Bancolombia");
+            empresa1.getRedesSociales().add("https://www.instagram.com/bancolombia");
+            empresa1.getRedesSociales().add("https://www.twitter.com/Bancolombia");
+            empresa1.getDirecciones().add("Carrera 48 # 26-85, Medellín, Colombia");
+            empresa1.getDirecciones().add("Calle 72 # 7-83, Bogotá, Colombia");
+            empresa1.setRazonSocial("Bancolombia S.A.");
             empresa1.setMunicipio(municipioBogota);
             empresa1.setIsActive(true);
+            empresa1.getCategories().add(Empresa.Category.BANCA);
+            empresa1.getCategories().add(Empresa.Category.FINANZAS);
             empresaRepo.save(empresa1);
             System.out.println("✓ Empresa 1 creada: Bancolombia");
 
-            // EMPRESA 2 - Ecopetrol
-            Empresa empresa2 = new Empresa();
-            empresa2.setNombre("Ecopetrol");
-            empresa2.setDescripcion("Empresa petrolera estatal");
-            empresa2.setNit("899999063");
-            empresa2.setEmailContacto("contacto@ecopetrol.com.co");
-            empresa2.setTelefonoContacto("6012345678");
-            empresa2.setNumeroTrabajadores(3500);
-            empresa2.setWebsite("www.ecopetrol.com.co");
-            empresa2.setMunicipio(municipioBogota);
-            empresa2.setIsActive(true);
-            empresaRepo.save(empresa2);
-            System.out.println("✓ Empresa 2 creada: Ecopetrol");
-
-            // EMPRESA 3 - Grupo Aval
-            Empresa empresa3 = new Empresa();
-            empresa3.setNombre("Grupo Aval");
-            empresa3.setDescripcion("Holding financiero");
-            empresa3.setNit("860034313");
-            empresa3.setEmailContacto("contacto@grupoaval.com");
-            empresa3.setTelefonoContacto("6012345679");
-            empresa3.setNumeroTrabajadores(2000);
-            empresa3.setWebsite("www.grupoaval.com");
-            empresa3.setMunicipio(municipioBogota);
-            empresa3.setIsActive(true);
-            empresaRepo.save(empresa3);
-            System.out.println("✓ Empresa 3 creada: Grupo Aval");
-
-            System.out.println("✓ Empresas recreadas: 3 empresas disponibles");
+            System.out.println("✓ Empresas recreadas: 1 empresa disponible");
         } catch (Exception e) {
             System.err.println("Error en recreateEmpresas: " + e.getMessage());
             e.printStackTrace();

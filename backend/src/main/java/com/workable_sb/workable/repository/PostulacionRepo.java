@@ -32,4 +32,7 @@ public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
     
     // Buscar postulaciones por oferta y estado ordenadas por fecha
     List<Postulacion> findByOfertaIdAndEstadoOrderByFechaCreacionDesc(Long ofertaId, Estado estado);
+    
+    // Contar postulaciones por oferta
+    long countByOfertaId(Long ofertaId);
 }

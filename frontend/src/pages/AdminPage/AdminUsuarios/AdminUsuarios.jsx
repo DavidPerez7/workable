@@ -3,6 +3,7 @@ import Sidebar from '../SideBar/Sidebar';
 import Footer from '../../../components/Footer/footer';
 import aspirantesApi from '../../../api/aspirantesApi';
 import reclutadoresApi from '../../../api/reclutadoresApi';
+import { getEmpresaById } from '/src/api/empresaAPI';
 import administradorAPI from '../../../api/administradorAPI';
 import hojaDeVidaApi, { actualizarHojaDeVida as actualizarHojaDeVidaNamed } from '/src/api/hojaDeVidaAPI.js';
 import API from '/src/api/axiosConfig.js';
@@ -10,6 +11,7 @@ import { obtenerEstudiosPorUsuario, crearEstudio, actualizarEstudio, eliminarEst
 import { obtenerExperienciasPorUsuario, crearExperiencia, actualizarExperiencia, eliminarExperiencia } from '../../../api/experienciaAPI';
 import './AdminUsuarios.css';
 import HojaDeVidaModal from './components/HojaDeVidaModal';
+import CompanyModal from './components/CompanyModal';
 import UsersTable from './components/UsersTable';
 import FiltersBar from './components/FiltersBar';
 import StatsCards from './components/StatsCards';
@@ -57,6 +59,10 @@ export default function AdminUsuarios() {
     password: '',
     rol: 'ASPIRANTE'
   });
+  const [empresaMap, setEmpresaMap] = useState({}); // cache empresa.nombre by usuario id
+  const [companyModalVisible, setCompanyModalVisible] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [loadingCompany, setLoadingCompany] = useState(false);
 
   useEffect(() => {
     cargarUsuarios();
@@ -157,6 +163,13 @@ export default function AdminUsuarios() {
       }
 
       setUsuarios(usuariosData);
+      // Build empresaMap from already-loaded data to avoid extra backend calls
+      const reclutadores = usuariosData.filter((u) => u.rol === 'RECLUTADOR');
+      const mapUpdates = {};
+      reclutadores.forEach((r) => {
+        mapUpdates[r.id] = r.empresa || '-';
+      });
+      setEmpresaMap(mapUpdates);
     } catch (err) {
       setError('Error al cargar usuarios');
       console.error(err);
@@ -270,8 +283,20 @@ export default function AdminUsuarios() {
         return <td key={column}><button className="btn-action-UP" onClick={() => handleVerHojaVida(usuario.id)} title="Ver Hoja de Vida">Ver</button></td>;
       case 'Banner':
         return <td key={column}>{usuario.urlBanner ? <a href={usuario.urlBanner} target="_blank" rel="noopener noreferrer" style={{color: '#3B82F6', textDecoration: 'none'}}>Ver</a> : '-'}</td>;
-      case 'Empresa':
-        return <td key={column}>{usuario.empresa || '-'}</td>;
+      case 'Empresa': {
+        // Prefer value from empresaMap (fetched from backend), fall back to usuario.empresa or '-' if not available.
+        const empresaName = empresaMap[usuario.id];
+        return (
+          <td key={column}>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span>{empresaName === null ? 'Cargando...' : (empresaName ?? usuario.empresa ?? '-')}</span>
+              {usuario.rol === 'RECLUTADOR' && (
+                <button className="btn-action-UP" onClick={() => openCompanyModal(usuario.id)} title="Ver Empresa">Ver Empresa</button>
+              )}
+            </div>
+          </td>
+        );
+      }
       case 'Último Acceso':
         return <td key={column}>{usuario.ultimoAcceso || '-'}</td>;
       case 'Rol':
@@ -497,6 +522,10 @@ export default function AdminUsuarios() {
           setError('Fecha de nacimiento es requerida');
           return;
         }
+        if (formData.rol === 'ASPIRANTE' && !formData.genero) {
+          setError('Género es requerido');
+          return;
+        }
         
         updateData.password = formData.password;
         updateData.fechaNacimiento = formData.fechaNacimiento;
@@ -571,7 +600,11 @@ export default function AdminUsuarios() {
       if (rol === 'ASPIRANTE') {
         await aspirantesApi.activate(id);
       } else if (rol === 'RECLUTADOR') {
-        const reclutador = await reclutadoresApi.get(id);
+        // Prefer using already-loaded data to avoid permission-related 500s
+        let reclutador = usuarios.find((u) => u.id === id && u.rol === 'RECLUTADOR')?.originalData;
+        if (!reclutador) {
+          reclutador = await reclutadoresApi.get(id);
+        }
         await reclutadoresApi.updateAdmin(id, { ...reclutador, isActive: true });
       } else if (rol === 'ADMIN') {
         const admin = await administradorAPI.get(id);
@@ -591,7 +624,11 @@ export default function AdminUsuarios() {
       if (rol === 'ASPIRANTE') {
         await aspirantesApi.deactivate(id);
       } else if (rol === 'RECLUTADOR') {
-        const reclutador = await reclutadoresApi.get(id);
+        // Prefer using already-loaded data to avoid permission-related 500s
+        let reclutador = usuarios.find((u) => u.id === id && u.rol === 'RECLUTADOR')?.originalData;
+        if (!reclutador) {
+          reclutador = await reclutadoresApi.get(id);
+        }
         await reclutadoresApi.updateAdmin(id, { ...reclutador, isActive: false });
       } else if (rol === 'ADMIN') {
         const admin = await administradorAPI.get(id);
@@ -627,6 +664,55 @@ export default function AdminUsuarios() {
         }
         console.error(err);
       }
+    }
+  };
+
+  const openCompanyModal = async (reclutadorId) => {
+    try {
+      setLoadingCompany(true);
+      setSelectedCompany(null);
+      setCompanyModalVisible(true);
+      // Buscar reclutador en caché o API
+      let reclutador = null;
+      const existing = usuarios.find((u) => u.id === reclutadorId && u.rol === 'RECLUTADOR');
+      if (existing?.originalData) {
+        reclutador = existing.originalData;
+      } else {
+        try {
+          reclutador = await reclutadoresApi.get(reclutadorId);
+        } catch (err) {
+          try {
+            reclutador = await reclutadoresApi.getPublic(reclutadorId);
+          } catch (err2) {
+            setSelectedCompany({ nombre: '-', message: 'Error al obtener datos del reclutador' });
+            return;
+          }
+        }
+      }
+      // Extraer empresaId correctamente (puede ser objeto o string)
+      let empresaId = null;
+      if (reclutador?.empresa) {
+        if (typeof reclutador.empresa === 'object' && reclutador.empresa !== null) {
+          empresaId = reclutador.empresa.id || reclutador.empresa._id || null;
+        } else if (typeof reclutador.empresa === 'string') {
+          empresaId = reclutador.empresa;
+        }
+      }
+      if (!empresaId) {
+        setSelectedCompany({ nombre: '-', message: 'No tiene empresa asociada' });
+        return;
+      }
+      // Consultar empresa en backend
+      try {
+        const empresa = await getEmpresaById(empresaId);
+        setSelectedCompany(empresa);
+      } catch (err) {
+        setSelectedCompany({ nombre: '-', message: 'Error al obtener empresa del backend' });
+      }
+    } catch (err) {
+      setSelectedCompany({ nombre: '-', message: 'Error al cargar empresa' });
+    } finally {
+      setLoadingCompany(false);
     }
   };
 
@@ -886,19 +972,6 @@ export default function AdminUsuarios() {
                 <input type="tel" name="telefono" value={formData.telefono} onChange={handleInputChange} placeholder="Ej: 3001234567" />
               </div>
 
-              {formData.rol === 'ASPIRANTE' && (
-                <>
-                  <div className="form-group-UP">
-                    <label>Descripción</label>
-                    <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Descripción del aspirante" rows="3" />
-                  </div>
-                  <div className="form-group-UP">
-                    <label>Ubicación</label>
-                    <input type="text" name="ubicacion" value={formData.ubicacion} onChange={handleInputChange} placeholder="Ubicación" />
-                  </div>
-                </>
-              )}
-
               {formData.rol === 'RECLUTADOR' && (
                 <>
                   <div className="form-group-UP">
@@ -908,6 +981,10 @@ export default function AdminUsuarios() {
                   <div className="form-group-UP">
                     <label>Empresa ID (para reasignar)</label>
                     <input type="number" name="empresaId" value={formData.empresaId || ''} onChange={handleInputChange} placeholder="ID empresa (opcional)" />
+                  </div>
+                  <div className="form-group-UP">
+                    <label>Fecha de Nacimiento {editingUser ? '' : '*'}</label>
+                    <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required={!editingUser} />
                   </div>
                 </>
               )}
@@ -927,6 +1004,15 @@ export default function AdminUsuarios() {
                   <div className="form-group-UP">
                     <label>Fecha de Nacimiento {editingUser ? '' : '*'}</label>
                     <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required={!editingUser} />
+                  </div>
+                  <div className="form-group-UP">
+                    <label>Género {editingUser ? '' : '*'}</label>
+                    <select name="genero" value={formData.genero} onChange={handleInputChange} required={!editingUser}>
+                      <option value="">Selecciona un género</option>
+                      <option value="MASCULINO">Masculino</option>
+                      <option value="FEMENINO">Femenino</option>
+                      <option value="OTRO">Otro</option>
+                    </select>
                   </div>
                   <div className="form-group-UP">
                     <label>Descripción</label>
@@ -1083,6 +1169,9 @@ export default function AdminUsuarios() {
           handleSaveExperiencia={saveExperiencia}
           handleDeleteExperiencia={handleDeleteExperiencia}
         />
+      )}
+      {companyModalVisible && (
+        <CompanyModal show={companyModalVisible} onClose={() => { setCompanyModalVisible(false); setSelectedCompany(null); }} company={selectedCompany} loading={loadingCompany} />
       )}
       <Footer />
     </div>

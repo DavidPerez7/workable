@@ -1,0 +1,211 @@
+/* AdminCitaciones Styles */
+
+/* Estilos específicos para tabla de citaciones */
+.tabla-citaciones-header {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  font-weight: 700;
+  padding: 1rem;
+}
+
+/* Badge para estados de citación */
+.badge-pendiente {
+  background-color: #FEF3C7;
+  color: #92400E;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-confirmada {
+  background-color: #D1FAE5;
+  color: #065F46;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-asistio {
+  background-color: #D1FAE5;
+  color: #065F46;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-no_asistio {
+  background-color: #FED7D7;
+  color: #742A2A;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.badge-cancelada {
+  background-color: #E5E7EB;
+  color: #374151;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* Estilos para campos en modales */
+.form-field-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-field-input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+  transition: var(--transition);
+}
+
+.form-field-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-field-select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: var(--transition);
+  background: white;
+}
+
+.form-field-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-field-textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+  transition: var(--transition);
+}
+
+.form-field-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Botones de acción */
+.btn-action-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-light);
+}
+
+.btn-action-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-action-secondary {
+  background: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-action-secondary:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-action-danger {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-action-danger:hover {
+  background: #FCA5A5;
+  color: white;
+}
+
+/* Modal Link */
+.modal-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal-link:hover {
+  text-decoration: underline;
+}
+
+/* Filtros y búsqueda */
+.filtros-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+}
+
+.filter-select {
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  background: white;
+  min-width: 150px;
+}

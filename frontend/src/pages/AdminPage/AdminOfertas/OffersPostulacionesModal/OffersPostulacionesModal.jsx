@@ -13,7 +13,7 @@ export default function OffersPostulacionesModal({ isOpen, ofertaId, onClose, on
   const [editingId, setEditingId] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editForm, setEditForm] = useState({ aspiranteId: '', estado: '' });
-  const [createForm, setCreateForm] = useState({ aspiranteId: '', estado: 'PENDIENTE' });
+  const [createForm, setCreateForm] = useState({ aspiranteId: '' });
 
   useEffect(() => {
     if (isOpen && ofertaId) {
@@ -104,9 +104,9 @@ export default function OffersPostulacionesModal({ isOpen, ofertaId, onClose, on
     }
     try {
       setLoading(true);
-      await crearPostulacion({ aspirante: { id: parseInt(createForm.aspiranteId) }, oferta: { id: ofertaId }, estado: createForm.estado });
+      await crearPostulacion({ aspiranteId: parseInt(createForm.aspiranteId), ofertaId: ofertaId });
       setShowCreateForm(false);
-      setCreateForm({ aspiranteId: '', estado: 'PENDIENTE' });
+      setCreateForm({ aspiranteId: '' });
       if (onChange) onChange();
       fetchData();
     } catch (err) {
@@ -167,18 +167,6 @@ export default function OffersPostulacionesModal({ isOpen, ofertaId, onClose, on
                       {aspirante.nombre} {aspirante.apellido} - {aspirante.email}
                     </option>
                   ))}
-                </select>
-              </div>
-              <div className="form-group-opm">
-                <label>Estado</label>
-                <select
-                  value={createForm.estado}
-                  onChange={(e) => setCreateForm({ ...createForm, estado: e.target.value })}
-                >
-                  <option value="PENDIENTE">Pendiente</option>
-                  <option value="ACEPTADO">Aceptado</option>
-                  <option value="RECHAZADO">Rechazado</option>
-                  <option value="ENTREVISTA_PROGRAMADA">Entrevista Programada</option>
                 </select>
               </div>
               <div className="form-buttons-opm">

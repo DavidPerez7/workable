@@ -1,4 +1,39 @@
-/* CSS Variables for Professional Theme - Matching Header Palette */
+/* Recruiters Modal Table */
+.recruiters-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.recruiters-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8em;
+}
+
+.recruiters-table th,
+.recruiters-table td {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.recruiters-table th {
+  background: var(--background-card);
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.recruiters-table tbody tr:nth-child(even) {
+  background-color: rgba(59, 130, 246, 0.03);
+}
+
+.recruiters-table tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.12);
+}
 :root {
   --primary-color: #3B82F6;
   --primary-hover: #1D4ED8;
@@ -465,7 +500,7 @@
   width: 100%;
   border-collapse: collapse;
   min-width: 1100px;
-  font-size: 0.95em;
+  font-size: 0.85em;
 }
 
 .companies-table-CP thead {
@@ -473,22 +508,24 @@
 }
 
 .companies-table-CP th {
-  padding: 0.7rem 0.9rem;
+  padding: 0.4rem 0.6rem;
   text-align: left;
   font-weight: 800;
   color: var(--text-primary);
-  font-size: 0.75em;
+  font-size: 0.65em;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid var(--border-color);
+  line-height: 1.2;
 }
 
 .companies-table-CP td {
-  padding: 0.7rem 0.9rem;
+  padding: 0.4rem 0.6rem;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 0.88em;
+  font-size: 0.75em;
   font-weight: 500;
+  line-height: 1.2;
 }
 
 .companies-table-CP tbody tr:nth-child(even) {
@@ -567,10 +604,10 @@
 }
 
 .btn-action-CP {
-  padding: 0.75rem 1.2rem;
+  padding: 0.4rem 0.8rem;
   border: 1.5px solid var(--border-color);
   border-radius: var(--border-radius);
-  font-size: 0.9em;
+  font-size: 0.8em;
   cursor: pointer;
   transition: var(--transition);
   background-color: var(--background-card);
@@ -581,9 +618,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-width: 44px;
-  min-height: 44px;
+  gap: 0.3rem;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 .btn-action-CP:hover {
@@ -900,4 +937,24 @@
   .btn-submit-CP {
     width: 100%;
   }
+}
+
+/* Categories Grid */
+.categories-grid-CP {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.category-checkbox-CP {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.category-checkbox-CP input[type="checkbox"] {
+  margin: 0;
 }

@@ -4,6 +4,7 @@ import Footer from '../../../components/Footer/footer';
 import Sidebar from '../SideBar/Sidebar';
 import { getAllOfertas, crearOferta, actualizarOferta, eliminarOferta, cambiarEstadoOferta } from '../../../api/ofertasAPI';
 import { getAllEmpresasDto } from '../../../api/empresaAPI';
+import { obtenerConteoPostulacionesPorOferta } from '../../../api/postulacionesAPI';
 import './AdminOfertas.css';
 import OffersTable from './OffersTable';
 import OffersPostulacionesModal from './OffersPostulacionesModal/OffersPostulacionesModal';
@@ -48,7 +49,19 @@ function OffersPage() {
         getAllOfertas(),
         getAllEmpresasDto()
       ]);
-      setOfertas(ofertasData);
+      // Fetch postulaciones count for each oferta
+      const ofertasWithCount = await Promise.all(
+        ofertasData.map(async (oferta) => {
+          try {
+            const count = await obtenerConteoPostulacionesPorOferta(oferta.id);
+            return { ...oferta, postulacionesCount: count };
+          } catch (err) {
+            console.error(`Error fetching count for oferta ${oferta.id}:`, err);
+            return { ...oferta, postulacionesCount: 0 };
+          }
+        })
+      );
+      setOfertas(ofertasWithCount);
       setEmpresas(empresasData);
     } catch (err) {
       console.error('Error:', err);

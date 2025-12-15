@@ -80,7 +80,7 @@ public class Empresa {
 
     // Estado de la empresa
     @Column(nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     // Código de invitación para que otros reclutadores se unan
     @Column(length = 20, unique = true)
@@ -151,8 +151,9 @@ public class Empresa {
 
     @PrePersist
     protected void onCreate() {
-        if (fechaCreacion == null) {
+        if (fechaCreacion == null || isActive == null) {
             fechaCreacion = LocalDate.now();
+            isActive = true;
         }
         // Generar código de invitación si no existe
         if (codigoInvitacion == null || codigoInvitacion.isEmpty()) {

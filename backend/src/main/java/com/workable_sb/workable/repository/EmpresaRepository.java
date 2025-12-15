@@ -24,6 +24,11 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
 
     // Buscar empresa por NIT
     Optional<Empresa> findByNit(String nit);
+
+    // Buscar empresa por ID (no Optional)
+    default Empresa getByIdDirect(Long id) {
+        return findById(id).orElseThrow(() -> new RuntimeException("Empresa not found"));
+    }
     
     // Verificar si existe empresa con ese NIT
     boolean existsByNit(String nit);

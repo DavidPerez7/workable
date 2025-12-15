@@ -112,6 +112,14 @@ public class PostulacionService {
 		return postulacionRepo.findByOfertaId(ofertaId);
 	}
 
+	public long contarPorOferta(Long ofertaId) {
+		// Validar que la oferta existe
+		ofertaRepo.findById(ofertaId)
+			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+
+		return postulacionRepo.countByOfertaId(ofertaId);
+	}
+
 	public List<Postulacion> listarPorAspirante(Long aspiranteId, Long usuarioIdActual) {
 		// Validar que el usuario actual sea el aspirante (solo puedes ver tus propias postulaciones)
 		if (!aspiranteId.equals(usuarioIdActual) && !adminValidationService.isAdmin()) {

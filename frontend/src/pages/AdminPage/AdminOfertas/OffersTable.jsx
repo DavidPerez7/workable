@@ -80,7 +80,7 @@ export default function OffersTable({ ofertas = [], onEdit = () => {}, onChangeS
                 <td>{formatBenefits(oferta.beneficios)}</td>
                 <td>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <div>{Array.isArray(oferta.postulaciones) ? oferta.postulaciones.length : (oferta.postulaciones?.size ? oferta.postulaciones.size : (oferta.postulaciones ? Object.keys(oferta.postulaciones).length : '—'))}</div>
+                    <div>{oferta.postulacionesCount ?? 0}</div>
                     <button className="btn-action-UP" title="Ver postulaciones" onClick={() => onViewPostulaciones(oferta.id)}>Ver</button>
                   </div>
                 </td>

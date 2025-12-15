@@ -1,76 +1,37 @@
-import axios from "axios";
+import api from './axiosConfig';
 
-const API_URL = "http://localhost:8080/api/habilidad";
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  return {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
-};
-
-// Obtener todas las habilidades del aspirante logueado
-export const obtenerHabilidadesAspirante = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/aspirante`, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener habilidades:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al obtener habilidades");
-  }
-};
-
-// Obtener habilidad por ID
-export const obtenerHabilidadPorId = async (id) => {
-  try {
-    const response = await axios.get(`${API_URL}/${id}`, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener habilidad:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al obtener habilidad");
-  }
-};
-
-// Crear habilidad
+// ===== CREATE =====
 export const crearHabilidad = async (habilidadData) => {
-  try {
-    const response = await axios.post(API_URL, habilidadData, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al crear habilidad:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al crear habilidad");
-  }
+  const response = await api.post('/api/habilidad', habilidadData);
+  return response.data;
 };
 
-// Actualizar habilidad
+// ===== READ BY ASPIRANTE =====
+export const obtenerHabilidadesAspirante = async () => {
+  const response = await api.get('/api/habilidad/aspirante');
+  return response.data;
+};
+
+// ===== READ BY USUARIO ID =====
+export const obtenerHabilidadesPorUsuario = async (aspiranteId) => {
+  const response = await api.get(`/api/habilidad/usuario/${aspiranteId}`);
+  return response.data;
+};
+
+// ===== READ BY ID =====
+export const obtenerHabilidadPorId = async (id) => {
+  const response = await api.get(`/api/habilidad/${id}`);
+  return response.data;
+};
+
+// ===== UPDATE =====
 export const actualizarHabilidad = async (id, habilidadData) => {
-  try {
-    const response = await axios.put(`${API_URL}/${id}`, habilidadData, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al actualizar habilidad:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al actualizar habilidad");
-  }
+  const response = await api.put(`/api/habilidad/${id}`, habilidadData);
+  return response.data;
 };
 
-// Eliminar habilidad
+// ===== DELETE =====
 export const eliminarHabilidad = async (id) => {
-  try {
-    const response = await axios.delete(`${API_URL}/${id}`, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al eliminar habilidad:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al eliminar habilidad");
-  }
+  const response = await api.delete(`/api/habilidad/${id}`);
+  return response.data;
 };

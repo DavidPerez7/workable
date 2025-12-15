@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../../../components/Footer/footer';
 import Sidebar from '../SideBar/Sidebar';
 import { getAllEmpresasDto, actualizarEmpresa, eliminarEmpresa, crearEmpresa } from '../../../api/empresaAPI';
+import { getMunicipios } from '../../../api/municipioAPI';
+import EmpresasTable from './EmpresasTable';
+import RecruitersModal from './RecruitersModal';
 import './AdminEmpresas.css';
 
 function AdminEmpresas() {
@@ -15,6 +18,8 @@ function AdminEmpresas() {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [showRecruitersModal, setShowRecruitersModal] = useState(false);
+  const [selectedEmpresaForRecruiters, setSelectedEmpresaForRecruiters] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -22,13 +27,35 @@ function AdminEmpresas() {
     emailContacto: '',
     telefonoContacto: '',
     numeroTrabajadores: '',
-    website: ''
+    puntuacion: '',
+    website: '',
+    logoUrl: '',
+    redesSociales: '',
+    direcciones: '',
+    razonSocial: '',
+    municipioId: '',
+    categories: []
   });
   const [submitting, setSubmitting] = useState(false);
+  const [processingId, setProcessingId] = useState(null);
+  const [municipios, setMunicipios] = useState([]);
+  const [categories] = useState([
+    'TECNOLOGIA', 'SOFTWARE', 'TELECOMUNICACIONES', 'SALUD', 'FARMACEUTICA', 'EDUCACION', 'FINANZAS', 'BANCA', 'SEGUROS', 'CONSULTORIA', 'LEGAL', 'MANUFACTURERA', 'AUTOMOTRIZ', 'CONSTRUCCION', 'INMOBILIARIA', 'ENERGIA', 'RETAIL', 'ECOMMERCE', 'ALIMENTACION', 'TRANSPORTE', 'LOGISTICA', 'MARKETING', 'PUBLICIDAD', 'TURISMO', 'HOTELERIA', 'RESTAURACION', 'RECURSOS_HUMANOS', 'AGRICULTURA', 'MEDIO_AMBIENTE', 'OTRO'
+  ]);
 
   useEffect(() => {
     fetchEmpresas();
+    fetchMunicipios();
   }, []);
+
+  const fetchMunicipios = async () => {
+    try {
+      const data = await getMunicipios();
+      setMunicipios(data);
+    } catch (err) {
+      console.error('Error fetching municipios:', err);
+    }
+  };
 
   const fetchEmpresas = async () => {
     try {
@@ -54,28 +81,32 @@ function AdminEmpresas() {
 
   const handleAprobar = async (id) => {
     try {
+      setProcessingId(id);
       const empresa = empresas.find(e => e.id === id);
+      if (!empresa) throw new Error('Empresa no encontrada');
       await actualizarEmpresa(id, { ...empresa, isActive: true });
-      setEmpresas(empresas.map(emp => 
-        emp.id === id ? { ...emp, isActive: true } : emp
-      ));
+      fetchEmpresas(); // Refresh to get updated data
     } catch (err) {
       console.error('Error al activar empresa:', err);
-      setError('Error al activar empresa');
+      setError('Error al activar empresa: ' + (err.message || ''));
+    } finally {
+      setProcessingId(null);
     }
   };
 
   const handleDesactivar = async (id) => {
     if (window.confirm('¿Estás seguro de desactivar esta empresa?')) {
       try {
+        setProcessingId(id);
         const empresa = empresas.find(e => e.id === id);
+        if (!empresa) throw new Error('Empresa no encontrada');
         await actualizarEmpresa(id, { ...empresa, isActive: false });
-        setEmpresas(empresas.map(emp => 
-          emp.id === id ? { ...emp, isActive: false } : emp
-        ));
+        fetchEmpresas(); // Refresh to get updated data
       } catch (err) {
         console.error('Error al desactivar empresa:', err);
-        setError('Error al desactivar empresa');
+        setError('Error al desactivar empresa: ' + (err.message || ''));
+      } finally {
+        setProcessingId(null);
       }
     }
   };
@@ -83,11 +114,14 @@ function AdminEmpresas() {
   const handleEliminar = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar esta empresa? Esta acción no se puede deshacer.')) {
       try {
+        setProcessingId(id);
         await eliminarEmpresa(id);
-        setEmpresas(empresas.filter(emp => emp.id !== id));
+        fetchEmpresas(); // Refresh to get updated data
       } catch (err) {
         console.error('Error al eliminar empresa:', err);
-        setError('Error al eliminar empresa');
+        setError('Error al eliminar empresa: ' + (err.message || ''));
+      } finally {
+        setProcessingId(null);
       }
     }
   };
@@ -97,6 +131,15 @@ function AdminEmpresas() {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleCategoryChange = (category) => {
+    setFormData(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category]
     }));
   };
 
@@ -117,12 +160,19 @@ function AdminEmpresas() {
         emailContacto: formData.emailContacto,
         telefonoContacto: formData.telefonoContacto,
         numeroTrabajadores: parseInt(formData.numeroTrabajadores) || 0,
+        puntuacion: parseFloat(formData.puntuacion) || 0.0,
         website: formData.website,
+        logoUrl: formData.logoUrl,
+        redesSociales: formData.redesSociales ? formData.redesSociales.split(',').map(s => s.trim()) : [],
+        direcciones: formData.direcciones ? formData.direcciones.split(',').map(s => s.trim()) : [],
+        razonSocial: formData.razonSocial,
+        municipio: formData.municipioId ? { id: parseInt(formData.municipioId) } : null,
+        categories: formData.categories,
         isActive: true
       };
       
       const empresaCreada = await crearEmpresa(nuevaEmpresa);
-      setEmpresas([...empresas, empresaCreada]);
+      // setEmpresas([...empresas, empresaCreada]); // Remove local update
       setShowModal(false);
       setFormData({
         nombre: '',
@@ -131,9 +181,17 @@ function AdminEmpresas() {
         emailContacto: '',
         telefonoContacto: '',
         numeroTrabajadores: '',
-        website: ''
+        puntuacion: '',
+        website: '',
+        logoUrl: '',
+        redesSociales: '',
+        direcciones: '',
+        razonSocial: '',
+        municipioId: '',
+        categories: []
       });
       setError(null);
+      fetchEmpresas(); // Refresh to get updated data
     } catch (err) {
       console.error('Error al crear empresa:', err);
       setError('Error al crear empresa: ' + (err.message || ''));
@@ -151,7 +209,36 @@ function AdminEmpresas() {
       emailContacto: '',
       telefonoContacto: '',
       numeroTrabajadores: '',
-      website: ''
+      puntuacion: '',
+      website: '',
+      logoUrl: '',
+      redesSociales: '',
+      direcciones: '',
+      razonSocial: '',
+      municipioId: '',
+      categories: []
+    });
+    setError(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEditingId(null);
+    setFormData({
+      nombre: '',
+      descripcion: '',
+      nit: '',
+      emailContacto: '',
+      telefonoContacto: '',
+      numeroTrabajadores: '',
+      puntuacion: '',
+      website: '',
+      logoUrl: '',
+      redesSociales: '',
+      direcciones: '',
+      razonSocial: '',
+      municipioId: '',
+      categories: []
     });
     setError(null);
   };
@@ -165,7 +252,14 @@ function AdminEmpresas() {
       emailContacto: empresa.emailContacto,
       telefonoContacto: empresa.telefonoContacto || '',
       numeroTrabajadores: empresa.numeroTrabajadores || '',
-      website: empresa.website || ''
+      puntuacion: empresa.puntuacion != null ? empresa.puntuacion : '',
+      website: empresa.website || '',
+      logoUrl: empresa.logoUrl || '',
+      redesSociales: empresa.redesSociales ? empresa.redesSociales.join(', ') : '',
+      direcciones: empresa.direcciones ? empresa.direcciones.join(', ') : '',
+      razonSocial: empresa.razonSocial || '',
+      municipioId: empresa.municipio ? empresa.municipio.id : '',
+      categories: empresa.categories || []
     });
     setShowEditModal(true);
   };
@@ -187,14 +281,21 @@ function AdminEmpresas() {
         emailContacto: formData.emailContacto,
         telefonoContacto: formData.telefonoContacto,
         numeroTrabajadores: parseInt(formData.numeroTrabajadores) || 0,
+        puntuacion: parseFloat(formData.puntuacion) || 0.0,
         website: formData.website,
+        logoUrl: formData.logoUrl,
+        redesSociales: formData.redesSociales ? formData.redesSociales.split(',').map(s => s.trim()) : [],
+        direcciones: formData.direcciones ? formData.direcciones.split(',').map(s => s.trim()) : [],
+        razonSocial: formData.razonSocial,
+        municipio: formData.municipioId ? { id: parseInt(formData.municipioId) } : null,
+        categories: formData.categories,
         isActive: empresas.find(e => e.id === editingId)?.isActive || true
       };
       
-      await actualizarEmpresa(editingId, empresaActualizada);
-      setEmpresas(empresas.map(emp => 
-        emp.id === editingId ? { ...emp, ...empresaActualizada } : emp
-      ));
+      const empresaActualizadaResponse = await actualizarEmpresa(editingId, empresaActualizada);
+      // setEmpresas(empresas.map(emp => 
+      //   emp.id === editingId ? empresaActualizadaResponse : emp
+      // )); // Remove local update
       setShowEditModal(false);
       setEditingId(null);
       setFormData({
@@ -204,9 +305,17 @@ function AdminEmpresas() {
         emailContacto: '',
         telefonoContacto: '',
         numeroTrabajadores: '',
-        website: ''
+        puntuacion: '',
+        website: '',
+        logoUrl: '',
+        redesSociales: '',
+        direcciones: '',
+        razonSocial: '',
+        municipioId: '',
+        categories: []
       });
       setError(null);
+      fetchEmpresas(); // Refresh to get updated data
     } catch (err) {
       console.error('Error al actualizar empresa:', err);
       setError('Error al actualizar empresa: ' + (err.message || ''));
@@ -215,19 +324,14 @@ function AdminEmpresas() {
     }
   };
 
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
-    setEditingId(null);
-    setFormData({
-      nombre: '',
-      descripcion: '',
-      nit: '',
-      emailContacto: '',
-      telefonoContacto: '',
-      numeroTrabajadores: '',
-      website: ''
-    });
-    setError(null);
+  const handleViewRecruiters = (empresa) => {
+    setSelectedEmpresaForRecruiters(empresa);
+    setShowRecruitersModal(true);
+  };
+
+  const handleCloseRecruitersModal = () => {
+    setShowRecruitersModal(false);
+    setSelectedEmpresaForRecruiters(null);
   };
 
   const getEstadoBadgeClass = (isActive) => {
@@ -346,97 +450,16 @@ function AdminEmpresas() {
               </div>
 
 
-              <div className="table-container-CP">
-                <table className="companies-table-CP">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre</th>
-                      <th>NIT</th>
-                      <th>Correo</th>
-                      <th>Teléfono</th>
-                      <th>Descripción</th>
-                      <th>Dirección</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {empresasFiltradas.length > 0 ? (
-                      empresasFiltradas.map(empresa => (
-                        <tr key={empresa.id}>
-                          <td>{empresa.id}</td>
-                          <td className="empresa-name-CP">{empresa.nombre}</td>
-                          <td>{empresa.nit}</td>
-                          <td>{empresa.emailContacto || 'N/A'}</td>
-                          <td>{empresa.telefonoContacto || 'N/A'}</td>
-                          <td>{empresa.descripcion || 'N/A'}</td>
-                          <td>{empresa.website || 'N/A'}</td>
-                          <td>
-                            <span className={`estado-badge-CP ${getEstadoBadgeClass(empresa.isActive)}`}>
-                              {empresa.isActive ? 'Activa' : 'Inactiva'}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="actions-buttons-CP">
-                              <button
-                                className="btn-action-CP btn-edit-CP"
-                                onClick={() => handleEditEmpresa(empresa)}
-                                title="Editar"
-                              >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                              </button>
-                              {empresa.isActive ? (
-                                <button
-                                  className="btn-action-CP btn-reject-CP"
-                                  onClick={() => handleDesactivar(empresa.id)}
-                                  title="Desactivar"
-                                >
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <rect x="6" y="4" width="4" height="16"></rect>
-                                    <rect x="14" y="4" width="4" height="16"></rect>
-                                  </svg>
-                                </button>
-                              ) : (
-                                <button
-                                  className="btn-action-CP btn-approve-CP"
-                                  onClick={() => handleAprobar(empresa.id)}
-                                  title="Activar"
-                                >
-                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                  </svg>
-                                </button>
-                              )}
-                              <button
-                                className="btn-action-CP btn-delete-CP"
-                                onClick={() => handleEliminar(empresa.id)}
-                                title="Eliminar"
-                              >
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <polyline points="3 6 5 6 21 6"></polyline>
-                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="9" className="no-results-CP">
-                          No se encontraron empresas con los filtros seleccionados
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <EmpresasTable
+                empresasFiltradas={empresasFiltradas}
+                getEstadoBadgeClass={getEstadoBadgeClass}
+                handleEditEmpresa={handleEditEmpresa}
+                handleAprobar={handleAprobar}
+                handleDesactivar={handleDesactivar}
+                handleEliminar={handleEliminar}
+                onViewRecruiters={handleViewRecruiters}
+                processingId={processingId}
+              />
             </>
           )}
         </div>
@@ -539,6 +562,100 @@ function AdminEmpresas() {
                     onChange={handleInputChange}
                     placeholder="www.ejemplo.com"
                   />
+                </div>
+
+                <div className="form-row-CP">
+                  <div className="form-group-CP">
+                    <label>Puntuación</label>
+                    <input
+                      type="number"
+                      name="puntuacion"
+                      value={formData.puntuacion}
+                      onChange={handleInputChange}
+                      placeholder="0.0"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                    />
+                  </div>
+
+                  <div className="form-group-CP">
+                    <label>Logo URL</label>
+                    <input
+                      type="text"
+                      name="logoUrl"
+                      value={formData.logoUrl}
+                      onChange={handleInputChange}
+                      placeholder="https://ejemplo.com/logo.png"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group-CP">
+                  <label>Redes Sociales</label>
+                  <input
+                    type="text"
+                    name="redesSociales"
+                    value={formData.redesSociales}
+                    onChange={handleInputChange}
+                    placeholder="https://facebook.com/empresa, https://twitter.com/empresa"
+                  />
+                </div>
+
+                <div className="form-group-CP">
+                  <label>Direcciones</label>
+                  <input
+                    type="text"
+                    name="direcciones"
+                    value={formData.direcciones}
+                    onChange={handleInputChange}
+                    placeholder="Dirección 1, Dirección 2"
+                  />
+                </div>
+
+                <div className="form-row-CP">
+                  <div className="form-group-CP">
+                    <label>Razón Social</label>
+                    <input
+                      type="text"
+                      name="razonSocial"
+                      value={formData.razonSocial}
+                      onChange={handleInputChange}
+                      placeholder="Razón Social S.A."
+                    />
+                  </div>
+
+                  <div className="form-group-CP">
+                    <label>Municipio</label>
+                    <select
+                      name="municipioId"
+                      value={formData.municipioId}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Seleccionar Municipio</option>
+                      {municipios.map(municipio => (
+                        <option key={municipio.id} value={municipio.id}>
+                          {municipio.nombre} - {municipio.departamento}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group-CP">
+                  <label>Categorías</label>
+                  <div className="categories-grid-CP">
+                    {categories.map(category => (
+                      <label key={category} className="category-checkbox-CP">
+                        <input
+                          type="checkbox"
+                          checked={formData.categories.includes(category)}
+                          onChange={() => handleCategoryChange(category)}
+                        />
+                        {category.replace('_', ' ')}
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
                 {error && (
@@ -669,6 +786,100 @@ function AdminEmpresas() {
                   />
                 </div>
 
+                <div className="form-row-CP">
+                  <div className="form-group-CP">
+                    <label>Puntuación</label>
+                    <input
+                      type="number"
+                      name="puntuacion"
+                      value={formData.puntuacion}
+                      onChange={handleInputChange}
+                      placeholder="0.0"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                    />
+                  </div>
+
+                  <div className="form-group-CP">
+                    <label>Logo URL</label>
+                    <input
+                      type="text"
+                      name="logoUrl"
+                      value={formData.logoUrl}
+                      onChange={handleInputChange}
+                      placeholder="https://ejemplo.com/logo.png"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group-CP">
+                  <label>Redes Sociales</label>
+                  <input
+                    type="text"
+                    name="redesSociales"
+                    value={formData.redesSociales}
+                    onChange={handleInputChange}
+                    placeholder="https://facebook.com/empresa, https://twitter.com/empresa"
+                  />
+                </div>
+
+                <div className="form-group-CP">
+                  <label>Direcciones</label>
+                  <input
+                    type="text"
+                    name="direcciones"
+                    value={formData.direcciones}
+                    onChange={handleInputChange}
+                    placeholder="Dirección 1, Dirección 2"
+                  />
+                </div>
+
+                <div className="form-row-CP">
+                  <div className="form-group-CP">
+                    <label>Razón Social</label>
+                    <input
+                      type="text"
+                      name="razonSocial"
+                      value={formData.razonSocial}
+                      onChange={handleInputChange}
+                      placeholder="Razón Social S.A."
+                    />
+                  </div>
+
+                  <div className="form-group-CP">
+                    <label>Municipio</label>
+                    <select
+                      name="municipioId"
+                      value={formData.municipioId}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Seleccionar Municipio</option>
+                      {municipios.map(municipio => (
+                        <option key={municipio.id} value={municipio.id}>
+                          {municipio.nombre} - {municipio.departamento}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group-CP">
+                  <label>Categorías</label>
+                  <div className="categories-grid-CP">
+                    {categories.map(category => (
+                      <label key={category} className="category-checkbox-CP">
+                        <input
+                          type="checkbox"
+                          checked={formData.categories.includes(category)}
+                          onChange={() => handleCategoryChange(category)}
+                        />
+                        {category.replace('_', ' ')}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
                 {error && (
                   <div className="error-message-CP">
                     {error}
@@ -698,6 +909,13 @@ function AdminEmpresas() {
         )}
       </main>
       </div>
+
+      <RecruitersModal
+        isOpen={showRecruitersModal}
+        onClose={handleCloseRecruitersModal}
+        empresa={selectedEmpresaForRecruiters}
+      />
+
       <Footer />
     </>
   );

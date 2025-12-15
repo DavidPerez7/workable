@@ -1,36 +1,41 @@
-const API_URL = "http://localhost:8080/api/notificaciones";
+import api from './axiosConfig';
 
-export const getNotificacionesPorUsuario = async (usuarioId) => {
-  const res = await fetch(`${API_URL}/usuario/${usuarioId}`);
-  if (!res.ok) throw new Error("Error al obtener notificaciones");
-  return await res.json();
+// ===== CREATE (Solo ADMIN) =====
+export const crearNotificacion = async (data) => {
+  const response = await api.post('/api/notificacion', data);
+  return response.data;
 };
 
+// ===== READ ALL =====
+export const getAllNotificaciones = async () => {
+  const response = await api.get('/api/notificacion');
+  return response.data;
+};
+
+// ===== READ BY ID =====
 export const getNotificacion = async (id) => {
-  const res = await fetch(`${API_URL}/${id}`);
-  if (!res.ok) throw new Error("Error al obtener notificación");
-  return await res.json();
+  const response = await api.get(`/api/notificacion/${id}`);
+  return response.data;
 };
 
-export const crearNotificacion = async (notificacion) => {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(notificacion),
+// ===== READ BY USUARIO =====
+export const getNotificacionesPorUsuario = async (usuarioId, usuarioIdActual) => {
+  const response = await api.get(`/api/notificacion/usuario/${usuarioId}`, {
+    params: { usuarioIdActual }
   });
-  if (!res.ok) throw new Error("Error al crear notificación");
-  return await res.json();
+  return response.data;
 };
 
+// ===== UPDATE (marcar como leída) =====
 export const marcarNotificacionLeida = async (id) => {
-  const res = await fetch(`${API_URL}/leida/${id}`, {
-    method: "PUT" });
-  if (!res.ok) throw new Error("Error al marcar notificación como leída");
-  return await res.json();
+  const response = await api.put(`/api/notificacion/${id}/marcar-leida`);
+  return response.data;
 };
 
-export const eliminarNotificacion = async (id) => {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE" });
-  if (!res.ok) throw new Error("Error al eliminar notificación");
+// ===== DELETE =====
+export const eliminarNotificacion = async (id, usuarioIdActual) => {
+  const response = await api.delete(`/api/notificacion/${id}`, {
+    params: { usuarioIdActual }
+  });
+  return response.data;
 };
