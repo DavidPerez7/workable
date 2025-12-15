@@ -92,6 +92,19 @@ export const changeEstadoPostulacion = async (
   }
 };
 
+// Update postulacion (estado + comentarios)
+export const updatePostulacion = async (
+  id: number,
+  data: Partial<Postulacion>
+): Promise<Postulacion> => {
+  try {
+    const response = await api.put<Postulacion>(`/postulacion/${id}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
 // Delete postulacion
 export const deletePostulacion = async (id: number): Promise<void> => {
   try {
@@ -104,7 +117,7 @@ export const deletePostulacion = async (id: number): Promise<void> => {
 // Get all postulaciones (ADMIN)
 export const getAllPostulaciones = async (): Promise<Postulacion[]> => {
   try {
-    const response = await api.get<Postulacion[]>('/postulacion');
+    const response = await api.get<Postulacion[]>('/postulacion/all');
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));

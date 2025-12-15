@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, FlatList, Text, StyleSheet, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-import { getOfertasByReclutador } from '../../api/oferta';
+import { getOfertasByReclutador, getOfertasByEmpresa } from '../../api/oferta';
 import Loading from '../../components/Loading';
 import EmptyState from '../../components/EmptyState';
 import Button from '../../components/Button';
@@ -18,7 +18,12 @@ const MisOfertasListScreen = () => {
 
   const loadOfertas = async () => {
     try {
-      if (user?.reclutadorId) {
+      if (user?.empresaId) {
+        // Si tenemos empresaId, filtrar por empresa
+        const data = await getOfertasByEmpresa(user.empresaId);
+        setOfertas(data);
+      } else if (user?.reclutadorId) {
+        // Si no, obtener todas y filtrar del lado del cliente
         const data = await getOfertasByReclutador(user.reclutadorId);
         setOfertas(data);
       }

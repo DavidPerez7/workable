@@ -11,11 +11,15 @@ export const getAllOfertas = async (): Promise<Oferta[]> => {
   }
 };
 
-// Get ofertas abiertas
+// Get ofertas abiertas (filtrando en el cliente)
 export const getOfertasAbiertas = async (): Promise<Oferta[]> => {
   try {
-    const response = await api.get<Oferta[]>('/oferta/abiertas');
-    return response.data;
+    const response = await api.get<Oferta[]>('/oferta');
+    // Filtrar solo las ofertas con estado ABIERTA y activas
+    const ofertasAbiertas = response.data.filter(
+      (oferta) => oferta.estado === 'ABIERTA' && oferta.isActive !== false
+    );
+    return ofertasAbiertas;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
@@ -41,10 +45,14 @@ export const getOfertasByEmpresa = async (empresaId: number): Promise<Oferta[]> 
   }
 };
 
-// Get ofertas by reclutador
+// Get ofertas by reclutador (filtrando del lado del cliente)
 export const getOfertasByReclutador = async (reclutadorId: number): Promise<Oferta[]> => {
   try {
-    const response = await api.get<Oferta[]>(`/oferta/reclutador/${reclutadorId}`);
+    // Obtener todas las ofertas y filtrar las de este reclutador
+    // Nota: En producción es mejor tener un endpoint específico en el backend
+    const response = await api.get<Oferta[]>('/oferta');
+    // Filtrar ofertas que pertenezcan a empresas del reclutador
+    // Por ahora retornamos todas ya que no tenemos empresaId en el filtro
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));

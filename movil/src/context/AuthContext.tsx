@@ -19,6 +19,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const TOKEN_KEY = 'workable_token';
 const USER_KEY = 'workable_user';
 
+// Clave de empresa cacheada por correo
+const empresaCacheKey = (correo: string) => `workable_empresa_${correo.toLowerCase()}`;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,15 +31,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadUser();
   }, []);
 
+  const hydrateEmpresaFromCache = async (correo: string) => {
+    try {
+      const cached = await SecureStore.getItemAsync(empresaCacheKey(correo));
+      if (cached) return JSON.parse(cached);
+    } catch (err) {
+      console.warn('No se pudo leer empresa cacheada:', err);
+    }
+    return null;
+  };
+
+  const persistUser = async (data: User) => {
+    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(data));
+    await SecureStore.setItemAsync(TOKEN_KEY, data.token);
+  };
+
   const loadUser = async () => {
     try {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       const userJson = await SecureStore.getItemAsync(USER_KEY);
 
       if (token && userJson) {
-        const userData = JSON.parse(userJson);
-        setUser(userData);
+        let userData: User = JSON.parse(userJson);
         setAuthToken(token);
+
+        // Si es reclutador y sigue sin empresa, hidratar
+        if (userData.rol === 'RECLUTADOR' && !userData.empresaId) {
+          try {
+            const perfil = await getMyProfile();
+            const perfilEmpresaId = perfil.empresa?.id || null;
+            const perfilEmpresa = perfil.empresa || undefined;
+
+            if (perfilEmpresaId) {
+              userData = { ...userData, empresaId: perfilEmpresaId, empresa: perfilEmpresa };
+              await persistUser(userData);
+            } else {
+              const cached = await hydrateEmpresaFromCache(userData.correo);
+              if (cached?.id) {
+                userData = { ...userData, empresaId: cached.id, empresa: cached };
+                await persistUser(userData);
+              }
+            }
+          } catch (perfilErr) {
+            console.warn('No se pudo hidratar empresa al cargar usuario:', perfilErr);
+          }
+        }
+
+        setUser(userData);
       }
     } catch (error) {
       console.error('Error loading user:', error);
@@ -51,17 +92,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Set token early to allow follow-up requests (perfil)
       setAuthToken(response.token);
 
-      let empresaId = response.empresaId || response.empresa?.id;
-      let empresa = response.empresa;
+      let empresaId = response.empresaId || response.empresa?.id || null;
+      let empresa = response.empresa || null;
 
-      // Si es reclutador y no viene empresa, intenta hidratar desde /reclutador/me
-      if (response.rol === 'RECLUTADOR' && !empresaId) {
+      // Si es reclutador, SIEMPRE llamamos a /me para obtener empresa actualizada
+      if (response.rol === 'RECLUTADOR') {
         try {
           const perfil = await getMyProfile();
-          empresaId = perfil.empresa?.id || null;
-          empresa = perfil.empresa || undefined;
+          if (perfil && perfil.empresa) {
+            empresaId = perfil.empresa.id || empresaId;
+            empresa = perfil.empresa;
+            // Cache empresa para futuras sesiones
+            await SecureStore.setItemAsync(
+              empresaCacheKey(response.correo),
+              JSON.stringify(perfil.empresa)
+            );
+          }
         } catch (perfilErr) {
-          console.warn('No se pudo hidratar empresa desde perfil:', perfilErr);
+          console.error('Error obteniendo perfil de reclutador:', perfilErr);
+          // Intentar recuperar empresa cacheada como fallback
+          const cached = await hydrateEmpresaFromCache(response.correo);
+          if (cached?.id && !empresaId) {
+            empresaId = cached.id;
+            empresa = cached;
+          }
         }
       }
       
@@ -72,15 +126,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         correo: response.correo,
         nombre: response.nombre,
         apellido: response.apellido,
-        // Si es reclutador, el usuarioId ES el reclutadorId
         reclutadorId: response.rol === 'RECLUTADOR' ? response.usuarioId : response.reclutadorId,
         empresaId,
         empresa,
       };
 
       // Save to SecureStore
-      await SecureStore.setItemAsync(TOKEN_KEY, response.token);
-      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData));
+      await persistUser(userData);
 
       // Update state
       setUser(userData);
@@ -110,7 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (user) {
       const updatedUser = { ...user, ...userData };
       setUser(updatedUser);
-      SecureStore.setItemAsync(USER_KEY, JSON.stringify(updatedUser));
+      persistUser(updatedUser);
     }
   };
 

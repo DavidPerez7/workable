@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { getMyProfile } from '../../api/reclutador';
 import { getEmpresaById } from '../../api/empresa';
+import * as SecureStore from 'expo-secure-store';
 import Loading from '../../components/Loading';
 import { colors, spacing, fontSize, fontWeight, globalStyles, shadows } from '../../styles/theme';
 import type { Reclutador, Empresa } from '../../types';
@@ -45,6 +46,18 @@ const DashboardReclutadorScreen = () => {
           });
         } catch (empresaError: any) {
           console.warn('No se pudo cargar empresa:', empresaError);
+        }
+      } else if (user?.correo) {
+        // Fallback a empresa cacheada localmente si el perfil no trae empresa
+        try {
+          const cached = await SecureStore.getItemAsync(`workable_empresa_${user.correo.toLowerCase()}`);
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            setEmpresa(parsed);
+            updateUser({ empresaId: parsed.id, empresa: parsed });
+          }
+        } catch (cacheErr) {
+          console.warn('No se pudo cargar empresa cacheada en dashboard:', cacheErr);
         }
       }
     } catch (error: any) {

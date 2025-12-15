@@ -189,6 +189,7 @@ export type AuthStackParamList = {
 export type AspiranteTabParamList = {
   OfertasTab: undefined;
   PostulacionesTab: undefined;
+  HojaDeVidaTab: undefined;
   PerfilTab: undefined;
 };
 

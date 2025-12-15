@@ -21,9 +21,9 @@ export const createOrUpdateHojaVida = async (data: HojaVida): Promise<HojaVida> 
 };
 
 // ===== Estudios =====
-export const getEstudiosByAspirante = async (aspiranteId: number): Promise<Estudio[]> => {
+export const getEstudiosByAspirante = async (): Promise<Estudio[]> => {
   try {
-    const response = await api.get<Estudio[]>(`/estudio/aspirante/${aspiranteId}`);
+    const response = await api.get<Estudio[]>(`/estudio/aspirante`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -57,9 +57,9 @@ export const deleteEstudio = async (id: number): Promise<void> => {
 };
 
 // ===== Experiencias =====
-export const getExperienciasByAspirante = async (aspiranteId: number): Promise<Experiencia[]> => {
+export const getExperienciasByAspirante = async (): Promise<Experiencia[]> => {
   try {
-    const response = await api.get<Experiencia[]>(`/experiencia/aspirante/${aspiranteId}`);
+    const response = await api.get<Experiencia[]>(`/experiencia/aspirante`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -93,9 +93,9 @@ export const deleteExperiencia = async (id: number): Promise<void> => {
 };
 
 // ===== Habilidades =====
-export const getHabilidadesByAspirante = async (aspiranteId: number): Promise<Habilidad[]> => {
+export const getHabilidadesByAspirante = async (): Promise<Habilidad[]> => {
   try {
-    const response = await api.get<Habilidad[]>(`/habilidad/aspirante/${aspiranteId}`);
+    const response = await api.get<Habilidad[]>(`/habilidad/aspirante`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));

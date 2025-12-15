@@ -31,6 +31,11 @@ public class PostulacionService {
 	@Autowired
 	private AdminValidationService adminValidationService;
 
+	// ===== LISTAR TODAS (ADMIN) =====
+	public List<Postulacion> listarTodas() {
+		return postulacionRepo.findAll();
+	}
+
 	// ===== CREACIÓN =====
 	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId, Long usuarioIdActual) {
 		if (aspiranteId == null) {
@@ -127,10 +132,6 @@ public class PostulacionService {
 		}
 
 		return postulacionRepo.findByAspiranteId(aspiranteId);
-	}
-
-	public List<Postulacion> listarTodas() {
-		return postulacionRepo.findAll();
 	}
 
 	// ===== UPDATE =====

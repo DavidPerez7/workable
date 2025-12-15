@@ -10,7 +10,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { getOfertaById } from '../../api/oferta';
-import { createPostulacion } from '../../api/postulacion';
+import { createPostulacion, getMyPostulaciones } from '../../api/postulacion';
 import { useAuth } from '../../context/AuthContext';
 import Loading from '../../components/Loading';
 import Button from '../../components/Button';
@@ -28,6 +28,7 @@ const OfertaDetailScreen = () => {
   const [oferta, setOferta] = useState<Oferta | null>(null);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
+  const [isAlreadyApplied, setIsAlreadyApplied] = useState(false);
 
   useEffect(() => {
     loadOferta();
@@ -35,8 +36,15 @@ const OfertaDetailScreen = () => {
 
   const loadOferta = async () => {
     try {
-      const data = await getOfertaById(ofertaId);
+      const [data, postulaciones] = await Promise.all([
+        getOfertaById(ofertaId),
+        getMyPostulaciones(),
+      ]);
       setOferta(data);
+      
+      // Verificar si ya está postulado
+      const alreadyApplied = postulaciones.some((p) => p.oferta?.id === ofertaId);
+      setIsAlreadyApplied(alreadyApplied);
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Error al cargar oferta');
       navigation.goBack();
@@ -47,6 +55,11 @@ const OfertaDetailScreen = () => {
 
   const handlePostular = async () => {
     if (!user) return;
+
+    if (isAlreadyApplied) {
+      Alert.alert('Ya postulado', 'Ya te has postulado a esta oferta');
+      return;
+    }
 
     Alert.alert(
       'Confirmar postulación',
@@ -60,7 +73,9 @@ const OfertaDetailScreen = () => {
             try {
               await createPostulacion(ofertaId);
               Alert.alert('Éxito', 'Te has postulado exitosamente', [
-                { text: 'OK', onPress: () => navigation.goBack() },
+                { text: 'OK', onPress: () => {
+                  setIsAlreadyApplied(true);
+                } },
               ]);
             } catch (error: any) {
               Alert.alert('Error', error.message || 'Error al postular');
@@ -145,11 +160,13 @@ const OfertaDetailScreen = () => {
 
       <View style={styles.footer}>
         <Button
-          title="Postularme"
+          title={isAlreadyApplied ? '✓ Ya postulado' : 'Postularme'}
           onPress={handlePostular}
           loading={applying}
           fullWidth
           size="large"
+          variant={isAlreadyApplied ? 'outline' : 'primary'}
+          disabled={isAlreadyApplied}
         />
       </View>
     </View>

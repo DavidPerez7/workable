@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import OfertasNavigator from './stacks/OfertasNavigator';
 import PostulacionesNavigator from './stacks/PostulacionesNavigator';
 import PerfilAspiranteScreen from '../screens/aspirante/PerfilAspiranteScreen';
+import HojaDeVidaScreen from '../screens/aspirante/HojaDeVidaScreen';
 import type { AspiranteTabParamList } from '../types';
 
 const Tab = createBottomTabNavigator<AspiranteTabParamList>();
@@ -46,6 +47,16 @@ const AspiranteNavigator = () => {
           title: 'Mis Postulaciones',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="HojaDeVidaTab"
+        component={HojaDeVidaScreen}
+        options={{
+          title: 'Hoja de Vida',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="school" size={size} color={color} />
           ),
         }}
       />
