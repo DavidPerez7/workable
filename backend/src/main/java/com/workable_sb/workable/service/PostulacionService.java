@@ -126,10 +126,6 @@ public class PostulacionService {
 		return postulacionRepo.findByAspiranteId(aspiranteId);
 	}
 
-	public List<Postulacion> listarTodas() {
-		return postulacionRepo.findAll();
-	}
-
 	// ===== UPDATE =====
 	public Postulacion cambiarEstado(Postulacion postulacion) {
 		return postulacionRepo.save(postulacion);
