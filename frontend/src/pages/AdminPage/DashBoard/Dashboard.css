@@ -34,7 +34,7 @@
 .section-body{ margin-top:12px }
 
 /* Chart placeholder */
-.chart-placeholder{ height:160px; border-radius:8px; background: linear-gradient(90deg,#eef2ff,#fff); display:flex; align-items:center; justify-content:center; color:#334155 }
+.chart-placeholder{ height:160px; border-radius:14px; background: linear-gradient(90deg,#eef2ff,#fff); display:flex; align-items:center; justify-content:center; color:#334155; border:1.5px solid #CBD5E1; box-shadow: 0 4px 12px rgba(0,0,0,0.04) }
 
 /* Error message */
 .error-message{ color: #ef4444; margin-left: 12px; font-weight:700 }

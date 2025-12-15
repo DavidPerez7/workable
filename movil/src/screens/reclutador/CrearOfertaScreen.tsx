@@ -37,16 +37,11 @@ const CrearOfertaScreen = () => {
 
     setLoading(true);
     try {
-      // Convertir requisitos de string a array (separado por comas o saltos de línea)
-      const requisitosArray = requisitos
-        .split(/[,\n]+/)
-        .map(r => r.trim())
-        .filter(r => r.length > 0);
-
+      // requisitos ahora se envían como un único string descriptivo
       await createOferta({
         titulo,
         descripcion,
-        requisitos: requisitosArray.length > 0 ? requisitosArray : undefined,
+        requisitos: requisitos && requisitos.length > 0 ? requisitos : undefined,
         salario: parseFloat(salario),
         vacantes: vacantes ? parseInt(vacantes) : 1,
         fechaLimite,

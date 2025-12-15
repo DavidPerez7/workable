@@ -5,6 +5,8 @@ import Sidebar from '../SideBar/Sidebar';
 import { getAllOfertas, crearOferta, actualizarOferta, eliminarOferta, cambiarEstadoOferta } from '../../../api/ofertasAPI';
 import { getAllEmpresasDto } from '../../../api/empresaAPI';
 import './AdminOfertas.css';
+import OffersTable from './OffersTable';
+import OffersPostulacionesModal from './OffersPostulacionesModal/OffersPostulacionesModal';
 
 function OffersPage() {
   const navigate = useNavigate();
@@ -21,6 +23,7 @@ function OffersPage() {
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
+    requisitos: '',
     empresa: '',
     salario: '',
     numeroVacantes: '',
@@ -29,6 +32,9 @@ function OffersPage() {
     tipoContrato: 'TIEMPO_COMPLETO'
   });
   const [submitting, setSubmitting] = useState(false);
+  const [deletingIds, setDeletingIds] = useState([]);
+  const [showPostulacionesModal, setShowPostulacionesModal] = useState(false);
+  const [selectedOfertaIdForPostulaciones, setSelectedOfertaIdForPostulaciones] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -75,6 +81,14 @@ function OffersPage() {
       setError('Por favor llena todos los campos requeridos');
       return;
     }
+    if (!formData.requisitos || !formData.requisitos.trim()) {
+      setError("El campo 'requisitos' es obligatorio");
+      return;
+    }
+    if (!formData.requisitos || !formData.requisitos.trim()) {
+      setError("El campo 'requisitos' es obligatorio");
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -83,6 +97,7 @@ function OffersPage() {
       const nuevaOferta = {
         titulo: formData.titulo,
         descripcion: formData.descripcion || '',
+        requisitos: formData.requisitos || '',
         empresa: { id: parseInt(formData.empresa) },
         salario: parseInt(formData.salario),
         numeroVacantes: parseInt(formData.numeroVacantes) || 1,
@@ -100,6 +115,7 @@ function OffersPage() {
       setFormData({
         titulo: '',
         descripcion: '',
+        requisitos: '',
         empresa: '',
         salario: '',
         numeroVacantes: '',
@@ -136,6 +152,7 @@ function OffersPage() {
     setFormData({
       titulo: oferta.titulo,
       descripcion: oferta.descripcion || '',
+      requisitos: oferta.requisitos || '',
       empresa: oferta.empresa?.id || '',
       salario: oferta.salario || '',
       numeroVacantes: oferta.numeroVacantes || '',
@@ -160,6 +177,7 @@ function OffersPage() {
       const ofertaActualizada = {
         titulo: formData.titulo,
         descripcion: formData.descripcion || '',
+        requisitos: formData.requisitos || '',
         empresa: { id: parseInt(formData.empresa) },
         salario: parseInt(formData.salario),
         numeroVacantes: parseInt(formData.numeroVacantes) || 1,
@@ -214,10 +232,13 @@ function OffersPage() {
 
   const handleCambiarEstado = async (id, nuevoEstado) => {
     try {
-      await cambiarEstadoOferta(id, nuevoEstado);
-      setOfertas(ofertas.map(of => 
-        of.id === id ? { ...of, estado: nuevoEstado } : of
-      ));
+      const ofertaOriginal = ofertas.find(o => o.id === id);
+      if (!ofertaOriginal) throw new Error('Oferta no encontrada');
+      const nuevoIsActive = !(ofertaOriginal.isActive ?? true);
+      const nuevoEstado = nuevoIsActive ? 'ABIERTA' : 'CERRADA';
+      const ofertaActualizada = { ...ofertaOriginal, isActive: nuevoIsActive, estado: nuevoEstado };
+      await actualizarOferta(id, ofertaActualizada);
+      setOfertas(ofertas.map(of => of.id === id ? { ...of, ...ofertaActualizada } : of));
     } catch (err) {
       console.error('Error al cambiar estado:', err);
       setError('Error al cambiar estado: ' + (err.message || ''));
@@ -227,13 +248,27 @@ function OffersPage() {
   const handleEliminar = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar esta oferta? Esta acción no se puede deshacer.')) {
       try {
+        setDeletingIds(prev => [...prev, id]);
         await eliminarOferta(id);
         setOfertas(ofertas.filter(of => of.id !== id));
       } catch (err) {
         console.error('Error al eliminar oferta:', err);
         setError('Error al eliminar oferta: ' + (err.message || ''));
       }
+      finally {
+        setDeletingIds(prev => prev.filter(x => x !== id));
+      }
     }
+  };
+
+  const handleViewPostulaciones = (ofertaId) => {
+    setSelectedOfertaIdForPostulaciones(ofertaId);
+    setShowPostulacionesModal(true);
+  };
+
+  const handleClosePostulacionesModal = () => {
+    setSelectedOfertaIdForPostulaciones(null);
+    setShowPostulacionesModal(false);
   };
 
   const getEstadoBadgeClass = (estado) => {
@@ -246,8 +281,8 @@ function OffersPage() {
 
   const estadisticas = {
     total: ofertas.length,
-    activas: ofertas.filter(o => o.estadoOferta === 'ABIERTA').length,
-    inactivas: ofertas.filter(o => o.estadoOferta === 'CERRADA').length
+    activas: ofertas.filter(o => o.estado === 'ABIERTA').length,
+    inactivas: ofertas.filter(o => o.estado === 'CERRADA').length
   };
 
   return (
@@ -358,99 +393,15 @@ function OffersPage() {
                 </div>
               </div>
 
-              <div className="table-container-OP">
-                <table className="offers-table-OP">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Título</th>
-                      <th>Empresa</th>
-                      <th>Ubicación</th>
-                      <th>Modalidad</th>
-                      <th>Salario</th>
-                      <th>Estado</th>
-                      <th>Fecha</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ofertasFiltradas.length > 0 ? (
-                      ofertasFiltradas.map(oferta => (
-                        <tr key={oferta.id}>
-                          <td>{oferta.id}</td>
-                          <td className="offer-title-OP">{oferta.titulo}</td>
-                          <td className="company-name-OP">{oferta.empresa?.nombre || 'N/A'}</td>
-                          <td>{oferta.municipio?.nombre || 'N/A'}</td>
-                          <td>
-                            <span className="modalidad-badge-OP">{oferta.modalidad || 'N/A'}</span>
-                          </td>
-                          <td className="salary-OP">${(oferta.salario || 0).toLocaleString('es-CO')}</td>
-                          <td>
-                            <span className={`estado-badge-OP ${getEstadoBadgeClass(oferta.estado)}`}>
-                              {oferta.estado === 'ABIERTA' ? 'Abierta' : 'Cerrada'}
-                            </span>
-                          </td>
-                          <td>{new Date(oferta.fechaPublicacion).toLocaleDateString('es-CO')}</td>
-                          <td>
-                            <div className="actions-buttons-OP">
-                              <button
-                                className="btn-action-OP btn-edit-OP"
-                                onClick={() => handleEditOferta(oferta)}
-                                title="Editar"
-                              >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                              </button>
-                              {oferta.estado === 'ABIERTA' ? (
-                                <button
-                                  className="btn-action-OP btn-reject-OP"
-                                  onClick={() => handleCambiarEstado(oferta.id, 'CERRADA')}
-                                  title="Cerrar oferta"
-                                >
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <rect x="6" y="4" width="4" height="16"></rect>
-                                    <rect x="14" y="4" width="4" height="16"></rect>
-                                  </svg>
-                                </button>
-                              ) : (
-                                <button
-                                  className="btn-action-OP btn-activate-OP"
-                                  onClick={() => handleCambiarEstado(oferta.id, 'ABIERTA')}
-                                  title="Abrir oferta"
-                                >
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                  </svg>
-                                </button>
-                              )}
-                              <button
-                                className="btn-action-OP btn-delete-OP"
-                                onClick={() => handleEliminar(oferta.id)}
-                                title="Eliminar"
-                              >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M3 6h18"></path>
-                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="9" className="no-results-OP">
-                          No se encontraron ofertas con los filtros seleccionados
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <OffersTable
+                ofertas={ofertasFiltradas}
+                onEdit={handleEditOferta}
+                onChangeState={handleCambiarEstado}
+                onDelete={handleEliminar}
+                deletingIds={deletingIds}
+                onViewPostulaciones={handleViewPostulaciones}
+                getEstadoBadgeClass={getEstadoBadgeClass}
+              />
             </>
           )}
         </div>
@@ -478,6 +429,11 @@ function OffersPage() {
                 <div className="form-group-OP">
                   <label>Descripción</label>
                   <textarea name="descripcion" value={formData.descripcion} onChange={handleInputChange} placeholder="Descripción" rows="3" />
+                </div>
+
+                <div className="form-group-OP">
+                  <label>Requisitos *</label>
+                  <textarea name="requisitos" value={formData.requisitos} onChange={handleInputChange} placeholder="Requisitos (máx 500 caracteres)" rows="2" maxLength={500} required />
                 </div>
 
                 <div className="form-group-OP">
@@ -569,6 +525,11 @@ function OffersPage() {
                 </div>
 
                 <div className="form-group-OP">
+                  <label>Requisitos *</label>
+                  <textarea name="requisitos" value={formData.requisitos} onChange={handleInputChange} placeholder="Requisitos (máx 500 caracteres)" rows="2" maxLength={500} required />
+                </div>
+
+                <div className="form-group-OP">
                   <label>Empresa *</label>
                   <select name="empresa" value={formData.empresa} onChange={handleInputChange} required>
                     <option value="">Selecciona una empresa</option>
@@ -632,6 +593,11 @@ function OffersPage() {
         )}
       </main>
       </div>
+      <OffersPostulacionesModal
+        isOpen={showPostulacionesModal}
+        onClose={handleClosePostulacionesModal}
+        ofertaId={selectedOfertaIdForPostulaciones}
+      />
       <Footer />
     </>
   );

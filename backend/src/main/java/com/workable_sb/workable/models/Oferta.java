@@ -1,9 +1,8 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
-
+import java.util.HashSet;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -70,13 +69,8 @@ public class Oferta {
 	@Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'ABIERTA'")
 	private EstadoOferta estado = EstadoOferta.ABIERTA;
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(
-		name = "oferta_requisitos",
-		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
-	)
-	@Column(name = "requisito", length = 100, nullable = false)
-	private Set<String> requisitos = new HashSet<>();
+	@Column(nullable = false, length = 500)
+	private String requisitos;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
@@ -111,10 +105,14 @@ public class Oferta {
 
 	private Float puntuacion = 0.0f;
 
+	@Column(nullable = false)
+	private Boolean isActive = true;
+
 	@PrePersist
 	protected void onCreate() {
-		if (this.fechaPublicacion == null) {
+		if (this.fechaPublicacion == null || this.isActive == null) {
 			this.fechaPublicacion = LocalDate.now();
+			this.isActive = true;
 		}
 		validateFechas();
 	}

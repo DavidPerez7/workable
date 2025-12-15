@@ -18,21 +18,12 @@ export const obtenerPostulacionesAspirante = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error al obtener postulaciones:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al obtener postulaciones");
-  }
-};
-
-// Obtener todas las postulaciones (admin)
-export const obtenerTodasPostulaciones = async () => {
-  try {
-    const response = await axios.get(API_URL, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener postulaciones:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al obtener postulaciones");
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al obtener postulaciones:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
   }
 };
 
@@ -44,35 +35,29 @@ export const obtenerPostulacionPorId = async (id) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error al obtener postulación:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al obtener postulación");
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al obtener postulación:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
   }
 };
 
 // Crear postulación
-export const crearPostulacion = async (ofertaId) => {
+export const crearPostulacion = async (postulacion) => {
   try {
-    const response = await axios.post(API_URL, { ofertaId }, {
+    const response = await axios.post(API_URL, postulacion, {
       headers: getAuthHeaders(),
     });
     return response.data;
   } catch (error) {
-    console.error("Error al crear postulación:", error.response?.data || error.message);
-    const errorMsg = error.response?.data?.error || error.response?.data?.message || "Error al crear postulación";
-    throw new Error(errorMsg);
-  }
-};
-
-// Actualizar postulación
-export const actualizarPostulacion = async (id, postulacionData) => {
-  try {
-    const response = await axios.put(`${API_URL}/${id}`, postulacionData, {
-      headers: getAuthHeaders(),
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error al actualizar postulación:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "Error al actualizar postulación");
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al crear postulación:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
   }
 };
 
@@ -84,46 +69,74 @@ export const eliminarPostulacion = async (id) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error al eliminar postulación:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.error || error.response?.data?.message || "Error al eliminar postulación");
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al eliminar postulación:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
   }
 };
 
 // Obtener postulaciones de una oferta (para reclutadores)
 export const obtenerPostulacionesPorOferta = async (ofertaId, usuarioIdActual) => {
   try {
-    const response = await axios.get(`${API_URL}/oferta/${ofertaId}?usuarioIdActual=${usuarioIdActual}`, {
+    const params = usuarioIdActual ? `?usuarioIdActual=${usuarioIdActual}` : '';
+    const response = await axios.get(`${API_URL}/oferta/${ofertaId}${params}`, {
       headers: getAuthHeaders(),
     });
     return response.data;
   } catch (error) {
-    console.error("Error al obtener postulaciones:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.error || "Error al obtener postulaciones");
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al obtener postulaciones:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    err.statusCode = error.response?.status || 500;
+    throw err;
   }
 };
 
 // Cambiar estado de postulación (para reclutadores)
-export const cambiarEstadoPostulacion = async (postulacionId, estado, usuarioIdActual) => {
+export const cambiarEstadoPostulacion = async (postulacionId, estado) => {
   try {
-    const response = await axios.patch(
-      `${API_URL}/${postulacionId}/estado?usuarioIdActual=${usuarioIdActual}`,
-      { estado },
-      { headers: getAuthHeaders() }
-    );
+    const response = await axios.put(`${API_URL}/${postulacionId}`, { id: postulacionId, estado: estado }, {
+      headers: getAuthHeaders()
+    });
     return response.data;
   } catch (error) {
-    console.error("Error al cambiar estado:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.error || "Error al cambiar estado");
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al cambiar estado:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
+  }
+};
+
+// Actualizar postulación completa
+export const actualizarPostulacion = async (postulacion) => {
+  try {
+    const response = await axios.put(`${API_URL}/${postulacion.id}`, postulacion, {
+      headers: getAuthHeaders()
+    });
+    return response.data;
+  } catch (error) {
+    const serverInfo = error.response?.data || error.message;
+    console.error("Error al actualizar postulación:", serverInfo);
+    const serverMsg = error.response?.data?.error || error.response?.data?.message || JSON.stringify(error.response?.data) || error.message;
+    const err = new Error(serverMsg);
+    err.serverData = error.response?.data;
+    throw err;
   }
 };
 
 export default {
   obtenerPostulacionesAspirante,
-  obtenerTodasPostulaciones,
   obtenerPostulacionPorId,
   obtenerPostulacionesPorOferta,
   crearPostulacion,
-  actualizarPostulacion,
   cambiarEstadoPostulacion,
+  actualizarPostulacion,
   eliminarPostulacion
 };

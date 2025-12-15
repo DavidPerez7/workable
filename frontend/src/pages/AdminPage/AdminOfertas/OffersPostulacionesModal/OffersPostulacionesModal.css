@@ -1,0 +1,336 @@
+/* CSS Variables for Professional Theme - Matching AdminOfertas Palette */
+:root {
+  --primary-color: #3B82F6;
+  --primary-hover: #1D4ED8;
+  --secondary-color: #64748B;
+  --accent-green: #10B981;
+  --accent-yellow: #F59E0B;
+  --accent-red: #EF4444;
+  --accent-neutral: #6B7280;
+  --background-main: #FFFFFF;
+  --background-card: #FFFFFF;
+  --text-primary: #0A0E27;
+  --text-secondary: #3F4651;
+  --border-color: #A8B3C1;
+  --shadow-light: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-medium: 0 4px 16px rgba(59, 130, 246, 0.25);
+  --shadow-heavy: 0 8px 24px rgba(59, 130, 246, 0.35);
+  --border-radius: 10px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+}
+
+.opal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  backdrop-filter: blur(4px);
+}
+
+.opal-modal {
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  background: var(--background-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-heavy);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.opal-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+}
+
+.opal-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--accent-neutral);
+  padding: 8px;
+  border-radius: 6px;
+  transition: var(--transition);
+  font-size: 1.2rem;
+}
+
+.modal-close-btn:hover {
+  background-color: #f3f4f6;
+  color: var(--text-primary);
+}
+
+.opal-modal-body {
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 120px);
+}
+
+.opal-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  justify-content: flex-end;
+}
+
+.btn-small {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.3px;
+}
+
+.btn-small.primary {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-small.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-heavy);
+}
+
+.btn-small.ghost {
+  background: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-small.ghost:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-small.danger {
+  background: var(--accent-red);
+  color: white;
+}
+
+.btn-small.danger:hover {
+  background: #dc2626;
+}
+
+.opal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.opal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: white;
+  transition: var(--transition);
+  box-shadow: var(--shadow-light);
+}
+
+.opal-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.opal-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex: 1;
+}
+
+.opal-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.opal-name {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.opal-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.opal-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.opal-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status.aceptada {
+  background: #dcfce7;
+  color: #065f46;
+}
+
+.status.rechazada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status.pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.error-text {
+  color: var(--accent-red);
+  background: #fef2f2;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  margin-bottom: 1rem;
+}
+
+.btn-small.edit {
+  background: var(--accent-yellow);
+  color: #92400e;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-small.edit:hover {
+  background: #f59e0b;
+  color: white;
+}
+
+.create-form-opm {
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.create-form-opm h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.form-group-opm {
+  margin-bottom: 1rem;
+}
+
+.form-group-opm label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-group-opm select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.form-buttons-opm {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.form-buttons-opm button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.form-buttons-opm button:first-child {
+  background: #f3f4f6;
+  color: var(--text-secondary);
+}
+
+.form-buttons-opm button:last-child {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.edit-form-opm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-form-opm select {
+  padding: 0.4rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.edit-buttons-opm {
+  display: flex;
+  gap: 4px;
+}

@@ -151,6 +151,48 @@ public class DataInitializer implements CommandLineRunner {
         reclutador.setEmpresa(empresa);
         reclutadorRepo.save(reclutador);
         System.out.println("✓ Usuario RECLUTADOR recreado: reclutador@example.com / pass123");
+
+        // ===== CREAR OFERTA DE PRUEBA =====
+        try {
+            Oferta oferta = new Oferta();
+            oferta.setTitulo("Desarrollador Java - Prueba");
+            oferta.setDescripcion("Oferta de prueba generada por DataInitializer");
+            oferta.setFechaPublicacion(LocalDate.now());
+            oferta.setFechaLimite(LocalDate.now().plusDays(30));
+            oferta.setSalario(3500000L);
+            oferta.setNumeroVacantes(2);
+            oferta.setNivelExperiencia(Oferta.NivelExperiencia.INTERMEDIO);
+            oferta.setEstado(Oferta.EstadoOferta.ABIERTA);
+            oferta.setRequisitos("Java, Spring Boot, SQL");
+            oferta.setMunicipio(municipio);
+            oferta.setModalidad(Oferta.Modalidad.REMOTO);
+            oferta.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
+            oferta.setEmpresa(empresa);
+            // agregar un beneficio de ejemplo
+            try {
+                oferta.getBeneficios().add(Oferta.Beneficio.TELETRABAJO);
+            } catch (Exception ignore) {}
+            oferta.setPuntuacion(0.0f);
+            ofertaRepo.save(oferta);
+            System.out.println("✓ Oferta de prueba creada: " + oferta.getTitulo());
+
+            // ===== CREAR POSTULACIÓN para aspirante id=1 (si existe) o para el aspirante recién creado =====
+            try {
+                Postulacion postulacion = new Postulacion();
+                postulacion.setOferta(oferta);
+                Aspirante postulante = aspiranteRepo.findById(1L).orElse(aspirante);
+                postulacion.setAspirante(postulante);
+                postulacion.setFechaCreacion(LocalDate.now());
+                postulacion.setIsActive(true);
+                postulacion.setEstado(Postulacion.Estado.PENDIENTE);
+                postulacionRepo.save(postulacion);
+                System.out.println("✓ Postulación creada para oferta '" + oferta.getTitulo() + "' por aspirante ID " + (postulante != null ? postulante.getId() : "null"));
+            } catch (Exception e) {
+                System.out.println("⚠ Error creando postulacion de prueba: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            System.out.println("⚠ Error creando oferta de prueba: " + e.getMessage());
+        }
     }
 
     private void recreateEmpresas() {
