@@ -49,6 +49,11 @@ public class PostulacionService {
 	@Autowired
 	private AdminValidationService adminValidationService;
 
+	// ===== LISTAR TODAS (ADMIN) =====
+	public List<Postulacion> listarTodas() {
+		return postulacionRepo.findAll();
+	}
+
 	// ===== CREACIÓN =====
 	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId, Long usuarioIdActual) {
 		Aspirante aspirante = aspiranteRepo.findById(aspiranteId)

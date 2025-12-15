@@ -21,6 +21,18 @@ public class PostulacionController {
     @Autowired
     private PostulacionService postulacionService;
 
+    // GET ALL (ADMIN)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllPostulaciones() {
+        try {
+            List<Postulacion> postulaciones = postulacionService.listarTodas();
+            return ResponseEntity.ok(postulaciones);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
+        }
+    }
+
     // CREATE - Solo ASPIRANTE puede postularse a ofertas, pero ADMIN puede crear para testing
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping

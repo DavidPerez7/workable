@@ -1,11 +1,586 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { colors, spacing, fontSize, fontWeight, globalStyles } from '../../styles/theme';
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  RefreshControl,
+  Modal,
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { getAllAspirantes, deleteAspirante } from '../../api/aspirante';
+import { getAllReclutadores, deleteReclutador } from '../../api/reclutador';
+import Loading from '../../components/Loading';
+import Button from '../../components/Button';
+import { colors, spacing, fontSize, fontWeight, globalStyles, shadows } from '../../styles/theme';
+import type { Aspirante, Reclutador } from '../../types';
+
+type UserType = 'ASPIRANTE' | 'RECLUTADOR';
 
 const UsuariosAdminScreen = () => {
-  return <ScrollView style={globalStyles.container}><View style={styles.container}><Text style={styles.title}>Gestión de Usuarios</Text></View></ScrollView>;
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedType, setSelectedType] = useState<UserType>('ASPIRANTE');
+  const [aspirantes, setAspirantes] = useState<Aspirante[]>([]);
+  const [reclutadores, setReclutadores] = useState<Reclutador[]>([]);
+
+  // Modal
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<Aspirante | Reclutador | null>(null);
+
+  const loadData = async () => {
+    try {
+      const [aspirantesData, reclutadoresData] = await Promise.all([
+        getAllAspirantes(),
+        getAllReclutadores(),
+      ]);
+      const aspirantesList = Array.isArray(aspirantesData) ? aspirantesData : [];
+      const reclutadoresList = Array.isArray(reclutadoresData) ? reclutadoresData : [];
+      setAspirantes(aspirantesList);
+      setReclutadores(reclutadoresList);
+    } catch (error: any) {
+      console.error('Error cargando usuarios:', error);
+      Alert.alert('Error', error.message || 'Error al cargar usuarios');
+      setAspirantes([]);
+      setReclutadores([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [])
+  );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadData();
+  };
+
+  const openUserModal = (user: Aspirante | Reclutador) => {
+    setSelectedUser(user);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleDeleteUser = (user: Aspirante | Reclutador) => {
+    Alert.alert(
+      'Confirmar Eliminación',
+      `¿Estás seguro de eliminar a ${user.nombre} ${user.apellido}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (!user.id) return;
+              
+              if (selectedType === 'ASPIRANTE') {
+                await deleteAspirante(user.id);
+              } else {
+                await deleteReclutador(user.id);
+              }
+              
+              Alert.alert('Éxito', 'Usuario eliminado correctamente');
+              closeModal();
+              loadData();
+            } catch (error: any) {
+              Alert.alert('Error', error.message || 'Error al eliminar usuario');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const renderUserCard = (user: Aspirante | Reclutador, index: number) => {
+    const isReclutador = 'cargo' in user;
+    return (
+      <TouchableOpacity
+        key={user.id || index}
+        style={styles.userCard}
+        onPress={() => openUserModal(user)}
+      >
+        <View style={styles.cardHeader}>
+          <View style={styles.userIcon}>
+            <Ionicons
+              name={isReclutador ? 'briefcase' : 'person'}
+              size={32}
+              color={colors.primary}
+            />
+          </View>
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>
+              {user.nombre} {user.apellido}
+            </Text>
+            <Text style={styles.userEmail}>{user.correo}</Text>
+            {isReclutador && (user as Reclutador).cargo && (
+              <Text style={styles.userCargo}>{(user as Reclutador).cargo}</Text>
+            )}
+            {isReclutador && (user as Reclutador).empresa && (
+              <Text style={styles.userEmpresa}>
+                {(user as Reclutador).empresa?.nombre}
+              </Text>
+            )}
+          </View>
+          <Ionicons name="chevron-forward" size={24} color={colors.textSecondary} />
+        </View>
+
+        <View style={styles.cardFooter}>
+          {user.telefono && (
+            <View style={styles.infoItem}>
+              <Ionicons name="call-outline" size={16} color={colors.textSecondary} />
+              <Text style={styles.infoText}>{user.telefono}</Text>
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  if (loading) return <Loading />;
+
+  const currentUsers = (selectedType === 'ASPIRANTE' ? aspirantes : reclutadores) || [];
+
+  return (
+    <View style={globalStyles.container}>
+      {/* Header with Stats */}
+      <View style={styles.header}>
+        <View style={styles.statsContainer}>
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{aspirantes.length}</Text>
+            <Text style={styles.statLabel}>Aspirantes</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{reclutadores.length}</Text>
+            <Text style={styles.statLabel}>Reclutadores</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Filters */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedType === 'ASPIRANTE' && styles.filterButtonActive,
+          ]}
+          onPress={() => setSelectedType('ASPIRANTE')}
+        >
+          <Ionicons
+            name="person"
+            size={20}
+            color={selectedType === 'ASPIRANTE' ? colors.white : colors.textSecondary}
+          />
+          <Text
+            style={[
+              styles.filterText,
+              selectedType === 'ASPIRANTE' && styles.filterTextActive,
+            ]}
+          >
+            Aspirantes ({aspirantes.length})
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filterButton,
+            selectedType === 'RECLUTADOR' && styles.filterButtonActive,
+          ]}
+          onPress={() => setSelectedType('RECLUTADOR')}
+        >
+          <Ionicons
+            name="briefcase"
+            size={20}
+            color={selectedType === 'RECLUTADOR' ? colors.white : colors.textSecondary}
+          />
+          <Text
+            style={[
+              styles.filterText,
+              selectedType === 'RECLUTADOR' && styles.filterTextActive,
+            ]}
+          >
+            Reclutadores ({reclutadores.length})
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* User List */}
+      <ScrollView
+        style={styles.listContainer}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        {currentUsers.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="people-outline" size={64} color={colors.textSecondary} />
+            <Text style={styles.emptyText}>
+              No hay {selectedType === 'ASPIRANTE' ? 'aspirantes' : 'reclutadores'} registrados
+            </Text>
+          </View>
+        ) : (
+          currentUsers.map((user, index) => renderUserCard(user, index))
+        )}
+      </ScrollView>
+
+      {/* User Detail Modal */}
+      <Modal visible={showModal} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Detalle del Usuario</Text>
+              <TouchableOpacity onPress={closeModal}>
+                <Ionicons name="close" size={28} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            {selectedUser && (
+              <ScrollView style={styles.modalBody}>
+                <View style={styles.modalUserHeader}>
+                  <View style={styles.modalUserIcon}>
+                    <Ionicons
+                      name={selectedType === 'RECLUTADOR' ? 'briefcase' : 'person'}
+                      size={48}
+                      color={colors.primary}
+                    />
+                  </View>
+                  <Text style={styles.modalUserName}>
+                    {selectedUser.nombre} {selectedUser.apellido}
+                  </Text>
+                  <Text style={styles.modalUserEmail}>{selectedUser.correo}</Text>
+                </View>
+
+                <View style={styles.modalSection}>
+                  <Text style={styles.modalSectionTitle}>Información Personal</Text>
+
+                  <View style={styles.modalInfoRow}>
+                    <Ionicons name="mail-outline" size={20} color={colors.textSecondary} />
+                    <View style={styles.modalInfoContent}>
+                      <Text style={styles.modalInfoLabel}>Correo</Text>
+                      <Text style={styles.modalInfoText}>{selectedUser.correo}</Text>
+                    </View>
+                  </View>
+
+                  {selectedUser.telefono && (
+                    <View style={styles.modalInfoRow}>
+                      <Ionicons name="call-outline" size={20} color={colors.textSecondary} />
+                      <View style={styles.modalInfoContent}>
+                        <Text style={styles.modalInfoLabel}>Teléfono</Text>
+                        <Text style={styles.modalInfoText}>{selectedUser.telefono}</Text>
+                      </View>
+                    </View>
+                  )}
+
+                  {selectedType === 'ASPIRANTE' && (selectedUser as Aspirante).direccion && (
+                    <View style={styles.modalInfoRow}>
+                      <Ionicons name="location-outline" size={20} color={colors.textSecondary} />
+                      <View style={styles.modalInfoContent}>
+                        <Text style={styles.modalInfoLabel}>Dirección</Text>
+                        <Text style={styles.modalInfoText}>
+                          {(selectedUser as Aspirante).direccion}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+
+                  {selectedType === 'RECLUTADOR' && (selectedUser as Reclutador).cargo && (
+                    <View style={styles.modalInfoRow}>
+                      <Ionicons name="briefcase-outline" size={20} color={colors.textSecondary} />
+                      <View style={styles.modalInfoContent}>
+                        <Text style={styles.modalInfoLabel}>Cargo</Text>
+                        <Text style={styles.modalInfoText}>
+                          {(selectedUser as Reclutador).cargo}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+
+                  {selectedType === 'RECLUTADOR' && (selectedUser as Reclutador).empresa && (
+                    <View style={styles.modalInfoRow}>
+                      <Ionicons name="business-outline" size={20} color={colors.textSecondary} />
+                      <View style={styles.modalInfoContent}>
+                        <Text style={styles.modalInfoLabel}>Empresa</Text>
+                        <Text style={styles.modalInfoText}>
+                          {(selectedUser as Reclutador).empresa?.nombre}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.dangerZone}>
+                  <Text style={styles.dangerTitle}>Zona de Peligro</Text>
+                  <Button
+                    title="Eliminar Usuario"
+                    variant="danger"
+                    icon={<Ionicons name="trash-outline" size={20} color={colors.white} />}
+                    onPress={() => handleDeleteUser(selectedUser)}
+                    fullWidth
+                  />
+                </View>
+              </ScrollView>
+            )}
+
+            <View style={styles.modalFooter}>
+              <Button title="Cerrar" variant="outline" onPress={closeModal} fullWidth />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
 };
 
-const styles = StyleSheet.create({ container: { padding: spacing.md }, title: { fontSize: fontSize.xxl, fontWeight: fontWeight.bold, color: colors.text } });
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: colors.primary,
+    padding: spacing.lg,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  statCard: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: spacing.md,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: spacing.xs,
+    ...shadows.sm,
+  },
+  statNumber: {
+    fontSize: fontSize.xxl,
+    fontWeight: fontWeight.bold,
+    color: colors.primary,
+  },
+  statLabel: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.white,
+    padding: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  filterButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    marginHorizontal: spacing.xs,
+    borderRadius: 8,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  filterButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  filterText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.textSecondary,
+    marginLeft: spacing.xs,
+  },
+  filterTextActive: {
+    color: colors.white,
+  },
+  listContainer: {
+    flex: 1,
+    padding: spacing.md,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.xxl,
+  },
+  emptyText: {
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+    marginTop: spacing.md,
+  },
+  userCard: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    ...shadows.md,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  userIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+  },
+  userEmail: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  userCargo: {
+    fontSize: fontSize.sm,
+    color: colors.primary,
+    fontWeight: fontWeight.semibold,
+    marginTop: spacing.xs,
+  },
+  userEmpresa: {
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  cardFooter: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoText: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    marginLeft: spacing.sm,
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '90%',
+    paddingTop: spacing.lg,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  modalTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+  },
+  modalBody: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  modalUserHeader: {
+    alignItems: 'center',
+    padding: spacing.lg,
+    backgroundColor: colors.background,
+    borderRadius: 12,
+    marginBottom: spacing.md,
+  },
+  modalUserIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+    ...shadows.md,
+  },
+  modalUserName: {
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  modalUserEmail: {
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  modalSection: {
+    marginBottom: spacing.lg,
+  },
+  modalSectionTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+    marginBottom: spacing.md,
+  },
+  modalInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: spacing.md,
+  },
+  modalInfoContent: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  modalInfoLabel: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.semibold,
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  modalInfoText: {
+    fontSize: fontSize.md,
+    color: colors.text,
+  },
+  dangerZone: {
+    backgroundColor: '#fef2f2',
+    padding: spacing.md,
+    borderRadius: 12,
+    marginTop: spacing.md,
+  },
+  dangerTitle: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.bold,
+    color: colors.danger,
+    marginBottom: spacing.md,
+  },
+  modalFooter: {
+    padding: spacing.lg,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+});
 
 export default UsuariosAdminScreen;

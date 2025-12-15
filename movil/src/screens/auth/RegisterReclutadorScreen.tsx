@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as SecureStore from 'expo-secure-store';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   View,
@@ -10,16 +11,18 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { registerReclutador, login as loginApi } from '../../api/auth';
 import { createEmpresa } from '../../api/empresa';
 import { updateReclutadorWithActual } from '../../api/reclutador';
+import { getAllMunicipios } from '../../api/municipio';
 import { setAuthToken } from '../../api/config';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { colors, spacing, fontSize, fontWeight } from '../../styles/theme';
-import type { AuthStackParamList } from '../../types';
+import type { AuthStackParamList, Municipio } from '../../types';
 
 type RegisterReclutadorNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -48,8 +51,23 @@ const RegisterReclutadorScreen = () => {
   const [telefonoEmpresa, setTelefonoEmpresa] = useState('');
   const [correoEmpresa, setCorreoEmpresa] = useState('');
   const [numeroTrabajadores, setNumeroTrabajadores] = useState('');
+  const [municipioId, setMunicipioId] = useState<number>(1);
 
+  const [municipios, setMunicipios] = useState<Municipio[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Cargar municipios al montar el componente
+  useEffect(() => {
+    const loadMunicipios = async () => {
+      try {
+        const data = await getAllMunicipios();
+        setMunicipios(data);
+      } catch (error) {
+        console.error('Error al cargar municipios:', error);
+      }
+    };
+    loadMunicipios();
+  }, []);
 
   const handleRegister = async () => {
     if (!nombre || !apellido || !correo || !password || !nombreEmpresa || !descripcionEmpresa || !fechaNacimiento) {
@@ -107,38 +125,54 @@ const RegisterReclutadorScreen = () => {
         numeroTrabajadores: numeroTrabajadores ? parseInt(numeroTrabajadores) : 1,
         isActive: true,
         reclutadorOwner: { id: reclutadorId },
+        municipio: { id: municipioId },
       };
       const empresaCreada = await createEmpresa(empresaData);
 
-      // Paso 4: Asociar el reclutador a la empresa usando el endpoint con reclutadorIdActual
-      // Enviamos también los datos del reclutador para no sobrescribir con null en el backend
-      console.log('Asociando empresa al reclutador...');
-      await updateReclutadorWithActual(
-        reclutadorId,
-        {
-          nombre,
-          apellido,
-          correo,
-          telefono,
-          cargo,
-          fechaNacimiento,
-          empresa: { id: empresaCreada.id },
-        } as any,
-        reclutadorId
-      );
+      // Guardar empresa localmente para hidratar en el próximo login si el backend no la devuelve
+      try {
+        await SecureStore.setItemAsync(
+          `workable_empresa_${correo.toLowerCase()}`,
+          JSON.stringify({ id: empresaCreada.id, nombre: empresaCreada.nombre })
+        );
+      } catch (storeErr) {
+        console.warn('No se pudo guardar empresa localmente:', storeErr);
+      }
 
-      // Paso 5: Volver a iniciar sesión para obtener los datos actualizados con la empresa
-      console.log('Actualizando datos de sesión...');
-      const loginResponseFinal = await loginApi({ correo, password });
-      console.log('Login final response:', loginResponseFinal);
+      // Paso 4: Asociar el reclutador a la empresa usando el endpoint con reclutadorIdActual
+      console.log('Asociando empresa al reclutador...');
+      try {
+        await updateReclutadorWithActual(
+          reclutadorId,
+          {
+            nombre,
+            apellido,
+            correo,
+            telefono,
+            cargo,
+            fechaNacimiento,
+            empresa: { id: empresaCreada.id },
+            // Enviamos también el identificador plano por si el backend lo espera como empresaId
+            // Esto evita que la empresa quede sin asociar al reclutador
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            empresaId: empresaCreada.id,
+          } as any,
+          reclutadorId
+        );
+        console.log('Empresa asociada exitosamente');
+      } catch (updateError) {
+        console.error('Error al asociar empresa, pero continuando:', updateError);
+        // Continuar de todas formas ya que la empresa fue creada
+      }
 
       // Limpiar el token temporal
       setAuthToken(null);
 
       Alert.alert(
         'Éxito', 
-        'Registro exitoso. Tu empresa ha sido creada. Ahora puedes iniciar sesión', 
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+        'Registro exitoso. Tu empresa "' + nombreEmpresa + '" ha sido creada.\n\nPor favor inicia sesión para continuar.', 
+        [{ text: 'Iniciar sesión', onPress: () => navigation.navigate('Login') }]
       );
     } catch (error: any) {
       console.error('Error en registro:', error);
@@ -300,6 +334,23 @@ const RegisterReclutadorScreen = () => {
             icon="location"
           />
 
+          <Text style={styles.label}>Municipio *</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={municipioId}
+              onValueChange={(itemValue) => setMunicipioId(itemValue as number)}
+              style={styles.picker}
+            >
+              {municipios.map((municipio) => (
+                <Picker.Item
+                  key={municipio.id}
+                  label={`${municipio.nombre} - ${municipio.departamento}`}
+                  value={municipio.id}
+                />
+              ))}
+            </Picker>
+          </View>
+
           <Input
             label="Teléfono de la empresa"
             placeholder="Opcional"
@@ -395,6 +446,22 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
     color: colors.primary,
     fontWeight: fontWeight.semibold,
+  },
+  label: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    marginBottom: spacing.md,
+    backgroundColor: '#fff',
+  },
+  picker: {
+    height: 50,
   },
 });
 

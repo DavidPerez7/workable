@@ -76,7 +76,14 @@ public class EmpresaService {
         request.setReclutadorOwner(usuario);
         request.getReclutadores().add(usuario);
 
-        return empresaRepository.save(request);
+        // Persistir empresa
+        Empresa guardada = empresaRepository.save(request);
+
+        // Asociar empresa al reclutador (dueño) para que el login devuelva empresa
+        usuario.setEmpresa(guardada);
+        usuarioRepository.save(usuario);
+
+        return guardada;
     }
 
     public Empresa createWithOwner(Empresa empresa, Reclutador reclutadorOwner) {
@@ -94,7 +101,13 @@ public class EmpresaService {
         empresa.setReclutadorOwner(ownerGuardado);
         empresa.getReclutadores().add(ownerGuardado);
 
-        return empresaRepository.save(empresa);
+        Empresa guardada = empresaRepository.save(empresa);
+
+        // Asociar empresa al owner
+        ownerGuardado.setEmpresa(guardada);
+        usuarioRepository.save(ownerGuardado);
+
+        return guardada;
     }
 
     public Empresa addReclutador(Long empresaId, Reclutador nuevoReclutador, Long usuarioIdActual) {
