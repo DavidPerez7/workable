@@ -19,6 +19,6 @@ public class GlobalExceptionLogger {
         String msg = ex.getMessage();
         String details = ex.toString();
         logService.add("ERROR", "BACKEND", msg != null ? msg : "Exception", details);
-        return ResponseEntity.status(500).body(Map.of("error", "Internal server error"));
+        return ResponseEntity.status(500).body(Map.of("error", ex.getMessage() != null ? ex.getMessage() : "Internal server error"));
     }
 }

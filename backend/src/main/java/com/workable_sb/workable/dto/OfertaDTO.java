@@ -1,20 +1,28 @@
 package com.workable_sb.workable.dto;
 
-import java.time.LocalDate;
-import java.util.Set;
-
+/**
+ * Deprecated placeholder. The backend now uses the domain model `Oferta` directly
+ * for request/response mapping. This class is kept temporarily for compatibility
+ * and will be removed when all clients and references are migrated.
+ */
+@Deprecated
 public class OfertaDTO {
-    public String titulo;
-    public String descripcion;
-    public LocalDate fechaLimite;
-    public Long salario;
-    public Integer numeroVacantes;
-    public String nivelExperiencia;
-    public String estado;
-    public Set<String> requisitos;
-    public Long municipioId;
-    public String modalidad;
-    public String tipoContrato;
-    public Long empresaId;
-    public Set<String> beneficios;
+    // Minimal DTO kept for compatibility with older clients. Only include the changed field
+    // `requisitos` as a String (no nulo, max 500 caracteres).
+
+    private String requisitos;
+
+    public OfertaDTO() {}
+
+    public OfertaDTO(String requisitos) {
+        this.requisitos = requisitos;
+    }
+
+    public String getRequisitos() {
+        return requisitos;
+    }
+
+    public void setRequisitos(String requisitos) {
+        this.requisitos = requisitos;
+    }
 }

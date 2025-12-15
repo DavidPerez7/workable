@@ -464,7 +464,7 @@
 .offers-table-OP {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1100px;
+  min-width: 1500px; /* increased to accomodate additional columns */
   font-size: 0.95em;
 }
 
@@ -473,26 +473,26 @@
 }
 
 .offers-table-OP th {
-  padding: 0.7rem 0.9rem;
+  padding: 0.45rem 0.6rem;
   text-align: left;
   font-weight: 800;
   color: var(--text-primary);
-  font-size: 0.75em;
+  font-size: 0.72em;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid var(--border-color);
 }
 
 .offers-table-OP td {
-  padding: 0.7rem 0.9rem;
+  padding: 0.45rem 0.6rem;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 0.88em;
+  font-size: 0.82em;
   font-weight: 500;
 }
 
 .offers-table-OP tbody tr:nth-child(even) {
-  background-color: rgba(59, 130, 246, 0.03);
+  background-color: rgba(59, 130, 246, 0.02);
 }
 
 .offers-table-OP tbody tr {
@@ -500,13 +500,29 @@
 }
 
 .offers-table-OP tbody tr:hover {
-  background-color: rgba(59, 130, 246, 0.12);
-  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.1);
+  background-color: rgba(59, 130, 246, 0.09);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.08);
 }
 
 .offer-title-OP {
   font-weight: 800;
   color: var(--text-primary);
+}
+
+.description-cell {
+  max-width: 360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.requisitos-cell, .beneficios-cell {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary);
+  font-size: 0.85em;
 }
 
 .contact-info-OP {
@@ -644,12 +660,110 @@
   border-color: rgba(239, 68, 68, 0.65);
 }
 
+/* Action buttons: reuse UsersTable styles for consistent look */
+.actions-UP {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: nowrap;
+}
+
+.btn-action-UP {
+  padding: 0.45rem 0.65rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.75em;
+  cursor: pointer;
+  transition: var(--transition);
+  background-color: var(--background-card);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.btn-action-UP:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-edit-UP {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #1D4ED8;
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.btn-edit-UP:hover {
+  background-color: rgba(59, 130, 246, 0.22);
+  color: #1e40af;
+  border-color: rgba(59, 130, 246, 0.65);
+}
+
+.btn-activate-UP {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.btn-activate-UP:hover {
+  background-color: rgba(16, 185, 129, 0.22);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.65);
+}
+
+.btn-deactivate-UP {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #F59E0B;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+.btn-deactivate-UP:hover {
+  background-color: rgba(245, 158, 11, 0.22);
+  color: #D97706;
+  border-color: rgba(245, 158, 11, 0.65);
+}
+
+.btn-delete-UP {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.btn-delete-UP:hover {
+  background-color: rgba(239, 68, 68, 0.22);
+  color: #7f1d1d;
+  border-color: rgba(239, 68, 68, 0.65);
+}
+
 .no-results-OP {
   text-align: center;
   padding: 3rem !important;
   color: var(--text-secondary);
   font-size: 1.1em;
   font-style: italic;
+}
+
+/* Actions in offers table should match AdminUsuarios small buttons */
+.actions-UP {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Ensure small icon-only buttons in table look like the rest of admin buttons */
+.table-UP .btn-small {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.table-UP .btn-small[title] {
+  line-height: 1;
 }
 
 /* Responsive Design */
