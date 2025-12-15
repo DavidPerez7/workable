@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../SideBar/Sidebar';
 import { getAllFeedbacks, getFeedbackById, updateFeedback, deleteFeedback } from '../../../api/feedbackAPI';
-import '../AdminEmpresas/AdminEmpresas.css';
 import './AdminFeedback.css';
 
 function AdminFeedback() {
@@ -97,27 +97,33 @@ function AdminFeedback() {
     setShowEditModal(true);
   };
 
-  if (loading) return <div className="container-admin-page-AP"><p>Cargando...</p></div>;
-  if (error) return <div className="container-admin-page-AP"><p>{error}</p></div>;
+  if (loading) return <div style={{padding: '2rem', textAlign: 'center'}}>Cargando...</div>;
+  if (error) return <div style={{padding: '2rem', color: '#DC2626'}}>{error}</div>;
 
   return (
-    <div className="container-admin-page-AP">
-      <div className="header-admin-empresas-AE">
-        <h1>Gestión de Feedback</h1>
-      </div>
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-feedback-FED">
+        <div className="container-feedback-FED">
+          <div className="header-section-FED">
+            <div>
+              <h1 className="title-feedback-FED">Gestión de Feedback</h1>
+              <p className="subtitle-feedback-FED">Administra los feedbacks de aspirantes</p>
+            </div>
+          </div>
 
-      <div className="filters-AE">
+      <div className="filters-feedback-FED">
         <input
           type="text"
           placeholder="Buscar feedback..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="search-input-AE"
+          className="search-input-FED"
         />
       </div>
 
-      <div className="table-container-AE">
-        <table className="empresas-table-AE">
+      <div className="table-container-FED">
+        <table className="table-feedback-FED">
           <thead>
             <tr>
               <th>ID</th>
@@ -140,19 +146,19 @@ function AdminFeedback() {
                 <td>{feedback.oferta?.titulo || 'N/A'}</td>
                 <td>{feedback.titulo}</td>
                 <td>
-                  <div className="stars-container">
+                  <div className="stars-container-FED">
                     {[...Array(5)].map((_, i) => (
-                      <span key={i} className={`star ${i < Math.floor(feedback.puntuacion || 0) ? 'filled' : i < feedback.puntuacion ? 'half' : ''}`}>★</span>
+                      <span key={i} className={`star-FED ${i < Math.floor(feedback.puntuacion || 0) ? 'filled' : i < feedback.puntuacion ? 'half' : ''}`}>★</span>
                     ))}
-                    <span className="puntuacion-valor">{feedback.puntuacion?.toFixed(1) || 'N/A'}</span>
+                    <span className="puntuacion-valor-FED">{feedback.puntuacion?.toFixed(1) || 'N/A'}</span>
                   </div>
                 </td>
                 <td>{feedback.fechaCreacion}</td>
                 <td>{feedback.isActive ? '✅' : '❌'}</td>
-                <td className="actions-cell-AE">
-                  <button className="btn-ver-AE" onClick={() => openViewModal(feedback)}>Ver</button>
-                  <button className="btn-editar-AE" onClick={() => openEditModal(feedback)}>Editar</button>
-                  <button className="btn-eliminar-AE" onClick={() => handleDelete(feedback.id)}>Eliminar</button>
+                <td className="actions-cell-FED">
+                  <button className="btn-ver-FED" onClick={() => openViewModal(feedback)}>Ver</button>
+                  <button className="btn-editar-FED" onClick={() => openEditModal(feedback)}>Editar</button>
+                  <button className="btn-eliminar-FED" onClick={() => handleDelete(feedback.id)}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -214,6 +220,8 @@ function AdminFeedback() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

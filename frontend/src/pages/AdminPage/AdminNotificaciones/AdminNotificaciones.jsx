@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../SideBar/Sidebar';
 import { getAllNotificaciones, crearNotificacion, marcarNotificacionLeida, eliminarNotificacion } from '../../../api/notificacionAPI';
 import aspirantesApi from '../../../api/aspirantesApi';
 import reclutadoresApi from '../../../api/reclutadoresApi';
-import '../AdminEmpresas/AdminEmpresas.css';
 import './AdminNotificaciones.css';
 
 function AdminNotificaciones() {
@@ -120,25 +120,31 @@ function AdminNotificaciones() {
     });
   };
 
-  if (loading) return <div className="container-admin-page-AP"><p>Cargando...</p></div>;
-  if (error) return <div className="container-admin-page-AP"><p>{error}</p></div>;
+  if (loading) return <div style={{padding: '2rem', textAlign: 'center'}}>Cargando...</div>;
+  if (error) return <div style={{padding: '2rem', color: '#DC2626'}}>{error}</div>;
 
   return (
-    <div className="container-admin-page-AP">
-      <div className="header-admin-empresas-AE">
-        <h1>Gestión de Notificaciones</h1>
-        <button className="btn-crear-AE" onClick={openCreateModal}>+ Nueva Notificación</button>
-      </div>
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-notificaciones-NOT">
+        <div className="container-notificaciones-NOT">
+          <div className="header-section-NOT">
+            <div>
+              <h1 className="title-notificaciones-NOT">Gestión de Notificaciones</h1>
+              <p className="subtitle-notificaciones-NOT">Administra las notificaciones del sistema</p>
+            </div>
+            <button className="btn-crear-NOT" onClick={openCreateModal}>+ Nueva Notificación</button>
+          </div>
 
-      <div className="filters-AE">
+      <div className="filters-notificaciones-NOT">
         <input
           type="text"
           placeholder="Buscar notificación..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="search-input-AE"
+          className="search-input-NOT"
         />
-        <select value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)} className="filter-select-AE">
+        <select value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)} className="filter-select-NOT">
           <option value="todos">Todos los tipos</option>
           {tiposNotificacion.map(tipo => (
             <option key={tipo} value={tipo}>{tipo}</option>
@@ -146,8 +152,8 @@ function AdminNotificaciones() {
         </select>
       </div>
 
-      <div className="table-container-AE">
-        <table className="empresas-table-AE">
+      <div className="table-container-NOT">
+        <table className="table-notificaciones-NOT">
           <thead>
             <tr>
               <th>ID</th>
@@ -170,12 +176,12 @@ function AdminNotificaciones() {
                 <td>{notif.leida ? '✅' : '❌'}</td>
                 <td>{notif.isActive ? '✅' : '❌'}</td>
                 <td>{notif.fechaCreacion}</td>
-                <td className="actions-cell-AE">
-                  <button className="btn-ver-AE" onClick={() => openViewModal(notif)}>Ver</button>
+                <td className="actions-cell-NOT">
+                  <button className="btn-ver-NOT" onClick={() => openViewModal(notif)}>Ver</button>
                   {!notif.leida && (
-                    <button className="btn-editar-AE" onClick={() => handleMarcarLeida(notif.id)}>Marcar Leída</button>
+                    <button className="btn-editar-NOT" onClick={() => handleMarcarLeida(notif.id)}>Marcar Leída</button>
                   )}
-                  <button className="btn-eliminar-AE" onClick={() => handleDelete(notif.id)}>Eliminar</button>
+                  <button className="btn-eliminar-NOT" onClick={() => handleDelete(notif.id)}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -261,6 +267,8 @@ function AdminNotificaciones() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,271 +1,354 @@
-/* AdminHabilidades Styles */
+/* AdminHabilidades - HAB */
 
-/* Tabla habilidades */
-.tabla-habilidades-header {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  color: white;
-  font-weight: 700;
-  padding: 1rem;
+/* Layout */
+.main-habilidades-HAB {
+  flex: 1;
+  margin-left: 250px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F7FA 100%);
+  min-height: calc(100vh - 120px);
+  padding: 40px 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Habilidad nombre y nivel */
-.habilidad-nombre {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 1em;
+.container-habilidades-HAB {
+  max-width: 1400px;
+  margin: 0 auto;
+  border: 1px solid #A8B3C1;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25);
+  padding: 2rem;
 }
 
-.habilidad-nivel {
-  color: var(--text-secondary);
-  font-size: 0.9em;
-  margin-top: 0.25rem;
-}
-
-/* Nivel skill badge */
-.badge-nivel-basico {
-  background-color: #DBEAFE;
-  color: #0C4A6E;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: 600;
-}
-
-.badge-nivel-intermedio {
-  background-color: #FED7AA;
-  color: #92400E;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: 600;
-}
-
-.badge-nivel-avanzado {
-  background-color: #D1FAE5;
-  color: #065F46;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: 600;
-}
-
-.badge-nivel-experto {
-  background-color: #E9D5FF;
-  color: #581C87;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: 600;
-}
-
-/* Años experiencia */
-.anos-experiencia {
-  display: inline-block;
-  background: #F3F4F6;
-  color: var(--text-primary);
-  padding: 0.3rem 0.7rem;
-  border-radius: 6px;
-  font-size: 0.85em;
-  font-weight: 500;
-}
-
-/* Filtro aspirante */
-.filtro-aspirante-container {
-  margin-bottom: 1.5rem;
+/* Header */
+.header-section-HAB {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filtro-aspirante-label {
-  font-weight: 600;
-  color: var(--text-primary);
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.filtro-aspirante-select {
-  padding: 0.8rem;
-  border: 1px solid var(--border-color);
+.title-habilidades-HAB {
+  font-size: 2.4em;
+  font-weight: 900;
+  color: #0A0E27;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.8px;
+}
+
+.subtitle-habilidades-HAB {
+  font-size: 1em;
+  color: #3F4651;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.btn-crear-HAB {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 0.9rem 1.8rem;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  letter-spacing: 0.3px;
+}
+
+.btn-crear-HAB:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Filters */
+.filters-habilidades-HAB {
+  margin-bottom: 1.5rem;
+}
+
+.filter-select-HAB {
+  padding: 0.8rem 1rem;
+  border: 2px solid #A8B3C1;
   border-radius: 8px;
   font-size: 1em;
   cursor: pointer;
-  background: white;
-  min-width: 200px;
-  transition: var(--transition);
+  transition: all 0.3s ease;
+  min-width: 250px;
 }
 
-.filtro-aspirante-select:focus {
+.filter-select-HAB:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: #3B82F6;
+}
+
+.search-input-HAB {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid #A8B3C1;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: all 0.3s ease;
+}
+
+.search-input-HAB:focus {
+  outline: none;
+  border-color: #3B82F6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Información aspirante en modal */
-.aspirante-info {
-  background: #F9FAFB;
+/* Table */
+.table-container-HAB {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #A8B3C1;
+}
+
+.table-habilidades-HAB {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.table-habilidades-HAB thead {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  color: white;
+}
+
+.table-habilidades-HAB th {
   padding: 1rem;
-  border-radius: 8px;
-  border-left: 4px solid var(--primary-color);
-  margin-bottom: 1.5rem;
+  text-align: left;
+  font-weight: 700;
 }
 
-.aspirante-info-item {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+.table-habilidades-HAB td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #E5E7EB;
 }
 
-.aspirante-info-label {
-  font-weight: 600;
-  color: var(--text-secondary);
+.table-habilidades-HAB tbody tr:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Actions */
+.actions-cell-HAB {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-ver-HAB,
+.btn-editar-HAB,
+.btn-eliminar-HAB {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
   font-size: 0.9em;
-}
-
-.aspirante-info-valor {
-  color: var(--text-primary);
-}
-
-/* Formulario habilidad */
-.habilidad-form-group {
-  margin-bottom: 1.5rem;
-}
-
-.habilidad-form-label {
   font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.habilidad-form-input {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1em;
-  transition: var(--transition);
-}
-
-.habilidad-form-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-}
-
-.habilidad-form-select {
-  width: 100%;
-  padding: 0.8rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1em;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ver-HAB {
+  background: #3B82F6;
+  color: white;
+}
+
+.btn-ver-HAB:hover {
+  background: #1D4ED8;
+}
+
+.btn-editar-HAB {
+  background: #F59E0B;
+  color: white;
+}
+
+.btn-editar-HAB:hover {
+  background: #D97706;
+}
+
+.btn-eliminar-HAB {
+  background: #EF4444;
+  color: white;
+}
+
+.btn-eliminar-HAB:hover {
+  background: #DC2626;
+}
+
+/* Modals */
+.modal-overlay-AE {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content-AE {
   background: white;
-  transition: var(--transition);
+  border-radius: 10px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease;
 }
 
-.habilidad-form-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-}
-
-/* Grid dos columnas para nivel y años */
-.habilidad-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-@media (max-width: 768px) {
-  .habilidad-form-row {
-    grid-template-columns: 1fr;
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Botones habilidad */
-.btn-habilidad-primary {
-  background: var(--gradient-primary);
-  color: white;
+.modal-header-AE {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #E5E7EB;
+  padding-bottom: 1rem;
+}
+
+.modal-header-AE h2 {
+  font-size: 1.5em;
+  color: #0A0E27;
+  margin: 0;
+}
+
+.modal-close-AE {
+  background: none;
   border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.95em;
-  font-weight: 600;
+  font-size: 1.5em;
   cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-light);
+  color: #6B7280;
+  transition: all 0.3s ease;
 }
 
-.btn-habilidad-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-}
-
-.btn-habilidad-secondary {
-  background: white;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.95em;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn-habilidad-secondary:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
-.btn-habilidad-danger {
-  background: #FEE2E2;
+.modal-close-AE:hover {
   color: #DC2626;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.95em;
+}
+
+.modal-form-AE {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group-AE {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field-label {
   font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
+  color: #0A0E27;
+  font-size: 0.95em;
 }
 
-.btn-habilidad-danger:hover {
-  background: #FCA5A5;
-  color: white;
+.form-field-input,
+.form-field-select,
+.form-field-textarea {
+  padding: 0.8rem;
+  border: 2px solid #A8B3C1;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
-/* Modal acciones */
-.modal-habilidad-actions {
+.form-field-input:focus,
+.form-field-select:focus,
+.form-field-textarea:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-field-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-actions-AE {
   display: flex;
   gap: 1rem;
-  margin-top: 2rem;
   justify-content: flex-end;
+  margin-top: 1.5rem;
+  border-top: 2px solid #E5E7EB;
+  padding-top: 1rem;
 }
 
-/* Sin habilidades */
-.sin-habilidades {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text-secondary);
+.btn-cancelar-AE,
+.btn-guardar-AE {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.sin-habilidades-icon {
-  font-size: 4em;
-  margin-bottom: 1rem;
-  opacity: 0.3;
+.btn-cancelar-AE {
+  background: #E5E7EB;
+  color: #0A0E27;
 }
 
-/* Tabla responsiva */
-@media (max-width: 768px) {
-  .filtro-aspirante-container {
-    flex-direction: column;
-  }
+.btn-cancelar-AE:hover {
+  background: #D1D5DB;
+}
 
-  .filtro-aspirante-select {
-    width: 100%;
-  }
+.btn-guardar-AE {
+  background: #3B82F6;
+  color: white;
+}
+
+.btn-guardar-AE:hover {
+  background: #1D4ED8;
+}
+
+.modal-body-AE {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+.modal-body-AE p {
+  margin: 0.8rem 0;
+  color: #3F4651;
+}
+
+.modal-body-AE a {
+  color: #3B82F6;
+  text-decoration: none;
+}
+
+.modal-body-AE a:hover {
+  text-decoration: underline;
+}
+
+.btn-editar-HAB:hover {
+  background: #D97706;
+}
+
+.btn-eliminar-HAB {
+  background: #EF4444;
+  color: white;
+}
+
+.btn-eliminar-HAB:hover {
+  background: #DC2626;
 }

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../SideBar/Sidebar';
 import { getAllCitaciones, createCitacion, updateCitacion, deleteCitacion } from '../../../api/citacionAPI';
-import { getAllOfertas } from '../../../api/ofertasAPI';
 import reclutadoresApi from '../../../api/reclutadoresApi';
-import '../AdminEmpresas/AdminEmpresas.css';
 import './AdminCitaciones.css';
 
 function AdminCitaciones() {
   const [citaciones, setCitaciones] = useState([]);
-  const [ofertas, setOfertas] = useState([]);
   const [reclutadores, setReclutadores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,13 +35,11 @@ function AdminCitaciones() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [citacionesData, ofertasData, reclutadoresData] = await Promise.all([
+      const [citacionesData, reclutadoresData] = await Promise.all([
         getAllCitaciones(),
-        getAllOfertas(),
         reclutadoresApi.getAll()
       ]);
       setCitaciones(citacionesData);
-      setOfertas(ofertasData);
       setReclutadores(reclutadoresData);
     } catch (err) {
       console.error('Error:', err);
@@ -127,28 +123,34 @@ function AdminCitaciones() {
     });
   };
 
-  if (loading) return <div className="container-admin-page-AP"><p>Cargando...</p></div>;
-  if (error) return <div className="container-admin-page-AP"><p>{error}</p></div>;
+  if (loading) return <div style={{padding: '2rem', textAlign: 'center'}}>Cargando...</div>;
+  if (error) return <div style={{padding: '2rem', color: '#DC2626'}}>{error}</div>;
 
   return (
-    <div className="container-admin-page-AP">
-      <div className="header-admin-empresas-AE">
-        <h1>Gestión de Citaciones</h1>
-        <button className="btn-crear-AE" onClick={openCreateModal}>+ Nueva Citación</button>
-      </div>
+    <div className="admin-layout">
+      <Sidebar />
+      <div className="main-citaciones-CIT">
+        <div className="container-citaciones-CIT">
+          <div className="header-section-CIT">
+            <div>
+              <h1 className="title-citaciones-CIT">Gestión de Citaciones</h1>
+              <p className="subtitle-citaciones-CIT">Administra las citaciones con los aspirantes</p>
+            </div>
+            <button className="btn-crear-CIT" onClick={openCreateModal}>+ Nueva Citación</button>
+          </div>
 
-      <div className="filters-AE">
+      <div className="filters-citaciones-CIT">
         <input
           type="text"
           placeholder="Buscar citación..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="search-input-AE"
+          className="search-input-CIT"
         />
       </div>
 
-      <div className="table-container-AE">
-        <table className="empresas-table-AE">
+      <div className="table-container-CIT">
+        <table className="table-citaciones-CIT">
           <thead>
             <tr>
               <th>ID</th>
@@ -173,10 +175,10 @@ function AdminCitaciones() {
                     {citacion.estado}
                   </span>
                 </td>
-                <td className="actions-cell-AE">
-                  <button className="btn-ver-AE" onClick={() => openViewModal(citacion)}>Ver</button>
-                  <button className="btn-editar-AE" onClick={() => openEditModal(citacion)}>Editar</button>
-                  <button className="btn-eliminar-AE" onClick={() => handleDelete(citacion.id)}>Eliminar</button>
+                <td className="actions-cell-CIT">
+                  <button className="btn-ver-CIT" onClick={() => openViewModal(citacion)}>Ver</button>
+                  <button className="btn-editar-CIT" onClick={() => openEditModal(citacion)}>Editar</button>
+                  <button className="btn-eliminar-CIT" onClick={() => handleDelete(citacion.id)}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -282,6 +284,8 @@ function AdminCitaciones() {
           </div>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }
