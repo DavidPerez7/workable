@@ -129,6 +129,122 @@ kill_port_process() {
     fi
 }
 
+# Limpieza agresiva de procesos del backend
+force_kill_backend() {
+    print_info "Limpieza agresiva de procesos del backend..."
+    local killed=false
+    
+    # 1. Terminar por PID guardado
+    if [ -f "$BACKEND_PID_FILE" ]; then
+        local backend_pid=$(cat "$BACKEND_PID_FILE")
+        if kill -0 $backend_pid 2>/dev/null; then
+            kill -9 $backend_pid 2>/dev/null || true
+            print_success "Backend detenido (PID: $backend_pid)"
+            killed=true
+        fi
+        rm -f "$BACKEND_PID_FILE"
+    fi
+    
+    # 2. Terminar procesos Java que contengan "workable"
+    if pgrep -f "workable.*\.jar" > /dev/null 2>&1; then
+        local java_pids=$(pgrep -f "workable.*\.jar")
+        for pid in $java_pids; do
+            kill -9 $pid 2>/dev/null || true
+            print_success "Proceso Java workable terminado (PID: $pid)"
+            killed=true
+        done
+    fi
+    
+    # 3. Terminar procesos en puerto 8080
+    if command -v lsof &> /dev/null; then
+        if lsof -ti :$BACKEND_PORT > /dev/null 2>&1; then
+            local port_pids=$(lsof -ti :$BACKEND_PORT)
+            for pid in $port_pids; do
+                kill -9 $pid 2>/dev/null || true
+                print_success "Proceso en puerto $BACKEND_PORT terminado (PID: $pid)"
+                killed=true
+            done
+        fi
+    fi
+    
+    # 4. Fallback: matar todos los procesos Java
+    if pgrep java > /dev/null 2>&1; then
+        pkill -9 java 2>/dev/null || true
+        print_success "Todos los procesos Java terminados"
+        killed=true
+    fi
+    
+    if [ "$killed" = false ]; then
+        print_info "No hay procesos del backend en ejecución"
+    fi
+    
+    # Esperar a que los puertos se liberen
+    sleep 2
+}
+
+# Limpieza agresiva de procesos del frontend
+force_kill_frontend() {
+    print_info "Limpieza agresiva de procesos del frontend..."
+    local killed=false
+    
+    # 1. Terminar por PID guardado
+    if [ -f "$FRONTEND_PID_FILE" ]; then
+        local frontend_pid=$(cat "$FRONTEND_PID_FILE")
+        if kill -0 $frontend_pid 2>/dev/null; then
+            kill -9 $frontend_pid 2>/dev/null || true
+            print_success "Frontend detenido (PID: $frontend_pid)"
+            killed=true
+        fi
+        rm -f "$FRONTEND_PID_FILE"
+    fi
+    
+    # 2. Terminar procesos Vite/Node que contengan "vite" o puerto 5173
+    if pgrep -f "vite" > /dev/null 2>&1; then
+        local vite_pids=$(pgrep -f "vite")
+        for pid in $vite_pids; do
+            kill -9 $pid 2>/dev/null || true
+            print_success "Proceso Vite terminado (PID: $pid)"
+            killed=true
+        done
+    fi
+    
+    # 3. Terminar procesos en puerto 5173
+    if command -v lsof &> /dev/null; then
+        if lsof -ti :$FRONTEND_PORT > /dev/null 2>&1; then
+            local port_pids=$(lsof -ti :$FRONTEND_PORT)
+            for pid in $port_pids; do
+                kill -9 $pid 2>/dev/null || true
+                print_success "Proceso en puerto $FRONTEND_PORT terminado (PID: $pid)"
+                killed=true
+            done
+        fi
+    fi
+    
+    # 4. Terminar procesos Node relacionados con el frontend
+    if pgrep -f "node.*frontend" > /dev/null 2>&1; then
+        local node_pids=$(pgrep -f "node.*frontend")
+        for pid in $node_pids; do
+            kill -9 $pid 2>/dev/null || true
+            print_success "Proceso Node frontend terminado (PID: $pid)"
+            killed=true
+        done
+    fi
+    
+    # 5. Fallback: matar todos los procesos Node
+    if pgrep node > /dev/null 2>&1; then
+        pkill -9 node 2>/dev/null || true
+        print_success "Todos los procesos Node terminados"
+        killed=true
+    fi
+    
+    if [ "$killed" = false ]; then
+        print_info "No hay procesos del frontend en ejecución"
+    fi
+    
+    # Esperar a que los puertos se liberen
+    sleep 2
+}
+
 # Verificar y iniciar MySQL (XAMPP)
 ensure_mysql_running() {
     print_header "Verificando MySQL"
@@ -209,9 +325,13 @@ check_backend_health() {
     print_info "Realizando health check del backend (máximo ${max_attempts} intentos)..."
     
     while [ $attempt -le $max_attempts ]; do
-        if curl -s -f http://localhost:$BACKEND_PORT/api/health > /dev/null 2>&1; then
-            print_success "Backend está respondiendo en http://localhost:$BACKEND_PORT"
-            return 0
+        # Verificar si el puerto está escuchando Y si el endpoint responde
+        if netstat -tuln 2>/dev/null | grep -q ":$BACKEND_PORT " || ss -tuln 2>/dev/null | grep -q ":$BACKEND_PORT "; then
+            # Puerto abierto, ahora verificar que responde
+            if curl -s http://localhost:$BACKEND_PORT/api/municipio > /dev/null 2>&1; then
+                print_success "Backend está respondiendo en http://localhost:$BACKEND_PORT"
+                return 0
+            fi
         fi
         
         if [ $((attempt % 5)) -eq 0 ]; then
@@ -403,8 +523,10 @@ run_backend_background() {
     
     print_success "JAR compilado exitosamente"
     
-    # Limpiar puerto
+    # Verificar que no hay procesos previos
+    print_info "Verificando que no hay procesos previos del backend..."
     kill_port_process $BACKEND_PORT
+    sleep 1
     
     # Ejecutar el JAR en background
     print_info "Iniciando Spring Boot..."
@@ -426,8 +548,6 @@ run_backend_background() {
         print_error "Log: tail -f $BACKEND_LOG"
         return 1
     fi
-}
-
 run_frontend_background() {
     print_header "INSTALANDO E INICIANDO FRONTEND EN BACKGROUND"
     
@@ -442,6 +562,10 @@ run_frontend_background() {
         fi
     fi
     
+    # Verificar que no hay procesos previos
+    print_info "Verificando que no hay procesos previos del frontend..."
+    kill_port_process $FRONTEND_PORT
+    sleep 1
     # Limpiar puerto
     kill_port_process $FRONTEND_PORT
     
@@ -563,6 +687,14 @@ main_menu() {
             3)
                 clear
                 print_header "INICIANDO BACKEND Y FRONTEND EN BACKGROUND"
+                
+                # Limpieza agresiva de procesos existentes
+                print_header "LIMPIEZA DE PROCESOS EXISTENTES"
+                force_kill_backend
+                force_kill_frontend
+                
+                print_success "✓ Limpieza completada"
+                echo ""
                 
                 if ! run_backend_background; then
                     print_error "No se pudo iniciar backend"

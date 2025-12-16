@@ -27,10 +27,10 @@ public class CitacionData {
     private String linkMeet;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private Estado estado = Estado.PENDIENTE;
+    @Column(name = "citacion_estado", length = 20)
+    private EstadoCitacion estadoCitacion = EstadoCitacion.PENDIENTE;
 
-    public enum Estado {
+    public enum EstadoCitacion {
         PENDIENTE, CONFIRMADA, ASISTIO, NO_ASISTIO, CANCELADA
     }
 }

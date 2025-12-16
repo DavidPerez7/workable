@@ -182,7 +182,7 @@ public class DataInitializer implements CommandLineRunner {
                 citacion.setFecha(LocalDate.now().plusDays(5));
                 citacion.setHora("14:30");
                 citacion.setLinkMeet("https://meet.google.com/abc-defg-hij");
-                citacion.setEstado(CitacionData.Estado.PENDIENTE);
+                citacion.setEstadoCitacion(CitacionData.EstadoCitacion.PENDIENTE);
                 postulacion.setCitacionData(citacion);
                 
                 postulacionRepo.save(postulacion);
