@@ -451,7 +451,11 @@ export default function AdminUsuarios() {
         setError('Contraseña es requerida');
         return;
       }
-      if (!formData.fechaNacimiento) {
+      if (formData.password.length < 8) {
+        setError('La contraseña debe tener mínimo 8 caracteres');
+        return;
+      }
+      if (formData.rol !== 'ADMIN' && !formData.fechaNacimiento) {
         setError('Fecha de nacimiento es requerida');
         return;
       }
@@ -518,7 +522,11 @@ export default function AdminUsuarios() {
           setError('Contraseña es requerida');
           return;
         }
-        if (!formData.fechaNacimiento) {
+        if (formData.password.length < 8) {
+          setError('La contraseña debe tener mínimo 8 caracteres');
+          return;
+        }
+        if (formData.rol !== 'ADMIN' && !formData.fechaNacimiento) {
           setError('Fecha de nacimiento es requerida');
           return;
         }
@@ -996,6 +1004,14 @@ export default function AdminUsuarios() {
                 </div>
               )}
 
+              {formData.rol === 'ADMIN' && !editingUser && (
+                <div className="form-group-UP">
+                  <small style={{ color: '#666', fontStyle: 'italic' }}>
+                    ℹ️ Los administradores no requieren fecha de nacimiento. Solo se necesita una contraseña segura (mínimo 8 caracteres).
+                  </small>
+                </div>
+              )}
+
               {/* Show fields that are relevant to the role. Fecha de nacimiento is shown for aspirantes (required only on create),
                   urlFotoPerfil and urlBanner are shown for aspirantes/reclutadores even when editing, and password only on create. */}
 
@@ -1128,6 +1144,31 @@ export default function AdminUsuarios() {
                   }}
                 >
                   🔍 Reclutador
+                </button>
+
+                <button
+                  onClick={() => handleSelectRole('ADMIN')}
+                  style={{
+                    padding: '2rem 1rem',
+                    border: '2px solid #8B5CF6',
+                    borderRadius: '12px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: '#8B5CF6'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#8B5CF6';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#fff';
+                    e.target.style.color = '#8B5CF6';
+                  }}
+                >
+                  🤵 Administrador
                 </button>
                 {selectedHojaDeVida ? (
                   <div className="hdv-summary-mini" style={{gridColumn: '1 / -1', textAlign: 'left'}}>

@@ -29,13 +29,6 @@ const HeaderAdmin = () => {
           Dashboard
         </NavLink>
         <NavLink
-          to="/Administrador/CuentasInternas"
-          className={({ isActive }) => `nav-item-HAD ${isActive ? 'active-HAD' : ''}`}
-          onClick={() => setMenuOpen(false)}
-        >
-          Cuentas Internas
-        </NavLink>
-        <NavLink
           to="/Administrador/Reportes"
           className={({ isActive }) => `nav-item-HAD ${isActive ? 'active-HAD' : ''}`}
           onClick={() => setMenuOpen(false)}
