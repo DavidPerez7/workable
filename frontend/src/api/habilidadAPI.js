@@ -1,5 +1,11 @@
 import api from './axiosConfig';
 
+// ===== READ ALL =====
+export const obtenerTodasLasHabilidades = async () => {
+  const response = await api.get('/api/habilidad');
+  return response.data;
+};
+
 // ===== CREATE =====
 export const crearHabilidad = async (habilidadData) => {
   const response = await api.post('/api/habilidad', habilidadData);
