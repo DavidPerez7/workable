@@ -42,7 +42,6 @@ public class HojaVidaService {
                     .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
                 HojaVida nuevaHojaVida = new HojaVida();
                 nuevaHojaVida.setAspirante(aspirante);
-                nuevaHojaVida.setEsPublica(false);
                 return hojaVidaRepo.save(nuevaHojaVida);
             });
     }
@@ -57,9 +56,6 @@ public class HojaVidaService {
 
         if (request.getResumenProfesional() != null) {
             existing.setResumenProfesional(request.getResumenProfesional());
-        }
-        if (request.getObjetivoProfesional() != null) {
-            existing.setObjetivoProfesional(request.getObjetivoProfesional());
         }
         if (request.getRedSocial1() != null) {
             existing.setRedSocial1(request.getRedSocial1());
@@ -87,9 +83,6 @@ public class HojaVidaService {
         }
         if (request.getIdiomas() != null) {
             existing.setIdiomas(request.getIdiomas());
-        }
-        if (request.getEsPublica() != null) {
-            existing.setEsPublica(request.getEsPublica());
         }
         
         // Actualizar estudios y experiencias si vienen en el request

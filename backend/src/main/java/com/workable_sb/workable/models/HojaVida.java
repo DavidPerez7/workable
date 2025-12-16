@@ -79,9 +79,6 @@ public class HojaVida {
             this.fechaCreacion = LocalDate.now();
         }
         this.fechaActualizacion = LocalDate.now();
-        if (this.esPublica == null) {
-            this.esPublica = false;
-        }
     }
 
     @PreUpdate

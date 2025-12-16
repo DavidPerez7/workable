@@ -52,7 +52,6 @@ public class AspiranteService {
         // Crear HojaVida automáticamente
         HojaVida hojaVida = new HojaVida();
         hojaVida.setAspirante(aspirante);
-        hojaVida.setEsPublica(false);
         hojaVidaRepo.save(hojaVida);
 
         return aspirante;

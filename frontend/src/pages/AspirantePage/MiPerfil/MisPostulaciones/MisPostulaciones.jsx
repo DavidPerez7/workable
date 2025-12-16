@@ -76,7 +76,14 @@ const MisPostulaciones = () => {
           Aquí puedes ver todas las ofertas a las que te has postulado.
         </p>
 
-        {error && <div className="mp-error">{error}</div>}
+        {error && (
+          <div className="mp-error">
+            <p>{error}</p>
+            <button onClick={obtenerPostulaciones} className="mp-retry-btn">
+              Reintentar
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <p className="mp-loading">Cargando postulaciones...</p>

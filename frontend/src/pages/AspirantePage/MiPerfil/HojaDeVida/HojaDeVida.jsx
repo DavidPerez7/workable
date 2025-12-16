@@ -108,10 +108,13 @@ const HojaDeVida = () => {
     );
   }
 
-  if (!perfil) {
+  if (error) {
     return (
-      <div className="perfil-loading">
-        <p>No se pudo cargar el perfil</p>
+      <div className="perfil-error">
+        <p>Error: {error}</p>
+        <button onClick={cargarDatos} className="perfil-retry-btn">
+          Reintentar
+        </button>
       </div>
     );
   }

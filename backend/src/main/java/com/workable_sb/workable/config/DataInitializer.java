@@ -217,11 +217,9 @@ public class DataInitializer implements CommandLineRunner {
             HojaVida hojaVida = new HojaVida();
             hojaVida.setAspirante(aspirante);
             hojaVida.setResumenProfesional("Profesional con experiencia en desarrollo de software con Java y tecnologías web modernas");
-            hojaVida.setObjetivoProfesional("Desarrollador Senior en empresas de tecnología líderes");
             hojaVida.setContactoEmail("aspirante@example.com");
             hojaVida.setTelefono("3105555555");
             hojaVida.setIdiomas("Español (Nativo), Inglés (Intermedio)");
-            hojaVida.setEsPublica(true);
             
             // Crear lista de estudios
             List<EstudioData> estudios = new java.util.ArrayList<>();

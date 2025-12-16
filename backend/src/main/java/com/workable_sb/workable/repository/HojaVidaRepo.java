@@ -12,7 +12,4 @@ public interface HojaVidaRepo extends JpaRepository<HojaVida, Long> {
     
     // Buscar hoja de vida por aspirante (getbyaspirante)
     List<HojaVida> findByAspiranteId(Long aspiranteId);
-    
-    // Buscar hojas de vida públicas
-    List<HojaVida> findByEsPublicaTrue();
 }
