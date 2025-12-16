@@ -8,8 +8,6 @@ import administradorAPI from '../../../api/administradorAPI';
 import { getMunicipios } from '../../../api/municipioAPI';
 import hojaDeVidaApi, { actualizarHojaDeVida as actualizarHojaDeVidaNamed } from '/src/api/hojaDeVidaAPI.js';
 import API from '/src/api/axiosConfig.js';
-import { obtenerEstudiosPorUsuario, crearEstudio, actualizarEstudio, eliminarEstudio } from '../../../api/estudioAPI';
-import { obtenerExperienciasPorUsuario, crearExperiencia, actualizarExperiencia, eliminarExperiencia } from '../../../api/experienciaAPI';
 import './AdminUsuarios.css';
 import HojaDeVidaModal from './components/HojaDeVidaModal';
 import CompanyModal from './components/CompanyModal';

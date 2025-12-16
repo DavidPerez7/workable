@@ -93,10 +93,14 @@ const aspirantesApi = {
     }
   },
 
-  // Actualizar mi perfil
+  // Actualizar mi perfil (usa el mismo endpoint que update)
   updateMyProfile: async (data) => {
     try {
-      const response = await API.put('/api/aspirante/actualizar', data);
+      const usuarioId = localStorage.getItem("usuarioId");
+      if (!usuarioId) {
+        throw new Error("No se encontró ID de usuario en sesión");
+      }
+      const response = await API.put(`/api/aspirante/${usuarioId}`, data);
       return response.data;
     } catch (error) {
       console.error('Error updating my profile:', error);
@@ -115,17 +119,6 @@ const aspirantesApi = {
     }
   },
 
-  // Actualizar aspirante como ADMIN
-  updateAdmin: async (id, data) => {
-    try {
-      const response = await API.put(`/api/aspirante/${id}/admin`, data);
-      return response.data;
-    } catch (error) {
-      console.error(`Error updating aspirante ${id} as admin:`, error);
-      throw error;
-    }
-  },
-
   // Actualizar aspirante públicamente
   updatePublic: async (id, data, aspiranteActualId) => {
     try {
@@ -133,28 +126,6 @@ const aspirantesApi = {
       return response.data;
     } catch (error) {
       console.error(`Error updating aspirante ${id} publicly:`, error);
-      throw error;
-    }
-  },
-
-  // Desactivar un aspirante
-  deactivate: async (id) => {
-    try {
-      const response = await API.put(`/api/aspirante/${id}/desactivar`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error deactivating aspirante ${id}:`, error);
-      throw error;
-    }
-  },
-
-  // Activar un aspirante
-  activate: async (id) => {
-    try {
-      const response = await API.put(`/api/aspirante/${id}/activar`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error activating aspirante ${id}:`, error);
       throw error;
     }
   },

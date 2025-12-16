@@ -100,6 +100,31 @@ const MisPostulaciones = () => {
                   {post.oferta?.tipoContrato && <span className="mp-tag contrato">{post.oferta.tipoContrato}</span>}
                 </div>
 
+                {/* CITACIÓN EMBEDDED */}
+                {post.citacion && post.citacion.fecha && (
+                  <div className="mp-citacion">
+                    <h4 className="mp-citacion-title">📅 Citación programada</h4>
+                    <div className="mp-citacion-info">
+                      <p><strong>Fecha:</strong> {new Date(post.citacion.fecha).toLocaleDateString("es-CO")}</p>
+                      {post.citacion.hora && <p><strong>Hora:</strong> {post.citacion.hora}</p>}
+                      {post.citacion.linkMeet && (
+                        <p>
+                          <strong>Enlace:</strong>{" "}
+                          <a href={post.citacion.linkMeet} target="_blank" rel="noopener noreferrer" className="mp-citacion-link">
+                            Unirse a la reunión
+                          </a>
+                        </p>
+                      )}
+                      {post.citacion.detalles && <p><strong>Detalles:</strong> {post.citacion.detalles}</p>}
+                      {post.citacion.estado && (
+                        <span className={`mp-citacion-estado ${post.citacion.estado.toLowerCase()}`}>
+                          {post.citacion.estado}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div className="mp-footer">
                   {post.oferta?.salario && <p className="mp-salary">{formatSalary(post.oferta.salario)}</p>}
                   <p className="mp-date">Postulado el: {new Date(post.fechaCreacion).toLocaleDateString("es-CO")}</p>

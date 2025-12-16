@@ -64,7 +64,7 @@ export const crearPostulacion = async (postulacion) => {
 // Eliminar postulación
 export const eliminarPostulacion = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}/eliminar`, {
+    const response = await axios.delete(`${API_URL}/${id}`, {
       headers: getAuthHeaders(),
     });
     return response.data;

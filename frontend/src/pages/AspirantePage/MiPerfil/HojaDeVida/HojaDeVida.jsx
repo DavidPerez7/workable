@@ -3,23 +3,28 @@ import { useNavigate } from "react-router-dom";
 import "./HojaDeVida.css";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
-import { getUsuarioActual } from "../../../../api/usuarioAPI";
-import { obtenerHabilidadesAspirante, crearHabilidad, eliminarHabilidad } from "../../../../api/habilidadAPI";
-import { obtenerExperienciasAspirante, crearExperiencia, eliminarExperiencia } from "../../../../api/experienciaAPI";
-import { obtenerEstudiosAspirante, crearEstudio, eliminarEstudio } from "../../../../api/estudioAPI";
+import aspirantesApi from "../../../../api/aspirantesApi";
+import { getHojasDeVidaPorAspirante, actualizarHojaDeVida } from "../../../../api/hojaDeVidaAPI";
 
 const HojaDeVida = () => {
   const [perfil, setPerfil] = useState(null);
+  const [hojaDeVida, setHojaDeVida] = useState(null);
   const [editandoDescripcion, setEditandoDescripcion] = useState(false);
   const [descripcionTemporal, setDescripcionTemporal] = useState("");
-  const [habilidades, setHabilidades] = useState([]);
   const [experiencias, setExperiencias] = useState([]);
   const [estudios, setEstudios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Estados para edición inline
+  const [editandoExpIndex, setEditandoExpIndex] = useState(null);
+  const [expEditTemp, setExpEditTemp] = useState(null);
+  const [editandoEduIndex, setEditandoEduIndex] = useState(null);
+  const [eduEditTemp, setEduEditTemp] = useState(null);
+  const [guardandoExp, setGuardandoExp] = useState(false);
+  const [guardandoEdu, setGuardandoEdu] = useState(false);
+
   // Estados para agregar nuevos datos
-  const [nuevaHabilidad, setNuevaHabilidad] = useState("");
   const [nuevaExp, setNuevaExp] = useState({
     empresa: "",
     cargo: "",
@@ -46,27 +51,47 @@ const HojaDeVida = () => {
     setLoading(true);
     setError("");
     try {
-      const token = localStorage.getItem("token");
-      const rol = localStorage.getItem("rol");
+      const usuarioId = localStorage.getItem("usuarioId");
+      if (!usuarioId) {
+        throw new Error("No se encontró ID de usuario en sesión");
+      }
 
-      // Cargar perfil usando el nuevo endpoint /me
-      const usuarioData = await getUsuarioActual(rol);
+      // Cargar perfil usando aspirantesApi
+      const usuarioData = await aspirantesApi.get(usuarioId);
       setPerfil(usuarioData);
       setDescripcionTemporal(usuarioData.descripcion || "");
 
-      // Cargar habilidades
-      const habilidadesData = await obtenerHabilidadesAspirante();
-      setHabilidades(habilidadesData || []);
-
-      // Cargar experiencias
-      const experienciasData = await obtenerExperienciasAspirante();
-      setExperiencias(experienciasData || []);
-
-      // Cargar estudios
-      const estudiosData = await obtenerEstudiosAspirante();
-      setEstudios(estudiosData || []);
+      // Cargar HojaDeVida con estudios y experiencias embebidas
+      const hojasData = await getHojasDeVidaPorAspirante(usuarioId);
+      console.log("🎓 HojaDeVida completa recibida:", hojasData);
+      console.log("🔍 Tipo de hojasData:", typeof hojasData, "Es array?", Array.isArray(hojasData));
+      
+      // Verificar si es un objeto directo o un array
+      let hoja = null;
+      if (Array.isArray(hojasData) && hojasData.length > 0) {
+        hoja = hojasData[0];
+      } else if (hojasData && typeof hojasData === 'object' && hojasData.id) {
+        // Es un objeto directo, no un array
+        hoja = hojasData;
+      }
+      
+      if (hoja) {
+        console.log("✅ HojaDeVida encontrada - ID:", hoja.id);
+        console.log("📚 Estudios recibidos:", hoja.estudios);
+        console.log("📊 Experiencias recibidas:", hoja.experiencias);
+        console.log("🔢 Cantidad estudios:", hoja.estudios?.length || 0);
+        console.log("🔢 Cantidad experiencias:", hoja.experiencias?.length || 0);
+        
+        setHojaDeVida(hoja);
+        setExperiencias(hoja.experiencias || []);
+        setEstudios(hoja.estudios || []);
+      } else {
+        console.warn("⚠️ No se encontró HojaDeVida para el aspirante");
+        setExperiencias([]);
+        setEstudios([]);
+      }
     } catch (err) {
-      console.error("Error al cargar datos:", err);
+      console.error("❌ Error al cargar datos:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -96,61 +121,33 @@ const HojaDeVida = () => {
   const guardarDescripcion = async () => {
     try {
       const token = localStorage.getItem("token");
-      const rol = localStorage.getItem("rol");
+      const usuarioId = localStorage.getItem("usuarioId");
       
-      if (rol === "ASPIRANTE") {
-        const response = await fetch("http://localhost:8080/api/aspirante/actualizar", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            descripcion: descripcionTemporal,
-          }),
-        });
-        
-        if (!response.ok) {
-          throw new Error("Error al guardar descripción");
-        }
-        
-        const perfilActualizado = await response.json();
-        setPerfil(perfilActualizado);
-        setEditandoDescripcion(false);
+      if (!usuarioId) {
+        throw new Error("No se encontró ID de usuario en sesión");
       }
+      
+      const response = await fetch(`http://localhost:8080/api/aspirante/${usuarioId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          descripcion: descripcionTemporal,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Error al guardar descripción");
+      }
+      
+      const perfilActualizado = await response.json();
+      setPerfil(perfilActualizado);
+      setEditandoDescripcion(false);
     } catch (err) {
       console.error("Error al guardar descripción:", err);
       alert("Error al guardar: " + err.message);
-    }
-  };
-
-  /* ============================
-        HABILIDADES
-  ============================ */
-
-  const agregarHabilidad = async () => {
-    if (nuevaHabilidad.trim() === "") return;
-
-    try {
-      const habilidadData = {
-        nombre: nuevaHabilidad,
-      };
-      const nuevaHab = await crearHabilidad(habilidadData);
-      setHabilidades([...habilidades, nuevaHab]);
-      setNuevaHabilidad("");
-    } catch (err) {
-      console.error("Error al agregar habilidad:", err);
-      alert("Error al agregar habilidad: " + err.message);
-    }
-  };
-
-  const borrarHabilidad = async (id) => {
-    try {
-      await eliminarHabilidad(id);
-      setHabilidades(habilidades.filter((h) => h.id !== id));
-    } catch (err) {
-      console.error("Error al eliminar habilidad:", err);
-      alert("Error al eliminar habilidad: " + err.message);
     }
   };
 
@@ -167,28 +164,106 @@ const HojaDeVida = () => {
     }
 
     try {
+      if (!hojaDeVida) {
+        throw new Error("No se encontró la HojaDeVida");
+      }
+
+      // Crear nueva experiencia
       const experienciaData = {
         empresa,
         cargo,
         fechaInicio,
         descripcion,
       };
-      const nuevaExpData = await crearExperiencia(experienciaData);
-      setExperiencias([...experiencias, nuevaExpData]);
+
+      // Agregar a la lista de experiencias
+      const experienciasActualizadas = [...(hojaDeVida.experiencias || []), experienciaData];
+      
+      // Actualizar la HojaDeVida completa
+      const hojaActualizada = {
+        ...hojaDeVida,
+        experiencias: experienciasActualizadas,
+      };
+
+      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
+      setHojaDeVida(hojaActualizada);
+      setExperiencias(experienciasActualizadas);
       setNuevaExp({ empresa: "", cargo: "", fechaInicio: "", descripcion: "" });
+      
+      // Ocultar formulario
+      const form = document.getElementById("add-exp-form");
+      if (form) form.style.display = "none";
     } catch (err) {
       console.error("Error al agregar experiencia:", err);
       alert("Error al agregar experiencia: " + err.message);
     }
   };
 
-  const borrarExperiencia = async (id) => {
+  const borrarExperiencia = async (index) => {
     try {
-      await eliminarExperiencia(id);
-      setExperiencias(experiencias.filter((e) => e.id !== id));
+      if (!hojaDeVida) {
+        throw new Error("No se encontró la HojaDeVida");
+      }
+
+      // Eliminar por índice
+      const experienciasActualizadas = hojaDeVida.experiencias.filter((_, i) => i !== index);
+      
+      // Actualizar la HojaDeVida completa
+      const hojaActualizada = {
+        ...hojaDeVida,
+        experiencias: experienciasActualizadas,
+      };
+
+      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
+      setHojaDeVida(hojaActualizada);
+      setExperiencias(experienciasActualizadas);
     } catch (err) {
       console.error("Error al eliminar experiencia:", err);
       alert("Error al eliminar experiencia: " + err.message);
+    }
+  };
+
+  /* ============================
+        EDICIÓN INLINE EXPERIENCIAS
+  ============================ */
+
+  const iniciarEditExp = (index) => {
+    setEditandoExpIndex(index);
+    setExpEditTemp({ ...experiencias[index] });
+  };
+
+  const cancelarEditExp = () => {
+    setEditandoExpIndex(null);
+    setExpEditTemp(null);
+  };
+
+  const guardarEditExp = async () => {
+    if (!expEditTemp || editandoExpIndex === null) return;
+    
+    try {
+      setGuardandoExp(true);
+      if (!hojaDeVida) {
+        throw new Error("No se encontró la HojaDeVida");
+      }
+
+      const experienciasActualizadas = [...hojaDeVida.experiencias];
+      experienciasActualizadas[editandoExpIndex] = expEditTemp;
+
+      const hojaActualizada = {
+        ...hojaDeVida,
+        experiencias: experienciasActualizadas,
+      };
+
+      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
+      setHojaDeVida(hojaActualizada);
+      setExperiencias(experienciasActualizadas);
+      setEditandoExpIndex(null);
+      setExpEditTemp(null);
+    } catch (err) {
+      console.error("Error al guardar experiencia:", err);
+      alert("Error al guardar: " + err.message);
+    } finally {
+      setGuardandoExp(false);
     }
   };
 
@@ -198,7 +273,6 @@ const HojaDeVida = () => {
 
   const agregarEstudio = async () => {
     const { institucion, titulo, fechaInicio, nivelEducativo, enCurso } = nuevoEstudio;
-
 
     if (!institucion || !titulo || !fechaInicio || !nivelEducativo) {
       alert("Por favor rellena todos los campos requeridos");
@@ -210,6 +284,10 @@ const HojaDeVida = () => {
     }
 
     try {
+      if (!hojaDeVida) {
+        throw new Error("No se encontró la HojaDeVida");
+      }
+
       const estudioData = {
         institucion,
         titulo,
@@ -221,14 +299,93 @@ const HojaDeVida = () => {
       if (!enCurso && nuevoEstudio.fechaFin) {
         estudioData.fechaFin = nuevoEstudio.fechaFin;
       }
-      const nuevoEstudioData = await crearEstudio(estudioData);
-      setEstudios([...estudios, nuevoEstudioData]);
+
+      // Agregar a la lista de estudios
+      const estudiosActualizados = [...(hojaDeVida.estudios || []), estudioData];
+      
+      // Actualizar la HojaDeVida completa
+      const hojaActualizada = {
+        ...hojaDeVida,
+        estudios: estudiosActualizados,
+      };
+
+      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
+      setHojaDeVida(hojaActualizada);
+      setEstudios(estudiosActualizados);
       setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", fechaFin: "", nivelEducativo: "UNIVERSITARIO", enCurso: true });
       const form = document.getElementById("add-edu-form");
       if (form) form.style.display = "none";
     } catch (err) {
       console.error("Error al agregar estudio:", err);
       alert("Error al agregar estudio: " + err.message);
+    }
+  };
+
+  const borrarEstudio = async (index) => {
+    try {
+      if (!hojaDeVida) {
+        throw new Error("No se encontró la HojaDeVida");
+      }
+
+      // Eliminar por índice
+      const estudiosActualizados = hojaDeVida.estudios.filter((_, i) => i !== index);
+      
+      // Actualizar la HojaDeVida completa
+      const hojaActualizada = {
+        ...hojaDeVida,
+        estudios: estudiosActualizados,
+      };
+
+      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
+      setHojaDeVida(hojaActualizada);
+      setEstudios(estudiosActualizados);
+    } catch (err) {
+      console.error("Error al eliminar estudio:", err);
+      alert("Error al eliminar estudio: " + err.message);
+    }
+  };
+
+  /* ============================
+        EDICIÓN INLINE ESTUDIOS
+  ============================ */
+
+  const iniciarEditEdu = (index) => {
+    setEditandoEduIndex(index);
+    setEduEditTemp({ ...estudios[index] });
+  };
+
+  const cancelarEditEdu = () => {
+    setEditandoEduIndex(null);
+    setEduEditTemp(null);
+  };
+
+  const guardarEditEdu = async () => {
+    if (!eduEditTemp || editandoEduIndex === null) return;
+    
+    try {
+      setGuardandoEdu(true);
+      if (!hojaDeVida) {
+        throw new Error("No se encontró la HojaDeVida");
+      }
+
+      const estudiosActualizados = [...hojaDeVida.estudios];
+      estudiosActualizados[editandoEduIndex] = eduEditTemp;
+
+      const hojaActualizada = {
+        ...hojaDeVida,
+        estudios: estudiosActualizados,
+      };
+
+      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
+      setHojaDeVida(hojaActualizada);
+      setEstudios(estudiosActualizados);
+      setEditandoEduIndex(null);
+      setEduEditTemp(null);
+    } catch (err) {
+      console.error("Error al guardar estudio:", err);
+      alert("Error al guardar: " + err.message);
+    } finally {
+      setGuardandoEdu(false);
     }
   };
 
@@ -256,7 +413,7 @@ const HojaDeVida = () => {
 
           <button
             className="editar-perfil-btn-PF"
-            onClick={() => navigate("/ActualizarPerfil")}
+            onClick={() => navigate("/Aspirante/MiPerfil")}
           >
             Editar perfil
           </button>
@@ -305,80 +462,6 @@ const HojaDeVida = () => {
               </button>
             </div>
           )}
-        </div>
-
-        {/* HABILIDADES */}
-        <div className="perfil-bloque-PF">
-          <div className="perfil-bloque-top-PF">
-            <h3 className="perfil-bloque-titulo-PF">Habilidades</h3>
-
-            {/* BOTÓN AÑADIR */}
-            <button
-              className="perfil-add-btn-PF"
-              onClick={() => {
-                const form = document.getElementById("add-skill-form");
-                form.style.display =
-                  form.style.display === "none" ? "flex" : "none";
-              }}
-            >
-              + Añadir habilidad
-            </button>
-          </div>
-
-          {/* FORMULARIO INLINE PARA NUEVA HABILIDAD */}
-          <div
-            id="add-skill-form"
-            className="perfil-form-inline-PF"
-            style={{ display: "none" }}
-          >
-            <input
-              type="text"
-              placeholder="Ej: JavaScript (máx 20 caracteres)"
-              maxLength="20"
-              value={nuevaHabilidad}
-              onChange={(e) => setNuevaHabilidad(e.target.value)}
-            />
-            <button 
-              className="perfil-skill-add-btn-PF"
-              onClick={agregarHabilidad}
-            >
-              Añadir
-            </button>
-            <button 
-              className="perfil-skill-cancel-btn-PF"
-              onClick={() => {
-                const form = document.getElementById("add-skill-form");
-                form.style.display = "none";
-                setNuevaHabilidad("");
-              }}
-            >
-              Cancelar
-            </button>
-          </div>
-
-          {/* LISTA DE HABILIDADES EDITABLE */}
-          <div className="perfil-habilidades-PF">
-            {habilidades.length === 0 ? (
-              <p className="perfil-no-habilidades-PF">No tienes habilidades registradas</p>
-            ) : (
-              habilidades.map((skill) => (
-                <div key={skill.id} className="perfil-skill-item-PF">
-                  <span className="perfil-skill-nombre-PF">{skill.nombre}</span>
-                  <button
-                    className="perfil-skill-delete-PF"
-                    onClick={() => {
-                      if (window.confirm(`¿Eliminar habilidad "${skill.nombre}"?`)) {
-                        borrarHabilidad(skill.id);
-                      }
-                    }}
-                    title="Eliminar habilidad"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
         </div>
 
         {/* EXPERIENCIA */}
@@ -442,20 +525,114 @@ const HojaDeVida = () => {
           {experiencias.length === 0 ? (
             <p>No tienes experiencias registradas</p>
           ) : (
-            experiencias.map((exp) => (
-              <div key={exp.id} className="perfil-experiencia-card-PF">
-                <button
-                  className="perfil-exp-delete-PF"
-                  onClick={() => borrarExperiencia(exp.id)}
-                >
-                  Eliminar
-                </button>
+            experiencias.map((exp, index) => (
+              editandoExpIndex === index && expEditTemp ? (
+                // MODO EDICIÓN INLINE
+                <div key={index} className="perfil-experiencia-card-PF perfil-card-editing-PF">
+                  <div className="perfil-edit-actions-top-PF">
+                    <button
+                      className="perfil-exp-delete-PF"
+                      onClick={() => borrarExperiencia(index)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
 
-                <h4>{exp.cargo}</h4>
-                <p className="perfil-exp-empresa-PF">{exp.empresa}</p>
-                <p className="perfil-exp-fecha-PF">{exp.fechaInicio}</p>
-                <p>{exp.descripcion}</p>
-              </div>
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Cargo</label>
+                    <input
+                      type="text"
+                      value={expEditTemp.cargo}
+                      onChange={(e) => setExpEditTemp({ ...expEditTemp, cargo: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Empresa</label>
+                    <input
+                      type="text"
+                      value={expEditTemp.empresa}
+                      onChange={(e) => setExpEditTemp({ ...expEditTemp, empresa: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Fecha inicio</label>
+                    <input
+                      type="text"
+                      value={expEditTemp.fechaInicio}
+                      onChange={(e) => setExpEditTemp({ ...expEditTemp, fechaInicio: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Fecha fin</label>
+                    <input
+                      type="text"
+                      value={expEditTemp.fechaFin || ""}
+                      onChange={(e) => setExpEditTemp({ ...expEditTemp, fechaFin: e.target.value })}
+                      className="perfil-inline-input-PF"
+                      placeholder="Dejar vacío si aún trabajas aquí"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Descripción</label>
+                    <textarea
+                      value={expEditTemp.descripcion}
+                      onChange={(e) => setExpEditTemp({ ...expEditTemp, descripcion: e.target.value })}
+                      className="perfil-inline-textarea-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-buttons-PF">
+                    <button 
+                      className="perfil-inline-save-PF"
+                      onClick={guardarEditExp}
+                      disabled={guardandoExp}
+                    >
+                      {guardandoExp ? "Guardando..." : "✓ Guardar"}
+                    </button>
+                    <button 
+                      className="perfil-inline-cancel-PF"
+                      onClick={cancelarEditExp}
+                      disabled={guardandoExp}
+                    >
+                      ✕ Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // MODO VISTA
+                <div key={index} className="perfil-experiencia-card-PF">
+                  <div className="perfil-card-actions-PF">
+                    <button
+                      className="perfil-edit-btn-inline-PF"
+                      onClick={() => iniciarEditExp(index)}
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="perfil-exp-delete-PF"
+                      onClick={() => borrarExperiencia(index)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+
+                  <h4>{exp.cargo}</h4>
+                  <p className="perfil-exp-empresa-PF">{exp.empresa}</p>
+                  <p className="perfil-exp-fecha-PF">
+                    {exp.fechaInicio} {exp.fechaFin ? ` - ${exp.fechaFin}` : " - Actualidad"}
+                  </p>
+                  {exp.municipio && <p className="perfil-exp-ubicacion-PF">📍 {exp.municipio}</p>}
+                  {exp.descripcion && <p className="perfil-exp-desc-PF">{exp.descripcion}</p>}
+                </div>
+              )
             ))
           )}
         </div>
@@ -550,19 +727,135 @@ const HojaDeVida = () => {
           {estudios.length === 0 ? (
             <p>No tienes estudios registrados</p>
           ) : (
-            estudios.map((edu) => (
-              <div key={edu.id} className="perfil-educ-card-PF">
-                <button
-                  className="perfil-exp-delete-PF"
-                  onClick={() => eliminarEstudio(edu.id)}
-                >
-                  Eliminar
-                </button>
-                <h4>{edu.titulo}</h4>
-                <p className="perfil-edu-inst-PF">{edu.institucion}</p>
-                <p className="perfil-edu-fecha-PF">{edu.fechaInicio}</p>
-                <p className="perfil-edu-estado-PF">Estado: {edu.estado}</p>
-              </div>
+            estudios.map((edu, index) => (
+              editandoEduIndex === index && eduEditTemp ? (
+                // MODO EDICIÓN INLINE
+                <div key={index} className="perfil-educ-card-PF perfil-card-editing-PF">
+                  <div className="perfil-edit-actions-top-PF">
+                    <button
+                      className="perfil-exp-delete-PF"
+                      onClick={() => borrarEstudio(index)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Título</label>
+                    <input
+                      type="text"
+                      value={eduEditTemp.titulo}
+                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, titulo: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Institución</label>
+                    <input
+                      type="text"
+                      value={eduEditTemp.institucion}
+                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, institucion: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Nivel educativo</label>
+                    <select
+                      value={eduEditTemp.nivelEducativo}
+                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, nivelEducativo: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    >
+                      <option value="PRIMARIA">Primaria</option>
+                      <option value="BACHILLERATO">Bachillerato</option>
+                      <option value="TECNICO">Técnico</option>
+                      <option value="TECNOLOGO">Tecnólogo</option>
+                      <option value="UNIVERSITARIO">Universitario</option>
+                      <option value="MAESTRIA">Maestría</option>
+                      <option value="DOCTORADO">Doctorado</option>
+                      <option value="ESPECIALIZACION">Especialización</option>
+                    </select>
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>Fecha inicio</label>
+                    <input
+                      type="text"
+                      value={eduEditTemp.fechaInicio}
+                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, fechaInicio: e.target.value })}
+                      className="perfil-inline-input-PF"
+                    />
+                  </div>
+
+                  <div className="perfil-inline-edit-field-PF">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={eduEditTemp.enCurso}
+                        onChange={(e) => setEduEditTemp({ ...eduEditTemp, enCurso: e.target.checked })}
+                      />
+                      En curso
+                    </label>
+                  </div>
+
+                  {!eduEditTemp.enCurso && (
+                    <div className="perfil-inline-edit-field-PF">
+                      <label>Fecha fin</label>
+                      <input
+                        type="text"
+                        value={eduEditTemp.fechaFin || ""}
+                        onChange={(e) => setEduEditTemp({ ...eduEditTemp, fechaFin: e.target.value })}
+                        className="perfil-inline-input-PF"
+                      />
+                    </div>
+                  )}
+
+                  <div className="perfil-inline-buttons-PF">
+                    <button 
+                      className="perfil-inline-save-PF"
+                      onClick={guardarEditEdu}
+                      disabled={guardandoEdu}
+                    >
+                      {guardandoEdu ? "Guardando..." : "✓ Guardar"}
+                    </button>
+                    <button 
+                      className="perfil-inline-cancel-PF"
+                      onClick={cancelarEditEdu}
+                      disabled={guardandoEdu}
+                    >
+                      ✕ Cancelar
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // MODO VISTA
+                <div key={index} className="perfil-educ-card-PF">
+                  <div className="perfil-card-actions-PF">
+                    <button
+                      className="perfil-edit-btn-inline-PF"
+                      onClick={() => iniciarEditEdu(index)}
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="perfil-exp-delete-PF"
+                      onClick={() => borrarEstudio(index)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                  <h4>{edu.titulo}</h4>
+                  <p className="perfil-edu-inst-PF">{edu.institucion}</p>
+                  <p className="perfil-edu-nivel-PF">Nivel: {edu.nivelEducativo || "No especificado"}</p>
+                  <p className="perfil-edu-fecha-PF">
+                    {edu.fechaInicio} 
+                    {edu.enCurso ? " - Actualidad" : edu.fechaFin ? ` - ${edu.fechaFin}` : ""}
+                  </p>
+                  {edu.descripcion && <p className="perfil-edu-desc-PF">{edu.descripcion}</p>}
+                </div>
+              )
             ))
           )}
         </div>
@@ -577,6 +870,72 @@ const HojaDeVida = () => {
             <strong>Teléfono:</strong> {perfil?.telefono || "Sin teléfono"}
           </p>
         </div>
+
+        {/* INFORMACIÓN DE LA HOJA DE VIDA */}
+        {hojaDeVida && (
+          <div className="perfil-bloque-PF">
+            <h3 className="perfil-bloque-titulo-PF">Información Profesional</h3>
+            
+            {/* Resumen Profesional */}
+            <div className="perfil-info-section-PF">
+              <h4 className="perfil-info-title-PF">📋 Resumen Profesional</h4>
+              <p className="perfil-info-value-PF">
+                {hojaDeVida.resumenProfesional || "Sin resumen profesional"}
+              </p>
+            </div>
+
+            {/* Idiomas */}
+            {hojaDeVida.idiomas && (
+              <div className="perfil-info-section-PF">
+                <h4 className="perfil-info-title-PF">🗣️ Idiomas</h4>
+                <p className="perfil-info-value-PF">{hojaDeVida.idiomas}</p>
+              </div>
+            )}
+
+            {/* Red Social */}
+            {hojaDeVida.redSocial1 && (
+              <div className="perfil-info-section-PF">
+                <h4 className="perfil-info-title-PF">🔗 Red Social</h4>
+                <a href={hojaDeVida.redSocial1} target="_blank" rel="noopener noreferrer" className="perfil-link-PF">
+                  {hojaDeVida.redSocial1}
+                </a>
+              </div>
+            )}
+
+            {/* Email de Contacto */}
+            {hojaDeVida.contactoEmail && (
+              <div className="perfil-info-section-PF">
+                <h4 className="perfil-info-title-PF">📧 Email de Contacto</h4>
+                <p className="perfil-info-value-PF">{hojaDeVida.contactoEmail}</p>
+              </div>
+            )}
+
+            {/* Teléfono de HojaDeVida */}
+            {hojaDeVida.telefono && (
+              <div className="perfil-info-section-PF">
+                <h4 className="perfil-info-title-PF">📞 Teléfono</h4>
+                <p className="perfil-info-value-PF">{hojaDeVida.telefono}</p>
+              </div>
+            )}
+
+            {/* Fechas */}
+            <div className="perfil-info-section-PF">
+              <h4 className="perfil-info-title-PF">📅 Fechas</h4>
+              <div className="perfil-info-dates-PF">
+                {hojaDeVida.fechaCreacion && (
+                  <p className="perfil-info-date-PF">
+                    <strong>Creada:</strong> {new Date(hojaDeVida.fechaCreacion).toLocaleDateString('es-CO')}
+                  </p>
+                )}
+                {hojaDeVida.fechaActualizacion && (
+                  <p className="perfil-info-date-PF">
+                    <strong>Actualizada:</strong> {new Date(hojaDeVida.fechaActualizacion).toLocaleDateString('es-CO')}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

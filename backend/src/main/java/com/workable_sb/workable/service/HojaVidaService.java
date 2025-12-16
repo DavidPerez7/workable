@@ -91,6 +91,14 @@ public class HojaVidaService {
         if (request.getEsPublica() != null) {
             existing.setEsPublica(request.getEsPublica());
         }
+        
+        // Actualizar estudios y experiencias si vienen en el request
+        if (request.getEstudios() != null) {
+            existing.setEstudios(request.getEstudios());
+        }
+        if (request.getExperiencias() != null) {
+            existing.setExperiencias(request.getExperiencias());
+        }
 
         return hojaVidaRepo.save(existing);
     }

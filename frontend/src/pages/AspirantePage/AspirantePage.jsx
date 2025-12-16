@@ -27,7 +27,6 @@ const AspirantePage = () => {
     ordenar: "",
     experiencia: "",
     salario: "",
-    jornada: "",
     contrato: "",
     modalidad: "",
     fecha: "",
@@ -86,9 +85,9 @@ const AspirantePage = () => {
       (job.ubicacion || "").toLowerCase().includes(generalQuery) ||
       (job.empresa?.nombre || "").toLowerCase().includes(generalQuery);
 
-    // Filtro por experiencia (requerida)
+    // Filtro por nivel de experiencia
     const matchExperiencia = filters.experiencia
-      ? (job.nivelExperiencia || "").toLowerCase().includes(filters.experiencia.toLowerCase())
+      ? (job.nivelExperiencia || "") === filters.experiencia
       : true;
 
     // Filtro por salario (rango mínimo)
@@ -96,19 +95,14 @@ const AspirantePage = () => {
       ? Number(job.salario || 0) >= Number(filters.salario)
       : true;
 
-    // Filtro por jornada
-    const matchJornada = filters.jornada
-      ? (job.jornada || "").toLowerCase() === filters.jornada.toLowerCase()
-      : true;
-
     // Filtro por tipo de contrato
     const matchContrato = filters.contrato
-      ? (job.tipoContrato || "").toLowerCase() === filters.contrato.toLowerCase()
+      ? (job.tipoContrato || "") === filters.contrato
       : true;
 
     // Filtro por modalidad
     const matchModalidad = filters.modalidad
-      ? (job.modalidad || "").toLowerCase() === filters.modalidad.toLowerCase()
+      ? (job.modalidad || "") === filters.modalidad
       : true;
 
     // Filtro por ciudad
@@ -131,7 +125,6 @@ const AspirantePage = () => {
       matchesGeneral &&
       matchExperiencia &&
       matchSalario &&
-      matchJornada &&
       matchContrato &&
       matchModalidad &&
       matchCityFilter &&
@@ -170,9 +163,19 @@ const AspirantePage = () => {
   const handlePostularse = async (ofertaId) => {
     setPostulando(true);
     try {
-      await crearPostulacion(ofertaId);
+      const usuarioId = localStorage.getItem("usuarioId");
+      if (!usuarioId) {
+        alert("Debes iniciar sesión para postularte");
+        return;
+      }
+
+      const postulacionData = {
+        aspirante: { id: parseInt(usuarioId) },
+        oferta: { id: ofertaId }
+      };
+
+      await crearPostulacion(postulacionData);
       alert("¡Postulación exitosa!");
-      cargarOfertas();
     } catch (err) {
       console.error("Error al postularse:", err);
       alert("Error al postularse: " + err.message);
@@ -218,7 +221,6 @@ const AspirantePage = () => {
                   ordenar: "",
                   experiencia: "",
                   salario: "",
-                  jornada: "",
                   contrato: "",
                   modalidad: "",
                   fecha: "",
@@ -248,7 +250,7 @@ const AspirantePage = () => {
 
           {/* Experiencia */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Experiencia</label>
+            <label className="filter-label-AP">Nivel de Experiencia</label>
             <select
               className="filter-select-AP"
               value={filters.experiencia}
@@ -256,10 +258,12 @@ const AspirantePage = () => {
                 setFilters({ ...filters, experiencia: e.target.value })
               }
             >
-              <option value="">Seleccionar</option>
-              <option value="junior">Junior</option>
-              <option value="semi">Semi-Senior</option>
-              <option value="senior">Senior</option>
+              <option value="">Todas</option>
+              <option value="SIN_EXPERIENCIA">Sin Experiencia</option>
+              <option value="BASICO">Básico</option>
+              <option value="INTERMEDIO">Intermedio</option>
+              <option value="AVANZADO">Avanzado</option>
+              <option value="EXPERTO">Experto</option>
             </select>
           </div>
 
@@ -273,16 +277,16 @@ const AspirantePage = () => {
                 setFilters({ ...filters, modalidad: e.target.value })
               }
             >
-              <option value="">Seleccionar</option>
-              <option value="Presencial">Presencial</option>
-              <option value="Remota">Remota</option>
-              <option value="Híbrida">Híbrida</option>
+              <option value="">Todas</option>
+              <option value="PRESENCIAL">Presencial</option>
+              <option value="REMOTO">Remoto</option>
+              <option value="HIBRIDO">Híbrido</option>
             </select>
           </div>
 
           {/* Tipo de contrato */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Tipo de contrato</label>
+            <label className="filter-label-AP">Tipo de Contrato</label>
             <select
               className="filter-select-AP"
               value={filters.contrato}
@@ -290,27 +294,12 @@ const AspirantePage = () => {
                 setFilters({ ...filters, contrato: e.target.value })
               }
             >
-              <option value="">Seleccionar</option>
-              <option value="Término Fijo">Término Fijo</option>
-              <option value="Término Indefinido">Término Indefinido</option>
-              <option value="Aprendiz">Aprendiz</option>
-            </select>
-          </div>
-
-          {/* Jornada */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Jornada</label>
-            <select
-              className="filter-select-AP"
-              value={filters.jornada}
-              onChange={(e) =>
-                setFilters({ ...filters, jornada: e.target.value })
-              }
-            >
-              <option value="">Seleccionar</option>
-              <option value="Completa">Completa</option>
-              <option value="Media Tiempo">Media Tiempo</option>
-              <option value="Por Horas">Por Horas</option>
+              <option value="">Todos</option>
+              <option value="TIEMPO_COMPLETO">Tiempo Completo</option>
+              <option value="MEDIO_TIEMPO">Medio Tiempo</option>
+              <option value="TEMPORAL">Temporal</option>
+              <option value="PRESTACION_SERVICIOS">Prestación de Servicios</option>
+              <option value="PRACTICAS">Prácticas</option>
             </select>
           </div>
 

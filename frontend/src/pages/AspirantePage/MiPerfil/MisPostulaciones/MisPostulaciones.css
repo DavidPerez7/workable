@@ -294,3 +294,85 @@
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
 }
+
+/* ===========================
+   CITACIÓN EMBEDDED
+   =========================== */
+.mp-citacion {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+}
+
+.mp-citacion-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #075985;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-citacion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mp-citacion-info p {
+  margin: 0;
+  color: #0c4a6e;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.mp-citacion-info strong {
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.mp-citacion-link {
+  color: #0369a1;
+  text-decoration: underline;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.mp-citacion-link:hover {
+  color: #0284c7;
+}
+
+.mp-citacion-estado {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.mp-citacion-estado.programada {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.mp-citacion-estado.realizada {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.mp-citacion-estado.cancelada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.mp-citacion-estado.pendiente {
+  background: #fef3c7;
+  color: #a16207;
+}

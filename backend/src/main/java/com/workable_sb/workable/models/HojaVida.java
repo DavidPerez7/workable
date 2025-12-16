@@ -50,10 +50,6 @@ public class HojaVida {
     @Column(length = 20)
     private String telefono;
 
-    @Size(max = 500)
-    @Column(length = 500)
-    private String objetivoProfesional;
-
     // Estudios y experiencias incrustados como value objects
     // Se persisten en tablas separadas pero forman parte de la HojaVida
     @ElementCollection(fetch = FetchType.EAGER)
@@ -61,23 +57,18 @@ public class HojaVida {
         name = "hoja_vida_estudios",
         joinColumns = @JoinColumn(name = "hoja_vida_id", referencedColumnName = "id")
     )
-    @Column(name = "estudio")
-    private List<EstudioData> estudios;
+    private List<EstudioData> estudios = new java.util.ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
         name = "hoja_vida_experiencias",
         joinColumns = @JoinColumn(name = "hoja_vida_id", referencedColumnName = "id")
     )
-    @Column(name = "experiencia")
-    private List<ExperienciaData> experiencias;
+    private List<ExperienciaData> experiencias = new java.util.ArrayList<>();
 
     @Size(max = 500)
     @Column(length = 500)
     private String idiomas;
-
-    @Column(nullable = false)
-    private Boolean esPublica = false;
 
     private LocalDate fechaCreacion;
     private LocalDate fechaActualizacion;
