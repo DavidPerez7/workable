@@ -2,7 +2,6 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.models.Postulacion.Estado;
-import com.workable_sb.workable.dto.PostulacionCreateRequest;
 import com.workable_sb.workable.service.PostulacionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ public class PostulacionController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllPostulaciones() {
         try {
-            List<Postulacion> postulaciones = postulacionService.listarTodas();
+            List<Postulacion> postulaciones = postulacionService.getAll();
             return ResponseEntity.ok(postulaciones);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
@@ -41,29 +40,25 @@ public class PostulacionController {
     // CREATE
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody PostulacionCreateRequest request, @AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<?> create(@RequestBody Postulacion request, @AuthenticationPrincipal CustomUserDetails user) {
         try {
             if (user == null) {
                 return ResponseEntity.status(401).body(Map.of("error", "Usuario no autenticado"));
             }
-            Long usuarioId = user.getUsuarioId();
-            log.info("Creando postulación: usuarioId={}, aspiranteId={}, ofertaId={}",
-                usuarioId, request.getAspiranteId(), request.getOfertaId());
-            log.info("Crear postulacion request body: {}", request);
-            // Validaciones claras para evitar NullPointer y mensajes crípticos desde capas inferiores
+            
             if (request == null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Cuerpo de la petición inválido"));
             }
-            if (request.getAspiranteId() == null) {
+            if (request.getAspirante() == null || request.getAspirante().getId() == null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "aspiranteId es obligatorio"));
             }
-            if (request.getOfertaId() == null) {
+            if (request.getOferta() == null || request.getOferta().getId() == null) {
                 return ResponseEntity.badRequest().body(Map.of("error", "ofertaId es obligatorio"));
             }
 
-            Long aspiranteId = request.getAspiranteId();
-            Long ofertaId = request.getOfertaId();
-            Postulacion creada = postulacionService.crearPostulacion(aspiranteId, ofertaId, usuarioId);
+            Long aspiranteId = request.getAspirante().getId();
+            Long ofertaId = request.getOferta().getId();
+            Postulacion creada = postulacionService.create(request);
             return ResponseEntity.ok(creada);
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -77,12 +72,10 @@ public class PostulacionController {
     // GET BY ID
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
-            Postulacion postulacion = postulacionService.obtenerPorId(id, user.getUsuarioId());
+            Postulacion postulacion = postulacionService.getById(id);
             return ResponseEntity.ok(postulacion);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -93,30 +86,14 @@ public class PostulacionController {
     // GET BY OFERTA
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @GetMapping("/oferta/{ofertaId}")
-    public ResponseEntity<?> getByOferta(@PathVariable Long ofertaId, @AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<?> getByOferta(@PathVariable Long ofertaId) {
         try {
-            List<Postulacion> postulaciones = postulacionService.listarPorOferta(ofertaId, user.getUsuarioId());
+            List<Postulacion> postulaciones = postulacionService.getByOfertaId(ofertaId);
             return ResponseEntity.ok(postulaciones);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
-        }
-    }
-
-    // GET COUNT BY OFERTA
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/oferta/{ofertaId}/count")
-    public ResponseEntity<?> getCountByOferta(@PathVariable Long ofertaId, @AuthenticationPrincipal CustomUserDetails user) {
-        try {
-            long count = postulacionService.contarPorOferta(ofertaId);
-            return ResponseEntity.ok(Map.of("count", count));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener conteo de postulaciones: " + e.getMessage()));
         }
     }
 
@@ -125,7 +102,7 @@ public class PostulacionController {
     @GetMapping("/aspirante")
     public ResponseEntity<?> getByAspirante(@AuthenticationPrincipal CustomUserDetails user) {
         try {
-            List<Postulacion> postulaciones = postulacionService.listarPorAspirante(user.getUsuarioId(), user.getUsuarioId());
+            List<Postulacion> postulaciones = postulacionService.getByAspiranteId(user.getUsuarioId());
             return ResponseEntity.ok(postulaciones);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
@@ -138,7 +115,7 @@ public class PostulacionController {
     public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestBody Postulacion postulacion) {
         try {
             postulacion.setId(id);
-            Postulacion actualizada = postulacionService.cambiarEstado(postulacion);
+            Postulacion actualizada = postulacionService.update(id, postulacion);
             return ResponseEntity.ok(actualizada);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
@@ -151,11 +128,10 @@ public class PostulacionController {
 
     // DELETE
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @DeleteMapping("/{id}/eliminar")
-    public ResponseEntity<?> deleteWithAuth(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails user) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-            Long usuarioId = user.getUsuarioId();
-            postulacionService.eliminarPostulacion(id, usuarioId);
+            postulacionService.delete(id);
             return ResponseEntity.ok(Map.of("message", "Postulación eliminada correctamente"));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));

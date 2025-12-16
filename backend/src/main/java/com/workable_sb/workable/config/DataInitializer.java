@@ -75,7 +75,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private void recreateTestUsers() {
         // Obtener un municipio por defecto para los usuarios
-        Municipio municipio = municipioRepo.findByNombre("Bogotá").orElse(municipioRepo.findAll().stream().findFirst().orElse(null));
+        Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
 
         // ===== CREAR ASPIRANTE =====
         Aspirante aspirante = new Aspirante();
@@ -187,7 +187,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private void recreateEmpresas() {
         try {
-            Municipio municipioBogota = municipioRepo.findByNombre("Bogotá").orElse(null);
+            Municipio municipioBogota = municipioRepo.findAll().stream().filter(m -> m.getNombre() != null && m.getNombre().equals("Bogotá")).findFirst().orElse(null);
 
             // EMPRESA 1 - Bancolombia
             Empresa empresa1 = new Empresa();

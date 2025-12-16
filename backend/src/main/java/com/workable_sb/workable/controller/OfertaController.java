@@ -21,36 +21,36 @@ public class OfertaController {
     // CREATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<Oferta> crearOferta(@RequestBody Oferta oferta) {
-        return ResponseEntity.ok(ofertaService.crearOferta(oferta));
+    public ResponseEntity<Oferta> criarOferta(@RequestBody Oferta oferta) {
+        return ResponseEntity.ok(ofertaService.create(oferta));
     }
 
     // GET ALL
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping
     public ResponseEntity<List<Oferta>> listarTodas() {
-        return ResponseEntity.ok(ofertaService.listarTodas());
+        return ResponseEntity.ok(ofertaService.getAll());
     }
 
     // GET BY ID
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/{id}")
     public ResponseEntity<Oferta> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(ofertaService.obtenerPorId(id));
+        return ResponseEntity.ok(ofertaService.getById(id));
     }
 
     // UPDATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Oferta> actualizarOferta(@PathVariable Long id, @RequestBody Oferta oferta) {
-        return ResponseEntity.ok(ofertaService.actualizarOferta(id, oferta));
+        return ResponseEntity.ok(ofertaService.update(id, oferta));
     }
 
     // DELETE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarOferta(@PathVariable Long id) {
-        ofertaService.eliminarOferta(id);
+        ofertaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

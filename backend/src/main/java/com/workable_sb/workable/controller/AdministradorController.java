@@ -21,108 +21,61 @@ public class AdministradorController {
     // ===== CREATE =====
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearAdministrador(@RequestBody Administrador administrador) {
+    public ResponseEntity<?> create(@RequestBody Administrador administrador) {
         try {
-            Administrador nuevoAdministrador = administradorService.crearAdministrador(administrador);
-            return ResponseEntity.status(201).body(nuevoAdministrador);
+            Administrador created = administradorService.create(administrador);
+            return ResponseEntity.status(201).body(created);
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al crear administrador: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }
     }
 
     // ===== READ =====
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerAdministrador(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
-            Administrador administrador = administradorService.obtenerPorId(id);
-            return ResponseEntity.ok(administrador);
+            Administrador admin = administradorService.getById(id);
+            return ResponseEntity.ok(admin);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener administrador: " + e.getMessage()));
         }
     }
 
-    // Obtener por correo
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/correo/{correo}")
-    public ResponseEntity<?> obtenerPorCorreo(@PathVariable String correo) {
-        try {
-            Administrador administrador = administradorService.obtenerPorCorreo(correo);
-            return ResponseEntity.ok(administrador);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener administrador: " + e.getMessage()));
-        }
-    }
-
-    // Obtener todos
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<?> obtenerTodos() {
+    public ResponseEntity<?> getAll() {
         try {
-            List<Administrador> administradores = administradorService.obtenerTodos();
-            return ResponseEntity.ok(administradores);
+            List<Administrador> admins = administradorService.getAll();
+            return ResponseEntity.ok(admins);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener administradores: " + e.getMessage()));
-        }
-    }
-
-    // Obtener administradores activos
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/activos")
-    public ResponseEntity<?> obtenerActivos() {
-        try {
-            List<Administrador> administradores = administradorService.obtenerActivos();
-            return ResponseEntity.ok(administradores);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener administradores: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }
     }
 
     // ===== UPDATE =====
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarAdministrador(@PathVariable Long id, @RequestBody Administrador administrador) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Administrador administrador) {
         try {
-            Administrador administradorActualizado = administradorService.actualizar(id, administrador);
-            return ResponseEntity.ok(administradorActualizado);
+            Administrador updated = administradorService.update(id, administrador);
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar administrador: " + e.getMessage()));
         }
     }
 
     // ===== DELETE =====
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarAdministrador(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
-            administradorService.eliminarAdministrador(id);
+            administradorService.delete(id);
             return ResponseEntity.status(204).build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar administrador: " + e.getMessage()));
-        }
-    }
-
-    // ===== ACTUALIZAR ÚLTIMO ACCESO =====
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}/ultimo-acceso")
-    public ResponseEntity<?> actualizarUltimoAcceso(@PathVariable Long id) {
-        try {
-            administradorService.actualizarUltimoAcceso(id);
-            return ResponseEntity.ok(Map.of("mensaje", "Último acceso actualizado"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar último acceso: " + e.getMessage()));
         }
     }
 }

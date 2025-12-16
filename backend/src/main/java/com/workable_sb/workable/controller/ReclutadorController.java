@@ -23,7 +23,7 @@ public class ReclutadorController {
     // ===== CREATE =====
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> criarReclutador(@RequestBody Reclutador reclutador) {
+    public ResponseEntity<?> crear(@RequestBody Reclutador reclutador) {
         try {
             Reclutador nuevoReclutador = reclutadorService.create(reclutador);
             return ResponseEntity.status(201).body(nuevoReclutador);
@@ -35,88 +35,46 @@ public class ReclutadorController {
     }
 
     // ===== READ =====
-    
-    // READ my profile (using JWT authentication)
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        try {
+            List<Reclutador> reclutadores = reclutadorService.getAll();
+            return ResponseEntity.ok(reclutadores);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutadores: " + e.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        try {
+            Reclutador reclutador = reclutadorService.getById(id);
+            return ResponseEntity.ok(reclutador);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutador: " + e.getMessage()));
+        }
+    }
+
     @PreAuthorize("hasRole('RECLUTADOR')")
     @GetMapping("/me")
     public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal CustomUserDetails user) {
         try {
             Long usuarioId = user.getUsuarioId();
-            Reclutador reclutador = reclutadorService.obtenerPorId(usuarioId);
+            Reclutador reclutador = reclutadorService.getById(usuarioId);
             return ResponseEntity.ok(reclutador);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener perfil: " + e.getMessage()));
         }
     }
 
-    // READ by id
-    public ResponseEntity<?> obtenerReclutador(@PathVariable Long id) {
-        try {
-            Reclutador reclutador = reclutadorService.obtenerPorId(id);
-            return ResponseEntity.ok(reclutador);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutador: " + e.getMessage()));
-        }
-    }
-
-    // READ PUBLIC by id (para perfil)
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/public/{id}")
-    public ResponseEntity<?> obtenerReclutadorPublic(@PathVariable Long id) {
-        try {
-            Reclutador reclutador = reclutadorService.obtenerPorId(id);
-            return ResponseEntity.ok(reclutador);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutador: " + e.getMessage()));
-        }
-    }
-
-    // Obtener por correo
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/correo/{correo}")
-    public ResponseEntity<?> obtenerPorCorreo(@PathVariable String correo) {
-        try {
-            Reclutador reclutador = reclutadorService.obtenerPorCorreo(correo);
-            return ResponseEntity.ok(reclutador);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutador: " + e.getMessage()));
-        }
-    }
-
-    // Obtener todos
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
-    public ResponseEntity<?> obtenerTodos() {
-        try {
-            List<Reclutador> reclutadores = reclutadorService.obtenerTodos();
-            return ResponseEntity.ok(reclutadores);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutadores: " + e.getMessage()));
-        }
-    }
-
-    // Obtener reclutadores de una empresa
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<?> obtenerPorEmpresa(@PathVariable Long empresaId) {
-        try {
-            List<Reclutador> reclutadores = reclutadorService.obtenerPorEmpresa(empresaId);
-            return ResponseEntity.ok(reclutadores);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutadores: " + e.getMessage()));
-        }
-    }
-
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarReclutador(@PathVariable Long id, @RequestBody Reclutador reclutador) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Reclutador reclutador) {
         try {
             Reclutador reclutadorActualizado = reclutadorService.update(id, reclutador);
             return ResponseEntity.ok(reclutadorActualizado);
@@ -129,24 +87,10 @@ public class ReclutadorController {
         }
     }
 
-    // Actualizar (ADMIN)
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/{id}")
-    public ResponseEntity<?> actualizarReclutadorAdmin(@PathVariable Long id, @RequestBody Reclutador reclutador) {
-        try {
-            Reclutador reclutadorActualizado = reclutadorService.update(id, reclutador);
-            return ResponseEntity.ok(reclutadorActualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar reclutador: " + e.getMessage()));
-        }
-    }
-
     // ===== DELETE =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarReclutador(@PathVariable Long id) {
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             reclutadorService.delete(id);
             return ResponseEntity.status(204).build();

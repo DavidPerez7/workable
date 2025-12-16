@@ -39,22 +39,15 @@ public class EmpresaController {
     // - CREATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<Empresa> create(@RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
-        return ResponseEntity.ok(empresaService.create(empresa, user.getUsuarioId()));
+    public ResponseEntity<Empresa> create(@RequestBody Empresa empresa) {
+        return ResponseEntity.ok(empresaService.create(empresa));
     }
 
     // - UPDATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<Empresa> update(@PathVariable Long id, @RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
-        boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
-        if (isAdmin) {
-            return ResponseEntity.ok(empresaService.updateAdmin(id, empresa));
-        } else {
-            return ResponseEntity.ok(empresaService.update(id, empresa, user.getUsuarioId()));
-        }
+    public ResponseEntity<Empresa> update(@PathVariable Long id, @RequestBody Empresa empresa) {
+        return ResponseEntity.ok(empresaService.update(id, empresa));
     }
 
     // - DELETE

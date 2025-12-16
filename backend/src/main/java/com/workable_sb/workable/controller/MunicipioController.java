@@ -20,27 +20,7 @@ public class MunicipioController {
     @GetMapping
     public ResponseEntity<List<Municipio>> obtenerTodos() {
         try {
-            List<Municipio> municipios = municipioService.obtenerTodos();
-            return ResponseEntity.ok(municipios);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }
-
-    @GetMapping("/departamento/{departamento}")
-    public ResponseEntity<List<Municipio>> obtenerPorDepartamento(@PathVariable Municipio.Departamento departamento) {
-        try {
-            List<Municipio> municipios = municipioService.obtenerPorDepartamento(departamento);
-            return ResponseEntity.ok(municipios);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
-        }
-    }
-
-    @GetMapping("/buscar")
-    public ResponseEntity<List<Municipio>> buscarPorNombre(@RequestParam String nombre) {
-        try {
-            List<Municipio> municipios = municipioService.buscarPorNombre(nombre);
+            List<Municipio> municipios = municipioService.getAll();
             return ResponseEntity.ok(municipios);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
@@ -50,7 +30,7 @@ public class MunicipioController {
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
-            Municipio municipio = municipioService.obtenerPorId(id);
+            Municipio municipio = municipioService.getById(id);
             return ResponseEntity.ok(municipio);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));

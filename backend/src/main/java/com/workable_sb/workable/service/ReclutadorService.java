@@ -57,23 +57,29 @@ public class ReclutadorService {
     }
 
     // ===== READ =====
-    public Reclutador obtenerPorId(Long id) {
+    public Reclutador getById(Long id) {
         return reclutadorRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
     }
 
-    public Reclutador obtenerPorCorreo(String correo) {
+    public Reclutador getByCorreo(String correo) {
         return reclutadorRepo.findByCorreo(correo)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
     }
 
-    public List<Reclutador> obtenerTodos() {
+    public List<Reclutador> getAll() {
         return reclutadorRepo.findAll();
+    }
+
+    public List<Reclutador> getByEmpresaId(Long empresaId) {
+        return reclutadorRepo.findAll().stream()
+                .filter(r -> r.getEmpresa() != null && r.getEmpresa().getId().equals(empresaId))
+                .toList();
     }
 
     // ===== UPDATE =====
     public Reclutador update(Long id, Reclutador request) {
-        Reclutador existingReclutador = obtenerPorId(id);
+        Reclutador existingReclutador = getById(id);
 
         // Validar correo único si cambió
         if (request.getCorreo() != null && !existingReclutador.getCorreo().equals(request.getCorreo())) {
@@ -112,21 +118,8 @@ public class ReclutadorService {
 
     // ===== DELETE =====
     public void delete(Long id) {
-        Reclutador reclutador = obtenerPorId(id);
+        Reclutador reclutador = getById(id);
         reclutador.setIsActive(false);
         reclutadorRepo.save(reclutador);
-    }
-
-    // ===== BÚSQUEDA Y FILTRADO =====
-    public List<Reclutador> obtenerPorEmpresa(Long empresaId) {
-        return reclutadorRepo.findAll().stream()
-                .filter(r -> r.getEmpresa() != null && r.getEmpresa().getId().equals(empresaId))
-                .toList();
-    }
-
-    public List<Reclutador> obtenerActivos() {
-        return reclutadorRepo.findAll().stream()
-                .filter(r -> r.getIsActive() != null && r.getIsActive())
-                .toList();
     }
 }

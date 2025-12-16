@@ -86,7 +86,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
 
-            Aspirante aspiranteCreado = aspiranteService.createPublic(request);
+            Aspirante aspiranteCreado = aspiranteService.create(request);
             
             log.info("Aspirante registrado exitosamente: {} {}", aspiranteCreado.getNombre(), aspiranteCreado.getApellido());
             return ResponseEntity.ok(aspiranteCreado);
@@ -123,7 +123,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(Map.of("error", "El correo ya está registrado"));
             }
 
-            Reclutador reclutadorCreado = reclutadorService.createPublic(request);
+            Reclutador reclutadorCreado = reclutadorService.create(request);
             
             log.info("Reclutador registrado exitosamente: {} {}", reclutadorCreado.getNombre(), reclutadorCreado.getApellido());
             return ResponseEntity.ok(reclutadorCreado);

@@ -91,7 +91,7 @@ public class AdministradorService {
 
     // ===== DELETE =====
     public void delete(Long id) {
-        Administrador administrador = obtenerPorId(id);
+        Administrador administrador = getById(id);
         administradorRepo.delete(administrador);
     }
 }

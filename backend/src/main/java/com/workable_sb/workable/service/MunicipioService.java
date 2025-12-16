@@ -13,11 +13,11 @@ public class MunicipioService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    public List<Municipio> obtenerTodos() {
+    public List<Municipio> getAll() {
         return municipioRepo.findAll();
     }
 
-    public Municipio obtenerPorId(Long id) {
+    public Municipio getById(Long id) {
         return municipioRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
     }
@@ -27,7 +27,7 @@ public class MunicipioService {
     }
 
     public Municipio update(Long id, Municipio municipio) {
-        Municipio existing = obtenerPorId(id);
+        Municipio existing = getById(id);
         existing.setNombre(municipio.getNombre());
         existing.setDepartamento(municipio.getDepartamento());
         return municipioRepo.save(existing);
