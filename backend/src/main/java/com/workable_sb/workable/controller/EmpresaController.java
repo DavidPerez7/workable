@@ -70,11 +70,7 @@ public class EmpresaController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         try {
-            if (isAdmin) {
-                empresaService.deleteAdmin(id);
-            } else {
-                empresaService.delete(id, user.getUsuarioId());
-            }
+            empresaService.delete(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalStateException e) {
             // e.g., user not allowed to delete

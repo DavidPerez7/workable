@@ -22,11 +22,18 @@ public class MunicipioService {
                 .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
     }
 
-    public List<Municipio> obtenerPorDepartamento(Municipio.Departamento departamento) {
-        return municipioRepo.findByDepartamento(departamento);
+    public Municipio create(Municipio municipio) {
+        return municipioRepo.save(municipio);
     }
 
-    public List<Municipio> buscarPorNombre(String nombre) {
-        return municipioRepo.findByNombreContainingIgnoreCase(nombre);
+    public Municipio update(Long id, Municipio municipio) {
+        Municipio existing = obtenerPorId(id);
+        existing.setNombre(municipio.getNombre());
+        existing.setDepartamento(municipio.getDepartamento());
+        return municipioRepo.save(existing);
+    }
+
+    public void delete(Long id) {
+        municipioRepo.deleteById(id);
     }
 }

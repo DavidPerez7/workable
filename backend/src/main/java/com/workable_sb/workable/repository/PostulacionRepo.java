@@ -19,4 +19,7 @@ public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
     
     // Validar postulación duplicada
     Optional<Postulacion> findByAspiranteIdAndOfertaId(Long aspiranteId, Long ofertaId);
+    
+    // Contar postulaciones por oferta
+    long countByOfertaId(Long ofertaId);
 }

@@ -20,13 +20,8 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private ReclutadorRepo reclutadorRepo;
     @Autowired private AdministradorRepo administradorRepo;
     @Autowired private EmpresaRepository empresaRepo;
-    // Estudio/Experiencia repos no gestionados por DataInitializer
-
-    @Autowired private HabilidadRepo habilidadRepo;
     @Autowired private OfertaRepo ofertaRepo;
     @Autowired private PostulacionRepo postulacionRepo;
-    @Autowired private FeedbackRepo feedbackRepo;
-    @Autowired private NotificacionRepo notificacionRepo;
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Override
@@ -64,13 +59,8 @@ public class DataInitializer implements CommandLineRunner {
     private void cleanupExistingData() {
         try {
             // Limpiar datos en orden inverso a las dependencias (entidades dependientes primero)
-            // Usar try-catch individual para cada eliminación para evitar que un error bloquee todo
-            try { feedbackRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando feedback: " + e.getMessage()); }
-            try { notificacionRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando notificaciones: " + e.getMessage()); }
             try { postulacionRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando postulaciones: " + e.getMessage()); }
             try { ofertaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando ofertas: " + e.getMessage()); }
-            // Estudios y experiencias gestionadas fuera del DataInitializer - no borrar aquí
-            try { habilidadRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando habilidades: " + e.getMessage()); }
             try { reclutadorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando reclutadores: " + e.getMessage()); }
             try { aspiranteRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando aspirantes: " + e.getMessage()); }
             try { administradorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando administradores: " + e.getMessage()); }

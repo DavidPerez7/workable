@@ -23,9 +23,9 @@ public class ReclutadorController {
     // ===== CREATE =====
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearReclutador(@RequestBody Reclutador reclutador) {
+    public ResponseEntity<?> criarReclutador(@RequestBody Reclutador reclutador) {
         try {
-            Reclutador nuevoReclutador = reclutadorService.crearReclutador(reclutador);
+            Reclutador nuevoReclutador = reclutadorService.create(reclutador);
             return ResponseEntity.status(201).body(nuevoReclutador);
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
@@ -116,9 +116,9 @@ public class ReclutadorController {
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarReclutador(@PathVariable Long id, @RequestBody Reclutador reclutador, @RequestParam Long reclutadorIdActual) {
+    public ResponseEntity<?> actualizarReclutador(@PathVariable Long id, @RequestBody Reclutador reclutador) {
         try {
-            Reclutador reclutadorActualizado = reclutadorService.actualizar(id, reclutador, reclutadorIdActual);
+            Reclutador reclutadorActualizado = reclutadorService.update(id, reclutador);
             return ResponseEntity.ok(reclutadorActualizado);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
@@ -146,9 +146,9 @@ public class ReclutadorController {
     // ===== DELETE =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarReclutador(@PathVariable Long id, @RequestParam Long reclutadorIdActual) {
+    public ResponseEntity<?> eliminarReclutador(@PathVariable Long id) {
         try {
-            reclutadorService.eliminarReclutador(id, reclutadorIdActual);
+            reclutadorService.delete(id);
             return ResponseEntity.status(204).build();
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));

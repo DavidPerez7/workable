@@ -10,5 +10,9 @@ import com.workable_sb.workable.models.Empresa;
 
 @Repository
 public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
-
+    Optional<Empresa> findByNit(String nit);
+    
+    boolean existsByNit(String nit);
+    
+    List<Empresa> findByIsActive(Boolean isActive);
 }

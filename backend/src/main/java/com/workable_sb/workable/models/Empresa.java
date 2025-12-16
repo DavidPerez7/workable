@@ -139,10 +139,6 @@ public class Empresa {
     @JsonIgnore
     private List<Oferta> ofertas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Feedback> feedbacks = new ArrayList<>();
-
     // Relación unidireccional: La empresa conoce sus reclutadores
     // Se crea una columna empresa_id en la tabla reclutador
     // IMPORTANTE: Usar @Transient para evitar ConcurrentModificationException durante serialización JSON

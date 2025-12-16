@@ -10,8 +10,6 @@ import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.HojaVida;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @Transactional
@@ -23,8 +21,8 @@ public class HojaVidaService {
     @Autowired
     private AspiranteRepo aspiranteRepo;
 
-    // ===== CREATE (Manual, solo para ADMIN) =====
-    public HojaVida crearHojaVidaManual(HojaVida hojaVida) {
+    // ===== CREATE =====
+    public HojaVida create(HojaVida hojaVida) {
         if (hojaVida.getAspirante() == null || hojaVida.getAspirante().getId() == null) {
             throw new IllegalArgumentException("El aspirante es requerido");
         }
@@ -32,18 +30,14 @@ public class HojaVidaService {
     }
 
     // ===== READ =====
-    public HojaVida obtenerPorId(Long id) {
-        HojaVida hoja = hojaVidaRepo.findById(id)
+    public HojaVida getById(Long id) {
+        return hojaVidaRepo.findById(id)
             .orElseThrow(() -> new RuntimeException("Hoja de vida no encontrada"));
-        // Incluir estudios y experiencias en la respuesta
-        populateRelated(hoja);
-        return hoja;
     }
 
-    public HojaVida obtenerHojaVidaPorAspirante(Long aspiranteId) {
-        HojaVida hoja = hojaVidaRepo.findByAspiranteId(aspiranteId).stream().findFirst()
+    public HojaVida getByAspiranteId(Long aspiranteId) {
+        return hojaVidaRepo.findByAspiranteId(aspiranteId).stream().findFirst()
             .orElseGet(() -> {
-                // Si no existe, crear una automáticamente
                 Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
                     .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
                 HojaVida nuevaHojaVida = new HojaVida();
@@ -51,177 +45,59 @@ public class HojaVidaService {
                 nuevaHojaVida.setEsPublica(false);
                 return hojaVidaRepo.save(nuevaHojaVida);
             });
-        populateRelated(hoja);
-        return hoja;
     }
 
-    public List<HojaVida> obtenerTodasLasHojasVida() {
+    public List<HojaVida> getAll() {
         return hojaVidaRepo.findAll();
     }
 
-    public List<HojaVida> obtenerHojasVidaPublicas() {
-        return hojaVidaRepo.findByEsPublicaTrue();
-    }
-
     // ===== UPDATE =====
-    public HojaVida actualizarHojaVida(Long id, HojaVida hojaVidaActualizada) {
-        HojaVida existente = obtenerPorId(id);
+    public HojaVida update(Long id, HojaVida request) {
+        HojaVida existing = getById(id);
 
-        // Obtener usuario autenticado
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("Usuario no autenticado");
+        if (request.getResumenProfesional() != null) {
+            existing.setResumenProfesional(request.getResumenProfesional());
         }
-
-        // Obtener detalles del usuario
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof com.workable_sb.workable.security.CustomUserDetails)) {
-            throw new IllegalStateException("Usuario no válido");
+        if (request.getObjetivoProfesional() != null) {
+            existing.setObjetivoProfesional(request.getObjetivoProfesional());
         }
-
-        com.workable_sb.workable.security.CustomUserDetails userDetails = (com.workable_sb.workable.security.CustomUserDetails) principal;
-        Long usuarioIdActual = userDetails.getUsuarioId();
-        String rol = userDetails.getAuthorities().stream()
-            .map(auth -> auth.getAuthority().replace("ROLE_", ""))
-            .findFirst().orElse("");
-
-        // Validar permisos
-        if ("ADMIN".equals(rol)) {
-            // Admin puede actualizar cualquier hoja de vida
-        } else if ("ASPIRANTE".equals(rol)) {
-            // Aspirante solo puede actualizar su propia hoja de vida
-            if (!existente.getAspirante().getId().equals(usuarioIdActual)) {
-                throw new IllegalStateException("Solo el dueño puede actualizar esta hoja de vida");
-            }
-        } else {
-            throw new IllegalStateException("Rol no autorizado para actualizar hoja de vida");
+        if (request.getRedSocial1() != null) {
+            existing.setRedSocial1(request.getRedSocial1());
         }
-
-        // Actualizar campos opcionales
-        if (hojaVidaActualizada.getResumenProfesional() != null) {
-            existente.setResumenProfesional(hojaVidaActualizada.getResumenProfesional());
-        }
-        if (hojaVidaActualizada.getObjetivoProfesional() != null) {
-            existente.setObjetivoProfesional(hojaVidaActualizada.getObjetivoProfesional());
-        }
-        if (hojaVidaActualizada.getRedSocial1() != null) {
-            existente.setRedSocial1(hojaVidaActualizada.getRedSocial1());
-        }
-        // Allow updating contactoEmail and telefono through the Hoja de Vida editor.
-        // When a user edits the contact info from the UI we propagate changes to the related Aspirante
-        // so that autocompletion remains consistent.
-        if (hojaVidaActualizada.getContactoEmail() != null) {
-            String nuevoCorreo = hojaVidaActualizada.getContactoEmail();
-            Aspirante aspirante = existente.getAspirante();
+        if (request.getContactoEmail() != null) {
+            String nuevoCorreo = request.getContactoEmail();
+            Aspirante aspirante = existing.getAspirante();
             if (aspirante == null) throw new RuntimeException("Aspirante asociado no encontrado");
-            // If correo cambia, validate uniqueness among aspirantes
             if (!nuevoCorreo.equals(aspirante.getCorreo())) {
                 if (aspiranteRepo.findByCorreo(nuevoCorreo).isPresent()) {
                     throw new RuntimeException("El correo ya está en uso por otro aspirante");
                 }
                 aspirante.setCorreo(nuevoCorreo);
             }
-            // Update Hoja de Vida contact field as well
-            existente.setContactoEmail(nuevoCorreo);
+            existing.setContactoEmail(nuevoCorreo);
             aspiranteRepo.save(aspirante);
         }
-        if (hojaVidaActualizada.getTelefono() != null) {
-            String nuevoTelefono = hojaVidaActualizada.getTelefono();
-            Aspirante aspirante = existente.getAspirante();
+        if (request.getTelefono() != null) {
+            String nuevoTelefono = request.getTelefono();
+            Aspirante aspirante = existing.getAspirante();
             if (aspirante == null) throw new RuntimeException("Aspirante asociado no encontrado");
             aspirante.setTelefono(nuevoTelefono);
-            existente.setTelefono(nuevoTelefono);
+            existing.setTelefono(nuevoTelefono);
             aspiranteRepo.save(aspirante);
         }
-        // Nota: `salarioEsperado` fue removido del modelo. Si hace falta, usar
-        // una entidad separada o un campo en Aspirante.
-        if (hojaVidaActualizada.getIdiomas() != null) {
-            existente.setIdiomas(hojaVidaActualizada.getIdiomas());
+        if (request.getIdiomas() != null) {
+            existing.setIdiomas(request.getIdiomas());
         }
-        if (hojaVidaActualizada.getEsPublica() != null) {
-            existente.setEsPublica(hojaVidaActualizada.getEsPublica());
+        if (request.getEsPublica() != null) {
+            existing.setEsPublica(request.getEsPublica());
         }
 
-        HojaVida saved = hojaVidaRepo.save(existente);
-        // Autogenerar y poblar relaciones para mantener consistencia
-        autogenerarHojaVida(existente.getAspirante().getId());
-        populateRelated(saved);
-        return saved;
+        return hojaVidaRepo.save(existing);
     }
 
     // ===== DELETE =====
-    public void eliminarHojaVida(Long id) {
-        HojaVida hojaVida = obtenerPorId(id);
-
-        // Obtener usuario autenticado
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("Usuario no autenticado");
-        }
-
-        // Obtener detalles del usuario
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof com.workable_sb.workable.security.CustomUserDetails)) {
-            throw new IllegalStateException("Usuario no válido");
-        }
-
-        com.workable_sb.workable.security.CustomUserDetails userDetails = (com.workable_sb.workable.security.CustomUserDetails) principal;
-        Long usuarioIdActual = userDetails.getUsuarioId();
-        String rol = userDetails.getAuthorities().stream()
-            .map(auth -> auth.getAuthority().replace("ROLE_", ""))
-            .findFirst().orElse("");
-
-        // Validar permisos
-        if ("ADMIN".equals(rol)) {
-            // Admin puede eliminar cualquier hoja de vida
-        } else if ("ASPIRANTE".equals(rol)) {
-            // Aspirante solo puede eliminar su propia hoja de vida
-            if (!hojaVida.getAspirante().getId().equals(usuarioIdActual)) {
-                throw new IllegalStateException("Solo el dueño puede eliminar esta hoja de vida");
-            }
-        } else {
-            throw new IllegalStateException("Rol no autorizado para eliminar hoja de vida");
-        }
-
+    public void delete(Long id) {
+        HojaVida hojaVida = getById(id);
         hojaVidaRepo.delete(hojaVida);
-    }
-
-    // ===== AUTOGENERAR HOJA DE VIDA =====
-    public HojaVida autogenerarHojaVida(Long aspiranteId) {
-        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
-                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
-
-        // Buscar la hoja de vida existente (creada al registro)
-        HojaVida hojaVida = hojaVidaRepo.findByAspiranteId(aspiranteId).stream().findFirst()
-                .orElseThrow(() -> new RuntimeException("Hoja de vida no encontrada"));
-
-        // Autocompletar contacto desde el aspirante
-        hojaVida.setContactoEmail(aspirante.getCorreo());
-        hojaVida.setTelefono(aspirante.getTelefono());
-
-        // Generar resumen profesional si no existe
-        if (hojaVida.getResumenProfesional() == null || hojaVida.getResumenProfesional().isEmpty()) {
-            StringBuilder resumen = new StringBuilder();
-            resumen.append("Profesional con ");
-            if (hojaVida.getExperiencias() != null && !hojaVida.getExperiencias().isEmpty()) {
-                resumen.append(hojaVida.getExperiencias().size()).append(" experiencia(s) laboral(es). ");
-            }
-            if (hojaVida.getEstudios() != null && !hojaVida.getEstudios().isEmpty()) {
-                resumen.append("Formación académica en ").append(hojaVida.getEstudios().get(0).getTitulo()).append(".");
-            }
-            hojaVida.setResumenProfesional(resumen.toString());
-        }
-
-        return hojaVidaRepo.save(hojaVida);
-    }
-
-    // ---- Helpers ----
-    private void populateRelated(HojaVida hoja) {
-        if (hoja == null || hoja.getAspirante() == null || hoja.getAspirante().getId() == null) return;
-        // Autocompletar contacto desde aspirante
-        if (hoja.getAspirante() != null) {
-            hoja.setContactoEmail(hoja.getAspirante().getCorreo());
-            hoja.setTelefono(hoja.getAspirante().getTelefono());
-        }
     }
 }

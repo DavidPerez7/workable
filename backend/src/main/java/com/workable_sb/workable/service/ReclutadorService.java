@@ -31,40 +31,21 @@ public class ReclutadorService {
     private PasswordEncoder passwordEncoder;
 
     // ===== CREATE =====
-    public Reclutador crearReclutador(Reclutador reclutador) {
+    public Reclutador create(Reclutador request) {
         // Validar que el correo no existe
-        if (reclutadorRepo.findByCorreo(reclutador.getCorreo()).isPresent()) {
-            throw new RuntimeException("El correo ya está registrado");
+        if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
+            throw new RuntimeException("Correo already in use");
         }
 
         // Validar campos obligatorios
-        if (reclutador.getNombre() == null || reclutador.getNombre().isEmpty()) {
+        if (request.getNombre() == null || request.getNombre().isEmpty()) {
             throw new IllegalArgumentException("El nombre es obligatorio");
         }
-        if (reclutador.getCorreo() == null || reclutador.getCorreo().isEmpty()) {
+        if (request.getCorreo() == null || request.getCorreo().isEmpty()) {
             throw new IllegalArgumentException("El correo es obligatorio");
         }
-
-        // Encriptar contraseña
-        reclutador.setPassword(passwordEncoder.encode(reclutador.getPassword()));
-        reclutador.setRol(Reclutador.Rol.RECLUTADOR);
-
-        return reclutadorRepo.save(reclutador);
-    }
-
-    /**
-     * Registro público de reclutador (desde formulario de registro)
-     * No requiere empresa en el momento de registro
-     */
-    public Reclutador createPublic(Reclutador request) {
-        // Validación de contraseña requerida
         if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-            throw new RuntimeException("La contraseña es requerida");
-        }
-        
-        // Validación de correo único
-        if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new RuntimeException("Correo already in use");
+            throw new IllegalArgumentException("La contraseña es requerida");
         }
 
         // Encriptar contraseña
@@ -90,54 +71,11 @@ public class ReclutadorService {
         return reclutadorRepo.findAll();
     }
 
-    // ===== UPDATE (PÚBLICO: el mismo reclutador) =====
-    public Reclutador actualizar(Long id, Reclutador request, Long reclutadorIdActual) {
-        // Validar que sea el mismo reclutador o admin
-        if (!id.equals(reclutadorIdActual)) {
-            throw new IllegalStateException("Solo puedes actualizar tu propio perfil");
-        }
-
-        Reclutador existingReclutador = obtenerPorId(id);
-
-        // Solo actualizar correo si viene en el request y es diferente
-        if (request.getCorreo() != null && !existingReclutador.getCorreo().equals(request.getCorreo())) {
-            if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
-                throw new RuntimeException("Correo already in use");
-            }
-            existingReclutador.setCorreo(request.getCorreo());
-        }
-
-        existingReclutador.setNombre(request.getNombre());
-        existingReclutador.setApellido(request.getApellido());
-        existingReclutador.setTelefono(request.getTelefono());
-        existingReclutador.setUrlFotoPerfil(request.getUrlFotoPerfil());
-        existingReclutador.setUrlBanner(request.getUrlBanner());
-        existingReclutador.setFechaNacimiento(request.getFechaNacimiento());
-
-        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            existingReclutador.setPassword(passwordEncoder.encode(request.getPassword()));
-        }
-
-        if (request.getMunicipio() != null) {
-            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                    .orElseThrow(() -> new RuntimeException("Municipio not found"));
-            existingReclutador.setMunicipio(municipio);
-        }
-
-        if (request.getEmpresa() != null) {
-            Empresa empresa = empresaRepo.findById(request.getEmpresa().getId())
-                    .orElseThrow(() -> new RuntimeException("Empresa not found"));
-            existingReclutador.setEmpresa(empresa);
-        }
-
-        return reclutadorRepo.save(existingReclutador);
-    }
-
-    // ===== UPDATE (ADMIN: gestión completa) =====
+    // ===== UPDATE =====
     public Reclutador update(Long id, Reclutador request) {
         Reclutador existingReclutador = obtenerPorId(id);
 
-        // Solo actualizar correo si viene en el request y es diferente
+        // Validar correo único si cambió
         if (request.getCorreo() != null && !existingReclutador.getCorreo().equals(request.getCorreo())) {
             if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
                 throw new RuntimeException("Correo already in use");
@@ -173,14 +111,9 @@ public class ReclutadorService {
     }
 
     // ===== DELETE =====
-    public void eliminarReclutador(Long id, Long reclutadorIdActual) {
-        // Validar que sea el mismo reclutador o admin
-        if (!id.equals(reclutadorIdActual)) {
-            throw new IllegalStateException("Solo puedes eliminar tu propio perfil");
-        }
-
+    public void delete(Long id) {
         Reclutador reclutador = obtenerPorId(id);
-        reclutador.setIsActive(false); // Soft delete
+        reclutador.setIsActive(false);
         reclutadorRepo.save(reclutador);
     }
 

@@ -14,7 +14,6 @@ import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.repository.OfertaRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
 import com.workable_sb.workable.repository.AspiranteRepo;
-import com.workable_sb.workable.service.AdminValidationService;
 
 @Service
 @Transactional
@@ -28,24 +27,18 @@ public class PostulacionService {
 	@Autowired
 	private OfertaRepo ofertaRepo;
 
-	@Autowired
-	private AdminValidationService adminValidationService;
-
 	// ===== LISTAR TODAS (ADMIN) =====
 	public List<Postulacion> listarTodas() {
 		return postulacionRepo.findAll();
 	}
 
 	// ===== CREACIÓN =====
-	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId, Long usuarioIdActual) {
+	public Postulacion crearPostulacion(Long aspiranteId, Long ofertaId) {
 		if (aspiranteId == null) {
 			throw new IllegalArgumentException("El ID del aspirante es obligatorio");
 		}
 		if (ofertaId == null) {
 			throw new IllegalArgumentException("El ID de la oferta es obligatorio");
-		}
-		if (usuarioIdActual == null) {
-			throw new IllegalArgumentException("El ID del usuario actual es obligatorio");
 		}
 
 		// Validar que no exista ya una postulación
@@ -53,84 +46,40 @@ public class PostulacionService {
 			throw new IllegalStateException("Ya existe una postulación para este aspirante en esta oferta");
 		}
 
-		if (!adminValidationService.isAdmin()) {
-			Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
-				.orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+		Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
+			.orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
-			// Validar que el usuario actual sea el aspirante (solo puedes postularte por ti mismo)
-			if (!aspiranteId.equals(usuarioIdActual)) {
-				throw new IllegalStateException("Solo puedes postularte en nombre de ti mismo");
-			}
+		Oferta oferta = ofertaRepo.findById(ofertaId)
+			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
 
-			// Validar que la oferta existe
-			Oferta oferta = ofertaRepo.findById(ofertaId)
-				.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
-
-			// Validar que la oferta está ABIERTA
-			if (oferta.getEstado() != EstadoOferta.ABIERTA) {
-				throw new IllegalStateException("Solo puedes postularte a ofertas abiertas");
-			}
-
-			// Crear postulación
-			Postulacion postulacion = new Postulacion();
-			postulacion.setAspirante(aspirante);
-			postulacion.setOferta(oferta);
-			postulacion.setEstado(Estado.PENDIENTE);
-			postulacion.setIsActive(true);
-
-			return postulacionRepo.save(postulacion);
-		} else {
-			// Admin: skip validations
-			Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
-				.orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
-			Oferta oferta = ofertaRepo.findById(ofertaId)
-				.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
-
-			Postulacion postulacion = new Postulacion();
-			postulacion.setAspirante(aspirante);
-			postulacion.setOferta(oferta);
-			postulacion.setEstado(Estado.PENDIENTE);
-			postulacion.setIsActive(true);
-
-			return postulacionRepo.save(postulacion);
+		// Validar que la oferta está ABIERTA
+		if (oferta.getEstado() != EstadoOferta.ABIERTA) {
+			throw new IllegalStateException("Solo puedes postularte a ofertas abiertas");
 		}
+
+		// Crear postulación
+		Postulacion postulacion = new Postulacion();
+		postulacion.setAspirante(aspirante);
+		postulacion.setOferta(oferta);
+		postulacion.setEstado(Estado.PENDIENTE);
+		postulacion.setIsActive(true);
+
+		return postulacionRepo.save(postulacion);
 	}
 
 	// ===== READ =====
-	public Postulacion obtenerPorId(Long id, Long aspiranteIdActual) {
-		Postulacion postulacion = postulacionRepo.findById(id)
+	public Postulacion obtenerPorId(Long id) {
+		return postulacionRepo.findById(id)
 			.orElseThrow(() -> new RuntimeException("Postulación no encontrada con id: " + id));
-
-		// Validar permisos: aspirante solo puede ver sus propias postulaciones, admin ve todas
-		if (!postulacion.getAspirante().getId().equals(aspiranteIdActual) && !adminValidationService.isAdmin()) {
-			throw new IllegalStateException("No tienes permisos para ver esta postulación");
-		}
-
-		return postulacion;
 	}
 
-	public List<Postulacion> listarPorOferta(Long ofertaId, Long aspiranteIdActual) {
-		// Validar que la oferta existe
+	public List<Postulacion> listarPorOferta(Long ofertaId) {
 		ofertaRepo.findById(ofertaId)
 			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
-
 		return postulacionRepo.findByOfertaId(ofertaId);
 	}
 
-	public long contarPorOferta(Long ofertaId) {
-		// Validar que la oferta existe
-		ofertaRepo.findById(ofertaId)
-			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
-
-		return postulacionRepo.countByOfertaId(ofertaId);
-	}
-
-	public List<Postulacion> listarPorAspirante(Long aspiranteId, Long usuarioIdActual) {
-		// Validar que el usuario actual sea el aspirante (solo puedes ver tus propias postulaciones)
-		if (!aspiranteId.equals(usuarioIdActual) && !adminValidationService.isAdmin()) {
-			throw new IllegalStateException("No tienes permisos para ver las postulaciones de este aspirante");
-		}
-
+	public List<Postulacion> listarPorAspirante(Long aspiranteId) {
 		return postulacionRepo.findByAspiranteId(aspiranteId);
 	}
 
@@ -140,14 +89,9 @@ public class PostulacionService {
 	}
 
 	// ===== DELETE =====
-	public void eliminarPostulacion(Long postulacionId, Long usuarioIdActual) {
+	public void eliminarPostulacion(Long postulacionId) {
 		Postulacion postulacion = postulacionRepo.findById(postulacionId)
 			.orElseThrow(() -> new RuntimeException("Postulación no encontrada"));
-
-		if (!postulacion.getAspirante().getId().equals(usuarioIdActual) && !adminValidationService.isAdmin()) {
-			throw new IllegalStateException("Solo puedes eliminar tus propias postulaciones");
-		}
-
 		postulacionRepo.delete(postulacion);
 	}
 }

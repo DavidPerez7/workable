@@ -20,23 +20,19 @@ import com.workable_sb.workable.repository.OfertaRepo;
 public class OfertaService {
 
     @Autowired
+    private OfertaRepo ofertaRepository;
+
+    @Autowired
     private EmpresaRepository empresaRepo;
 
     @Autowired
     private MunicipioRepo municipioRepo;
 
-    public Oferta crearOferta(Oferta ofertaRequest) {
-        Oferta oferta = new Oferta();
-        oferta.setTitulo(ofertaRequest.getTitulo());
-        oferta.setDescripcion(ofertaRequest.getDescripcion());
-        oferta.setFechaLimite(ofertaRequest.getFechaLimite());
-        oferta.setSalario(ofertaRequest.getSalario());
-        oferta.setNumeroVacantes(ofertaRequest.getNumeroVacantes());
-        if (ofertaRequest.getNivelExperiencia() != null)
-            oferta.setNivelExperiencia(ofertaRequest.getNivelExperiencia());
-        if (ofertaRequest.getEstado() != null)
-            oferta.setEstado(ofertaRequest.getEstado());
-        // Requisitos ahora es un String no nulo con max 500 caracteres
+    @Autowired
+    private PostulacionRepo postulacionRepo;
+
+    // ===== CREATE =====
+    public Oferta create(Oferta ofertaRequest) {
         if (ofertaRequest.getRequisitos() == null || ofertaRequest.getRequisitos().trim().isEmpty()) {
             throw new IllegalArgumentException("El campo 'requisitos' es obligatorio y no puede estar vacío");
         }
@@ -44,56 +40,50 @@ public class OfertaService {
         if (req.length() > 500) {
             throw new IllegalArgumentException("El campo 'requisitos' no puede exceder 500 caracteres");
         }
+
+        Oferta oferta = new Oferta();
+        oferta.setTitulo(ofertaRequest.getTitulo());
+        oferta.setDescripcion(ofertaRequest.getDescripcion());
+        oferta.setFechaLimite(ofertaRequest.getFechaLimite());
+        oferta.setSalario(ofertaRequest.getSalario());
+        oferta.setNumeroVacantes(ofertaRequest.getNumeroVacantes());
+        oferta.setNivelExperiencia(ofertaRequest.getNivelExperiencia());
         oferta.setRequisitos(req);
+        oferta.setModalidad(ofertaRequest.getModalidad());
+        oferta.setTipoContrato(ofertaRequest.getTipoContrato());
+        oferta.setEstado(ofertaRequest.getEstado() != null ? ofertaRequest.getEstado() : Oferta.EstadoOferta.ABIERTA);
+        
         if (ofertaRequest.getMunicipio() != null && ofertaRequest.getMunicipio().getId() != null) {
-            oferta.setMunicipio(municipioRepo.findById(ofertaRequest.getMunicipio().getId()).orElse(null));
-        } else {
-            oferta.setMunicipio(ofertaRequest.getMunicipio());
+            oferta.setMunicipio(municipioRepo.findById(ofertaRequest.getMunicipio().getId())
+                .orElseThrow(() -> new RuntimeException("Municipio not found")));
         }
-        if (ofertaRequest.getModalidad() != null)
-            oferta.setModalidad(ofertaRequest.getModalidad());
-        if (ofertaRequest.getTipoContrato() != null)
-            oferta.setTipoContrato(ofertaRequest.getTipoContrato());
+        
         if (ofertaRequest.getEmpresa() != null && ofertaRequest.getEmpresa().getId() != null) {
-            oferta.setEmpresa(empresaRepo.findById(ofertaRequest.getEmpresa().getId()).orElse(null));
-        } else {
-            oferta.setEmpresa(ofertaRequest.getEmpresa());
+            oferta.setEmpresa(empresaRepo.findById(ofertaRequest.getEmpresa().getId())
+                .orElseThrow(() -> new RuntimeException("Empresa not found")));
         }
+        
         if (ofertaRequest.getBeneficios() != null && !ofertaRequest.getBeneficios().isEmpty()) {
             oferta.setBeneficios(ofertaRequest.getBeneficios());
         }
+        
         return ofertaRepository.save(oferta);
     }
 
-    @Autowired
-    private OfertaRepo ofertaRepository;
-
-    @Autowired
-    private PostulacionRepo postulacionRepo;
-
-
-    // GET ALL
-    public List<Oferta> listarTodas() {
+    // ===== READ =====
+    public List<Oferta> getAll() {
         return ofertaRepository.findAll();
     }
 
-    // GET BY ID
-    public Oferta obtenerPorId(Long id) {
+    public Oferta getById(Long id) {
         return ofertaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Oferta no encontrada con id: " + id));
     }
 
-    // UPDATE
-    public Oferta actualizarOferta(Long id, Oferta ofertaActualizada) {
-        Oferta existente = obtenerPorId(id);
-        existente.setTitulo(ofertaActualizada.getTitulo());
-        existente.setDescripcion(ofertaActualizada.getDescripcion());
-        existente.setFechaLimite(ofertaActualizada.getFechaLimite());
-        existente.setSalario(ofertaActualizada.getSalario());
-        existente.setNumeroVacantes(ofertaActualizada.getNumeroVacantes());
-        existente.setNivelExperiencia(ofertaActualizada.getNivelExperiencia());
-        existente.setModalidad(ofertaActualizada.getModalidad());
-        existente.setTipoContrato(ofertaActualizada.getTipoContrato());
+    // ===== UPDATE =====
+    public Oferta update(Long id, Oferta ofertaActualizada) {
+        Oferta existing = getById(id);
+        
         if (ofertaActualizada.getRequisitos() == null || ofertaActualizada.getRequisitos().trim().isEmpty()) {
             throw new IllegalArgumentException("El campo 'requisitos' es obligatorio y no puede estar vacío");
         }
@@ -101,34 +91,44 @@ public class OfertaService {
         if (reqUpd.length() > 500) {
             throw new IllegalArgumentException("El campo 'requisitos' no puede exceder 500 caracteres");
         }
-        existente.setRequisitos(reqUpd);
-        existente.setBeneficios(ofertaActualizada.getBeneficios());
-        existente.setMunicipio(ofertaActualizada.getMunicipio());
-        existente.setEmpresa(ofertaActualizada.getEmpresa());
-        // Actualizar campo isActive si viene en la petición
-        if (ofertaActualizada.getIsActive() != null) {
-            existente.setIsActive(ofertaActualizada.getIsActive());
-            // Mantener coherencia con el campo estado (opcional)
-            existente.setEstado(ofertaActualizada.getIsActive() ? Oferta.EstadoOferta.ABIERTA : Oferta.EstadoOferta.CERRADA);
+
+        existing.setTitulo(ofertaActualizada.getTitulo());
+        existing.setDescripcion(ofertaActualizada.getDescripcion());
+        existing.setFechaLimite(ofertaActualizada.getFechaLimite());
+        existing.setSalario(ofertaActualizada.getSalario());
+        existing.setNumeroVacantes(ofertaActualizada.getNumeroVacantes());
+        existing.setNivelExperiencia(ofertaActualizada.getNivelExperiencia());
+        existing.setModalidad(ofertaActualizada.getModalidad());
+        existing.setTipoContrato(ofertaActualizada.getTipoContrato());
+        existing.setRequisitos(reqUpd);
+        existing.setBeneficios(ofertaActualizada.getBeneficios());
+        
+        if (ofertaActualizada.getMunicipio() != null) {
+            existing.setMunicipio(ofertaActualizada.getMunicipio());
         }
-        // habilidadesRequeridas eliminado
-        return ofertaRepository.save(existente);
+        if (ofertaActualizada.getEmpresa() != null) {
+            existing.setEmpresa(ofertaActualizada.getEmpresa());
+        }
+        if (ofertaActualizada.getIsActive() != null) {
+            existing.setIsActive(ofertaActualizada.getIsActive());
+            existing.setEstado(ofertaActualizada.getIsActive() ? Oferta.EstadoOferta.ABIERTA : Oferta.EstadoOferta.CERRADA);
+        }
+        
+        return ofertaRepository.save(existing);
     }
 
-    // DELETE
-    public void eliminarOferta(Long id) {
-        Oferta existente = obtenerPorId(id);
-        // eliminar postulaciones asociadas primero para evitar violaciones de FK
+    // ===== DELETE =====
+    public void delete(Long id) {
+        Oferta existing = getById(id);
         try {
             var postulaciones = postulacionRepo.findByOfertaId(id);
             if (postulaciones != null && !postulaciones.isEmpty()) {
                 postulacionRepo.deleteAll(postulaciones);
             }
         } catch (Exception e) {
-            // registrar y re-lanzar como RuntimeException para que el controlador devuelva 500 y el front muestre el error
             throw new RuntimeException("No se pudieron eliminar las postulaciones asociadas: " + e.getMessage(), e);
         }
-        ofertaRepository.delete(existente);
+        ofertaRepository.delete(existing);
     }
 }
 
