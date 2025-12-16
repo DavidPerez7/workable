@@ -136,14 +136,6 @@ public class Aspirante {
     @JsonIgnore
     private Map<HabilidadEnum, String> habilidades;
 
-    // Relaciones
-    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("aspirante")
-    private List<Estudio> estudios;
-
-    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("aspirante")
-    private List<Experiencia> experiencias;
 
     @PrePersist
     protected void onCreate() {

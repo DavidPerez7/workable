@@ -3,46 +3,38 @@ package com.workable_sb.workable.models;
 import java.time.LocalDate;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Data
-@Table(name = "estudio")
-public class Estudio {
+public class EstudioData {
     
-    private static final Logger log = LoggerFactory.getLogger(Estudio.class);
+    private static final Logger log = LoggerFactory.getLogger(EstudioData.class);
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NotBlank(message = "El título es obligatorio")
     @Size(min = 2, max = 255, message = "El título debe tener entre 2 y 255 caracteres")
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String titulo;
 
     @NotNull(message = "La fecha de inicio es obligatoria")
-    @PastOrPresent(message = "La fecha de inicio no puede ser futura")
-    @Column(nullable = false)
+    @Column
     private LocalDate fechaInicio;
     
+    @Column
     private LocalDate fechaFin;
 
-    @Column(nullable = false)
+    @Column
     private Boolean enCurso = false;
 
     @NotBlank(message = "La institución es obligatoria")
     @Size(min = 2, max = 255, message = "La institución debe tener entre 2 y 255 caracteres")
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String institucion;
 
     @Size(max = 500, message = "La URL del certificado no puede exceder 500 caracteres")
@@ -52,12 +44,6 @@ public class Estudio {
     @Size(max = 1000, message = "La descripción no puede exceder 1000 caracteres")
     @Column(length = 1000)
     private String descripcion;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Municipio municipio;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
@@ -71,7 +57,7 @@ public class Estudio {
 
     @NotNull(message = "El nivel educativo es obligatorio")
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
     private NivelEducativo nivelEducativo;
 
     public enum NivelEducativo {
@@ -84,21 +70,6 @@ public class Estudio {
         ESPECIALIZACION,
         MAESTRIA,
         DOCTORADO
-    }
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
-    private Aspirante aspirante;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private EstadoEstudio estadoEstudio = EstadoEstudio.ACTIVO;
-
-    public enum EstadoEstudio {
-        ACTIVO,
-        INACTIVO
     }
 
     @PrePersist

@@ -54,15 +54,23 @@ public class HojaVida {
     @Column(length = 500)
     private String objetivoProfesional;
 
-    // Estudios y experiencias se exponen en la Hoja de Vida para conveniencia,
-    // pero NO se persisten directamente aquí (se almacenan en sus propias tablas
-    // y se relacionan con el aspirante). Marcamos @Transient para que JPA no
-    // intente mapear estas listas.
-    @Transient
-    private List<Estudio> estudios;
+    // Estudios y experiencias incrustados como value objects
+    // Se persisten en tablas separadas pero forman parte de la HojaVida
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "hoja_vida_estudios",
+        joinColumns = @JoinColumn(name = "hoja_vida_id", referencedColumnName = "id")
+    )
+    @Column(name = "estudio")
+    private List<EstudioData> estudios;
 
-    @Transient
-    private List<Experiencia> experiencias;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "hoja_vida_experiencias",
+        joinColumns = @JoinColumn(name = "hoja_vida_id", referencedColumnName = "id")
+    )
+    @Column(name = "experiencia")
+    private List<ExperienciaData> experiencias;
 
     @Size(max = 500)
     @Column(length = 500)

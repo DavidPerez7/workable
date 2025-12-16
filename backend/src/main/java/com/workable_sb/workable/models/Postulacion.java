@@ -50,6 +50,11 @@ public class Postulacion {
 	@JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})
 	private Aspirante aspirante;
 
+	// Datos de cita (entrevista) incrustados
+	// Solo se llena cuando estado = ENTREVISTA_PROGRAMADA
+	@Embedded
+	private CitacionData citacionData;
+
 	@PrePersist
 	protected void onCreate() {
 		if (this.fechaCreacion == null) {

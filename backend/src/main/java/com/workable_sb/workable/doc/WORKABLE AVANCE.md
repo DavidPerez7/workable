@@ -58,7 +58,7 @@
 ~~`update`~~
 ~~`delete`~~
 
-**→ Ahora es @Embeddable dentro de Aspirante con campos:** `titulo`, `institucion`, `nivelEducativo`, `fechaInicio`, `fechaFin`, `enCurso`, `modalidad`, `descripcion`, `certificadoUrl`
+**→ Ahora es @Embeddable dentro de HDV con campos:** `titulo`, `institucion`, `nivelEducativo`, `fechaInicio`, `fechaFin`, `enCurso`, `modalidad`, `descripcion`, `certificadoUrl`
 
 ---
 
@@ -72,7 +72,7 @@
 ~~`update`~~
 ~~`delete`~~
 
-**→ Ahora es @Embeddable dentro de Aspirante con campos:** `cargo`, `empresa`, `fechaInicio`, `fechaFin`, `municipio`, `descripcion`, `certificadoUrl`
+**→ Ahora es @Embeddable dentro de HDV con campos:** `cargo`, `empresa`, `fechaInicio`, `fechaFin`, `municipio`, `descripcion`, `certificadoUrl`
 
 ---
 
@@ -215,67 +215,3 @@
 **Tiempo ahorrado:** ~32-35 horas de desarrollo
 
 ---
-
-## 🎯 Resumen Ejecutivo
-
-### Optimizaciones Realizadas ✅
-
-| Optimización | Impacto | Patrón |
-|--------------|--------|--------|
-| ~~Estudio~~ → @Embedded en Aspirante | -7 endpoints | @Embedded con List<EstudioData> |
-| ~~Experiencia~~ → @Embedded en Aspirante | -7 endpoints | @Embedded con List<ExperienciaData> |
-| ~~Citacion~~ → @Embedded en Postulacion | -6 endpoints | @Embedded con CitacionData |
-| ~~Feedback~~ → Aplazado v1.1 | -7 endpoints | No crítico, RF14 post-lanzamiento |
-| ~~Notificacion~~ → Aplazado v1.1 | -7 endpoints | Complejidad innecesaria v1.0 |
-| Endpoints redundantes eliminados | -4 endpoints | `getall`, `getby*` innecesarios |
-| **Resultado Final** | **-37 endpoints** | **Modelo minimalista v1.0** |
-
-### Impacto en Entrega 🚀
-
-| Métrica | Valor | Beneficio |
-|---------|-------|-----------|
-| **Código Eliminado** | 2,280 líneas (-52%) | Mantenimiento simplificado, onboarding rápido |
-| **Horas Ahorradas** | 32-35 horas | **Entrega en 11hrs muy viable** |
-| **Endpoints Reducidos** | 43 endpoints (43.9%) | API extremadamente clara |
-| **Complejidad** | Reducida 50% | Menor deuda técnica |
-| **Entidades CRUD v1.0** | 7 (de 12) | Modelo minimalista, esencial |
-
-### Roadmap v1.0 vs v1.1+
-
-**v1.0 (Lanzamiento Esencial - 11hrs):**
-- ✅ Gestión de aspirantes, empresas, ofertas
-- ✅ Búsqueda, filtrado, postulación
-- ✅ Programación de entrevistas (CitacionData @Embedded en Postulacion)
-- ✅ Hoja de Vida simplificada (EstudioData + ExperienciaData @Embedded en Aspirante)
-- ✅ Autenticación y autorización básica
-- ⚠️ Email notificaciones básico (integrado en lógica de negocio)
-
-**v1.1 (Post-lanzamiento - Features):**
-- ⏸️ Sistema de notificaciones en tiempo real con arquitectura simplificada
-- ⏸️ Sistema de valoraciones y feedback (RF14)
-- ⏸️ Estadísticas avanzadas (RF17)
-- ⏸️ Mejoras UI/UX
-- ⏸️ Métricas y analytics
-
-**Patrón de Simplificación:**
-```
-@Entity HojaDeVida (con @OneToMany)
-  └─ List<Estudio> estudios
-  └─ List<Experiencia> experiencias
-
-SE CONVIERTE EN:
-
-@Entity Aspirante
-  └─ @Embedded List<EstudioData>
-  └─ @Embedded List<ExperienciaData>
-
-Mismo patrón aplicado a Citacion en Postulacion:
-
-@Entity Postulacion
-  └─ @Embedded CitacionData (fecha, hora, link, estado)
-```
-
----
-
-**Documento actualizado:** 15 de Diciembre de 2025 📅  
-**Estado:** Optimizaciones finales aplicadas para v1.0 ✓
