@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // Si es reclutador y sigue sin empresa, hidratar
         if (userData.rol === 'RECLUTADOR' && !userData.empresaId) {
           try {
-            const perfil = await getMyProfile();
+            const perfil = await getMyProfile(userData.usuarioId);
             const perfilEmpresaId = perfil.empresa?.id || null;
             const perfilEmpresa = perfil.empresa || undefined;
 
@@ -112,10 +112,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       let empresaId = response.empresaId || response.empresa?.id || null;
       let empresa = response.empresa || null;
 
-      // Si es reclutador, SIEMPRE llamamos a /me para obtener empresa actualizada
+      // Si es reclutador, SIEMPRE llamamos a getMyProfile para obtener empresa actualizada
       if (response.rol === 'RECLUTADOR') {
         try {
-          const perfil = await getMyProfile();
+          const perfil = await getMyProfile(response.usuarioId);
           if (perfil && perfil.empresa) {
             empresaId = perfil.empresa.id || empresaId;
             empresa = perfil.empresa;

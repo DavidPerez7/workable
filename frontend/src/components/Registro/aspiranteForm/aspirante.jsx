@@ -59,6 +59,8 @@ const AspiranteForm = () => {
       telefono: data.telefono,
       password: data.password,
       fechaNacimiento: data.fechaNacimiento,
+      genero: data.genero,
+      rol: "ASPIRANTE",
       municipio: {
         id: Number(data.municipioId),
       },
@@ -164,6 +166,16 @@ const AspiranteForm = () => {
                       {municipio.nombre}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              <div className="form-field">
+                <label className="form-label">Género *</label>
+                <select name="genero" required className="form-input">
+                  <option value="">Selecciona tu género</option>
+                  <option value="MASCULINO">Masculino</option>
+                  <option value="FEMENINO">Femenino</option>
+                  <option value="OTRO">Otro</option>
                 </select>
               </div>
 

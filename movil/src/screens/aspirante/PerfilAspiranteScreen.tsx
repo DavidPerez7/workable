@@ -20,8 +20,13 @@ const PerfilAspiranteScreen = () => {
   }, []);
 
   const loadPerfil = async () => {
+    if (!user?.usuarioId) {
+      Alert.alert('Error', 'No se pudo obtener el ID de usuario');
+      setLoading(false);
+      return;
+    }
     try {
-      const data = await getMyProfile();
+      const data = await getMyProfile(user.usuarioId);
       setPerfil(data);
     } catch (error: any) {
       Alert.alert('Error', error.message);
@@ -31,10 +36,10 @@ const PerfilAspiranteScreen = () => {
   };
 
   const handleSave = async () => {
-    if (!perfil) return;
+    if (!perfil || !user?.usuarioId) return;
     setSaving(true);
     try {
-      await updateMyProfile(perfil);
+      await updateMyProfile(user.usuarioId, perfil);
       Alert.alert('Éxito', 'Perfil actualizado');
       setEditing(false);
     } catch (error: any) {

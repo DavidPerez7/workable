@@ -4,7 +4,7 @@ import type { HojaVida, Estudio, Experiencia, Habilidad } from '../types';
 // ===== Hoja de Vida =====
 export const getHojaVidaByAspirante = async (aspiranteId: number): Promise<HojaVida> => {
   try {
-    const response = await api.get<HojaVida>(`/hoja-vida/aspirante/${aspiranteId}`);
+    const response = await api.get<HojaVida>(`/api/hoja-vida/aspirante/${aspiranteId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -13,7 +13,7 @@ export const getHojaVidaByAspirante = async (aspiranteId: number): Promise<HojaV
 
 export const createOrUpdateHojaVida = async (data: HojaVida): Promise<HojaVida> => {
   try {
-    const response = await api.post<HojaVida>('/hoja-vida', data);
+    const response = await api.post<HojaVida>('/api/hoja-vida', data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -21,9 +21,11 @@ export const createOrUpdateHojaVida = async (data: HojaVida): Promise<HojaVida> 
 };
 
 // ===== Estudios =====
-export const getEstudiosByAspirante = async (): Promise<Estudio[]> => {
+// NOTA: Backend tiene problema de orden - /aspirante es capturado por /{id}
+// Usar /usuario/{id} en su lugar
+export const getEstudiosByAspirante = async (userId: number): Promise<Estudio[]> => {
   try {
-    const response = await api.get<Estudio[]>(`/estudio/aspirante`);
+    const response = await api.get<Estudio[]>(`/api/estudio/usuario/${userId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -32,7 +34,7 @@ export const getEstudiosByAspirante = async (): Promise<Estudio[]> => {
 
 export const getEstudiosByAspiranteId = async (aspiranteId: number): Promise<Estudio[]> => {
   try {
-    const response = await api.get<Estudio[]>(`/estudio/usuario/${aspiranteId}`);
+    const response = await api.get<Estudio[]>(`/api/estudio/usuario/${aspiranteId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -41,7 +43,7 @@ export const getEstudiosByAspiranteId = async (aspiranteId: number): Promise<Est
 
 export const createEstudio = async (data: Estudio, aspiranteId?: number): Promise<Estudio> => {
   try {
-    const url = aspiranteId ? `/estudio?aspiranteId=${aspiranteId}` : '/estudio';
+    const url = aspiranteId ? `/api/estudio?aspiranteId=${aspiranteId}` : '/api/estudio';
     const response = await api.post<Estudio>(url, data);
     return response.data;
   } catch (error) {
@@ -51,7 +53,7 @@ export const createEstudio = async (data: Estudio, aspiranteId?: number): Promis
 
 export const updateEstudio = async (id: number, data: Estudio): Promise<Estudio> => {
   try {
-    const response = await api.put<Estudio>(`/estudio/${id}`, data);
+    const response = await api.put<Estudio>(`/api/estudio/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -60,16 +62,18 @@ export const updateEstudio = async (id: number, data: Estudio): Promise<Estudio>
 
 export const deleteEstudio = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/estudio/${id}`);
+    await api.delete(`/api/estudio/${id}`);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
 
 // ===== Experiencias =====
-export const getExperienciasByAspirante = async (): Promise<Experiencia[]> => {
+// NOTA: Backend tiene problema de orden - /aspirante es capturado por /{id}
+// Usar /usuario/{id} en su lugar
+export const getExperienciasByAspirante = async (userId: number): Promise<Experiencia[]> => {
   try {
-    const response = await api.get<Experiencia[]>(`/experiencia/aspirante`);
+    const response = await api.get<Experiencia[]>(`/api/experiencia/usuario/${userId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -78,7 +82,7 @@ export const getExperienciasByAspirante = async (): Promise<Experiencia[]> => {
 
 export const getExperienciasByAspiranteId = async (aspiranteId: number): Promise<Experiencia[]> => {
   try {
-    const response = await api.get<Experiencia[]>(`/experiencia/usuario/${aspiranteId}`);
+    const response = await api.get<Experiencia[]>(`/api/experiencia/usuario/${aspiranteId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -87,7 +91,7 @@ export const getExperienciasByAspiranteId = async (aspiranteId: number): Promise
 
 export const createExperiencia = async (data: Experiencia, aspiranteId?: number): Promise<Experiencia> => {
   try {
-    const url = aspiranteId ? `/experiencia?aspiranteId=${aspiranteId}` : '/experiencia';
+    const url = aspiranteId ? `/api/experiencia?aspiranteId=${aspiranteId}` : '/api/experiencia';
     const response = await api.post<Experiencia>(url, data);
     return response.data;
   } catch (error) {
@@ -97,7 +101,7 @@ export const createExperiencia = async (data: Experiencia, aspiranteId?: number)
 
 export const updateExperiencia = async (id: number, data: Experiencia): Promise<Experiencia> => {
   try {
-    const response = await api.put<Experiencia>(`/experiencia/${id}`, data);
+    const response = await api.put<Experiencia>(`/api/experiencia/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -106,7 +110,7 @@ export const updateExperiencia = async (id: number, data: Experiencia): Promise<
 
 export const deleteExperiencia = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/experiencia/${id}`);
+    await api.delete(`/api/experiencia/${id}`);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
@@ -115,26 +119,28 @@ export const deleteExperiencia = async (id: number): Promise<void> => {
 // ===== Habilidades =====
 export const getHabilidadesByAspiranteId = async (aspiranteId: number): Promise<Habilidad[]> => {
   try {
-    const response = await api.get<Habilidad[]>(`/habilidad/usuario/${aspiranteId}`);
+    const response = await api.get<Habilidad[]>(`/api/habilidad/usuario/${aspiranteId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
 
-export const getHabilidadesByAspirante = async (): Promise<Habilidad[]> => {
+// NOTA: Backend tiene problema de orden - /aspirante es capturado por /{id}
+// Usar /usuario/{id} en su lugar
+export const getHabilidadesByAspirante = async (userId: number): Promise<Habilidad[]> => {
   try {
-    const response = await api.get<Habilidad[]>(`/habilidad/aspirante`);
+    const response = await api.get<Habilidad[]>(`/api/habilidad/usuario/${userId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
-, aspiranteId?: number): Promise<Habilidad> => {
+
+export const createHabilidad = async (data: Habilidad, aspiranteId?: number): Promise<Habilidad> => {
   try {
-    const url = aspiranteId ? `/habilidad?aspiranteId=${aspiranteId}` : '/habilidad';
-    const response = await api.post<Habilidad>(url
-    const response = await api.post<Habilidad>('/habilidad', data);
+    const url = aspiranteId ? `/api/habilidad?aspiranteId=${aspiranteId}` : '/api/habilidad';
+    const response = await api.post<Habilidad>(url, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -143,7 +149,7 @@ export const getHabilidadesByAspirante = async (): Promise<Habilidad[]> => {
 
 export const updateHabilidad = async (id: number, data: Habilidad): Promise<Habilidad> => {
   try {
-    const response = await api.put<Habilidad>(`/habilidad/${id}`, data);
+    const response = await api.put<Habilidad>(`/api/habilidad/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -152,7 +158,7 @@ export const updateHabilidad = async (id: number, data: Habilidad): Promise<Habi
 
 export const deleteHabilidad = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/habilidad/${id}`);
+    await api.delete(`/api/habilidad/${id}`);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }

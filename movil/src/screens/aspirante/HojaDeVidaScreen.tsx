@@ -92,9 +92,9 @@ const HojaDeVidaScreen = () => {
     if (!user?.usuarioId) return;
     try {
       const [estudiosList, experienciasList, habilidadesList] = await Promise.all([
-        getEstudiosByAspirante(),
-        getExperienciasByAspirante(),
-        getHabilidadesByAspirante(),
+        getEstudiosByAspirante(user.usuarioId),
+        getExperienciasByAspirante(user.usuarioId),
+        getHabilidadesByAspirante(user.usuarioId),
       ]);
       setEstudios(estudiosList || []);
       setExperiencias(experienciasList || []);

@@ -5,7 +5,7 @@ import type { LoginCredentials, LoginResponse, Aspirante, Reclutador } from '../
 // Login
 export const login = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   try {
-    const response = await api.post<LoginResponse>('/auth/login', credentials);
+    const response = await api.post<LoginResponse>('/api/auth/login', credentials);
     
     console.log('Login response:', JSON.stringify(response.data, null, 2));
     
@@ -42,7 +42,7 @@ export const login = async (credentials: LoginCredentials): Promise<LoginRespons
 // Register Aspirante
 export const registerAspirante = async (data: Aspirante): Promise<Aspirante> => {
   try {
-    const response = await api.post<Aspirante>('/auth/register-aspirante', data);
+    const response = await api.post<Aspirante>('/api/auth/register-aspirante', data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -52,7 +52,7 @@ export const registerAspirante = async (data: Aspirante): Promise<Aspirante> => 
 // Register Reclutador
 export const registerReclutador = async (data: Reclutador): Promise<Reclutador> => {
   try {
-    const response = await api.post<Reclutador>('/auth/register-reclutador', data);
+    const response = await api.post<Reclutador>('/api/auth/register-reclutador', data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -65,11 +65,11 @@ export const logout = async (): Promise<void> => {
   return Promise.resolve();
 };
 
-// Verify token
+// Verify token - simplemente intenta una llamada autenticada
 export const verifyToken = async (token: string): Promise<boolean> => {
   try {
-    // Intentar obtener perfil según rol del token decodificado
-    await api.get('/aspirante/me', {
+    // Intentar obtener un endpoint público que requiera autenticación
+    await api.get('/api/aspirante', {
       headers: { Authorization: `Bearer ${token}` },
     });
     return true;
