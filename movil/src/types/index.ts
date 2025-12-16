@@ -37,6 +37,7 @@ export interface Aspirante {
   password?: string;
   telefono?: string;
   direccion?: string;
+  descripcion?: string;
   fechaNacimiento?: string;
   genero?: string;
   estadoCivil?: string;
@@ -54,6 +55,7 @@ export interface Reclutador {
   password?: string;
   telefono?: string;
   cargo?: string;
+    fechaNacimiento?: string;
   empresa?: Empresa;
 }
 
@@ -86,13 +88,14 @@ export interface Oferta {
   descripcion: string;
   requisitos?: string;
   salario?: number;
-  tipoContrato?: 'TIEMPO_COMPLETO' | 'MEDIO_TIEMPO' | 'TEMPORAL' | 'FREELANCE' | 'PRACTICAS';
+  tipoContrato?: 'TIEMPO_COMPLETO' | 'MEDIO_TIEMPO' | 'TEMPORAL' | 'PRESTACION_SERVICIOS' | 'PRACTICAS';
   modalidad?: 'PRESENCIAL' | 'REMOTO' | 'HIBRIDO';
   estado?: 'ABIERTA' | 'CERRADA' | 'PAUSADA';
   fechaPublicacion?: string;
   fechaCierre?: string;
-  vacantes?: number;
-  experienciaRequerida?: number;
+  fechaLimite?: string;
+  numeroVacantes?: number;
+  nivelExperiencia?: 'SIN_EXPERIENCIA' | 'BASICO' | 'INTERMEDIO' | 'AVANZADO' | 'EXPERTO';
   nivelEducativo?: string;
   empresa?: Empresa;
   reclutador?: Reclutador;
@@ -123,10 +126,11 @@ export interface Estudio {
   id?: number;
   institucion: string;
   titulo: string;
-  nivel: string;
+  nivelEducativo: string;
   fechaInicio?: string;
   fechaFin?: string;
   enCurso?: boolean;
+    estadoEstudio?: string;
   descripcion?: string;
   aspirante?: Aspirante;
 }
@@ -135,6 +139,7 @@ export interface Experiencia {
   id?: number;
   empresa: string;
   cargo: string;
+    certificadoUrl?: string;
   descripcion?: string;
   fechaInicio?: string;
   fechaFin?: string;
@@ -145,8 +150,8 @@ export interface Experiencia {
 export interface Habilidad {
   id?: number;
   nombre: string;
-  nivel?: 'BASICO' | 'INTERMEDIO' | 'AVANZADO' | 'EXPERTO';
-  descripcion?: string;
+  tipo?: 'TECNICA' | 'BLANDA' | 'IDIOMA';
+  isActive?: boolean;
   aspirante?: Aspirante;
 }
 
@@ -205,8 +210,10 @@ export type AdminDrawerParamList = {
   UsuariosAdmin: undefined;
   OfertasAdmin: undefined;
   PostulacionesAdmin: undefined;
+  HojasDeVidaAdmin: undefined;
   AspiranteView: undefined;
   ReclutadorView: undefined;
+  AspiranteHojaVida: { aspiranteId: number; aspiranteNombre: string };
 };
 
 export type OfertasStackParamList = {

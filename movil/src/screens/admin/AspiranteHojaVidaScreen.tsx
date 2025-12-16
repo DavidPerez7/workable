@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,15 +9,13 @@ import {
   Modal,
   RefreshControl,
   Switch,
-  ActivityIndicator,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../../context/AuthContext';
 import {
-  getEstudiosByAspirante,
-  getExperienciasByAspirante,
-  getHabilidadesByAspirante,
+  getEstudiosByAspiranteId,
+  getExperienciasByAspiranteId,
+  getHabilidadesByAspiranteId,
   createEstudio,
   updateEstudio,
   deleteEstudio,
@@ -34,10 +32,15 @@ import Input from '../../components/Input';
 import DatePicker from '../../components/DatePicker';
 import Picker from '../../components/Picker';
 import { colors, spacing, fontSize, fontWeight, globalStyles, shadows } from '../../styles/theme';
-import type { Estudio, Experiencia, Habilidad } from '../../types';
+import type { Estudio, Experiencia, Habilidad, AdminDrawerParamList } from '../../types';
 
-const HojaDeVidaScreen = () => {
-  const { user } = useAuth();
+type AspiranteHojaVidaScreenRouteProp = RouteProp<AdminDrawerParamList, 'AspiranteHojaVida'>;
+
+const AspiranteHojaVidaScreen = () => {
+  const route = useRoute<AspiranteHojaVidaScreenRouteProp>();
+  const navigation = useNavigation();
+  const { aspiranteId, aspiranteNombre } = route.params;
+
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<'estudios' | 'experiencias' | 'habilidades'>('estudios');
@@ -61,6 +64,7 @@ const HojaDeVidaScreen = () => {
     enCurso: false,
     fechaFin: '',
     descripcion: '',
+    estadoEstudio: 'ACTIVO',
   });
 
   // ===== MODALES DE EXPERIENCIAS =====
@@ -68,9 +72,10 @@ const HojaDeVidaScreen = () => {
   const [editingExperiencia, setEditingExperiencia] = useState<Experiencia | undefined>();
   const [experienciaSaving, setExperienciaSaving] = useState(false);
   const [experienciaFormData, setExperienciaFormData] = useState<Partial<Experiencia>>({
-    puesto: '',
+    cargo: '',
     empresa: '',
     descripcion: '',
+    certificadoUrl: '',
     fechaInicio: new Date().toISOString().split('T')[0],
     fechaFin: new Date().toISOString().split('T')[0],
   });
@@ -81,17 +86,17 @@ const HojaDeVidaScreen = () => {
   const [habilidadSaving, setHabilidadSaving] = useState(false);
   const [habilidadFormData, setHabilidadFormData] = useState<Partial<Habilidad>>({
     nombre: '',
-    nivel: 'INTERMEDIO',
+    tipo: 'TECNICA',
+    isActive: true,
   });
 
   // ===== CARGAR DATOS =====
   const loadData = async () => {
-    if (!user?.usuarioId) return;
     try {
       const [estudiosList, experienciasList, habilidadesList] = await Promise.all([
-        getEstudiosByAspirante(),
-        getExperienciasByAspirante(),
-        getHabilidadesByAspirante(),
+        getEstudiosByAspiranteId(aspiranteId),
+        getExperienciasByAspiranteId(aspiranteId),
+        getHabilidadesByAspiranteId(aspiranteId),
       ]);
       setEstudios(estudiosList || []);
       setExperiencias(experienciasList || []);
@@ -105,11 +110,9 @@ const HojaDeVidaScreen = () => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      loadData();
-    }, [user?.usuarioId])
-  );
+  useEffect(() => {
+    loadData();
+  }, [aspiranteId]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -128,6 +131,7 @@ const HojaDeVidaScreen = () => {
         enCurso: estudio.enCurso,
         fechaFin: estudio.fechaFin,
         descripcion: estudio.descripcion,
+        estadoEstudio: estudio.estadoEstudio || 'ACTIVO',
       });
     } else {
       setEditingEstudio(undefined);
@@ -139,6 +143,7 @@ const HojaDeVidaScreen = () => {
         enCurso: false,
         fechaFin: '',
         descripcion: '',
+        estadoEstudio: 'ACTIVO',
       });
     }
     setShowEstudioModal(true);
@@ -154,14 +159,14 @@ const HojaDeVidaScreen = () => {
       setEstudioSaving(true);
       const data = {
         ...estudioFormData,
-        aspirante: { id: user!.usuarioId },
+        aspirante: { id: aspiranteId },
       } as Estudio;
 
       if (editingEstudio?.id) {
         await updateEstudio(editingEstudio.id, data);
         Alert.alert('Éxito', 'Estudio actualizado');
       } else {
-        await createEstudio(data);
+        await createEstudio(data, aspiranteId);
         Alert.alert('Éxito', 'Estudio creado');
       }
 
@@ -198,18 +203,20 @@ const HojaDeVidaScreen = () => {
     if (experiencia) {
       setEditingExperiencia(experiencia);
       setExperienciaFormData({
-        puesto: experiencia.puesto,
+        cargo: experiencia.cargo,
         empresa: experiencia.empresa,
         descripcion: experiencia.descripcion,
+        certificadoUrl: experiencia.certificadoUrl,
         fechaInicio: experiencia.fechaInicio,
         fechaFin: experiencia.fechaFin,
       });
     } else {
       setEditingExperiencia(undefined);
       setExperienciaFormData({
-        puesto: '',
+        cargo: '',
         empresa: '',
         descripcion: '',
+        certificadoUrl: '',
         fechaInicio: new Date().toISOString().split('T')[0],
         fechaFin: new Date().toISOString().split('T')[0],
       });
@@ -219,22 +226,22 @@ const HojaDeVidaScreen = () => {
 
   const saveExperiencia = async () => {
     try {
-      if (!experienciaFormData.puesto?.trim() || !experienciaFormData.empresa?.trim()) {
-        Alert.alert('Validación', 'Completa puesto y empresa');
+      if (!experienciaFormData.cargo?.trim() || !experienciaFormData.empresa?.trim()) {
+        Alert.alert('Validación', 'Completa cargo y empresa');
         return;
       }
 
       setExperienciaSaving(true);
       const data = {
         ...experienciaFormData,
-        aspirante: { id: user!.usuarioId },
+        aspirante: { id: aspiranteId },
       } as Experiencia;
 
       if (editingExperiencia?.id) {
         await updateExperiencia(editingExperiencia.id, data);
         Alert.alert('Éxito', 'Experiencia actualizada');
       } else {
-        await createExperiencia(data);
+        await createExperiencia(data, aspiranteId);
         Alert.alert('Éxito', 'Experiencia creada');
       }
 
@@ -272,13 +279,15 @@ const HojaDeVidaScreen = () => {
       setEditingHabilidad(habilidad);
       setHabilidadFormData({
         nombre: habilidad.nombre,
-        nivel: habilidad.nivel,
+        tipo: habilidad.tipo,
+        isActive: habilidad.isActive,
       });
     } else {
       setEditingHabilidad(undefined);
       setHabilidadFormData({
         nombre: '',
-        nivel: 'INTERMEDIO',
+        tipo: 'TECNICA',
+        isActive: true,
       });
     }
     setShowHabilidadModal(true);
@@ -294,14 +303,14 @@ const HojaDeVidaScreen = () => {
       setHabilidadSaving(true);
       const data = {
         ...habilidadFormData,
-        aspirante: { id: user!.usuarioId },
+        aspirante: { id: aspiranteId },
       } as Habilidad;
 
       if (editingHabilidad?.id) {
         await updateHabilidad(editingHabilidad.id, data);
         Alert.alert('Éxito', 'Habilidad actualizada');
       } else {
-        await createHabilidad(data);
+        await createHabilidad(data, aspiranteId);
         Alert.alert('Éxito', 'Habilidad creada');
       }
 
@@ -344,7 +353,7 @@ const HojaDeVidaScreen = () => {
       {estudios.length === 0 ? (
         <View style={styles.emptyState}>
           <Ionicons name="school-outline" size={48} color={colors.textSecondary} />
-          <Text style={styles.emptyText}>No tienes estudios registrados</Text>
+          <Text style={styles.emptyText}>No hay estudios registrados</Text>
           <Button
             title="+ Agregar Estudio"
             onPress={() => openEstudioModal()}
@@ -424,7 +433,7 @@ const HojaDeVidaScreen = () => {
       {experiencias.length === 0 ? (
         <View style={styles.emptyState}>
           <Ionicons name="briefcase-outline" size={48} color={colors.textSecondary} />
-          <Text style={styles.emptyText}>No tienes experiencias registradas</Text>
+          <Text style={styles.emptyText}>No hay experiencias registradas</Text>
           <Button
             title="+ Agregar Experiencia"
             onPress={() => openExperienciaModal()}
@@ -447,7 +456,7 @@ const HojaDeVidaScreen = () => {
             >
               <View style={styles.itemHeader}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.itemTitle}>{experiencia.puesto}</Text>
+                  <Text style={styles.itemTitle}>{experiencia.cargo}</Text>
                   <Text style={styles.itemSubtitle}>{experiencia.empresa}</Text>
                 </View>
                 <Ionicons
@@ -499,7 +508,7 @@ const HojaDeVidaScreen = () => {
       {habilidades.length === 0 ? (
         <View style={styles.emptyState}>
           <Ionicons name="star-outline" size={48} color={colors.textSecondary} />
-          <Text style={styles.emptyText}>No tienes habilidades registradas</Text>
+          <Text style={styles.emptyText}>No hay habilidades registradas</Text>
           <Button
             title="+ Agregar Habilidad"
             onPress={() => openHabilidadModal()}
@@ -514,7 +523,7 @@ const HojaDeVidaScreen = () => {
               <View style={styles.habilidadContent}>
                 <Text style={styles.habilidadNombre}>{habilidad.nombre}</Text>
                 <View style={styles.levelIndicator}>
-                  <Text style={styles.levelText}>{habilidad.nivel}</Text>
+                  <Text style={styles.levelText}>{habilidad.tipo}</Text>
                 </View>
               </View>
               <View style={styles.habilidadActions}>
@@ -528,7 +537,7 @@ const HojaDeVidaScreen = () => {
                   onPress={() => deleteHabilidadHandler(habilidad.id!)}
                   style={styles.iconButton}
                 >
-                  <Ionicons name="trash" size={20} color={colors.danger} />
+                  <Ionicons name="trash" size={20} color={colors.error} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -548,7 +557,8 @@ const HojaDeVidaScreen = () => {
     <View style={globalStyles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Mi Hoja de Vida</Text>
+        <Text style={styles.title}>Hoja de Vida</Text>
+        <Text style={styles.subtitle}>{aspiranteNombre}</Text>
       </View>
 
       {/* Tabs */}
@@ -593,12 +603,8 @@ const HojaDeVidaScreen = () => {
         {activeTab === 'habilidades' && renderHabilidades()}
       </View>
 
-      {/* ===== MODAL DE ESTUDIO ===== */}
-      <Modal
-        visible={showEstudioModal}
-        animationType="slide"
-        transparent={true}
-      >
+      {/* MODAL DE ESTUDIO (Same as HojaDeVidaScreen) */}
+      <Modal visible={showEstudioModal} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -625,7 +631,7 @@ const HojaDeVidaScreen = () => {
 
               <Picker
                 label="Nivel Educativo"
-                value={estudioFormData.nivelEducativo}
+                selectedValue={estudioFormData.nivelEducativo}
                 options={[
                   { label: 'Primaria', value: 'PRIMARIA' },
                   { label: 'Secundaria', value: 'SECUNDARIA' },
@@ -640,10 +646,20 @@ const HojaDeVidaScreen = () => {
                 onValueChange={(value) => setEstudioFormData({ ...estudioFormData, nivelEducativo: value })}
               />
 
+              <Picker
+                label="Estado"
+                selectedValue={estudioFormData.estadoEstudio || 'ACTIVO'}
+                options={[
+                  { label: 'Activo', value: 'ACTIVO' },
+                  { label: 'Inactivo', value: 'INACTIVO' },
+                ]}
+                onValueChange={(value) => setEstudioFormData({ ...estudioFormData, estadoEstudio: value })}
+              />
+
               <DatePicker
                 label="Fecha de Inicio"
                 value={estudioFormData.fechaInicio}
-                onChange={(date) => setEstudioFormData({ ...estudioFormData, fechaInicio: date })}
+                onDateChange={(date) => setEstudioFormData({ ...estudioFormData, fechaInicio: date })}
               />
 
               <View style={styles.switchContainer}>
@@ -664,7 +680,7 @@ const HojaDeVidaScreen = () => {
                 <DatePicker
                   label="Fecha de Fin"
                   value={estudioFormData.fechaFin}
-                  onChange={(date) => setEstudioFormData({ ...estudioFormData, fechaFin: date })}
+                  onDateChange={(date) => setEstudioFormData({ ...estudioFormData, fechaFin: date })}
                 />
               )}
 
@@ -696,12 +712,8 @@ const HojaDeVidaScreen = () => {
         </View>
       </Modal>
 
-      {/* ===== MODAL DE EXPERIENCIA ===== */}
-      <Modal
-        visible={showExperienciaModal}
-        animationType="slide"
-        transparent={true}
-      >
+      {/* MODAL DE EXPERIENCIA */}
+      <Modal visible={showExperienciaModal} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -713,10 +725,10 @@ const HojaDeVidaScreen = () => {
 
             <ScrollView style={styles.modalBody}>
               <Input
-                label="Puesto"
+                label="Cargo"
                 placeholder="Ej: Desarrollador Junior"
-                value={experienciaFormData.puesto}
-                onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, puesto: text })}
+                value={experienciaFormData.cargo}
+                onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, cargo: text })}
               />
 
               <Input
@@ -729,13 +741,13 @@ const HojaDeVidaScreen = () => {
               <DatePicker
                 label="Fecha de Inicio"
                 value={experienciaFormData.fechaInicio}
-                onChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaInicio: date })}
+                onDateChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaInicio: date })}
               />
 
               <DatePicker
                 label="Fecha de Fin"
                 value={experienciaFormData.fechaFin}
-                onChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaFin: date })}
+                onDateChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaFin: date })}
               />
 
               <Input
@@ -745,6 +757,13 @@ const HojaDeVidaScreen = () => {
                 numberOfLines={3}
                 value={experienciaFormData.descripcion}
                 onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, descripcion: text })}
+              />
+
+              <Input
+                label="URL del Certificado"
+                placeholder="Ej: https://ejemplo.com/certificado"
+                value={experienciaFormData.certificadoUrl}
+                onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, certificadoUrl: text })}
               />
             </ScrollView>
 
@@ -766,12 +785,8 @@ const HojaDeVidaScreen = () => {
         </View>
       </Modal>
 
-      {/* ===== MODAL DE HABILIDAD ===== */}
-      <Modal
-        visible={showHabilidadModal}
-        animationType="slide"
-        transparent={true}
-      >
+      {/* MODAL DE HABILIDAD */}
+      <Modal visible={showHabilidadModal} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -790,15 +805,19 @@ const HojaDeVidaScreen = () => {
               />
 
               <Picker
-                label="Nivel"
-                value={habilidadFormData.nivel}
+                label="Tipo de Habilidad"
+                selectedValue={habilidadFormData.tipo || 'TECNICA'}
                 options={[
-                  { label: 'Básico', value: 'BASICO' },
-                  { label: 'Intermedio', value: 'INTERMEDIO' },
-                  { label: 'Avanzado', value: 'AVANZADO' },
-                  { label: 'Experto', value: 'EXPERTO' },
+                  { label: 'Técnica', value: 'TECNICA' },
+                  { label: 'Blanda', value: 'BLANDA' },
+                  { label: 'Idioma', value: 'IDIOMA' },
                 ]}
-                onValueChange={(value) => setHabilidadFormData({ ...habilidadFormData, nivel: value })}
+                onValueChange={(value) =>
+                  setHabilidadFormData({
+                    ...habilidadFormData,
+                    tipo: value as 'TECNICA' | 'BLANDA' | 'IDIOMA',
+                  })
+                }
               />
             </ScrollView>
 
@@ -843,7 +862,6 @@ const DetailRow: React.FC<DetailRowProps> = ({ label, value, badge }) => (
   </View>
 );
 
-// ===== FUNCIONES AUXILIARES =====
 const formatDate = (dateString?: string) => {
   if (!dateString) return '-';
   try {
@@ -865,6 +883,12 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xxl,
     fontWeight: fontWeight.bold,
     color: colors.white,
+  },
+  subtitle: {
+    fontSize: fontSize.md,
+    color: colors.white,
+    opacity: 0.9,
+    marginTop: spacing.xs,
   },
   tabContainer: {
     flexDirection: 'row',
@@ -968,7 +992,48 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     gap: spacing.sm,
   },
-  // Modal Styles
+  habilidadCard: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    ...shadows.sm,
+  },
+  habilidadContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  habilidadNombre: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+    flex: 1,
+  },
+  levelIndicator: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: 12,
+  },
+  levelText: {
+    fontSize: fontSize.xs,
+    color: colors.white,
+    fontWeight: fontWeight.semibold,
+  },
+  habilidadActions: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginLeft: spacing.md,
+  },
+  iconButton: {
+    padding: spacing.sm,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -1020,48 +1085,6 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     color: colors.text,
   },
-  habilidadCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    ...shadows.sm,
-  },
-  habilidadContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  habilidadNombre: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-    flex: 1,
-  },
-  levelIndicator: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 12,
-  },
-  levelText: {
-    fontSize: fontSize.xs,
-    color: colors.white,
-    fontWeight: fontWeight.semibold,
-  },
-  habilidadActions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginLeft: spacing.md,
-  },
-  iconButton: {
-    padding: spacing.sm,
-  },
 });
 
-export default HojaDeVidaScreen;
+export default AspiranteHojaVidaScreen;

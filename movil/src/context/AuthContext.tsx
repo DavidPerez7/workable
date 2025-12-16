@@ -60,6 +60,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (token && userJson) {
         let userData: User = JSON.parse(userJson);
+
+        // Forzar re-login para ADMIN al reiniciar la app
+        if (userData.rol === 'ADMIN') {
+          await SecureStore.deleteItemAsync(TOKEN_KEY);
+          await SecureStore.deleteItemAsync(USER_KEY);
+          setAuthToken(null);
+          setUser(null);
+          return;
+        }
+
         setAuthToken(token);
 
         // Si es reclutador y sigue sin empresa, hidratar

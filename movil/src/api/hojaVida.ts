@@ -30,9 +30,19 @@ export const getEstudiosByAspirante = async (): Promise<Estudio[]> => {
   }
 };
 
-export const createEstudio = async (data: Estudio): Promise<Estudio> => {
+export const getEstudiosByAspiranteId = async (aspiranteId: number): Promise<Estudio[]> => {
   try {
-    const response = await api.post<Estudio>('/estudio', data);
+    const response = await api.get<Estudio[]>(`/estudio/usuario/${aspiranteId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
+export const createEstudio = async (data: Estudio, aspiranteId?: number): Promise<Estudio> => {
+  try {
+    const url = aspiranteId ? `/estudio?aspiranteId=${aspiranteId}` : '/estudio';
+    const response = await api.post<Estudio>(url, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -66,9 +76,19 @@ export const getExperienciasByAspirante = async (): Promise<Experiencia[]> => {
   }
 };
 
-export const createExperiencia = async (data: Experiencia): Promise<Experiencia> => {
+export const getExperienciasByAspiranteId = async (aspiranteId: number): Promise<Experiencia[]> => {
   try {
-    const response = await api.post<Experiencia>('/experiencia', data);
+    const response = await api.get<Experiencia[]>(`/experiencia/usuario/${aspiranteId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
+export const createExperiencia = async (data: Experiencia, aspiranteId?: number): Promise<Experiencia> => {
+  try {
+    const url = aspiranteId ? `/experiencia?aspiranteId=${aspiranteId}` : '/experiencia';
+    const response = await api.post<Experiencia>(url, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -93,6 +113,15 @@ export const deleteExperiencia = async (id: number): Promise<void> => {
 };
 
 // ===== Habilidades =====
+export const getHabilidadesByAspiranteId = async (aspiranteId: number): Promise<Habilidad[]> => {
+  try {
+    const response = await api.get<Habilidad[]>(`/habilidad/usuario/${aspiranteId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
 export const getHabilidadesByAspirante = async (): Promise<Habilidad[]> => {
   try {
     const response = await api.get<Habilidad[]>(`/habilidad/aspirante`);
@@ -101,9 +130,10 @@ export const getHabilidadesByAspirante = async (): Promise<Habilidad[]> => {
     throw new Error(getErrorMessage(error));
   }
 };
-
-export const createHabilidad = async (data: Habilidad): Promise<Habilidad> => {
+, aspiranteId?: number): Promise<Habilidad> => {
   try {
+    const url = aspiranteId ? `/habilidad?aspiranteId=${aspiranteId}` : '/habilidad';
+    const response = await api.post<Habilidad>(url
     const response = await api.post<Habilidad>('/habilidad', data);
     return response.data;
   } catch (error) {

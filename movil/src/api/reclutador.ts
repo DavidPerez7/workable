@@ -64,7 +64,7 @@ export const createReclutador = async (data: Reclutador): Promise<Reclutador> =>
 // Update reclutador
 export const updateReclutador = async (id: number, data: Reclutador): Promise<Reclutador> => {
   try {
-    const response = await api.put<Reclutador>(`/reclutador/${id}`, data);
+    const response = await api.put<Reclutador>(`/reclutador/admin/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));

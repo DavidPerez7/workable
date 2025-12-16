@@ -186,6 +186,20 @@ const DashboardAdminScreen = () => {
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.textSecondary} />
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.actionCard}
+          onPress={() => navigation.navigate('HojasDeVidaAdmin' as never)}
+        >
+          <View style={styles.actionIcon}>
+            <Ionicons name="document-outline" size={24} color={colors.primary} />
+          </View>
+          <View style={styles.actionContent}>
+            <Text style={styles.actionTitle}>Hojas de Vida</Text>
+            <Text style={styles.actionSubtitle}>Ver y gestionar hojas de vida</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={24} color={colors.textSecondary} />
+        </TouchableOpacity>
       </View>
 
       {/* Info Card */}

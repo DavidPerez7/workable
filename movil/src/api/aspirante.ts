@@ -21,6 +21,16 @@ export const updateMyProfile = async (data: Aspirante): Promise<Aspirante> => {
   }
 };
 
+// Update aspirante by ID (ADMIN)
+export const updateAspirante = async (id: number, data: Partial<Aspirante>): Promise<Aspirante> => {
+  try {
+    const response = await api.put<Aspirante>(`/aspirante/${id}/admin`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+};
+
 // Get all aspirantes (ADMIN)
 export const getAllAspirantes = async (): Promise<Aspirante[]> => {
   try {

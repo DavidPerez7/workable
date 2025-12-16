@@ -8,13 +8,15 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  TextInput,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { getAllOfertas, deleteOferta, changeEstadoOferta } from '../../api/oferta';
+import { getAllOfertas, deleteOferta, changeEstadoOferta, createOferta, updateOferta } from '../../api/oferta';
 import Loading from '../../components/Loading';
 import Button from '../../components/Button';
 import Picker from '../../components/Picker';
+import DatePicker from '../../components/DatePicker';
 import { colors, spacing, fontSize, fontWeight, globalStyles, shadows } from '../../styles/theme';
 import type { Oferta } from '../../types';
 
@@ -30,6 +32,21 @@ const OfertasAdminScreen = () => {
   const [selectedOferta, setSelectedOferta] = useState<Oferta | null>(null);
   const [changingEstado, setChangingEstado] = useState(false);
   const [nuevoEstado, setNuevoEstado] = useState<string>('ABIERTA');
+
+  // Create/Edit Modal
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingOferta, setEditingOferta] = useState<Oferta | null>(null);
+  const [createForm, setCreateForm] = useState({
+    titulo: '',
+    descripcion: '',
+    requisitos: '',
+    salario: '',
+    tipoContrato: 'TIEMPO_COMPLETO',
+    estado: 'ABIERTA',
+    nivelExperiencia: 'BASICO',
+    numeroVacantes: '1',
+    fechaLimite: '',
+  });
 
   const loadOfertas = async () => {
     try {
@@ -73,6 +90,89 @@ const OfertasAdminScreen = () => {
   const closeModal = () => {
     setShowModal(false);
     setSelectedOferta(null);
+  };
+
+  const closeCreateModal = () => {
+    setShowCreateModal(false);
+    setEditingOferta(null);
+    setCreateForm({
+      titulo: '',
+      descripcion: '',
+      requisitos: '',
+      salario: '',
+      tipoContrato: 'TIEMPO_COMPLETO',
+      estado: 'ABIERTA',
+      nivelExperiencia: 'BASICO',
+      numeroVacantes: '1',
+      fechaLimite: '',
+    });
+  };
+
+  const openCreateModal = (oferta?: Oferta) => {
+    if (oferta) {
+      setEditingOferta(oferta);
+      setCreateForm({
+        titulo: oferta.titulo || '',
+        descripcion: oferta.descripcion || '',
+        requisitos: oferta.requisitos || '',
+        salario: oferta.salario ? oferta.salario.toString() : '',
+        tipoContrato: oferta.tipoContrato || 'TIEMPO_COMPLETO',
+        estado: oferta.estado || 'ABIERTA',
+        nivelExperiencia: oferta.nivelExperiencia || 'BASICO',
+        numeroVacantes: oferta.numeroVacantes ? oferta.numeroVacantes.toString() : '1',
+        fechaLimite: oferta.fechaLimite || '',
+      });
+    } else {
+      setEditingOferta(null);
+      setCreateForm({
+        titulo: '',
+        descripcion: '',
+        requisitos: '',
+        salario: '',
+        tipoContrato: 'TIEMPO_COMPLETO',
+        estado: 'ABIERTA',
+        nivelExperiencia: 'BASICO',
+        numeroVacantes: '1',
+        fechaLimite: '',
+      });
+    }
+    setShowCreateModal(true);
+  };
+
+  const handleSaveOferta = async () => {
+    if (!createForm.titulo.trim() || !createForm.descripcion.trim() || !createForm.fechaLimite.trim()) {
+      Alert.alert('Validación', 'Título, descripción y fecha límite son obligatorios');
+      return;
+    }
+
+    try {
+      if (editingOferta?.id) {
+        await updateOferta(editingOferta.id, {
+          ...editingOferta,
+          ...createForm,
+          salario: createForm.salario ? parseFloat(createForm.salario) : 0,
+          numeroVacantes: createForm.numeroVacantes ? parseInt(createForm.numeroVacantes) : 1,
+        });
+        Alert.alert('Éxito', 'Oferta actualizada correctamente');
+      } else {
+        await createOferta({
+          titulo: createForm.titulo,
+          descripcion: createForm.descripcion,
+          requisitos: createForm.requisitos,
+          salario: createForm.salario ? parseFloat(createForm.salario) : 0,
+          tipoContrato: createForm.tipoContrato,
+          estado: createForm.estado,
+          nivelExperiencia: createForm.nivelExperiencia,
+          numeroVacantes: createForm.numeroVacantes ? parseInt(createForm.numeroVacantes) : 1,
+          fechaLimite: createForm.fechaLimite,
+        } as any);
+        Alert.alert('Éxito', 'Oferta creada correctamente');
+      }
+      closeCreateModal();
+      loadOfertas();
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Error al guardar oferta');
+    }
   };
 
   const handleChangeEstado = async () => {
@@ -197,7 +297,7 @@ const OfertasAdminScreen = () => {
 
       {/* Filters */}
       <View style={styles.filterContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }}>
           {['TODOS', 'ABIERTA', 'PAUSADA', 'CERRADA'].map((estado) => (
             <TouchableOpacity
               key={estado}
@@ -215,16 +315,16 @@ const OfertasAdminScreen = () => {
               >
                 {estado === 'TODOS' ? 'Todos' : getEstadoLabel(estado)}
               </Text>
-              {estado !== 'TODOS' && (
-                <View style={styles.filterBadge}>
-                  <Text style={styles.filterBadgeText}>
-                    {ofertas.filter((o) => o.estado === estado).length}
-                  </Text>
-                </View>
-              )}
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+        <TouchableOpacity
+          style={styles.createButton}
+          onPress={() => openCreateModal()}
+        >
+          <Ionicons name="add" size={24} color={colors.white} />
+        </TouchableOpacity>
       </View>
 
       {/* Ofertas List */}
@@ -420,11 +520,19 @@ const OfertasAdminScreen = () => {
                 </View>
 
                 <View style={styles.dangerZone}>
-                  <Text style={styles.dangerTitle}>Zona de Peligro</Text>
+                  <Text style={styles.dangerTitle}>Acciones</Text>
+                  <Button
+                    title="Editar Oferta"
+                    variant="outline"
+                    onPress={() => {
+                      openCreateModal(selectedOferta);
+                      closeModal();
+                    }}
+                    fullWidth
+                  />
                   <Button
                     title="Eliminar Oferta"
                     variant="danger"
-                    icon={<Ionicons name="trash-outline" size={20} color={colors.white} />}
                     onPress={() => handleDeleteOferta(selectedOferta)}
                     fullWidth
                   />
@@ -434,6 +542,126 @@ const OfertasAdminScreen = () => {
 
             <View style={styles.modalFooter}>
               <Button title="Cerrar" variant="outline" onPress={closeModal} fullWidth />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Create/Edit Oferta Modal */}
+      <Modal visible={showCreateModal} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {editingOferta ? 'Editar Oferta' : 'Crear Nueva Oferta'}
+              </Text>
+              <TouchableOpacity onPress={closeCreateModal}>
+                <Ionicons name="close" size={28} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              <TextInput
+                style={styles.input}
+                placeholder="Título de la oferta *"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.titulo}
+                onChangeText={(text) => setCreateForm({ ...createForm, titulo: text })}
+              />
+
+              <TextInput
+                style={[styles.input, { minHeight: 100 }]}
+                placeholder="Descripción *"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.descripcion}
+                onChangeText={(text) => setCreateForm({ ...createForm, descripcion: text })}
+                multiline
+              />
+
+              <TextInput
+                style={[styles.input, { minHeight: 80 }]}
+                placeholder="Requisitos"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.requisitos}
+                onChangeText={(text) => setCreateForm({ ...createForm, requisitos: text })}
+                multiline
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Salario"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.salario}
+                onChangeText={(text) => setCreateForm({ ...createForm, salario: text })}
+                keyboardType="decimal-pad"
+              />
+
+              <Picker
+                label="Tipo de Contrato *"
+                value={createForm.tipoContrato}
+                options={[
+                  { label: 'Tiempo Completo', value: 'TIEMPO_COMPLETO' },
+                  { label: 'Medio Tiempo', value: 'MEDIO_TIEMPO' },
+                  { label: 'Temporal', value: 'TEMPORAL' },
+                  { label: 'Prestación de Servicios', value: 'PRESTACION_SERVICIOS' },
+                  { label: 'Prácticas', value: 'PRACTICAS' },
+                ]}
+                onValueChange={(value) => setCreateForm({ ...createForm, tipoContrato: value })}
+              />
+
+              <DatePicker
+                label="Fecha Límite *"
+                value={createForm.fechaLimite}
+                onDateChange={(date) => setCreateForm({ ...createForm, fechaLimite: date })}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Número de Vacantes"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.numeroVacantes}
+                onChangeText={(text) => setCreateForm({ ...createForm, numeroVacantes: text })}
+                keyboardType="number-pad"
+              />
+
+              <Picker
+                label="Nivel de Experiencia Requerido *"
+                value={createForm.nivelExperiencia}
+                options={[
+                  { label: 'Sin Experiencia', value: 'SIN_EXPERIENCIA' },
+                  { label: 'Básico', value: 'BASICO' },
+                  { label: 'Intermedio', value: 'INTERMEDIO' },
+                  { label: 'Avanzado', value: 'AVANZADO' },
+                  { label: 'Experto', value: 'EXPERTO' },
+                ]}
+                onValueChange={(value) => setCreateForm({ ...createForm, nivelExperiencia: value })}
+              />
+
+              <Picker
+                label="Estado"
+                value={createForm.estado}
+                options={[
+                  { label: 'Abierta', value: 'ABIERTA' },
+                  { label: 'Pausada', value: 'PAUSADA' },
+                  { label: 'Cerrada', value: 'CERRADA' },
+                ]}
+                onValueChange={(value) => setCreateForm({ ...createForm, estado: value })}
+              />
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <Button
+                title={editingOferta ? 'Actualizar' : 'Crear'}
+                variant="primary"
+                onPress={handleSaveOferta}
+                fullWidth
+              />
+              <Button
+                title="Cancelar"
+                variant="outline"
+                onPress={closeCreateModal}
+                fullWidth
+              />
             </View>
           </View>
         </View>
@@ -477,6 +705,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   filterButton: {
     flexDirection: 'row',
@@ -492,6 +723,33 @@ const styles = StyleSheet.create({
   filterButtonActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+  },
+  filterText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.textSecondary,
+    marginLeft: spacing.xs,
+  },
+  filterTextActive: {
+    color: colors.white,
+  },
+  createButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.md,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    fontSize: fontSize.md,
+    color: colors.text,
   },
   filterText: {
     fontSize: fontSize.sm,

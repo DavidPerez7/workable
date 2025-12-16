@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -132,6 +133,7 @@ public class Aspirante {
     @MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "habilidad")
     @Column(name = "nivel_dominio")
+    @JsonIgnore
     private Map<HabilidadEnum, String> habilidades;
 
     // Relaciones

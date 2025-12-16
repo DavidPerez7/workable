@@ -34,11 +34,16 @@ public class ExperienciaController {
     // ===== CREATE - Solo ASPIRANTE y ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearExperiencia(@RequestBody Experiencia experiencia, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> crearExperiencia(@RequestBody Experiencia experiencia, @RequestParam(required = false) Long aspiranteId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             Long aspiranteIdActual = userDetails.getUsuarioId();
-            // Solo se permite que el usuario cree sus propias experiencias
-            return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, aspiranteIdActual));
+            boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            
+            // Si se proporciona aspiranteId y el usuario es ADMIN, usar ese ID
+            Long targetAspiranteId = aspiranteId != null && isAdmin ? aspiranteId : aspiranteIdActual;
+            
+            return ResponseEntity.ok(experienciaService.crearExperiencia(experiencia, targetAspiranteId));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear experiencia: " + e.getMessage()));
         }

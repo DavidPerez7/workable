@@ -5,8 +5,10 @@ import DashboardAdminScreen from '../screens/admin/DashboardAdminScreen';
 import UsuariosAdminScreen from '../screens/admin/UsuariosAdminScreen';
 import OfertasAdminScreen from '../screens/admin/OfertasAdminScreen';
 import PostulacionesAdminScreen from '../screens/admin/PostulacionesAdminScreen';
+import HojasDeVidaAdminScreen from '../screens/admin/HojasDeVidaAdminScreen';
 import AspiranteViewScreen from '../screens/admin/AspiranteViewScreen';
 import ReclutadorViewScreen from '../screens/admin/ReclutadorViewScreen';
+import AspiranteHojaVidaScreen from '../screens/admin/AspiranteHojaVidaScreen';
 import type { AdminDrawerParamList } from '../types';
 
 const Stack = createNativeStackNavigator<AdminDrawerParamList>();
@@ -54,6 +56,13 @@ const AdminNavigator = () => {
         }}
       />
       <Stack.Screen
+        name="HojasDeVidaAdmin"
+        component={HojasDeVidaAdminScreen}
+        options={{
+          title: 'Gestión de Hojas de Vida',
+        }}
+      />
+      <Stack.Screen
         name="AspiranteView"
         component={AspiranteViewScreen}
         options={{
@@ -65,6 +74,13 @@ const AdminNavigator = () => {
         component={ReclutadorViewScreen}
         options={{
           title: 'Vista Reclutador',
+        }}
+      />
+      <Stack.Screen
+        name="AspiranteHojaVida"
+        component={AspiranteHojaVidaScreen}
+        options={{
+          title: 'Gestión de Hoja de Vida',
         }}
       />
     </Stack.Navigator>

@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Modelo de Habilidad - String simple (máx 20 caracteres) de habilidades del aspirante.
- * Asociadas a un aspirante con relación OneToMany inversa en Aspirante.
+ * Modelo de Habilidad - Habilidades del aspirante con tipo y estado activo.
+ * Asociadas a un aspirante con relación ManyToOne.
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,12 +25,23 @@ public class Habilidad {
     private Long id;
 
     @NotBlank(message = "La habilidad es obligatoria")
-    @Size(min = 2, max = 20, message = "La habilidad debe tener entre 2 y 20 caracteres")
-    @Column(nullable = false, length = 20)
+    @Size(min = 2, max = 100, message = "La habilidad debe tener entre 2 y 100 caracteres")
+    @Column(nullable = false, length = 100)
     private String nombre;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Tipo tipo = Tipo.TECNICA;
+
+    @Column(nullable = false)
+    private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
     @JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler", "experiencias", "estudios", "habilidades", "postulaciones"})
     private Aspirante aspirante;
+
+    public enum Tipo {
+        TECNICA, BLANDA, IDIOMA
+    }
 }

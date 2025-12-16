@@ -8,19 +8,23 @@ import {
   Alert,
   RefreshControl,
   Modal,
+  TextInput,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { getAllAspirantes, deleteAspirante } from '../../api/aspirante';
-import { getAllReclutadores, deleteReclutador } from '../../api/reclutador';
+import { getAllAspirantes, deleteAspirante, createAspirante, updateAspirante } from '../../api/aspirante';
+import { getAllReclutadores, deleteReclutador, createReclutador, updateReclutador } from '../../api/reclutador';
 import Loading from '../../components/Loading';
 import Button from '../../components/Button';
+import DatePicker from '../../components/DatePicker';
+import Picker from '../../components/Picker';
 import { colors, spacing, fontSize, fontWeight, globalStyles, shadows } from '../../styles/theme';
 import type { Aspirante, Reclutador } from '../../types';
 
 type UserType = 'ASPIRANTE' | 'RECLUTADOR';
 
 const UsuariosAdminScreen = () => {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedType, setSelectedType] = useState<UserType>('ASPIRANTE');
@@ -30,6 +34,20 @@ const UsuariosAdminScreen = () => {
   // Modal
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Aspirante | Reclutador | null>(null);
+
+  // Create/Edit User Modal
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<Aspirante | Reclutador | null>(null);
+  const [createForm, setCreateForm] = useState({
+    nombre: '',
+    apellido: '',
+    correo: '',
+    password: '',
+    telefono: '',
+    cargo: '', // for reclutador
+    genero: '', // for aspirante - REQUIRED
+    fechaNacimiento: '', // REQUIRED
+  });
 
   const loadData = async () => {
     try {
@@ -71,6 +89,121 @@ const UsuariosAdminScreen = () => {
   const closeModal = () => {
     setShowModal(false);
     setSelectedUser(null);
+  };
+
+  const closeCreateModal = () => {
+    setShowCreateModal(false);
+    setEditingUser(null);
+    setCreateForm({
+      nombre: '',
+      apellido: '',
+      correo: '',
+      password: '',
+      telefono: '',
+      cargo: '',
+      genero: '',
+      fechaNacimiento: '',
+    });
+  };
+
+  const openEditModal = (user: Aspirante | Reclutador) => {
+    setEditingUser(user);
+    const isAspirante = selectedType === 'ASPIRANTE';
+    setCreateForm({
+      nombre: user.nombre || '',
+      apellido: user.apellido || '',
+      correo: user.correo || '',
+      password: '', // No pre-fill password
+      telefono: user.telefono || '',
+      cargo: isAspirante ? '' : (user as Reclutador).cargo || '',
+      genero: isAspirante ? (user as Aspirante).genero || '' : '',
+      fechaNacimiento: (user as any).fechaNacimiento || '',
+    });
+    setShowCreateModal(true);
+  };
+
+  const handleCreateUser = async () => {
+    // Validación básica
+    if (!createForm.nombre.trim() || !createForm.apellido.trim() || !createForm.correo.trim()) {
+      Alert.alert('Validación', 'Por favor completa nombre, apellido y correo');
+      return;
+    }
+
+    // Validar password solo al crear (no al editar)
+    if (!editingUser && !createForm.password.trim()) {
+      Alert.alert('Validación', 'La contraseña es obligatoria al crear un usuario');
+      return;
+    }
+
+    if (selectedType === 'ASPIRANTE') {
+      if (!createForm.genero.trim() || !createForm.fechaNacimiento.trim()) {
+        Alert.alert('Validación', 'Género y fecha de nacimiento son obligatorios para aspirantes');
+        return;
+      }
+    }
+
+    if (selectedType === 'RECLUTADOR' && !createForm.cargo.trim()) {
+      Alert.alert('Validación', 'El cargo es obligatorio para reclutadores');
+      return;
+    }
+
+    try {
+      if (editingUser) {
+        // EDITAR usuario existente
+        const updateData: any = {
+          nombre: createForm.nombre,
+          apellido: createForm.apellido,
+          correo: createForm.correo,
+          telefono: createForm.telefono,
+        };
+
+        // Solo incluir password si se proporcionó uno nuevo
+        if (createForm.password.trim()) {
+          updateData.password = createForm.password;
+        }
+
+        if (selectedType === 'ASPIRANTE') {
+          updateData.genero = createForm.genero;
+          updateData.fechaNacimiento = createForm.fechaNacimiento;
+          await updateAspirante(editingUser.id!, updateData);
+        } else {
+          updateData.cargo = createForm.cargo;
+          if (createForm.fechaNacimiento) {
+            updateData.fechaNacimiento = createForm.fechaNacimiento;
+          }
+          await updateReclutador(editingUser.id!, updateData);
+        }
+        Alert.alert('Éxito', `${selectedType === 'ASPIRANTE' ? 'Aspirante' : 'Reclutador'} actualizado correctamente`);
+      } else {
+        // CREAR nuevo usuario
+        if (selectedType === 'ASPIRANTE') {
+          await createAspirante({
+            nombre: createForm.nombre,
+            apellido: createForm.apellido,
+            correo: createForm.correo,
+            password: createForm.password,
+            telefono: createForm.telefono,
+            genero: createForm.genero,
+            fechaNacimiento: createForm.fechaNacimiento,
+          });
+        } else {
+          await createReclutador({
+            nombre: createForm.nombre,
+            apellido: createForm.apellido,
+            correo: createForm.correo,
+            password: createForm.password,
+            telefono: createForm.telefono,
+            cargo: createForm.cargo,
+            fechaNacimiento: createForm.fechaNacimiento || new Date().toISOString().split('T')[0],
+          });
+        }
+        Alert.alert('Éxito', `${selectedType === 'ASPIRANTE' ? 'Aspirante' : 'Reclutador'} creado correctamente`);
+      }
+      closeCreateModal();
+      loadData();
+    } catch (error: any) {
+      Alert.alert('Error', error.message || `Error al ${editingUser ? 'actualizar' : 'crear'} usuario`);
+    }
   };
 
   const handleDeleteUser = (user: Aspirante | Reclutador) => {
@@ -214,6 +347,13 @@ const UsuariosAdminScreen = () => {
             Reclutadores ({reclutadores.length})
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.createButton}
+          onPress={() => setShowCreateModal(true)}
+        >
+          <Ionicons name="add" size={24} color={colors.white} />
+        </TouchableOpacity>
       </View>
 
       {/* User List */}
@@ -319,6 +459,33 @@ const UsuariosAdminScreen = () => {
                 </View>
 
                 <View style={styles.dangerZone}>
+                  {selectedType === 'ASPIRANTE' && (
+                    <Button
+                      title="Gestionar Hoja de Vida"
+                      variant="primary"
+                      icon={<Ionicons name="document-text-outline" size={20} color={colors.white} />}
+                      onPress={() => {
+                        closeModal();
+                        navigation.navigate('AspiranteHojaVida' as never, {
+                          aspiranteId: selectedUser.id,
+                          aspiranteNombre: `${selectedUser.nombre} ${selectedUser.apellido}`,
+                        } as never);
+                      }}
+                      fullWidth
+                      style={{ marginBottom: spacing.md }}
+                    />
+                  )}
+                  <Button
+                    title="Editar Usuario"
+                    variant="outline"
+                    icon={<Ionicons name="pencil-outline" size={20} color={colors.primary} />}
+                    onPress={() => {
+                      closeModal();
+                      openEditModal(selectedUser);
+                    }}
+                    fullWidth
+                    style={{ marginBottom: spacing.md }}
+                  />
                   <Text style={styles.dangerTitle}>Zona de Peligro</Text>
                   <Button
                     title="Eliminar Usuario"
@@ -333,6 +500,113 @@ const UsuariosAdminScreen = () => {
 
             <View style={styles.modalFooter}>
               <Button title="Cerrar" variant="outline" onPress={closeModal} fullWidth />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Create User Modal */}
+      <Modal visible={showCreateModal} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {editingUser ? 'Editar' : 'Crear'} {selectedType === 'ASPIRANTE' ? 'Aspirante' : 'Reclutador'}
+              </Text>
+              <TouchableOpacity onPress={closeCreateModal}>
+                <Ionicons name="close" size={28} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              <TextInput
+                style={styles.input}
+                placeholder="Nombre *"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.nombre}
+                onChangeText={(text) => setCreateForm({ ...createForm, nombre: text })}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Apellido *"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.apellido}
+                onChangeText={(text) => setCreateForm({ ...createForm, apellido: text })}
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Correo *"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.correo}
+                onChangeText={(text) => setCreateForm({ ...createForm, correo: text })}
+                keyboardType="email-address"
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder={editingUser ? "Contrase\u00f1a (dejar vac\u00edo para no cambiar)" : "Contrase\u00f1a *"}
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.password}
+                onChangeText={(text) => setCreateForm({ ...createForm, password: text })}
+                secureTextEntry
+              />
+
+              <TextInput
+                style={styles.input}
+                placeholder="Teléfono"
+                placeholderTextColor={colors.textSecondary}
+                value={createForm.telefono}
+                onChangeText={(text) => setCreateForm({ ...createForm, telefono: text })}
+                keyboardType="phone-pad"
+              />
+
+              {selectedType === 'ASPIRANTE' && (
+                <>
+                  <DatePicker
+                    label="Fecha de Nacimiento *"
+                    value={createForm.fechaNacimiento}
+                    onDateChange={(date) => setCreateForm({ ...createForm, fechaNacimiento: date })}
+                  />
+
+                  <Picker
+                    label="Género *"
+                    selectedValue={createForm.genero || 'MASCULINO'}
+                    options={[
+                      { label: 'Masculino', value: 'MASCULINO' },
+                      { label: 'Femenino', value: 'FEMENINO' },
+                      { label: 'Otro', value: 'OTRO' },
+                    ]}
+                    onValueChange={(value) => setCreateForm({ ...createForm, genero: value })}
+                  />
+                </>
+              )}
+
+              {selectedType === 'RECLUTADOR' && (
+                <TextInput
+                  style={styles.input}
+                  placeholder="Cargo *"
+                  placeholderTextColor={colors.textSecondary}
+                  value={createForm.cargo}
+                  onChangeText={(text) => setCreateForm({ ...createForm, cargo: text })}
+                />
+              )}
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <Button
+                title={editingUser ? "Actualizar" : "Crear"}
+                variant="primary"
+                onPress={handleCreateUser}
+                fullWidth
+              />
+              <Button
+                title="Cancelar"
+                variant="outline"
+                onPress={closeCreateModal}
+                fullWidth
+              />
             </View>
           </View>
         </View>
@@ -375,6 +649,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    gap: spacing.sm,
   },
   filterButton: {
     flex: 1,
@@ -402,9 +677,23 @@ const styles = StyleSheet.create({
   filterTextActive: {
     color: colors.white,
   },
-  listContainer: {
-    flex: 1,
+  createButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.md,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
     padding: spacing.md,
+    marginBottom: spacing.md,
+    fontSize: fontSize.md,
+    color: colors.text,
   },
   emptyState: {
     alignItems: 'center',

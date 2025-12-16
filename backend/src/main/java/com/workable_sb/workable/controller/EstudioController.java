@@ -29,7 +29,7 @@ public class EstudioController {
     // ===== CREATE - Solo ASPIRANTE y ADMIN =====
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearEstudio(@RequestBody Estudio estudio) {
+    public ResponseEntity<?> crearEstudio(@RequestBody Estudio estudio, @RequestParam(required = false) Long aspiranteId) {
         try {
             // Obtener usuarioId y rol desde CustomUserDetails
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -48,20 +48,10 @@ public class EstudioController {
                 return ResponseEntity.status(401).body(Map.of("error", "No se pudo obtener el usuario del token"));
             }
             
-            // Si el aspirante no viene en el request, usar el del token
-            Long aspiranteId;
-            if (estudio.getAspirante() == null || estudio.getAspirante().getId() == null) {
-                aspiranteId = usuarioIdActual;
-            } else {
-                aspiranteId = estudio.getAspirante().getId();
-            }
+            // Si se proporciona aspiranteId y el usuario es ADMIN, usar ese ID
+            Long targetAspiranteId = aspiranteId != null && isAdmin ? aspiranteId : usuarioIdActual;
             
-            // Validar que el usuario solo puede crear estudios para sí mismo (ADMIN puede crear para cualquiera)
-            if (!isAdmin && !aspiranteId.equals(usuarioIdActual)) {
-                return ResponseEntity.status(403).body(Map.of("error", "No puedes crear estudios para otro usuario"));
-            }
-            
-            return ResponseEntity.ok(estudioService.crearEstudio(estudio, aspiranteId));
+            return ResponseEntity.ok(estudioService.crearEstudio(estudio, targetAspiranteId));
         } catch (Exception e) {
             log.error("Error al crear estudio", e);
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear estudio: " + e.getMessage()));

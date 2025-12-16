@@ -66,6 +66,19 @@ const PerfilAspiranteScreen = () => {
           <Input label="Apellido" value={perfil.apellido} onChangeText={(text) => setPerfil({ ...perfil, apellido: text })} />
           <Input label="Teléfono" value={perfil.telefono || ''} onChangeText={(text) => setPerfil({ ...perfil, telefono: text })} keyboardType="phone-pad" />
           <Input label="Dirección" value={perfil.direccion || ''} onChangeText={(text) => setPerfil({ ...perfil, direccion: text })} />
+          
+          <View style={styles.sobreMiSection}>
+            <Text style={styles.sectionTitle}>Sobre Mí</Text>
+            <Input
+              label="Cuéntanos sobre ti"
+              placeholder="Escribe aquí tu biografía, intereses, objetivos profesionales..."
+              value={perfil.descripcion || ''}
+              onChangeText={(text) => setPerfil({ ...perfil, descripcion: text })}
+              multiline
+              numberOfLines={6}
+            />
+          </View>
+          
           <Button title="Guardar" onPress={handleSave} loading={saving} fullWidth />
           <Button title="Cancelar" onPress={() => setEditing(false)} variant="outline" fullWidth style={{ marginTop: spacing.sm }} />
         </View>
@@ -73,6 +86,14 @@ const PerfilAspiranteScreen = () => {
         <View style={styles.section}>
           {perfil.telefono && <Text style={styles.text}>Teléfono: {perfil.telefono}</Text>}
           {perfil.direccion && <Text style={styles.text}>Dirección: {perfil.direccion}</Text>}
+          
+          {perfil.descripcion && (
+            <View style={styles.sobreMiDisplay}>
+              <Text style={styles.sectionTitle}>Sobre Mí</Text>
+              <Text style={styles.text}>{perfil.descripcion}</Text>
+            </View>
+          )}
+          
           <Button title="Editar Perfil" onPress={() => setEditing(true)} fullWidth style={{ marginTop: spacing.md }} />
           <Button title="Cerrar Sesión" onPress={handleLogout} variant="danger" fullWidth style={{ marginTop: spacing.sm }} />
         </View>
@@ -89,6 +110,27 @@ const styles = StyleSheet.create({
   section: { backgroundColor: colors.white, padding: spacing.lg, borderRadius: 12, ...shadows.md },
   form: { backgroundColor: colors.white, padding: spacing.lg, borderRadius: 12, ...shadows.md },
   text: { fontSize: fontSize.md, color: colors.text, marginBottom: spacing.sm },
+  sobreMiSection: {
+    marginVertical: spacing.lg,
+    paddingVertical: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  sobreMiDisplay: {
+    marginVertical: spacing.lg,
+    paddingVertical: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+    paddingLeftHorizontal: spacing.md,
+  },
+  sectionTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary,
+    marginBottom: spacing.sm,
+  },
 });
 
 export default PerfilAspiranteScreen;

@@ -59,13 +59,19 @@ public class HabilidadController {
         }
     }
 
-    // ===== CREATE - Solo ASPIRANTE =====
-    @PreAuthorize("hasRole('ASPIRANTE')")
+    // ===== CREATE - ASPIRANTE y ADMIN =====
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crearHabilidad(@RequestBody Habilidad habilidad, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> crearHabilidad(@RequestBody Habilidad habilidad, @RequestParam(required = false) Long aspiranteId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
-            Long aspiranteId = userDetails.getUsuarioId();
-            Habilidad nueva = habilidadService.crearHabilidad(habilidad, aspiranteId);
+            Long usuarioIdActual = userDetails.getUsuarioId();
+            boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            
+            // Si se proporciona aspiranteId y el usuario es ADMIN, usar ese ID
+            Long targetAspiranteId = aspiranteId != null && isAdmin ? aspiranteId : usuarioIdActual;
+            
+            Habilidad nueva = habilidadService.crearHabilidad(habilidad, targetAspiranteId);
             return ResponseEntity.ok(nueva);
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
