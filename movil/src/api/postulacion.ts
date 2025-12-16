@@ -41,43 +41,11 @@ export const getPostulacionById = async (id: number): Promise<Postulacion> => {
 
 // Get postulaciones by oferta
 export const getPostulacionesByOferta = async (
-  ofertaId: number,
-  usuarioIdActual: number
+  ofertaId: number
 ): Promise<Postulacion[]> => {
   try {
     const response = await api.get<Postulacion[]>(
-      `/api/postulacion/oferta/${ofertaId}?usuarioIdActual=${usuarioIdActual}`
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(getErrorMessage(error));
-  }
-};
-
-// Get postulaciones by usuario
-export const getPostulacionesByUsuario = async (
-  usuarioId: number,
-  usuarioIdActual: number
-): Promise<Postulacion[]> => {
-  try {
-    const response = await api.get<Postulacion[]>(
-      `/api/postulacion/usuario/${usuarioId}?usuarioIdActual=${usuarioIdActual}`
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(getErrorMessage(error));
-  }
-};
-
-// Get postulaciones by oferta y estado
-export const getPostulacionesByOfertaYEstado = async (
-  ofertaId: number,
-  estado: 'POSTULADO' | 'EN_REVISION' | 'ENTREVISTA' | 'RECHAZADO' | 'ACEPTADO',
-  usuarioIdActual: number
-): Promise<Postulacion[]> => {
-  try {
-    const response = await api.get<Postulacion[]>(
-      `/api/postulacion/oferta/${ofertaId}/estado?estado=${estado}&usuarioIdActual=${usuarioIdActual}`
+      `/api/postulacion/oferta/${ofertaId}`
     );
     return response.data;
   } catch (error) {

@@ -55,7 +55,7 @@ const PostulantesOfertaScreen = () => {
     try {
       const [ofertaData, postulacionesData] = await Promise.all([
         getOfertaById(ofertaId),
-        getPostulacionesByOferta(ofertaId, user.usuarioId),
+        getPostulacionesByOferta(ofertaId),
       ]);
       setOferta(ofertaData);
       const postulacionesList = Array.isArray(postulacionesData) ? postulacionesData : [];

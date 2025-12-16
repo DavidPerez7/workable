@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,25 +8,19 @@ import {
   TouchableOpacity,
   Modal,
   RefreshControl,
-  Switch,
-  ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import {
-  getEstudiosByAspirante,
-  getExperienciasByAspirante,
-  getHabilidadesByAspirante,
-  createEstudio,
-  updateEstudio,
-  deleteEstudio,
-  createExperiencia,
-  updateExperiencia,
-  deleteExperiencia,
-  createHabilidad,
-  updateHabilidad,
-  deleteHabilidad,
+  getHojaVidaByAspirante,
+  updateHojaVida,
+  addEstudio,
+  updateEstudioByIndex,
+  deleteEstudioByIndex,
+  addExperiencia,
+  updateExperienciaByIndex,
+  deleteExperienciaByIndex,
 } from '../../api/hojaVida';
 import Loading from '../../components/Loading';
 import Button from '../../components/Button';
@@ -34,71 +28,50 @@ import Input from '../../components/Input';
 import DatePicker from '../../components/DatePicker';
 import Picker from '../../components/Picker';
 import { colors, spacing, fontSize, fontWeight, globalStyles, shadows } from '../../styles/theme';
-import type { Estudio, Experiencia, Habilidad } from '../../types';
+import type { HojaVida, EstudioData, ExperienciaData } from '../../types';
 
 const HojaDeVidaScreen = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'estudios' | 'experiencias' | 'habilidades'>('estudios');
+  const [activeTab, setActiveTab] = useState<'estudios' | 'experiencias'>('estudios');
 
-  const [estudios, setEstudios] = useState<Estudio[]>([]);
-  const [experiencias, setExperiencias] = useState<Experiencia[]>([]);
-  const [habilidades, setHabilidades] = useState<Habilidad[]>([]);
-
+  const [hojaVida, setHojaVida] = useState<HojaVida | null>(null);
   const [expandedEstudios, setExpandedEstudios] = useState<Record<number, boolean>>({});
   const [expandedExperiencias, setExpandedExperiencias] = useState<Record<number, boolean>>({});
 
   // ===== MODALES DE ESTUDIOS =====
   const [showEstudioModal, setShowEstudioModal] = useState(false);
-  const [editingEstudio, setEditingEstudio] = useState<Estudio | undefined>();
+  const [editingEstudioIndex, setEditingEstudioIndex] = useState<number | null>(null);
   const [estudioSaving, setEstudioSaving] = useState(false);
-  const [estudioFormData, setEstudioFormData] = useState<Partial<Estudio>>({
+  const [estudioFormData, setEstudioFormData] = useState<Partial<EstudioData>>({
     institucion: '',
     titulo: '',
-    nivelEducativo: 'LICENCIATURA',
+    nivelEducativo: 'UNIVERSITARIO',
     fechaInicio: new Date().toISOString().split('T')[0],
     enCurso: false,
     fechaFin: '',
     descripcion: '',
-    estadoEstudio: 'ACTIVO',
   });
 
   // ===== MODALES DE EXPERIENCIAS =====
   const [showExperienciaModal, setShowExperienciaModal] = useState(false);
-  const [editingExperiencia, setEditingExperiencia] = useState<Experiencia | undefined>();
+  const [editingExperienciaIndex, setEditingExperienciaIndex] = useState<number | null>(null);
   const [experienciaSaving, setExperienciaSaving] = useState(false);
-  const [experienciaFormData, setExperienciaFormData] = useState<Partial<Experiencia>>({
+  const [experienciaFormData, setExperienciaFormData] = useState<Partial<ExperienciaData>>({
     cargo: '',
     empresa: '',
     descripcion: '',
-    certificadoUrl: '',
     fechaInicio: new Date().toISOString().split('T')[0],
-    fechaFin: new Date().toISOString().split('T')[0],
-  });
-
-  // ===== MODALES DE HABILIDADES =====
-  const [showHabilidadModal, setShowHabilidadModal] = useState(false);
-  const [editingHabilidad, setEditingHabilidad] = useState<Habilidad | undefined>();
-  const [habilidadSaving, setHabilidadSaving] = useState(false);
-  const [habilidadFormData, setHabilidadFormData] = useState<Partial<Habilidad>>({
-    nombre: '',
-    tipo: 'TECNICA',
-    isActive: true,
+    fechaFin: '',
   });
 
   // ===== CARGAR DATOS =====
   const loadData = async () => {
     if (!user?.usuarioId) return;
     try {
-      const [estudiosList, experienciasList, habilidadesList] = await Promise.all([
-        getEstudiosByAspirante(user.usuarioId),
-        getExperienciasByAspirante(user.usuarioId),
-        getHabilidadesByAspirante(user.usuarioId),
-      ]);
-      setEstudios(estudiosList || []);
-      setExperiencias(experienciasList || []);
-      setHabilidades(habilidadesList || []);
+      const hv = await getHojaVidaByAspirante(user.usuarioId);
+      setHojaVida(hv);
     } catch (error: any) {
       console.error('Error cargando hoja de vida:', error);
       Alert.alert('Error', error.message || 'Error al cargar hoja de vida');
@@ -119,10 +92,16 @@ const HojaDeVidaScreen = () => {
     loadData();
   };
 
+  const formatDate = (date?: string) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('es-CO');
+  };
+
   // ===== HANDLERS DE ESTUDIOS =====
-  const openEstudioModal = (estudio?: Estudio) => {
-    if (estudio) {
-      setEditingEstudio(estudio);
+  const openEstudioModal = (index?: number) => {
+    if (index !== undefined && hojaVida?.estudios?.[index]) {
+      const estudio = hojaVida.estudios[index];
+      setEditingEstudioIndex(index);
       setEstudioFormData({
         institucion: estudio.institucion,
         titulo: estudio.titulo,
@@ -131,25 +110,24 @@ const HojaDeVidaScreen = () => {
         enCurso: estudio.enCurso,
         fechaFin: estudio.fechaFin,
         descripcion: estudio.descripcion,
-      estadoEstudio: estudio.estadoEstudio || 'ACTIVO',
-          });
+      });
     } else {
-      setEditingEstudio(undefined);
+      setEditingEstudioIndex(null);
       setEstudioFormData({
         institucion: '',
         titulo: '',
-        nivelEducativo: 'LICENCIATURA',
+        nivelEducativo: 'UNIVERSITARIO',
         fechaInicio: new Date().toISOString().split('T')[0],
         enCurso: false,
         fechaFin: '',
         descripcion: '',
-      estadoEstudio: 'ACTIVO',
-          });
+      });
     }
     setShowEstudioModal(true);
   };
 
   const saveEstudio = async () => {
+    if (!hojaVida?.id) return;
     try {
       if (!estudioFormData.institucion?.trim() || !estudioFormData.titulo?.trim()) {
         Alert.alert('Validación', 'Completa institución y título');
@@ -157,16 +135,13 @@ const HojaDeVidaScreen = () => {
       }
 
       setEstudioSaving(true);
-      const data = {
-        ...estudioFormData,
-        aspirante: { id: user!.usuarioId },
-      } as Estudio;
+      const data = estudioFormData as EstudioData;
 
-      if (editingEstudio?.id) {
-        await updateEstudio(editingEstudio.id, data);
+      if (editingEstudioIndex !== null) {
+        await updateEstudioByIndex(hojaVida.id, editingEstudioIndex, data);
         Alert.alert('Éxito', 'Estudio actualizado');
       } else {
-        await createEstudio(data);
+        await addEstudio(hojaVida.id, data);
         Alert.alert('Éxito', 'Estudio creado');
       }
 
@@ -179,7 +154,8 @@ const HojaDeVidaScreen = () => {
     }
   };
 
-  const deleteEstudioHandler = (id: number) => {
+  const deleteEstudioHandler = (index: number) => {
+    if (!hojaVida?.id) return;
     Alert.alert('Eliminar', '¿Eliminar este estudio?', [
       { text: 'Cancelar', style: 'cancel' },
       {
@@ -187,7 +163,7 @@ const HojaDeVidaScreen = () => {
         style: 'destructive',
         onPress: async () => {
           try {
-            await deleteEstudio(id);
+            await deleteEstudioByIndex(hojaVida.id!, index);
             Alert.alert('Éxito', 'Estudio eliminado');
             loadData();
           } catch (error: any) {
@@ -199,32 +175,32 @@ const HojaDeVidaScreen = () => {
   };
 
   // ===== HANDLERS DE EXPERIENCIAS =====
-  const openExperienciaModal = (experiencia?: Experiencia) => {
-    if (experiencia) {
-      setEditingExperiencia(experiencia);
+  const openExperienciaModal = (index?: number) => {
+    if (index !== undefined && hojaVida?.experiencias?.[index]) {
+      const experiencia = hojaVida.experiencias[index];
+      setEditingExperienciaIndex(index);
       setExperienciaFormData({
         cargo: experiencia.cargo,
         empresa: experiencia.empresa,
         descripcion: experiencia.descripcion,
-        certificadoUrl: experiencia.certificadoUrl,
         fechaInicio: experiencia.fechaInicio,
         fechaFin: experiencia.fechaFin,
       });
     } else {
-      setEditingExperiencia(undefined);
+      setEditingExperienciaIndex(null);
       setExperienciaFormData({
         cargo: '',
         empresa: '',
         descripcion: '',
-        certificadoUrl: '',
         fechaInicio: new Date().toISOString().split('T')[0],
-        fechaFin: new Date().toISOString().split('T')[0],
+        fechaFin: '',
       });
     }
     setShowExperienciaModal(true);
   };
 
   const saveExperiencia = async () => {
+    if (!hojaVida?.id) return;
     try {
       if (!experienciaFormData.cargo?.trim() || !experienciaFormData.empresa?.trim()) {
         Alert.alert('Validación', 'Completa cargo y empresa');
@@ -232,16 +208,13 @@ const HojaDeVidaScreen = () => {
       }
 
       setExperienciaSaving(true);
-      const data = {
-        ...experienciaFormData,
-        aspirante: { id: user!.usuarioId },
-      } as Experiencia;
+      const data = experienciaFormData as ExperienciaData;
 
-      if (editingExperiencia?.id) {
-        await updateExperiencia(editingExperiencia.id, data);
+      if (editingExperienciaIndex !== null) {
+        await updateExperienciaByIndex(hojaVida.id, editingExperienciaIndex, data);
         Alert.alert('Éxito', 'Experiencia actualizada');
       } else {
-        await createExperiencia(data);
+        await addExperiencia(hojaVida.id, data);
         Alert.alert('Éxito', 'Experiencia creada');
       }
 
@@ -254,7 +227,8 @@ const HojaDeVidaScreen = () => {
     }
   };
 
-  const deleteExperienciaHandler = (id: number) => {
+  const deleteExperienciaHandler = (index: number) => {
+    if (!hojaVida?.id) return;
     Alert.alert('Eliminar', '¿Eliminar esta experiencia?', [
       { text: 'Cancelar', style: 'cancel' },
       {
@@ -262,7 +236,7 @@ const HojaDeVidaScreen = () => {
         style: 'destructive',
         onPress: async () => {
           try {
-            await deleteExperiencia(id);
+            await deleteExperienciaByIndex(hojaVida.id!, index);
             Alert.alert('Éxito', 'Experiencia eliminada');
             loadData();
           } catch (error: any) {
@@ -273,77 +247,25 @@ const HojaDeVidaScreen = () => {
     ]);
   };
 
-  // ===== HANDLERS DE HABILIDADES =====
-  const openHabilidadModal = (habilidad?: Habilidad) => {
-    if (habilidad) {
-      setEditingHabilidad(habilidad);
-      setHabilidadFormData({
-        nombre: habilidad.nombre,
-        tipo: habilidad.tipo,
-        isActive: habilidad.isActive,
-      });
-    } else {
-      setEditingHabilidad(undefined);
-      setHabilidadFormData({
-        nombre: '',
-        tipo: 'TECNICA',
-        isActive: true,
-      });
-    }
-    setShowHabilidadModal(true);
-  };
-
-  const saveHabilidad = async () => {
-    try {
-      if (!habilidadFormData.nombre?.trim()) {
-        Alert.alert('Validación', 'Escribe el nombre de la habilidad');
-        return;
-      }
-
-      setHabilidadSaving(true);
-      const data = {
-        ...habilidadFormData,
-        aspirante: { id: user!.usuarioId },
-      } as Habilidad;
-
-      if (editingHabilidad?.id) {
-        await updateHabilidad(editingHabilidad.id, data);
-        Alert.alert('Éxito', 'Habilidad actualizada');
-      } else {
-        await createHabilidad(data);
-        Alert.alert('Éxito', 'Habilidad creada');
-      }
-
-      setShowHabilidadModal(false);
-      loadData();
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Error al guardar habilidad');
-    } finally {
-      setHabilidadSaving(false);
-    }
-  };
-
-  const deleteHabilidadHandler = (id: number) => {
-    Alert.alert('Eliminar', '¿Eliminar esta habilidad?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Eliminar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteHabilidad(id);
-            Alert.alert('Éxito', 'Habilidad eliminada');
-            loadData();
-          } catch (error: any) {
-            Alert.alert('Error', error.message || 'Error al eliminar');
-          }
-        },
-      },
-    ]);
-  };
+  // ===== COMPONENT HELPERS =====
+  const DetailRow = ({ label, value, badge }: { label: string; value: string; badge?: boolean }) => (
+    <View style={styles.detailRow}>
+      <Text style={styles.detailLabel}>{label}</Text>
+      {badge ? (
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{value}</Text>
+        </View>
+      ) : (
+        <Text style={styles.detailValue}>{value}</Text>
+      )}
+    </View>
+  );
 
   // ===== RENDERS =====
   if (loading) return <Loading />;
+
+  const estudios = hojaVida?.estudios || [];
+  const experiencias = hojaVida?.experiencias || [];
 
   const renderEstudios = () => (
     <ScrollView
@@ -363,16 +285,11 @@ const HojaDeVidaScreen = () => {
         </View>
       ) : (
         <View style={styles.itemsContainer}>
-          {estudios.map((estudio) => (
+          {estudios.map((estudio, index) => (
             <TouchableOpacity
-              key={estudio.id}
+              key={index}
               style={styles.itemCard}
-              onPress={() =>
-                setExpandedEstudios({
-                  ...expandedEstudios,
-                  [estudio.id!]: !expandedEstudios[estudio.id!],
-                })
-              }
+              onPress={() => setExpandedEstudios({ ...expandedEstudios, [index]: !expandedEstudios[index] })}
             >
               <View style={styles.itemHeader}>
                 <View style={{ flex: 1 }}>
@@ -380,15 +297,15 @@ const HojaDeVidaScreen = () => {
                   <Text style={styles.itemSubtitle}>{estudio.institucion}</Text>
                 </View>
                 <Ionicons
-                  name={expandedEstudios[estudio.id!] ? 'chevron-up' : 'chevron-down'}
+                  name={expandedEstudios[index] ? 'chevron-up' : 'chevron-down'}
                   size={24}
                   color={colors.primary}
                 />
               </View>
 
-              {expandedEstudios[estudio.id!] && (
+              {expandedEstudios[index] && (
                 <View style={styles.itemDetails}>
-                  <DetailRow label="Nivel" value={estudio.nivelEducativo} />
+                  <DetailRow label="Nivel" value={estudio.nivelEducativo || 'N/A'} />
                   <DetailRow label="Inicio" value={formatDate(estudio.fechaInicio)} />
                   {estudio.enCurso ? (
                     <DetailRow label="Estado" value="En curso" badge />
@@ -400,13 +317,13 @@ const HojaDeVidaScreen = () => {
                     <Button
                       title="Editar"
                       variant="outline"
-                      onPress={() => openEstudioModal(estudio)}
+                      onPress={() => openEstudioModal(index)}
                       style={{ flex: 1, marginRight: spacing.sm }}
                     />
                     <Button
                       title="Eliminar"
                       variant="danger"
-                      onPress={() => deleteEstudioHandler(estudio.id!)}
+                      onPress={() => deleteEstudioHandler(index)}
                       style={{ flex: 1 }}
                     />
                   </View>
@@ -443,16 +360,11 @@ const HojaDeVidaScreen = () => {
         </View>
       ) : (
         <View style={styles.itemsContainer}>
-          {experiencias.map((experiencia) => (
+          {experiencias.map((experiencia, index) => (
             <TouchableOpacity
-              key={experiencia.id}
+              key={index}
               style={styles.itemCard}
-              onPress={() =>
-                setExpandedExperiencias({
-                  ...expandedExperiencias,
-                  [experiencia.id!]: !expandedExperiencias[experiencia.id!],
-                })
-              }
+              onPress={() => setExpandedExperiencias({ ...expandedExperiencias, [index]: !expandedExperiencias[index] })}
             >
               <View style={styles.itemHeader}>
                 <View style={{ flex: 1 }}>
@@ -460,13 +372,13 @@ const HojaDeVidaScreen = () => {
                   <Text style={styles.itemSubtitle}>{experiencia.empresa}</Text>
                 </View>
                 <Ionicons
-                  name={expandedExperiencias[experiencia.id!] ? 'chevron-up' : 'chevron-down'}
+                  name={expandedExperiencias[index] ? 'chevron-up' : 'chevron-down'}
                   size={24}
                   color={colors.primary}
                 />
               </View>
 
-              {expandedExperiencias[experiencia.id!] && (
+              {expandedExperiencias[index] && (
                 <View style={styles.itemDetails}>
                   <DetailRow label="Inicio" value={formatDate(experiencia.fechaInicio)} />
                   <DetailRow label="Fin" value={formatDate(experiencia.fechaFin)} />
@@ -475,13 +387,13 @@ const HojaDeVidaScreen = () => {
                     <Button
                       title="Editar"
                       variant="outline"
-                      onPress={() => openExperienciaModal(experiencia)}
+                      onPress={() => openExperienciaModal(index)}
                       style={{ flex: 1, marginRight: spacing.sm }}
                     />
                     <Button
                       title="Eliminar"
                       variant="danger"
-                      onPress={() => deleteExperienciaHandler(experiencia.id!)}
+                      onPress={() => deleteExperienciaHandler(index)}
                       style={{ flex: 1 }}
                     />
                   </View>
@@ -492,59 +404,6 @@ const HojaDeVidaScreen = () => {
           <Button
             title="+ Agregar Experiencia"
             onPress={() => openExperienciaModal()}
-            fullWidth
-            style={{ marginTop: spacing.md }}
-          />
-        </View>
-      )}
-    </ScrollView>
-  );
-
-  const renderHabilidades = () => (
-    <ScrollView
-      style={{ flex: 1 }}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    >
-      {habilidades.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Ionicons name="star-outline" size={48} color={colors.textSecondary} />
-          <Text style={styles.emptyText}>No tienes habilidades registradas</Text>
-          <Button
-            title="+ Agregar Habilidad"
-            onPress={() => openHabilidadModal()}
-            fullWidth
-            style={{ marginTop: spacing.md }}
-          />
-        </View>
-      ) : (
-        <View style={styles.itemsContainer}>
-          {habilidades.map((habilidad) => (
-            <View key={habilidad.id} style={styles.habilidadCard}>
-              <View style={styles.habilidadContent}>
-                <Text style={styles.habilidadNombre}>{habilidad.nombre}</Text>
-                <View style={styles.levelIndicator}>
-                  <Text style={styles.levelText}>{habilidad.tipo}</Text>
-                </View>
-              </View>
-              <View style={styles.habilidadActions}>
-                <TouchableOpacity
-                  onPress={() => openHabilidadModal(habilidad)}
-                  style={styles.iconButton}
-                >
-                  <Ionicons name="pencil" size={20} color={colors.primary} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => deleteHabilidadHandler(habilidad.id!)}
-                  style={styles.iconButton}
-                >
-                  <Ionicons name="trash" size={20} color={colors.error} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-          <Button
-            title="+ Agregar Habilidad"
-            onPress={() => openHabilidadModal()}
             fullWidth
             style={{ marginTop: spacing.md }}
           />
@@ -567,7 +426,9 @@ const HojaDeVidaScreen = () => {
           onPress={() => setActiveTab('estudios')}
         >
           <Ionicons name="school" size={20} color={activeTab === 'estudios' ? colors.primary : colors.textSecondary} />
-          <Text style={[styles.tabText, activeTab === 'estudios' && styles.activeTabText]}>Estudios ({estudios.length})</Text>
+          <Text style={[styles.tabText, activeTab === 'estudios' && styles.activeTabText]}>
+            Estudios ({estudios.length})
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -583,131 +444,84 @@ const HojaDeVidaScreen = () => {
             Experiencias ({experiencias.length})
           </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'habilidades' && styles.activeTab]}
-          onPress={() => setActiveTab('habilidades')}
-        >
-          <Ionicons name="star" size={20} color={activeTab === 'habilidades' ? colors.primary : colors.textSecondary} />
-          <Text style={[styles.tabText, activeTab === 'habilidades' && styles.activeTabText]}>
-            Habilidades ({habilidades.length})
-          </Text>
-        </TouchableOpacity>
       </View>
 
       {/* Content */}
       <View style={{ flex: 1, paddingHorizontal: spacing.md }}>
         {activeTab === 'estudios' && renderEstudios()}
         {activeTab === 'experiencias' && renderExperiencias()}
-        {activeTab === 'habilidades' && renderHabilidades()}
       </View>
 
-      {/* ===== MODAL DE ESTUDIO ===== */}
-      <Modal
-        visible={showEstudioModal}
-        animationType="slide"
-        transparent={true}
-      >
+      {/* Modal Estudio */}
+      <Modal visible={showEstudioModal} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{editingEstudio ? 'Editar' : 'Crear'} Estudio</Text>
+              <Text style={styles.modalTitle}>
+                {editingEstudioIndex !== null ? 'Editar Estudio' : 'Nuevo Estudio'}
+              </Text>
               <TouchableOpacity onPress={() => setShowEstudioModal(false)}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
-
             <ScrollView style={styles.modalBody}>
               <Input
-                label="Institución"
-                placeholder="Ej: Universidad Nacional"
+                label="Institución *"
                 value={estudioFormData.institucion}
                 onChangeText={(text) => setEstudioFormData({ ...estudioFormData, institucion: text })}
+                placeholder="Universidad, instituto..."
               />
-
               <Input
-                label="Título"
-                placeholder="Ej: Ingeniería de Sistemas"
+                label="Título *"
                 value={estudioFormData.titulo}
                 onChangeText={(text) => setEstudioFormData({ ...estudioFormData, titulo: text })}
+                placeholder="Nombre del título o carrera"
               />
-
               <Picker
                 label="Nivel Educativo"
                 selectedValue={estudioFormData.nivelEducativo}
-                options={[
+                onValueChange={(value) => setEstudioFormData({ ...estudioFormData, nivelEducativo: value as any })}
+                items={[
                   { label: 'Primaria', value: 'PRIMARIA' },
-                  { label: 'Secundaria', value: 'SECUNDARIA' },
+                  { label: 'Bachillerato', value: 'BACHILLERATO' },
                   { label: 'Técnico', value: 'TECNICO' },
                   { label: 'Tecnólogo', value: 'TECNOLOGO' },
-                  { label: 'Licenciatura', value: 'LICENCIATURA' },
-                  { label: 'Profesional', value: 'PROFESIONAL' },
+                  { label: 'Universitario', value: 'UNIVERSITARIO' },
                   { label: 'Especialización', value: 'ESPECIALIZACION' },
                   { label: 'Maestría', value: 'MAESTRIA' },
                   { label: 'Doctorado', value: 'DOCTORADO' },
                 ]}
-                onValueChange={(value) => setEstudioFormData({ ...estudioFormData, nivelEducativo: value })}
               />
-
-              <Picker
-                label="Estado"
-                selectedValue={estudioFormData.estadoEstudio || 'ACTIVO'}
-                options={[
-                  { label: 'Activo', value: 'ACTIVO' },
-                  { label: 'Inactivo', value: 'INACTIVO' },
-                ]}
-                onValueChange={(value) => setEstudioFormData({ ...estudioFormData, estadoEstudio: value })}
-              />
-
               <DatePicker
                 label="Fecha de Inicio"
-                value={estudioFormData.fechaInicio}
-                onDateChange={(date) => setEstudioFormData({ ...estudioFormData, fechaInicio: date })}
+                value={estudioFormData.fechaInicio ? new Date(estudioFormData.fechaInicio) : new Date()}
+                onChange={(date) => setEstudioFormData({ ...estudioFormData, fechaInicio: date.toISOString().split('T')[0] })}
               />
-
-              <View style={styles.switchContainer}>
-                <Text style={styles.switchLabel}>En Curso</Text>
-                <Switch
-                  value={estudioFormData.enCurso}
-                  onValueChange={(value) =>
-                    setEstudioFormData({
-                      ...estudioFormData,
-                      enCurso: value,
-                      fechaFin: value ? '' : estudioFormData.fechaFin,
-                    })
-                  }
-                />
-              </View>
-
-              {!estudioFormData.enCurso && (
-                <DatePicker
-                  label="Fecha de Fin"
-                  value={estudioFormData.fechaFin}
-                  onDateChange={(date) => setEstudioFormData({ ...estudioFormData, fechaFin: date })}
-                />
-              )}
-
+              <DatePicker
+                label="Fecha de Fin"
+                value={estudioFormData.fechaFin ? new Date(estudioFormData.fechaFin) : new Date()}
+                onChange={(date) => setEstudioFormData({ ...estudioFormData, fechaFin: date.toISOString().split('T')[0] })}
+              />
               <Input
                 label="Descripción"
-                placeholder="Opcional"
-                multiline
-                numberOfLines={3}
                 value={estudioFormData.descripcion}
                 onChangeText={(text) => setEstudioFormData({ ...estudioFormData, descripcion: text })}
+                placeholder="Descripción adicional"
+                multiline
+                numberOfLines={3}
               />
             </ScrollView>
-
             <View style={styles.modalFooter}>
               <Button
                 title="Cancelar"
                 variant="outline"
                 onPress={() => setShowEstudioModal(false)}
-                style={{ flex: 1, marginRight: spacing.sm }}
+                style={{ flex: 1 }}
               />
               <Button
-                title="Guardar"
+                title={estudioSaving ? 'Guardando...' : 'Guardar'}
                 onPress={saveEstudio}
-                loading={estudioSaving}
+                disabled={estudioSaving}
                 style={{ flex: 1 }}
               />
             </View>
@@ -715,135 +529,61 @@ const HojaDeVidaScreen = () => {
         </View>
       </Modal>
 
-      {/* ===== MODAL DE EXPERIENCIA ===== */}
-      <Modal
-        visible={showExperienciaModal}
-        animationType="slide"
-        transparent={true}
-      >
+      {/* Modal Experiencia */}
+      <Modal visible={showExperienciaModal} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{editingExperiencia ? 'Editar' : 'Crear'} Experiencia</Text>
+              <Text style={styles.modalTitle}>
+                {editingExperienciaIndex !== null ? 'Editar Experiencia' : 'Nueva Experiencia'}
+              </Text>
               <TouchableOpacity onPress={() => setShowExperienciaModal(false)}>
                 <Ionicons name="close" size={24} color={colors.text} />
               </TouchableOpacity>
             </View>
-
             <ScrollView style={styles.modalBody}>
               <Input
-                label="Cargo"
-                placeholder="Ej: Desarrollador Junior"
+                label="Cargo *"
                 value={experienciaFormData.cargo}
                 onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, cargo: text })}
+                placeholder="Nombre del cargo"
               />
-
               <Input
-                label="Empresa"
-                placeholder="Ej: TechCorp"
+                label="Empresa *"
                 value={experienciaFormData.empresa}
                 onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, empresa: text })}
+                placeholder="Nombre de la empresa"
               />
-
               <DatePicker
                 label="Fecha de Inicio"
-                value={experienciaFormData.fechaInicio}
-                onDateChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaInicio: date })}
+                value={experienciaFormData.fechaInicio ? new Date(experienciaFormData.fechaInicio) : new Date()}
+                onChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaInicio: date.toISOString().split('T')[0] })}
               />
-
               <DatePicker
                 label="Fecha de Fin"
-                value={experienciaFormData.fechaFin}
-                onDateChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaFin: date })}
+                value={experienciaFormData.fechaFin ? new Date(experienciaFormData.fechaFin) : new Date()}
+                onChange={(date) => setExperienciaFormData({ ...experienciaFormData, fechaFin: date.toISOString().split('T')[0] })}
               />
-
               <Input
                 label="Descripción"
-                placeholder="Opcional"
-                multiline
-                numberOfLines={3}
                 value={experienciaFormData.descripcion}
                 onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, descripcion: text })}
-              />
-
-              <Input
-                label="URL del Certificado"
-                placeholder="Ej: https://ejemplo.com/certificado"
-                value={experienciaFormData.certificadoUrl}
-                onChangeText={(text) => setExperienciaFormData({ ...experienciaFormData, certificadoUrl: text })}
+                placeholder="Funciones y logros"
+                multiline
+                numberOfLines={3}
               />
             </ScrollView>
-
             <View style={styles.modalFooter}>
               <Button
                 title="Cancelar"
                 variant="outline"
                 onPress={() => setShowExperienciaModal(false)}
-                style={{ flex: 1, marginRight: spacing.sm }}
-              />
-              <Button
-                title="Guardar"
-                onPress={saveExperiencia}
-                loading={experienciaSaving}
                 style={{ flex: 1 }}
               />
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* ===== MODAL DE HABILIDAD ===== */}
-      <Modal
-        visible={showHabilidadModal}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{editingHabilidad ? 'Editar' : 'Crear'} Habilidad</Text>
-              <TouchableOpacity onPress={() => setShowHabilidadModal(false)}>
-                <Ionicons name="close" size={24} color={colors.text} />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.modalBody}>
-              <Input
-                label="Habilidad"
-                placeholder="Ej: JavaScript, Liderazgo, etc."
-                value={habilidadFormData.nombre}
-                onChangeText={(text) => setHabilidadFormData({ ...habilidadFormData, nombre: text })}
-              />
-
-              <Picker
-                label="Tipo de Habilidad"
-                 selectedValue={habilidadFormData.tipo || 'TECNICA'}
-                options={[
-                  { label: 'Técnica', value: 'TECNICA' },
-                  { label: 'Blanda', value: 'BLANDA' },
-                  { label: 'Idioma', value: 'IDIOMA' },
-                ]}
-                onValueChange={(value) =>
-                  setHabilidadFormData({
-                    ...habilidadFormData,
-                    tipo: value as 'TECNICA' | 'BLANDA' | 'IDIOMA',
-                  })
-                }
-                             // tipo values: TECNICA | BLANDA | IDIOMA
-              />
-            </ScrollView>
-
-            <View style={styles.modalFooter}>
               <Button
-                title="Cancelar"
-                variant="outline"
-                onPress={() => setShowHabilidadModal(false)}
-                style={{ flex: 1, marginRight: spacing.sm }}
-              />
-              <Button
-                title="Guardar"
-                onPress={saveHabilidad}
-                loading={habilidadSaving}
+                title={experienciaSaving ? 'Guardando...' : 'Guardar'}
+                onPress={saveExperiencia}
+                disabled={experienciaSaving}
                 style={{ flex: 1 }}
               />
             </View>
@@ -854,38 +594,6 @@ const HojaDeVidaScreen = () => {
   );
 };
 
-// ===== COMPONENTES AUXILIARES =====
-interface DetailRowProps {
-  label: string;
-  value: string | undefined;
-  badge?: boolean;
-}
-
-const DetailRow: React.FC<DetailRowProps> = ({ label, value, badge }) => (
-  <View style={styles.detailRow}>
-    <Text style={styles.detailLabel}>{label}:</Text>
-    {badge ? (
-      <View style={styles.badge}>
-        <Text style={styles.badgeText}>{value}</Text>
-      </View>
-    ) : (
-      <Text style={styles.detailValue}>{value || '-'}</Text>
-    )}
-  </View>
-);
-
-// ===== FUNCIONES AUXILIARES =====
-const formatDate = (dateString?: string) => {
-  if (!dateString) return '-';
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
-  } catch {
-    return dateString;
-  }
-};
-
-// ===== ESTILOS =====
 const styles = StyleSheet.create({
   header: {
     backgroundColor: colors.primary,
@@ -893,7 +601,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
   },
   title: {
-    fontSize: fontSize.xxl,
+    fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
     color: colors.white,
   },
@@ -999,7 +707,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     gap: spacing.sm,
   },
-  // Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -1036,62 +743,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.border,
     gap: spacing.md,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-    padding: spacing.md,
-    borderRadius: 12,
-    marginBottom: spacing.md,
-  },
-  switchLabel: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  habilidadCard: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    ...shadows.sm,
-  },
-  habilidadContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  habilidadNombre: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-    flex: 1,
-  },
-  levelIndicator: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: 12,
-  },
-  levelText: {
-    fontSize: fontSize.xs,
-    color: colors.white,
-    fontWeight: fontWeight.semibold,
-  },
-  habilidadActions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-    marginLeft: spacing.md,
-  },
-  iconButton: {
-    padding: spacing.sm,
   },
 });
 

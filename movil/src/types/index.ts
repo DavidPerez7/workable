@@ -112,47 +112,43 @@ export interface Postulacion {
   oferta?: Oferta;
 }
 
-// Hoja de Vida types
+// Hoja de Vida types - Coincide con HojaVida.java del backend
 export interface HojaVida {
   id?: number;
-  resumen?: string;
+  resumenProfesional?: string;
+  redSocial1?: string;
+  contactoEmail?: string;
+  telefono?: string;
+  idiomas?: string;
+  fechaCreacion?: string;
+  fechaActualizacion?: string;
   aspirante?: Aspirante;
-  estudios?: Estudio[];
-  experiencias?: Experiencia[];
-  habilidades?: Habilidad[];
+  estudios?: EstudioData[];
+  experiencias?: ExperienciaData[];
 }
 
-export interface Estudio {
-  id?: number;
-  institucion: string;
+// EstudioData - @Embeddable en backend
+export interface EstudioData {
   titulo: string;
-  nivelEducativo: string;
-  fechaInicio?: string;
+  institucion: string;
+  nivelEducativo?: 'PRIMARIA' | 'BACHILLERATO' | 'TECNICO' | 'TECNOLOGO' | 'LICENCIATURA' | 'UNIVERSITARIO' | 'ESPECIALIZACION' | 'MAESTRIA' | 'DOCTORADO';
+  fechaInicio: string;
   fechaFin?: string;
   enCurso?: boolean;
-    estadoEstudio?: string;
+  modalidad?: 'PRESENCIAL' | 'VIRTUAL' | 'HIBRIDA';
   descripcion?: string;
-  aspirante?: Aspirante;
+  certificadoUrl?: string;
 }
 
-export interface Experiencia {
-  id?: number;
-  empresa: string;
+// ExperienciaData - @Embeddable en backend
+export interface ExperienciaData {
   cargo: string;
-    certificadoUrl?: string;
-  descripcion?: string;
-  fechaInicio?: string;
+  empresa: string;
+  fechaInicio: string;
   fechaFin?: string;
-  actualmenteEmpleado?: boolean;
-  aspirante?: Aspirante;
-}
-
-export interface Habilidad {
-  id?: number;
-  nombre: string;
-  tipo?: 'TECNICA' | 'BLANDA' | 'IDIOMA';
-  isActive?: boolean;
-  aspirante?: Aspirante;
+  municipio?: string;
+  descripcion?: string;
+  certificadoUrl?: string;
 }
 
 // Municipio types

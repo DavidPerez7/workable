@@ -110,32 +110,32 @@ export const changeEstadoOferta = async (
   estado: 'ABIERTA' | 'CERRADA' | 'PAUSADA'
 ): Promise<Oferta> => {
   try {
-    const response = await api.patch<Oferta>(`/oferta/${id}/estado?estado=${estado}`);
+    const response = await api.patch<Oferta>(`/api/oferta/${id}/estado?estado=${estado}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
 
-// Get ofertas by estado
+// Get ofertas by estado - No existe en backend, usar getAll y filtrar
 export const getOfertasByEstado = async (
   estado: 'ABIERTA' | 'CERRADA' | 'PAUSADA'
 ): Promise<Oferta[]> => {
   try {
-    const response = await api.get<Oferta[]>(`/oferta/estado?estado=${estado}`);
-    return response.data;
+    const response = await api.get<Oferta[]>('/api/oferta');
+    return response.data.filter(o => o.estado === estado);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
 
-// Get ofertas by modalidad
+// Get ofertas by modalidad - No existe en backend, usar getAll y filtrar
 export const getOfertasByModalidad = async (
   modalidad: 'PRESENCIAL' | 'REMOTO' | 'HIBRIDO'
 ): Promise<Oferta[]> => {
   try {
-    const response = await api.get<Oferta[]>(`/oferta/modalidad?modalidad=${modalidad}`);
-    return response.data;
+    const response = await api.get<Oferta[]>('/api/oferta');
+    return response.data.filter(o => o.modalidad === modalidad);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
