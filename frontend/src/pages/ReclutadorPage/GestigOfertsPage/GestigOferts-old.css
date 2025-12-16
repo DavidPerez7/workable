@@ -1,0 +1,404 @@
+/* ===========================
+   VARIABLES Y CONFIGURACIÓN
+   =========================== */
+:root {
+  --primary: #3b82f6;
+  --primary-dark: #1e40af;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-900: #111827;
+}
+
+.container-main-GO {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  background-color: var(--gray-50);
+  padding: 2rem;
+}
+
+/* ===========================
+   HEADER SECTION
+   =========================== */
+.header-section-GO {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 0 1rem;
+}
+
+.title-page-GO {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.link-goback-GO {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+  white-space: nowrap;
+}
+
+.link-goback-GO:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* ===========================
+   SECTION CARD
+   =========================== */
+.section-card-GO {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===========================
+   EMPTY STATE
+   =========================== */
+.empty-state-GO {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.empty-text-GO {
+  font-size: 1rem;
+  color: var(--gray-600);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.btn-create-GO {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.btn-create-GO:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* ===========================
+   TABLE WRAPPER
+   =========================== */
+.table-wrapper-GO {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+}
+
+.tabla-gestion-GO {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.tabla-gestion-GO thead {
+  background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-600) 100%);
+  color: white;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.tabla-gestion-GO thead th {
+  padding: 0.9rem 1.2rem;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.tabla-gestion-GO tbody tr {
+  border-bottom: 1px solid var(--gray-200);
+  transition: background-color 0.15s ease;
+}
+
+.tabla-gestion-GO tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabla-gestion-GO tbody tr:hover {
+  background-color: var(--gray-50);
+}
+
+.tabla-gestion-GO tbody td {
+  padding: 0.85rem 1.2rem;
+  color: var(--gray-600);
+}
+
+.td-titulo-GO {
+  font-weight: 600;
+  color: var(--gray-900);
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.td-fecha-GO {
+  color: var(--gray-600);
+  font-size: 0.85rem;
+}
+
+/* ===========================
+   BADGES DE ESTADO
+   =========================== */
+.badge-estado-GO {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid;
+  transition: all 0.2s ease;
+}
+
+.badge-activa-GO {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.badge-cerrada-GO {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+  border-color: #fecaca;
+}
+
+/* ===========================
+   ESTADOS DE CARGA Y ERROR
+   =========================== */
+.loading-state-GO,
+.error-state-GO {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.loading-text-GO {
+  font-size: 1rem;
+  color: var(--primary);
+  font-weight: 600;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.error-state-GO {
+  background: #fef2f2;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+  padding: 2rem;
+}
+
+.error-text-GO {
+  font-size: 0.95rem;
+  color: #991b1b;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.btn-retry-GO {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-retry-GO:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ===========================
+   BOTONES DE ACCIONES
+   =========================== */
+.td-acciones-GO {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.btn-editar-GO,
+.btn-eliminar-GO,
+.btn-estado-GO {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  white-space: nowrap;
+  background-color: white;
+}
+
+.btn-editar-GO {
+  background-color: #dbeafe;
+  color: #0c4a6e;
+  border-color: #bfdbfe;
+}
+
+.btn-editar-GO:hover {
+  background-color: #bfdbfe;
+  transform: translateY(-1px);
+}
+
+.btn-eliminar-GO {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+  border-color: #fecaca;
+}
+
+.btn-eliminar-GO:hover {
+  background-color: #fecaca;
+  transform: translateY(-1px);
+}
+
+.btn-estado-GO {
+  background-color: #fef3c7;
+  color: #78350f;
+  border-color: #fde68a;
+  flex-grow: 1;
+  min-width: 65px;
+  justify-content: center;
+}
+
+.btn-estado-GO:hover {
+  background-color: #fde68a;
+  transform: translateY(-1px);
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 1024px) {
+  .container-main-GO {
+    padding: 1.5rem 1rem;
+  }
+
+  .section-card-GO {
+    padding: 1.5rem;
+  }
+
+  .title-page-GO {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container-main-GO {
+    padding: 1rem;
+  }
+
+  .header-section-GO {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 0;
+  }
+
+  .title-page-GO {
+    font-size: 1.35rem;
+  }
+
+  .link-goback-GO {
+    width: 100%;
+    text-align: center;
+  }
+
+  .section-card-GO {
+    padding: 1rem;
+  }
+
+  .table-wrapper-GO {
+    overflow-x: auto;
+  }
+
+  .tabla-gestion-GO {
+    min-width: 700px;
+  }
+
+  .tabla-gestion-GO thead th,
+  .tabla-gestion-GO tbody td {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .btn-editar-GO,
+  .btn-eliminar-GO,
+  .btn-estado-GO {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .td-acciones-GO {
+    gap: 0.3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .container-main-GO {
+    padding: 0.8rem;
+  }
+
+  .title-page-GO {
+    font-size: 1.2rem;
+  }
+
+  .section-card-GO {
+    padding: 0.8rem;
+  }
+
+  .tabla-gestion-GO {
+    min-width: 600px;
+    font-size: 0.8rem;
+  }
+
+  .td-titulo-GO {
+    max-width: 120px;
+  }
+
+  .empty-state-GO {
+    padding: 2rem 1rem;
+  }
+}

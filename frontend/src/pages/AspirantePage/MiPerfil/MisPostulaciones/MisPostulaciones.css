@@ -3,9 +3,6 @@
    =========================== */
 .mispostulaciones-container-MP {
   font-family: "Inter", sans-serif;
-  background: linear-gradient(135deg, #f0f4f8 0%, #f9fafb 100%);
-  padding: 2.5rem 3rem;
-  min-height: 100vh;
   max-width: 1200px;
   margin: 0 auto;
 }

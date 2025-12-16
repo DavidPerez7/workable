@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./AspirantePage.css";
 import Header from "../../components/Header/Header";
+import SidebarAspirante from "../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../components/Footer/footer";
 import { getAllOfertas } from "../../api/ofertasAPI";
 import { crearPostulacion } from "../../api/postulacionesAPI";
@@ -228,26 +229,29 @@ const AspirantePage = () => {
   return (
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
-
-      <main className="main-aspirant-page-AP">
-        {/* SIDEBAR */}
-        <aside className="sidebar-filters-AP">
-          <div className="filters-header-AP">
-            <h2 className="filters-title-AP">Filtros de búsqueda</h2>
-            <button
-              className="btn-clear-filters-AP"
-              onClick={() =>
-                setFilters({
-                  nombre: "",
-                  ordenar: "",
-                  experiencia: "",
-                  salario: "",
-                  contrato: "",
-                  modalidad: "",
-                  empresa: "",
-                  ubicacion: "",
-                })
-              }
+      
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)', background: 'linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%)'}}>
+        <SidebarAspirante />
+        
+        <main className="main-aspirant-page-AP" style={{flex: 1, padding: '1.5rem'}}>
+          {/* SIDEBAR */}
+          <aside className="sidebar-filters-AP">
+            <div className="filters-header-AP">
+              <h2 className="filters-title-AP">Filtros de búsqueda</h2>
+              <button
+                className="btn-clear-filters-AP"
+                onClick={() =>
+                  setFilters({
+                    nombre: "",
+                    ordenar: "",
+                    experiencia: "",
+                    salario: "",
+                    contrato: "",
+                    modalidad: "",
+                    empresa: "",
+                    ubicacion: "",
+                  })
+                }
             >
               Limpiar
             </button>
@@ -512,6 +516,7 @@ const AspirantePage = () => {
           </section>
         </div>
       </main>
+      </div>
 
       <Footer />
     </>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { getOfertasPorEmpresa, eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
 import "./GestigOferts.css";
 
@@ -117,7 +118,9 @@ const GestigOfertsPage = () => {
   return (
     <>
       <HeaderReclutador />
-      <div className="container-main-GO">
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)'}}>
+        <SidebarReclutador />
+        <div className="container-main-GO" style={{flex: 1}}>  
         <div className="header-section-GO">
           <h1 className="title-page-GO">Gestión de Ofertas</h1>
           <button
@@ -216,6 +219,7 @@ const GestigOfertsPage = () => {
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
     </>

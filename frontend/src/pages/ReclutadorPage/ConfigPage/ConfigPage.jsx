@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import Footer from "../../../components/Footer/footer";
 import "./ConfigPage.css";
 
@@ -213,7 +214,9 @@ const ConfigPage = () => {
   return (
     <>
       <HeaderReclutador />
-      <main className="main-config-CFP">
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)'}}>
+        <SidebarReclutador />
+        <main className="main-config-CFP" style={{flex: 1}}>
         <div className="container-module-CFP">
           {/* HEADER CON TÍTULO Y BOTÓN VOLVER */}
           <div className="header-page-CFP">
@@ -365,6 +368,7 @@ const ConfigPage = () => {
           </section>
         </div>
       </main>
+      </div>
 
       <Footer />
     </>

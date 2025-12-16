@@ -76,8 +76,8 @@ function App() {
         {/* Rutas protegidas de Aspirante */}
         <Route path="/Aspirante" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspirantePage /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><MiPerfil /></ProtectedRoute>} />
-        <Route path="/MiPerfil/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
-        <Route path="/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
+        <Route path="/Aspirante/MiPerfil/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
+        <Route path="/Aspirante/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
         
         {/* Rutas protegidas de Administrador */}
         <Route path="/Administrador/*" element={<ProtectedRoute requiredRole="ADMIN"><AdminPage /></ProtectedRoute>} />

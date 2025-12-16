@@ -17,11 +17,8 @@
 
 .main-aspirant-page-AP {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%);
   display: flex;
   gap: 1.5rem;
-  padding: 1.5rem;
 }
 
 /* ===========================

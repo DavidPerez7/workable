@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu"
+import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
 import { obtenerPostulacionesAspirante, eliminarPostulacion } from "../../../../api/postulacionesAPI";
 import "./MisPostulaciones.css";
 
@@ -67,7 +68,9 @@ const MisPostulaciones = () => {
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
       <Menu />
-      <div className="mispostulaciones-container-MP">
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)', background: 'linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%)'}}>
+        <SidebarAspirante />
+        <div className="mispostulaciones-container-MP" style={{flex: 1, padding: '2rem'}}>
         <h2 className="mp-title">Mis postulaciones</h2>
         <p className="mp-subtitle">
           Aquí puedes ver todas las ofertas a las que te has postulado.
@@ -140,6 +143,7 @@ const MisPostulaciones = () => {
             ))}
           </div>
         )}
+      </div>
       </div>
     </>
   );

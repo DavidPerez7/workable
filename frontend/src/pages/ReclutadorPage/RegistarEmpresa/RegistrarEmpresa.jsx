@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
+import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { crearEmpresa } from "../../../api/empresaAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
 import reclutadoresApi from "../../../api/reclutadoresApi";
@@ -106,8 +108,12 @@ const RegistrarEmpresa = () => {
   };
 
   return (
-    <div className="empresa-form-container">
-      <div className="empresa-form-card">
+    <>
+      <HeaderReclutador />
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)'}}>
+        <SidebarReclutador />
+        <div className="empresa-form-container" style={{flex: 1}}>
+          <div className="empresa-form-card">
 
         <h1 className="empresa-title">Registrar Empresa</h1>
         <p className="empresa-subtitle">
@@ -248,6 +254,8 @@ const RegistrarEmpresa = () => {
 
       </div>
     </div>
+      </div>
+    </>
   );
 };
 

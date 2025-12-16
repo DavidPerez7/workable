@@ -22,9 +22,6 @@
    CONTENEDOR PRINCIPAL
    ============================================================ */
 .perfil-container-PF {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%);
-  padding: 2rem 1rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   max-width: 1200px;
   margin: 0 auto;

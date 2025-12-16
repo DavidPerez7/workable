@@ -22,7 +22,7 @@
    CONTENEDOR PRINCIPAL
    ============================================================ */
 .main-perfil-MPF {
-  min-height: 100vh;
+  flex: 1;
   background: linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%);
   padding: 2rem 1rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;

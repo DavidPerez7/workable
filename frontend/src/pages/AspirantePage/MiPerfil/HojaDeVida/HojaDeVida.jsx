@@ -4,6 +4,7 @@ import "./HojaDeVida.css";
 import { jsPDF } from "jspdf";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
+import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import { getHojasDeVidaPorAspirante, actualizarHojaDeVida } from "../../../../api/hojaDeVidaAPI";
 
@@ -649,8 +650,9 @@ const HojaDeVida = () => {
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
       <Menu />
-
-      <div className="perfil-container-PF">
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)', background: 'linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%)'}}>
+        <SidebarAspirante />
+        <div className="perfil-container-PF" style={{flex: 1, padding: '2rem'}}>
         {/* HEADER */}
         <div className="perfil-header-PF">
           <img
@@ -1200,6 +1202,7 @@ const HojaDeVida = () => {
             </div>
           </div>
         )}
+      </div>
       </div>
     </>
   );

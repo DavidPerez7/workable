@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { crearOferta } from "../../../api/ofertasAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
 import reclutadoresApi from "../../../api/reclutadoresApi";
@@ -186,8 +187,9 @@ const PublicacionPage = () => {
   return (
     <>
       <HeaderReclutador />
-
-      <main className="pb-container">
+      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)'}}>
+        <SidebarReclutador />
+        <main className="pb-container" style={{flex: 1}}>
         <h1 className="pb-title">Publicar oferta</h1>
 
         <form className="pb-form" onSubmit={handleSubmit}>
@@ -359,7 +361,8 @@ const PublicacionPage = () => {
             </button>
           </section>
         </form>
-      </main>
+        </main>
+      </div>
     </>
   );
 };

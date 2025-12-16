@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import aspirantesApi from "../../../api/aspirantesApi";
 import { getMunicipios } from "../../../api/municipioAPI";
+import SidebarAspirante from "../../../components/SidebarAspirante/SidebarAspirante";
 import {
   FaUser,
   FaBriefcase,
@@ -218,25 +219,28 @@ const MiPerfil = () => {
 		<Header isLoggedIn={true} userRole="ASPIRANTE" />
 		<Menu />
 
-		<main className="main-perfil-MPF">
-		<div className="container-perfil-MPF">
-			{/* Encabezado del Perfil */}
-			<section className="profile-header-MPF">
-			<div className="profile-pic-MPF">
-				{usuario?.urlFotoPerfil ? (
-				<img
-					src={usuario.urlFotoPerfil}
-					alt={`${usuario.nombre} ${usuario.apellido}`}
-					onError={(e) => {
-					e.target.style.display = "none";
-					e.target.nextSibling.style.display = "flex";
-					}}
-				/>
-				) : null}
-				<div className="profile-pic-placeholder-MPF">
-				<FaUser size={64} />
+		<div style={{display: 'flex', minHeight: 'calc(100vh - 80px)'}}>
+			<SidebarAspirante />
+			
+			<main className="main-perfil-MPF">
+			<div className="container-perfil-MPF">
+				{/* Encabezado del Perfil */}
+				<section className="profile-header-MPF">
+				<div className="profile-pic-MPF">
+					{usuario?.urlFotoPerfil ? (
+					<img
+						src={usuario.urlFotoPerfil}
+						alt={`${usuario.nombre} ${usuario.apellido}`}
+						onError={(e) => {
+						e.target.style.display = "none";
+						e.target.nextSibling.style.display = "flex";
+						}}
+					/>
+					) : null}
+					<div className="profile-pic-placeholder-MPF">
+					<FaUser size={64} />
+					</div>
 				</div>
-			</div>
 
 			<div className="profile-info-MPF">
 				<div className="profile-name-section-MPF">
@@ -713,13 +717,13 @@ const MiPerfil = () => {
 			<section className="quick-actions-MPF">
 			<h2>Acciones</h2>
 			<div className="actions-grid-MPF">
-				<Link to="/MiPerfil/MisPostulaciones" className="action-card-MPF">
+				<Link to="/Aspirante/MiPerfil/MisPostulaciones" className="action-card-MPF">
 				<Rocket size={32} className="action-icon" />
 				<h3>Mis Postulaciones</h3>
 				<p>Revisa el estado de tus aplicaciones</p>
 				</Link>
 
-				<Link to="/MiPerfil/HojaDeVida" className="action-card-MPF">
+				<Link to="/Aspirante/MiPerfil/HojaDeVida" className="action-card-MPF">
 				<Eye size={32} className="action-icon" />
 				<h3>Ver Mi Hoja de Vida</h3>
 				<p>Mira cómo te ven los reclutadores</p>
@@ -745,7 +749,6 @@ const MiPerfil = () => {
 			</div>
 			</section>
 		</div>
-		</main>
 
 		{/* Modal de Confirmación para Eliminar Cuenta (RF04) */}
 		{showDeleteModal && (
@@ -818,6 +821,8 @@ const MiPerfil = () => {
 			</div>
 		</div>
 		)}
+		</main>
+		</div>
 
 		<Footer />
 	</>

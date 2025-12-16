@@ -279,6 +279,14 @@ function ReclutadorPage() {
 
               {/* POSTULACIONES */}
               <section className="section-card">
+                <div className="section-header">
+                  <div className="section-title-group">
+                    <svg className="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    </svg>
+                    <h3 className="section-title">Postulaciones</h3>
+                  </div>
+                </div>
                 <VerPostulacionesRecibidas ofertas={ofertas} />
               </section>
             </div>
