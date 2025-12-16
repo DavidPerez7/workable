@@ -112,6 +112,37 @@
 }
 
 /* ============================================================
+   BOTÓN DESCARGAR PDF
+   ============================================================ */
+.descargar-pdf-btn-PF {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.descargar-pdf-btn-PF:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.descargar-pdf-btn-PF:active {
+  transform: translateY(-1px);
+}
+
+/* ============================================================
    BLOQUES DE CONTENIDO
    ============================================================ */
 .perfil-bloque-PF {

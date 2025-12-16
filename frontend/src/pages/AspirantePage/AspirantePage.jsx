@@ -24,13 +24,14 @@ const AspirantePage = () => {
   const [hasRated, setHasRated] = useState(false);
 
   const [filters, setFilters] = useState({
+    nombre: "",
     ordenar: "",
     experiencia: "",
     salario: "",
     contrato: "",
     modalidad: "",
-    fecha: "",
-    ciudad: "",
+    empresa: "",
+    ubicacion: "",
   });
 
   // ============================================
@@ -85,6 +86,12 @@ const AspirantePage = () => {
       (job.ubicacion || "").toLowerCase().includes(generalQuery) ||
       (job.empresa?.nombre || "").toLowerCase().includes(generalQuery);
 
+    // Filtro por nombre/título (nuevo)
+    const matchNombre = filters.nombre
+      ? (job.titulo || "").toLowerCase().includes(filters.nombre.toLowerCase()) ||
+        (job.descripcion || "").toLowerCase().includes(filters.nombre.toLowerCase())
+      : true;
+
     // Filtro por nivel de experiencia
     const matchExperiencia = filters.experiencia
       ? (job.nivelExperiencia || "") === filters.experiencia
@@ -105,6 +112,16 @@ const AspirantePage = () => {
       ? (job.modalidad || "") === filters.modalidad
       : true;
 
+    // Filtro por empresa (nuevo)
+    const matchEmpresa = filters.empresa
+      ? (job.empresa?.nombre || "").toLowerCase().includes(filters.empresa.toLowerCase())
+      : true;
+
+    // Filtro por ubicación/municipio (nuevo)
+    const matchUbicacion = filters.ubicacion
+      ? (job.municipio?.nombre || "").toLowerCase().includes(filters.ubicacion.toLowerCase())
+      : true;
+
     // Filtro por ciudad
     const matchCityFilter = filters.ciudad
       ? (job.municipio?.nombre || "").toLowerCase().includes(filters.ciudad.toLowerCase())
@@ -123,10 +140,13 @@ const AspirantePage = () => {
       matchCargo &&
       matchCiudad &&
       matchesGeneral &&
+      matchNombre &&
       matchExperiencia &&
       matchSalario &&
       matchContrato &&
       matchModalidad &&
+      matchEmpresa &&
+      matchUbicacion &&
       matchCityFilter &&
       matchFecha
     );
@@ -218,13 +238,14 @@ const AspirantePage = () => {
               className="btn-clear-filters-AP"
               onClick={() =>
                 setFilters({
+                  nombre: "",
                   ordenar: "",
                   experiencia: "",
                   salario: "",
                   contrato: "",
                   modalidad: "",
-                  fecha: "",
-                  ciudad: "",
+                  empresa: "",
+                  ubicacion: "",
                 })
               }
             >
@@ -317,35 +338,46 @@ const AspirantePage = () => {
             />
           </div>
 
-          {/* Ciudad */}
+          {/* Búsqueda por nombre/título */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Ciudad</label>
+            <label className="filter-label-AP">Buscar por nombre</label>
             <input
               className="filter-input-AP"
               type="text"
-              placeholder="Ej: Bogotá, Medellín"
-              value={filters.ciudad}
+              placeholder="Ej: Desarrollador, Diseñador..."
+              value={filters.nombre}
               onChange={(e) =>
-                setFilters({ ...filters, ciudad: e.target.value })
+                setFilters({ ...filters, nombre: e.target.value })
               }
             />
           </div>
 
-          {/* Fecha de publicación */}
+          {/* Filtro por empresa */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Publicado hace</label>
-            <select
-              className="filter-select-AP"
-              value={filters.fecha}
+            <label className="filter-label-AP">Empresa</label>
+            <input
+              className="filter-input-AP"
+              type="text"
+              placeholder="Ej: Google, Microsoft..."
+              value={filters.empresa}
               onChange={(e) =>
-                setFilters({ ...filters, fecha: e.target.value })
+                setFilters({ ...filters, empresa: e.target.value })
               }
-            >
-              <option value="">Seleccionar</option>
-              <option value="1">Últimas 24 horas</option>
-              <option value="7">Últimos 7 días</option>
-              <option value="30">Últimos 30 días</option>
-            </select>
+            />
+          </div>
+
+          {/* Filtro por ubicación */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Ubicación</label>
+            <input
+              className="filter-input-AP"
+              type="text"
+              placeholder="Ej: Bogotá, Medellín..."
+              value={filters.ubicacion}
+              onChange={(e) =>
+                setFilters({ ...filters, ubicacion: e.target.value })
+              }
+            />
           </div>
         </aside>
 

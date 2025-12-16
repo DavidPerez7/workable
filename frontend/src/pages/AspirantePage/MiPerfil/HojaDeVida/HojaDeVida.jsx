@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./HojaDeVida.css";
+import { jsPDF } from "jspdf";
 import Header from "../../../../components/Header/Header";
 import Menu from "../../../../components/Menu/Menu";
 import aspirantesApi from "../../../../api/aspirantesApi";
@@ -389,6 +390,261 @@ const HojaDeVida = () => {
     }
   };
 
+  // ============================
+  // DESCARGAR PDF
+  // ============================
+  const descargarPDF = () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      let yPosition = 15;
+      const margin = 15;
+      const maxWidth = pageWidth - 2 * margin;
+      const lineHeight = 5;
+
+      // Colores profesionales
+      const colorPrincipal = [15, 23, 42]; // Navy
+      const colorSecundario = [59, 130, 246]; // Blue
+      const colorTexto = [30, 41, 59]; // Slate
+      const colorSubtexto = [100, 116, 139]; // Gris
+
+      // Título principal - Nombre
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.setTextColor(...colorPrincipal);
+      doc.text(`${perfil?.nombre || "Nombre"} ${perfil?.apellido || "Apellido"}`, margin, yPosition);
+      yPosition += 10;
+
+      // Profesión / Descripción
+      if (perfil?.descripcion) {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(12);
+        doc.setTextColor(...colorSecundario);
+        doc.text(perfil.descripcion, margin, yPosition);
+        yPosition += 8;
+      }
+
+      // Ubicación
+      if (perfil?.municipio?.nombre) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(...colorSubtexto);
+        doc.text(`📍 ${perfil.municipio.nombre}`, margin, yPosition);
+        yPosition += 6;
+      }
+
+      // Línea separadora
+      doc.setDrawColor(...colorSecundario);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 8;
+
+      // INFORMACIÓN DE CONTACTO
+      if (hojaDeVida?.contactoEmail || hojaDeVida?.telefono || hojaDeVida?.redSocial1) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(...colorPrincipal);
+        doc.text("INFORMACIÓN DE CONTACTO", margin, yPosition);
+        yPosition += 6;
+
+        if (hojaDeVida?.contactoEmail) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(...colorTexto);
+          doc.text(`Email: ${hojaDeVida.contactoEmail}`, margin + 3, yPosition);
+          yPosition += 5;
+        }
+
+        if (hojaDeVida?.telefono) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(...colorTexto);
+          doc.text(`Teléfono: ${hojaDeVida.telefono}`, margin + 3, yPosition);
+          yPosition += 5;
+        }
+
+        if (hojaDeVida?.redSocial1) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+          doc.setTextColor(...colorTexto);
+          doc.text(`Red Social: ${hojaDeVida.redSocial1}`, margin + 3, yPosition);
+          yPosition += 6;
+        }
+
+        // Línea separadora
+        doc.setDrawColor(...colorSecundario);
+        doc.line(margin, yPosition, pageWidth - margin, yPosition);
+        yPosition += 8;
+      }
+
+      // RESUMEN PROFESIONAL
+      if (hojaDeVida?.resumenProfesional) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(...colorPrincipal);
+        doc.text("RESUMEN PROFESIONAL", margin, yPosition);
+        yPosition += 6;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(...colorTexto);
+        const resumenLines = doc.splitTextToSize(hojaDeVida.resumenProfesional, maxWidth - 6);
+        doc.text(resumenLines, margin + 3, yPosition);
+        yPosition += resumenLines.length * lineHeight + 3;
+
+        // Línea separadora
+        doc.setDrawColor(...colorSecundario);
+        doc.line(margin, yPosition, pageWidth - margin, yPosition);
+        yPosition += 8;
+      }
+
+      // EXPERIENCIA
+      if (experiencias && experiencias.length > 0) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(...colorPrincipal);
+        doc.text("EXPERIENCIA LABORAL", margin, yPosition);
+        yPosition += 6;
+
+        experiencias.forEach((exp, index) => {
+          // Verificar si necesitamos nueva página
+          if (yPosition > pageHeight - 20) {
+            doc.addPage();
+            yPosition = 15;
+          }
+
+          // Cargo y empresa
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(...colorSecundario);
+          doc.text(`${exp.cargo || "Cargo"}`, margin + 3, yPosition);
+          yPosition += 5;
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(...colorTexto);
+          doc.text(`${exp.empresa || "Empresa"} | ${exp.fechaInicio || "Fecha"} ${exp.fechaFin ? `- ${exp.fechaFin}` : "- Presente"}`, margin + 3, yPosition);
+          yPosition += 4;
+
+          if (exp.descripcion) {
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.setTextColor(...colorSubtexto);
+            const descLines = doc.splitTextToSize(exp.descripcion, maxWidth - 6);
+            doc.text(descLines, margin + 3, yPosition);
+            yPosition += descLines.length * 4 + 2;
+          }
+
+          yPosition += 2;
+        });
+
+        // Línea separadora
+        if (yPosition <= pageHeight - 20) {
+          doc.setDrawColor(...colorSecundario);
+          doc.line(margin, yPosition, pageWidth - margin, yPosition);
+          yPosition += 8;
+        }
+      }
+
+      // EDUCACIÓN
+      if (estudios && estudios.length > 0) {
+        // Nueva página si es necesario
+        if (yPosition > pageHeight - 25) {
+          doc.addPage();
+          yPosition = 15;
+        }
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(...colorPrincipal);
+        doc.text("EDUCACIÓN", margin, yPosition);
+        yPosition += 6;
+
+        estudios.forEach((edu, index) => {
+          // Verificar si necesitamos nueva página
+          if (yPosition > pageHeight - 20) {
+            doc.addPage();
+            yPosition = 15;
+          }
+
+          // Título y nivel
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.setTextColor(...colorSecundario);
+          doc.text(`${edu.titulo || "Título"}`, margin + 3, yPosition);
+          yPosition += 5;
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(...colorTexto);
+          doc.text(`${edu.institucion || "Institución"} | ${edu.nivelEducativo || "Nivel"}`, margin + 3, yPosition);
+          yPosition += 4;
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(9);
+          doc.setTextColor(...colorSubtexto);
+          const periodo = edu.enCurso ? `${edu.fechaInicio || "Inicio"} - En curso` : `${edu.fechaInicio || "Inicio"} - ${edu.fechaFin || "Fin"}`;
+          doc.text(periodo, margin + 3, yPosition);
+          yPosition += 5;
+
+          if (edu.descripcion) {
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.setTextColor(...colorSubtexto);
+            const descLines = doc.splitTextToSize(edu.descripcion, maxWidth - 6);
+            doc.text(descLines, margin + 3, yPosition);
+            yPosition += descLines.length * 4 + 2;
+          }
+
+          yPosition += 2;
+        });
+
+        // Línea separadora
+        if (yPosition <= pageHeight - 20) {
+          doc.setDrawColor(...colorSecundario);
+          doc.line(margin, yPosition, pageWidth - margin, yPosition);
+          yPosition += 8;
+        }
+      }
+
+      // IDIOMAS
+      if (hojaDeVida?.idiomas) {
+        // Nueva página si es necesario
+        if (yPosition > pageHeight - 15) {
+          doc.addPage();
+          yPosition = 15;
+        }
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.setTextColor(...colorPrincipal);
+        doc.text("IDIOMAS", margin, yPosition);
+        yPosition += 6;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(...colorTexto);
+        const idiomasLines = doc.splitTextToSize(hojaDeVida.idiomas, maxWidth - 6);
+        doc.text(idiomasLines, margin + 3, yPosition);
+        yPosition += idiomasLines.length * lineHeight + 3;
+      }
+
+      // PIE DE PÁGINA - Fecha de generación
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')} | Hoja de Vida - Workable`, margin, pageHeight - 5);
+
+      // Descargar PDF
+      const nombreArchivo = `HojaDeVida_${perfil?.nombre}_${perfil?.apellido}_${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(nombreArchivo);
+    } catch (err) {
+      console.error("Error al generar PDF:", err);
+      alert("Error al descargar: " + err.message);
+    }
+  };
+
   return (
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
@@ -416,6 +672,14 @@ const HojaDeVida = () => {
             onClick={() => navigate("/Aspirante/MiPerfil")}
           >
             Editar perfil
+          </button>
+
+          <button
+            className="descargar-pdf-btn-PF"
+            onClick={descargarPDF}
+            title="Descargar Hoja de Vida en PDF"
+          >
+            📥 Descargar PDF
           </button>
         </div>
 
