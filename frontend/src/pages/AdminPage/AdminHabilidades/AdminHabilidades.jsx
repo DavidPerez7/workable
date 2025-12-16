@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../SideBar/Sidebar';
-import { obtenerHabilidadesPorUsuario, crearHabilidad, actualizarHabilidad, eliminarHabilidad } from '../../../api/habilidadAPI';
+import { obtenerTodasLasHabilidades, crearHabilidad, actualizarHabilidad, eliminarHabilidad } from '../../../api/habilidadAPI';
 import aspirantesApi from '../../../api/aspirantesApi';
 import './AdminHabilidades.css';
 
@@ -10,7 +10,6 @@ function AdminHabilidades() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState('');
-  const [selectedAspiranteId, setSelectedAspiranteId] = useState('');
   
   // Modales
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -24,36 +23,21 @@ function AdminHabilidades() {
   });
 
   useEffect(() => {
-    fetchUsuarios();
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    if (selectedAspiranteId) {
-      fetchHabilidades(selectedAspiranteId);
-    }
-  }, [selectedAspiranteId]);
-
-  const fetchUsuarios = async () => {
-    try {
-      const data = await aspirantesApi.getAll();
-      setAspirantes(data);
-      if (data.length > 0) {
-        setSelectedAspiranteId(data[0].id);
-      }
-    } catch (err) {
-      console.error('Error:', err);
-      setError('Error al cargar usuarios');
-    }
-  };
-
-  const fetchHabilidades = async (aspiranteId) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await obtenerHabilidadesPorUsuario(aspiranteId);
-      setHabilidades(data);
+      const [habilidadesData, aspirantesData] = await Promise.all([
+        obtenerTodasLasHabilidades(),
+        aspirantesApi.getAll()
+      ]);
+      setHabilidades(habilidadesData);
+      setAspirantes(aspirantesData);
     } catch (err) {
       console.error('Error:', err);
-      setHabilidades([]);
+      setError('Error al cargar datos');
     } finally {
       setLoading(false);
     }
@@ -73,9 +57,7 @@ function AdminHabilidades() {
       });
       setShowCreateModal(false);
       resetForm();
-      if (selectedAspiranteId) {
-        fetchHabilidades(selectedAspiranteId);
-      }
+      fetchData();
     } catch (err) {
       console.error('Error al crear habilidad:', err);
       alert('Error al crear habilidad');
@@ -90,9 +72,7 @@ function AdminHabilidades() {
         aspirante: selectedHabilidad.aspirante
       });
       setShowEditModal(false);
-      if (selectedAspiranteId) {
-        fetchHabilidades(selectedAspiranteId);
-      }
+      fetchData();
     } catch (err) {
       console.error('Error al actualizar:', err);
       alert('Error al actualizar habilidad');
@@ -103,9 +83,7 @@ function AdminHabilidades() {
     if (window.confirm('¿Eliminar esta habilidad?')) {
       try {
         await eliminarHabilidad(id);
-        if (selectedAspiranteId) {
-          fetchHabilidades(selectedAspiranteId);
-        }
+        fetchData();
       } catch (err) {
         console.error('Error al eliminar:', err);
         alert('Error al eliminar habilidad');
@@ -128,7 +106,7 @@ function AdminHabilidades() {
     setFormData({ nombre: '', aspirante: null });
   };
 
-  if (loading && !selectedAspiranteId) return <div style={{padding: '2rem', textAlign: 'center'}}>Cargando...</div>;
+  if (loading) return <div style={{padding: '2rem', textAlign: 'center'}}>Cargando...</div>;
   if (error) return <div style={{padding: '2rem', color: '#DC2626'}}>{error}</div>;
 
   return (
@@ -145,16 +123,6 @@ function AdminHabilidades() {
           </div>
 
           <div className="filters-habilidades-HAB">
-            <select 
-              value={selectedAspiranteId} 
-              onChange={(e) => setSelectedAspiranteId(e.target.value)}
-              className="filter-select-HAB"
-            >
-              <option value="">Seleccionar Aspirante...</option>
-              {aspirantes.map(asp => (
-                <option key={asp.id} value={asp.id}>{asp.nombre} {asp.apellido}</option>
-              ))}
-            </select>
             <input
               type="text"
               placeholder="Buscar habilidad..."

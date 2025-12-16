@@ -25,6 +25,17 @@ public class HabilidadController {
     @Autowired
     private HabilidadService habilidadService;
 
+    // ===== READ todas las habilidades (ADMIN/RECLUTADOR) =====
+    @GetMapping
+    public ResponseEntity<?> obtenerTodasLasHabilidades() {
+        try {
+            List<Habilidad> habilidades = habilidadService.listarTodas();
+            return ResponseEntity.ok(habilidades);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     // ===== READ habilidades del aspirante autenticado =====
     @PreAuthorize("hasRole('ASPIRANTE')")
     @GetMapping("/aspirante")
