@@ -22,6 +22,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private EmpresaRepository empresaRepo;
     @Autowired private OfertaRepo ofertaRepo;
     @Autowired private PostulacionRepo postulacionRepo;
+    @Autowired private HojaVidaRepo hojaVidaRepo;
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Override
@@ -174,14 +175,94 @@ public class DataInitializer implements CommandLineRunner {
                 postulacion.setAspirante(postulante);
                 postulacion.setFechaCreacion(LocalDate.now());
                 postulacion.setIsActive(true);
-                postulacion.setEstado(Postulacion.Estado.PENDIENTE);
+                postulacion.setEstado(Postulacion.Estado.ENTREVISTA_PROGRAMADA);
+                
+                // Agregar CitacionData embebida
+                CitacionData citacion = new CitacionData();
+                citacion.setFecha(LocalDate.now().plusDays(5));
+                citacion.setHora("14:30");
+                citacion.setLinkMeet("https://meet.google.com/abc-defg-hij");
+                citacion.setEstado(CitacionData.Estado.PENDIENTE);
+                postulacion.setCitacionData(citacion);
+                
                 postulacionRepo.save(postulacion);
-                System.out.println("✓ Postulación creada para oferta '" + oferta.getTitulo() + "' por aspirante ID " + (postulante != null ? postulante.getId() : "null"));
+                System.out.println("✓ Postulación creada para oferta '" + oferta.getTitulo() + "' con CitacionData embebida");
             } catch (Exception e) {
                 System.out.println("⚠ Error creando postulacion de prueba: " + e.getMessage());
             }
         } catch (Exception e) {
             System.out.println("⚠ Error creando oferta de prueba: " + e.getMessage());
+        }
+
+        // ===== CREAR HOJA DE VIDA CON ESTUDIOS Y EXPERIENCIAS EMBEBIDOS =====
+        try {
+            HojaVida hojaVida = new HojaVida();
+            Aspirante aspiranteHoja = aspiranteRepo.findById(1L).orElse(aspirante);
+            hojaVida.setAspirante(aspiranteHoja);
+            hojaVida.setResumenProfesional("Profesional con experiencia en desarrollo de software con Java y tecnologías web modernas");
+            hojaVida.setObjetivoProfesional("Desarrollador Senior en empresas de tecnología líderes");
+            hojaVida.setContactoEmail("aspirante@example.com");
+            hojaVida.setTelefono("3105555555");
+            hojaVida.setIdiomas("Español (Nativo), Inglés (Intermedio)");
+            hojaVida.setEsPublica(true);
+            
+            // Crear lista de estudios
+            List<EstudioData> estudios = new java.util.ArrayList<>();
+            EstudioData estudio1 = new EstudioData();
+            estudio1.setTitulo("Ingeniería de Sistemas");
+            estudio1.setInstitucion("Universidad Nacional de Colombia");
+            estudio1.setNivelEducativo(EstudioData.NivelEducativo.UNIVERSITARIO);
+            estudio1.setFechaInicio(LocalDate.of(2018, 1, 15));
+            estudio1.setFechaFin(LocalDate.of(2022, 12, 10));
+            estudio1.setEnCurso(false);
+            estudio1.setModalidad(EstudioData.Modalidad.PRESENCIAL);
+            estudio1.setDescripcion("Formación en ingeniería de software, bases de datos y desarrollo web");
+            estudio1.setCertificadoUrl("https://example.com/certificados/ingenieria-sistemas.pdf");
+            estudios.add(estudio1);
+            
+            EstudioData estudio2 = new EstudioData();
+            estudio2.setTitulo("Especialización en Desarrollo Java");
+            estudio2.setInstitucion("Instituto Tecnológico de Colombia");
+            estudio2.setNivelEducativo(EstudioData.NivelEducativo.ESPECIALIZACION);
+            estudio2.setFechaInicio(LocalDate.of(2023, 2, 1));
+            estudio2.setFechaFin(null);
+            estudio2.setEnCurso(true);
+            estudio2.setModalidad(EstudioData.Modalidad.VIRTUAL);
+            estudio2.setDescripcion("Especialización en Spring Boot, Microservicios y Arquitectura");
+            estudio2.setCertificadoUrl(null);
+            estudios.add(estudio2);
+            
+            hojaVida.setEstudios(estudios);
+            
+            // Crear lista de experiencias
+            List<ExperienciaData> experiencias = new java.util.ArrayList<>();
+            ExperienciaData exp1 = new ExperienciaData();
+            exp1.setCargo("Desarrollador Java Junior");
+            exp1.setEmpresa("Tech Solutions Colombia");
+            exp1.setFechaInicio(LocalDate.of(2021, 6, 1));
+            exp1.setFechaFin(LocalDate.of(2022, 12, 31));
+            exp1.setMunicipio("Bogotá");
+            exp1.setDescripcion("Desarrollo de aplicaciones backend con Spring Boot, implementación de APIs REST y bases de datos");
+            exp1.setCertificadoUrl("https://example.com/certificados/tech-solutions.pdf");
+            experiencias.add(exp1);
+            
+            ExperienciaData exp2 = new ExperienciaData();
+            exp2.setCargo("Desarrollador Java Intermedio");
+            exp2.setEmpresa("Innovate Systems");
+            exp2.setFechaInicio(LocalDate.of(2023, 1, 15));
+            exp2.setFechaFin(null);
+            exp2.setMunicipio("Bogotá");
+            exp2.setDescripcion("Desarrollo de microservicios, arquitectura de software, mentoring de juniors");
+            exp2.setCertificadoUrl(null);
+            experiencias.add(exp2);
+            
+            hojaVida.setExperiencias(experiencias);
+            
+            hojaVidaRepo.save(hojaVida);
+            System.out.println("✓ HojaVida de prueba creada con " + estudios.size() + " estudios y " + experiencias.size() + " experiencias embebidas");
+        } catch (Exception e) {
+            System.out.println("⚠ Error creando hoja de vida de prueba: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
