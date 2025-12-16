@@ -20,7 +20,14 @@ const TOKEN_KEY = 'workable_token';
 const USER_KEY = 'workable_user';
 
 // Clave de empresa cacheada por correo
-const empresaCacheKey = (correo: string) => `workable_empresa_${correo.toLowerCase()}`;
+// Expo SecureStore exige claves alfanuméricas y solo permite ".", "-", "_".
+// Sanitizamos el correo para cumplir las reglas (p.ej. reemplazar "@" y otros por "_").
+const normalizeKey = (raw: string) => {
+  const lower = (raw || '').toLowerCase();
+  const safe = lower.replace(/[^a-z0-9._-]/g, '_');
+  return safe.length > 0 ? safe : 'unknown';
+};
+const empresaCacheKey = (correo: string) => `workable_empresa_${normalizeKey(correo)}`;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);

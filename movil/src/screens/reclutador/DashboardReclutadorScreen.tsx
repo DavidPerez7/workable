@@ -50,7 +50,8 @@ const DashboardReclutadorScreen = () => {
       } else if (user?.correo) {
         // Fallback a empresa cacheada localmente si el perfil no trae empresa
         try {
-          const cached = await SecureStore.getItemAsync(`workable_empresa_${user.correo.toLowerCase()}`);
+          const safeEmail = (user.correo || '').toLowerCase().replace(/[^a-z0-9._-]/g, '_') || 'unknown';
+          const cached = await SecureStore.getItemAsync(`workable_empresa_${safeEmail}`);
           if (cached) {
             const parsed = JSON.parse(cached);
             setEmpresa(parsed);
