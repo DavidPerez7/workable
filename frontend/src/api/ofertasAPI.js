@@ -1,144 +1,179 @@
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  return {
-    "Content-Type": "application/json",
-    ...(token && { "Authorization": `Bearer ${token}` })
-  };
-};
+import API from './axiosConfig';
 
-export const getAllOfertas = async () => {
+// ===== CREATE =====
+export const crearOferta = async (ofertaData) => {
   try {
-    const response = await fetch("http://localhost:8080/api/oferta", {
-      headers: getAuthHeaders()
-    });
-    if (!response.ok) {
-      throw new Error("Error al obtener ofertas");
-    }
-    return response.json();
+    const response = await API.post('/api/oferta', ofertaData);
+    return response.data;
   } catch (error) {
-    if (error.message.includes("Failed to fetch")) {
-      throw new Error("No se pudo conectar con el servidor");
-    }
+    console.error('Error al crear oferta:', error);
     throw error;
   }
 };
 
-export const getOfertasAbiertas = async () => {
+// ===== READ =====
+
+export const getAllOfertas = async () => {
   try {
-    const response = await fetch("http://localhost:8080/api/oferta/abiertas");
-    if (!response.ok) {
-      throw new Error("Error al obtener ofertas");
-    }
-    return response.json();
+    const response = await API.get('/api/oferta');
+    return response.data;
   } catch (error) {
-    if (error.message.includes("Failed to fetch")) {
-      throw new Error("No se pudo conectar con el servidor");
-    }
+    console.error('Error al obtener ofertas:', error);
     throw error;
   }
 };
 
 export const getOfertaById = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/${id}`);
-  if (!response.ok) {
-    throw new Error("Oferta no encontrada");
+  try {
+    const response = await API.get(`/api/oferta/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener oferta ${id}:`, error);
+    throw error;
   }
-  return response.json();
 };
 
+// ===== BÚSQUEDAS Y FILTROS =====
+
+// RF11 - Buscar por nombre/título
+export const buscarPorNombre = async (nombre) => {
+  try {
+    const response = await API.get('/api/oferta/nombre', {
+      params: { nombre }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas por nombre:', error);
+    throw error;
+  }
+};
+
+// RF12 - Buscar por rango de salario
+export const buscarPorSalario = async (min, max) => {
+  try {
+    const response = await API.get('/api/oferta/salario', {
+      params: { min, max }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas por salario:', error);
+    throw error;
+  }
+};
+
+// RF12 - Buscar por ubicación (municipio)
+export const buscarPorUbicacion = async (municipioId) => {
+  try {
+    const response = await API.get(`/api/oferta/ubicacion/${municipioId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas por ubicación:', error);
+    throw error;
+  }
+};
+
+// RF11 - Buscar por nivel de experiencia
+export const buscarPorExperiencia = async (nivel) => {
+  try {
+    const response = await API.get(`/api/oferta/experiencia/${nivel}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas por experiencia:', error);
+    throw error;
+  }
+};
+
+// RF12 - Buscar por modalidad
+export const buscarPorModalidad = async (modalidad) => {
+  try {
+    const response = await API.get(`/api/oferta/modalidad/${modalidad}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas por modalidad:', error);
+    throw error;
+  }
+};
+
+// Buscar por empresa
 export const getOfertasPorEmpresa = async (empresaId) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/empresa/${empresaId}`);
-  if (!response.ok) {
-    throw new Error("Error al obtener ofertas");
+  try {
+    const response = await API.get(`/api/oferta/empresa/${empresaId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener ofertas de empresa ${empresaId}:`, error);
+    throw error;
   }
-  return response.json();
 };
 
-export const getOfertasPorReclutador = async (reclutadorId) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/reclutador/${reclutadorId}`, {
-    headers: getAuthHeaders()
-  });
-  if (!response.ok) {
-    throw new Error("Error al obtener ofertas");
-  }
-  return response.json();
-};
-
+// Búsqueda por texto genérica (nombre o descripción)
 export const buscarOfertas = async (texto) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/buscar?texto=${encodeURIComponent(texto)}`);
-  if (!response.ok) {
-    throw new Error("Error al buscar ofertas");
+  try {
+    const response = await API.get('/api/oferta/nombre', {
+      params: { nombre: texto }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas:', error);
+    throw error;
   }
-  return response.json();
 };
 
-export const crearOferta = async (ofertaData) => {
-  const response = await fetch("http://localhost:8080/api/oferta", {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(ofertaData),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al crear oferta");
-  }
-
-  return response.json();
-};
+// ===== UPDATE =====
 
 export const actualizarOferta = async (id, ofertaData) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(ofertaData),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al actualizar oferta");
+  try {
+    const response = await API.put(`/api/oferta/${id}`, ofertaData);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al actualizar oferta ${id}:`, error);
+    throw error;
   }
-
-  return response.json();
 };
 
+// Cambiar estado de oferta (ABIERTA/CERRADA)
 export const cambiarEstadoOferta = async (id, estado) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/${id}/estado?estado=${estado}`, {
-    method: "PATCH",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al cambiar estado");
+  try {
+    const response = await API.patch(`/api/oferta/${id}/estado`, null, {
+      params: { estado }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error al cambiar estado de oferta ${id}:`, error);
+    throw error;
   }
-
-  return response.json();
 };
+
+// ===== DELETE =====
 
 export const eliminarOferta = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/oferta/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al eliminar oferta");
+  try {
+    const response = await API.delete(`/api/oferta/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al eliminar oferta ${id}:`, error);
+    throw error;
   }
-
-  return null;
 };
 
+// ===== EXPORTS PARA COMPATIBILIDAD HACIA ATRÁS =====
+// Mantener nombres antiguos para no romper código existente
+export const getOfertasAbiertas = getAllOfertas;
+export const getOfertasPorReclutador = getOfertasPorEmpresa;
+
 export default {
-  getAllOfertas,
-  getOfertasAbiertas,
-  getOfertaById,
-  getOfertasPorEmpresa,
-  getOfertasPorReclutador,
-  buscarOfertas,
   crearOferta,
+  getAllOfertas,
+  getOfertaById,
+  buscarPorNombre,
+  buscarPorSalario,
+  buscarPorUbicacion,
+  buscarPorExperiencia,
+  buscarPorModalidad,
+  getOfertasPorEmpresa,
+  buscarOfertas,
   actualizarOferta,
   cambiarEstadoOferta,
-  eliminarOferta
+  eliminarOferta,
+  getOfertasAbiertas,
+  getOfertasPorReclutador
 };

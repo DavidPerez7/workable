@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import { crearOferta } from "../../../api/ofertasAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
+import reclutadoresApi from "../../../api/reclutadoresApi";
 import "./PublicacionPage.css";
 
 const PublicacionPage = () => {
@@ -13,6 +14,7 @@ const PublicacionPage = () => {
   const [formData, setFormData] = useState({
     tituloAviso: "",
     descripcionTrabajo: "",
+    requisitos: "",
     salario: "",
     direccion: "",
     fechaLimite: "",
@@ -24,28 +26,33 @@ const PublicacionPage = () => {
   });
 
   useEffect(() => {
-    const cargarMunicipios = async () => {
+    const cargarDatos = async () => {
       try {
-        const data = await getMunicipios();
-        setMunicipios(data);
+        // Cargar municipios
+        const municipiosData = await getMunicipios();
+        setMunicipios(municipiosData);
+
+        // Obtener empresaId desde localStorage (actualizado por RegistrarEmpresa)
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user?.empresa?.id || user?.empresaId) {
+          const empresaId = user.empresa?.id || user.empresaId;
+          setFormData(prev => ({ ...prev, empresaId }));
+        } else {
+          // Fallback: intentar obtener desde getMyProfile
+          try {
+            const reclutador = await reclutadoresApi.getMyProfile();
+            if (reclutador?.empresa?.id) {
+              setFormData(prev => ({ ...prev, empresaId: reclutador.empresa.id }));
+            }
+          } catch (err) {
+            console.warn("No se pudo obtener empresa desde getMyProfile:", err);
+          }
+        }
       } catch (error) {
-        console.error("Error al cargar municipios:", error);
+        console.error("Error al cargar datos:", error);
       }
     };
-    cargarMunicipios();
-
-    // Obtener empresa del reclutador actual desde localStorage o contexto
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        if (user.empresa?.id) {
-          setFormData(prev => ({ ...prev, empresaId: user.empresa.id }));
-        }
-      } catch (e) {
-        console.error("Error parsing user:", e);
-      }
-    }
+    cargarDatos();
   }, []);
 
   const modalidades = [
@@ -58,7 +65,7 @@ const PublicacionPage = () => {
     { value: "TIEMPO_COMPLETO", nombre: "Tiempo completo" },
     { value: "MEDIO_TIEMPO", nombre: "Medio tiempo" },
     { value: "TEMPORAL", nombre: "Temporal" },
-    { value: "FREELANCE", nombre: "Freelance" },
+    { value: "PRESTACION_SERVICIOS", nombre: "Prestación de servicios" },
     { value: "PRACTICAS", nombre: "Prácticas" },
   ];
 
@@ -71,6 +78,55 @@ const PublicacionPage = () => {
     e.preventDefault();
     setLoading(true);
 
+    // Validar campos obligatorios en frontend ANTES de enviar
+    if (!formData.tituloAviso?.trim()) {
+      alert("El título es obligatorio");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.descripcionTrabajo?.trim()) {
+      alert("La descripción es obligatoria");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.requisitos?.trim()) {
+      alert("Los requisitos son obligatorios");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.salario) {
+      alert("El salario es obligatorio");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.fechaLimite) {
+      alert("La fecha límite es obligatoria");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.modalidadTrabajo) {
+      alert("La modalidad es obligatoria");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.tipoContrato) {
+      alert("El tipo de contrato es obligatorio");
+      setLoading(false);
+      return;
+    }
+    
+    if (!formData.nivelExperiencia) {
+      alert("El nivel de experiencia es obligatorio");
+      setLoading(false);
+      return;
+    }
+
     if (!formData.empresaId) {
       alert("No se encontró información de la empresa. Por favor, inicia sesión nuevamente.");
       setLoading(false);
@@ -81,18 +137,22 @@ const PublicacionPage = () => {
       const ofertaData = {
         titulo: formData.tituloAviso,
         descripcion: formData.descripcionTrabajo,
-        salario: parseFloat(formData.salario),
-        ubicacion: formData.direccion,
+        requisitos: formData.requisitos,
+        salario: parseInt(formData.salario, 10),
+        numeroVacantes: 1,
         fechaLimite: formData.fechaLimite,
-        modalidad: formData.modalidadTrabajo, // Enum string
-        tipoContrato: formData.tipoContrato,  // Enum string
-        nivelExperiencia: formData.nivelExperiencia, // Enum string
-        estadoOferta: "ABIERTA", // Enum string
+        nivelExperiencia: formData.nivelExperiencia,
+        modalidad: formData.modalidadTrabajo,
+        tipoContrato: formData.tipoContrato,
+        estado: "ABIERTA",
         empresa: { id: formData.empresaId },
-        municipio: formData.municipio ? { id: parseInt(formData.municipio) } : undefined
+        municipio: formData.municipio ? { id: parseInt(formData.municipio, 10) } : null,
+        beneficios: []
       };
 
-      console.log("Creando oferta:", ofertaData);
+      console.log("=== OFERTA A ENVIAR ===");
+      console.log(JSON.stringify(ofertaData, null, 2));
+      
       const response = await crearOferta(ofertaData);
       console.log("Oferta creada:", response);
 
@@ -102,6 +162,7 @@ const PublicacionPage = () => {
       setFormData({
         tituloAviso: "",
         descripcionTrabajo: "",
+        requisitos: "",
         salario: "",
         direccion: "",
         fechaLimite: "",
@@ -115,7 +176,7 @@ const PublicacionPage = () => {
       navigate("/Reclutador/GestigOferts");
 
     } catch (error) {
-      console.error("Error al crear oferta:", error);
+      console.error("Error completo:", error);
       alert(`Error al publicar oferta: ${error.message}`);
     } finally {
       setLoading(false);
@@ -157,6 +218,24 @@ const PublicacionPage = () => {
                 required
                 className="pb-textarea"
               />
+            </div>
+
+            <div className="pb-field">
+              <label htmlFor="requisitos">Requisitos * (máximo 500 caracteres)</label>
+              <textarea
+                id="requisitos"
+                name="requisitos"
+                value={formData.requisitos}
+                onChange={handleChange}
+                rows="3"
+                maxLength="500"
+                required
+                className="pb-textarea"
+                placeholder="Ej: 2 años de experiencia en programación, conocimiento en React, etc."
+              />
+              <small style={{ color: '#999', marginTop: '5px', display: 'block' }}>
+                {formData.requisitos.length}/500 caracteres
+              </small>
             </div>
 
             <div className="pb-field">

@@ -4,7 +4,7 @@ import { obtenerPostulacionesPorOferta, cambiarEstadoPostulacion } from "../../a
 import HeaderReclutador from "../HeaderReclutador/HeaderReclutador";
 import "./VerPostulacionesRecibidas.css";
 
-const VerPostulacionesRecibidas = () => {
+const VerPostulacionesRecibidas = ({ ofertas = [] }) => {
   const location = useLocation();
   const ofertaId = location.state?.ofertaId;
 
@@ -16,12 +16,16 @@ const VerPostulacionesRecibidas = () => {
 
   useEffect(() => {
     if (ofertaId) {
+      // Si se especificó una oferta específica, cargar solo sus postulaciones
       fetchPostulaciones();
+    } else if (ofertas && ofertas.length > 0) {
+      // Si se pasaron ofertas como prop, cargar postulaciones de todas ellas
+      fetchAllPostulaciones();
     } else {
-      setError('No se especificó una oferta');
+      setError('No hay ofertas disponibles');
       setLoading(false);
     }
-  }, [ofertaId]);
+  }, [ofertaId, ofertas]);
 
   const fetchPostulaciones = async () => {
     try {
@@ -31,6 +35,38 @@ const VerPostulacionesRecibidas = () => {
       setPostulaciones(data || []);
     } catch (err) {
       console.error('Error al cargar postulaciones:', err);
+      setError(err.message || 'Error al cargar postulaciones');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllPostulaciones = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const allPostulaciones = [];
+
+      // Cargar postulaciones de cada oferta
+      for (const oferta of ofertas) {
+        try {
+          const data = await obtenerPostulacionesPorOferta(oferta.id);
+          if (data && data.length > 0) {
+            // Agregar la información de la oferta a cada postulación
+            const postulacionesConOferta = data.map(p => ({
+              ...p,
+              oferta: oferta
+            }));
+            allPostulaciones.push(...postulacionesConOferta);
+          }
+        } catch (err) {
+          console.warn(`Error al cargar postulaciones de oferta ${oferta.id}:`, err);
+        }
+      }
+
+      setPostulaciones(allPostulaciones);
+    } catch (err) {
+      console.error('Error al cargar todas las postulaciones:', err);
       setError(err.message || 'Error al cargar postulaciones');
     } finally {
       setLoading(false);
@@ -132,7 +168,7 @@ const VerPostulacionesRecibidas = () => {
         {/* ======== LISTA DE POSTULACIONES ======== */}
         <div className="vp-container">
           {postulacionesFiltradas.length === 0 ? (
-            <p>No hay postulaciones para esta oferta</p>
+            <p>No hay postulaciones disponibles</p>
           ) : (
             postulacionesFiltradas.map((p) => (
               <div className="vp-item" key={p.id}>
@@ -148,6 +184,18 @@ const VerPostulacionesRecibidas = () => {
                     <p className="vp-status">{p.estado}</p>
                   </div>
                 </div>
+
+                {/* Información de la oferta */}
+                {p.oferta && (
+                  <div className="vp-oferta-info">
+                    <p className="vp-oferta-titulo">
+                      <strong>Oferta:</strong> {p.oferta.titulo || p.oferta.nom || 'Sin título'}
+                    </p>
+                    <p className="vp-oferta-desc">
+                      {p.oferta.descripcion || p.oferta.desc || 'Sin descripción'}
+                    </p>
+                  </div>
+                )}
 
                 <p className="vp-text">
                   Fecha: {new Date(p.fechaPostulacion || p.fecha).toLocaleDateString()}

@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
 import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador";
 import OfertaCard from "../../components/OfertaCard/ofertaCard";
 import VerPostulacionesRecibidas from "../../components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
 import "./ReclutadorPage.css";
-import { getAllOfertas, getOfertasPorReclutador } from "../../api/ofertasAPI";
+import { getOfertasPorEmpresa, obtenerPostulacionesPorOferta } from "../../api/ofertasAPI";
 import reclutadoresApi from "../../api/reclutadoresApi";
 import { getEmpresaById } from "../../api/empresaAPI";
 
 function ReclutadorPage() {
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [reclutadorData, setReclutadorData] = useState(null);
   const [empresaData, setEmpresaData] = useState(null);
+  const [totalPostulantes, setTotalPostulantes] = useState(0);
 
   useEffect(() => {
     fetchData();
@@ -23,37 +22,60 @@ function ReclutadorPage() {
     try {
       setLoading(true);
       
-      // Obtener datos del usuario desde localStorage
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      // Cargar perfil del reclutador logueado
+      const reclutador = await reclutadoresApi.getMyProfile();
       
-      // Cargar datos del reclutador
-      if (user.correo) {
-        const reclutador = await reclutadoresApi.getByCorreo(user.correo);
-        setReclutadorData(reclutador);
-        
-        // Cargar empresa si existe
-        if (reclutador.empresa?.id) {
+      // Cargar empresa si el reclutador tiene asignada una
+      if (reclutador?.empresa?.id) {
+        try {
+          const empresa = await getEmpresaById(reclutador.empresa.id);
+          console.log('Empresa cargada:', empresa);
+          setEmpresaData(empresa);
+          
+          // Cargar ofertas de la empresa
           try {
-            const empresa = await getEmpresaById(reclutador.empresa.id);
-            setEmpresaData(empresa);
-          } catch (err) {
-            console.warn('No se pudo cargar la empresa:', err);
-          }
-        }
-        
-        // Cargar ofertas del reclutador
-        if (reclutador.id) {
-          try {
-            const ofertasData = await getOfertasPorReclutador(reclutador.id);
+            const ofertasData = await getOfertasPorEmpresa(empresa.id);
             setOfertas(ofertasData || []);
+
+            // Cargar postulaciones de todas las ofertas
+            if (ofertasData && ofertasData.length > 0) {
+              try {
+                let totalPostulaciones = 0;
+                for (const oferta of ofertasData) {
+                  try {
+                    const postulaciones = await obtenerPostulacionesPorOferta(oferta.id);
+                    totalPostulaciones += (postulaciones?.length || 0);
+                  } catch (err) {
+                    console.warn(`No se pudieron cargar postulaciones para oferta ${oferta.id}:`, err);
+                  }
+                }
+                setTotalPostulantes(totalPostulaciones);
+              } catch (err) {
+                console.warn('Error al cargar postulaciones:', err);
+                setTotalPostulantes(0);
+              }
+            } else {
+              setTotalPostulantes(0);
+            }
           } catch (err) {
             console.warn('No se pudieron cargar ofertas:', err);
             setOfertas([]);
+            setTotalPostulantes(0);
           }
+        } catch (err) {
+          console.warn('No se pudo cargar la empresa:', err);
+          setEmpresaData(null);
         }
+      } else {
+        setEmpresaData(null);
+        setOfertas([]);
+        setTotalPostulantes(0);
       }
     } catch (error) {
-      console.error("Error al cargar datos:", error);
+      console.error('Error al cargar perfil del reclutador:', error);
+      setEmpresaData(null);
+      setOfertas([]);
+      setTotalPostulantes(0);
     } finally {
       setLoading(false);
     }
@@ -141,10 +163,10 @@ function ReclutadorPage() {
                   </div>
                   <div className="company-info">
                     <h2 className="company-name">
-                      {empresaData?.nombre || reclutadorData?.nombre || 'Mi Empresa'}
+                      {empresaData?.nombre || 'Mi Empresa'}
                     </h2>
                     <p className="company-role">
-                      {empresaData ? 'Reclutador' : 'Sin empresa registrada'}
+                      {empresaData ? `${empresaData.categoria || 'Empresa'}` : 'Sin empresa registrada'}
                     </p>
                   </div>
                 </div>
@@ -169,7 +191,7 @@ function ReclutadorPage() {
                     <h3 className="section-title">Reclutamiento</h3>
                   </div>
                   <Link to="/Reclutador/GestigOferts" className="section-link">
-                    Gestionar avisos
+                    Gestionar ofertas
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
@@ -247,6 +269,19 @@ function ReclutadorPage() {
                   <div className="stat-card">
                     <div className="stat-icon blue-bg">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      </svg>
+                    </div>
+                    <div className="stat-info">
+                      <p className="stat-value">{ofertas.length}</p>
+                      <p className="stat-label">Ofertas publicadas</p>
+                    </div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-icon green-bg">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -254,20 +289,10 @@ function ReclutadorPage() {
                       </svg>
                     </div>
                     <div className="stat-info">
-                      <p className="stat-value">248</p>
-                      <p className="stat-label">Total candidatos</p>
-                    </div>
-                  </div>
-
-                  <div className="stat-card">
-                    <div className="stat-icon green-bg">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </div>
-                    <div className="stat-info">
-                      <p className="stat-value">42</p>
-                      <p className="stat-label">Contrataciones</p>
+                      <p className="stat-value">
+                        {totalPostulantes}
+                      </p>
+                      <p className="stat-label">Aspirantes postulados</p>
                     </div>
                   </div>
                 </div>
@@ -303,7 +328,7 @@ function ReclutadorPage() {
                   </Link>
                 </div>
 
-                <VerPostulacionesRecibidas />
+                <VerPostulacionesRecibidas ofertas={ofertas} />
               </section>
 
 
@@ -325,32 +350,39 @@ function ReclutadorPage() {
                         <span>{empresaData.descripcion || 'No disponible'}</span>
                       </p>
                       <p>
+                        <strong>Dirección:</strong>{" "}
+                        <span>{empresaData.direccion || empresaData.ubicacion || 'No disponible'}</span>
+                      </p>
+                      <p>
                         <strong>Número de trabajadores:</strong>{" "}
                         <span>{empresaData.numeroTrabajadores || 0}</span>
                       </p>
-                      <div className="banner-puntuation">
-                        <p><strong>Puntuación:</strong> </p>
-                        <div className="banner-stars">
-                          {[...Array(5)].map((_, i) => (
-                            <FaStar 
-                              key={i} 
-                              color={i < (empresaData.puntuacion || 0) ? "#FFD700" : "#cccccc"} 
-                            />
-                          ))}
-                        </div>
-                      </div>
                       <p>
                         <strong>NIT:</strong>{" "}
                         <span>{empresaData.nit || 'No disponible'}</span>
                       </p>
-                      <p>
-                        <strong>Email:</strong>{" "}
-                        <span>{empresaData.correo || 'No disponible'}</span>
-                      </p>
-                      <p>
-                        <strong>Teléfono:</strong>{" "}
-                        <span>{empresaData.telefono || 'No disponible'}</span>
-                      </p>
+                      {empresaData.correo && (
+                        <p>
+                          <strong>Email:</strong>{" "}
+                          <span>{empresaData.correo}</span>
+                        </p>
+                      )}
+                      {empresaData.telefono && (
+                        <p>
+                          <strong>Teléfono:</strong>{" "}
+                          <span>{empresaData.telefono}</span>
+                        </p>
+                      )}
+                      {empresaData.website && (
+                        <p>
+                          <strong>Website:</strong>{" "}
+                          <span>
+                            <a href={empresaData.website} target="_blank" rel="noopener noreferrer">
+                              {empresaData.website}
+                            </a>
+                          </span>
+                        </p>
+                      )}
                       {empresaData.municipio && (
                         <p>
                           <strong>Ubicación:</strong>{" "}
@@ -372,75 +404,6 @@ function ReclutadorPage() {
                   )}
                 </div>
               </div>
-
-              <section className="section-card">
-                <div className="section-header">
-                  <div className="section-title-group">
-                    <svg
-                      className="section-icon"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                    <h3 className="section-title">Reviews</h3>
-                  </div>
-                  <Link to="/Reclutador/reviews" className="section-link">
-                    Ver todas
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                  </Link>
-                </div>
-
-                <div className="reviews-container">
-                  <div className="review-item">
-                    <div className="review-header">
-                      <div className="review-avatar">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                      </div>
-                      <div className="review-info">
-                        <p className="review-name">Juan Pérez</p>
-                        <div className="review-stars">⭐⭐⭐⭐⭐</div>
-                      </div>
-                    </div>
-                    <p className="review-text">
-                      Excelente proceso de selección, muy profesional y transparente.
-                    </p>
-                  </div>
-
-                  <div className="review-item">
-                    <div className="review-header">
-                      <div className="review-avatar">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                      </div>
-                      <div className="review-info">
-                        <p className="review-name">María García</p>
-                        <div className="review-stars">⭐⭐⭐⭐</div>
-                      </div>
-                    </div>
-                    <p className="review-text">
-                      Gran ambiente laboral y oportunidades de crecimiento.
-                    </p>
-                  </div>
-
-                  <div className="empty-reviews">
-                    <p className="empty-reviews-text">No hay más reviews recientes</p>
-                  </div>
-                </div>
-              </section>
-
             </div>
           </div>
         </div>

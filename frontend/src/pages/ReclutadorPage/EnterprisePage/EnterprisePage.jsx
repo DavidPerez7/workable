@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getOfertasPorEmpresa } from "../../../api/ofertasAPI";
 import { getEmpresaById } from "../../../api/empresaAPI";
 import reclutadoresApi from "../../../api/reclutadoresApi";
@@ -9,11 +9,9 @@ import "./EnterprisePage.css";
 
 function EnterprisePage() {
   const navigate = useNavigate();
-  const { nitId } = useParams();
   const [empresaData, setEmpresaData] = useState(null);
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("descripcion");
 
   useEffect(() => {
@@ -23,7 +21,6 @@ function EnterprisePage() {
   const fetchEmpresaData = async () => {
     try {
       setLoading(true);
-      setError(null);
 
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       
@@ -46,7 +43,7 @@ function EnterprisePage() {
       }
 
       if (!empresaId) {
-        setError('No tienes una empresa asociada. Por favor registra una empresa primero.');
+        console.error('No tienes una empresa asociada. Por favor registra una empresa primero.');
         setLoading(false);
         return;
       }
@@ -66,7 +63,6 @@ function EnterprisePage() {
 
     } catch (error) {
       console.error("Error al cargar empresa:", error);
-      setError(error.message || 'Error al cargar información de la empresa');
     } finally {
       setLoading(false);
     }
@@ -226,14 +222,11 @@ function EnterprisePage() {
                         <tr><td><b>Razón social</b></td><td>{empresaData.razonSocial}</td></tr>
                         <tr><td><b>Fecha de creación</b></td><td>{empresaData.fechaCreacion}</td></tr>
                         <tr><td><b>Activo</b></td><td>{empresaData.isActive ? 'Sí' : 'No'}</td></tr>
-                        <tr><td><b>Código invitación</b></td><td>{empresaData.codigoInvitacion}</td></tr>
                         <tr><td><b>Dueño (reclutador)</b></td><td>{empresaData.reclutadorOwner ? empresaData.reclutadorOwner.nombre + ' ' + empresaData.reclutadorOwner.apellido : 'N/A'}</td></tr>
                         <tr><td><b>Municipio</b></td><td>{empresaData.municipio ? empresaData.municipio.nombre : 'N/A'}</td></tr>
-                        <tr><td><b>Puntuación</b></td><td>{empresaData.puntuacion}</td></tr>
                         <tr><td><b>Email contacto</b></td><td>{empresaData.emailContacto}</td></tr>
                         <tr><td><b>Teléfono contacto</b></td><td>{empresaData.telefonoContacto}</td></tr>
                         <tr><td><b>Website</b></td><td>{empresaData.website}</td></tr>
-                        <tr><td><b>Logo URL</b></td><td>{empresaData.logoUrl}</td></tr>
                         <tr><td><b>Redes sociales</b></td><td>{empresaData.redesSociales && empresaData.redesSociales.length > 0 ? empresaData.redesSociales.join(', ') : 'N/A'}</td></tr>
                         <tr><td><b>Direcciones</b></td><td>{empresaData.direcciones && empresaData.direcciones.length > 0 ? empresaData.direcciones.join(', ') : 'N/A'}</td></tr>
                         <tr><td><b>Categorías</b></td><td>{empresaData.categories && empresaData.categories.length > 0 ? Array.from(empresaData.categories).join(', ') : 'N/A'}</td></tr>
@@ -263,27 +256,6 @@ function EnterprisePage() {
                           {empresaData.numeroTrabajadores}+
                         </p>
                         <p className="stat-label-EP">Empleados</p>
-                      </div>
-                    </div>
-
-                    <div className="stat-item-EP">
-                      <div className="stat-icon-EP green-bg-EP">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="stat-value-EP">
-                          {empresaData.puntuacion} / 5.0
-                        </p>
-                        <p className="stat-label-EP">Valoración</p>
                       </div>
                     </div>
 
@@ -409,10 +381,7 @@ function EnterprisePage() {
                             </span>
                           </div>
                           <div className="job-actions-EP">
-                            <Link to={`/oferta/${oferta.id}`} className="btn-view-job-EP">Ver oferta completa</Link>
-                            <button className="btn-save-job-EP">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                            </button>
+                            <Link to={`/Reclutador/OfertaCompleta/${oferta.id}`} className="btn-view-job-EP">Ver oferta completa</Link>
                           </div>
                         </div>
                       ))}

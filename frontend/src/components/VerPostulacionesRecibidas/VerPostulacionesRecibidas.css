@@ -122,6 +122,29 @@
   margin-bottom: 0.25rem;
 }
 
+/* ===== INFORMACIÓN DE OFERTA ===== */
+.vp-oferta-info {
+  background: #f0f9ff;
+  border-left: 4px solid #3b82f6;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin: 0.75rem 0;
+}
+
+.vp-oferta-titulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.vp-oferta-desc {
+  font-size: 0.9rem;
+  color: #475569;
+  margin: 0;
+  line-height: 1.4;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .vp-filters {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
-import { getEmpresaById } from "../../../api/empresaAPI";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
 import Footer from "../../../components/Footer/footer";
 import { User, Building2, BarChart3, LogOut, Edit2, Save, X } from "lucide-react";
@@ -10,11 +9,6 @@ import "./ReclutadorProfile.css";
 function ReclutadorProfile() {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editingField, setEditingField] = useState(null);
-  const [editValues, setEditValues] = useState({});
-  const [savingField, setSavingField] = useState(null);
 
   useEffect(() => {
     fetchProfileData();
@@ -22,137 +16,18 @@ function ReclutadorProfile() {
 
   const fetchProfileData = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      // Obtener perfil del reclutador autenticado
+      const reclutadorData = await reclutadoresApi.getMyProfile();
 
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const correo = user.correo;
-
-      if (!correo) {
-        throw new Error("No se encontró información del usuario");
-      }
-
-      const reclutadorData = await reclutadoresApi.getByCorreo(correo);
-
-      let empresaData = null;
-      if (reclutadorData.empresa?.id) {
-        try {
-          empresaData = await getEmpresaById(reclutadorData.empresa.id);
-        } catch (err) {
-          console.warn("No se pudo cargar información de la empresa:", err);
-        }
-      }
-
-      setProfileData({
-        ...reclutadorData,
-        empresa: empresaData || reclutadorData.empresa,
-      });
-      setEditValues({
-        nombre: reclutadorData.nombre || "",
-        correo: reclutadorData.correo || "",
-        telefono: reclutadorData.telefono || "",
-        urlFotoPerfil: reclutadorData.urlFotoPerfil || "",
-        urlBanner: reclutadorData.urlBanner || "",
-      });
+      setProfileData(reclutadorData);
     } catch (error) {
       console.error("Error al cargar perfil:", error);
-      setError(error.message || "Error al cargar el perfil");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEditClick = () => {
-    setShowEditSidebar(true);
-  };
-
-  const handleCloseSidebar = () => {
-    setShowEditSidebar(false);
-    // Restaurar valores originales
-    setEditForm({
-      nombre: profileData.nombre,
-      correo: profileData.correo,
-      fotoPerfilUrl: profileData.fotoPerfilUrl,
-      fotoBannerUrl: profileData.fotoBannerUrl,
-    });
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSaveChanges = async () => {
-    setSaving(true);
-    try {
-      // TODO: Llamada real a API para actualizar
-      // const response = await fetch(`http://localhost:8080/api/usuario/${profileData.id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}`
-      //   },
-      //   body: JSON.stringify({
-      //     nombre: editForm.nombre,
-      //     correo: editForm.correo,
-      //     telefono: profileData.telefono,
-      //     fotoPerfilUrl: editForm.fotoPerfilUrl,
-      //     rol: profileData.rol,
-      //     municipio_id: profileData.municipio.id
-      //   })
-      // });
-
-      // Simulación de guardado exitoso
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setProfileData((prev) => ({
-        ...prev,
-        nombre: editForm.nombre,
-        correo: editForm.correo,
-        fotoPerfilUrl: editForm.fotoPerfilUrl,
-        fotoBannerUrl: editForm.fotoBannerUrl,
-      }));
-
-      setShowEditSidebar(false);
-      alert("Perfil actualizado exitosamente");
-    } catch (error) {
-      console.error("Error al actualizar perfil:", error);
-      alert("Error al actualizar el perfil. Intenta nuevamente.");
-    } finally {
-      setSaving(false);
     }
   };
 
   const cerrarSesion = () => {
     localStorage.clear();
     navigate("/login");
-  };
-
-  const startEditing = (field) => {
-    setEditingField(field);
-  };
-
-  const cancelEdit = () => {
-    setEditingField(null);
-  };
-
-  const saveEdit = async (field) => {
-    setSavingField(field);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setProfileData((prev) => ({
-        ...prev,
-        [field]: editValues[field],
-      }));
-      setEditingField(null);
-    } catch (error) {
-      console.error("Error al guardar:", error);
-    } finally {
-      setSavingField(null);
-    }
   };
 
   if (!profileData) {
@@ -282,6 +157,12 @@ function ReclutadorProfile() {
           <section className="quick-actions-RPF">
             <h2>Acciones</h2>
             <div className="actions-grid-RPF">
+              <Link to="/Reclutador/EditarPerfil" className="action-card-RPF">
+                <Edit2 size={32} className="action-icon" />
+                <h3>Editar Perfil</h3>
+                <p>Actualiza tu información personal</p>
+              </Link>
+
               <Link to="/Reclutador/GestigOferts" className="action-card-RPF">
                 <BarChart3 size={32} className="action-icon" />
                 <h3>Gestionar Ofertas</h3>

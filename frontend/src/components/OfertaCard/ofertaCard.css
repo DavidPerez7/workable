@@ -2,21 +2,46 @@
   background: #fff;
   border-radius: 1rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 1rem;
+  padding: 1.25rem;
   margin-bottom: 1rem;
-  transition: transform 0.2s;
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
 }
+
 .oferta-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
 }
+
+.oferta-card h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.oferta-card p {
+  margin: 0.5rem 0;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.oferta-card p strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
 .oferta-titulo {
   font-size: 1.1rem;
   font-weight: bold;
+  color: #1e293b;
 }
+
 .oferta-detalles {
   display: flex;
   justify-content: space-between;
   margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: #444;
+  color: #64748b;
 }

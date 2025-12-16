@@ -71,6 +71,33 @@ public class ReclutadorController {
         }
     }
 
+    @PreAuthorize("hasRole('RECLUTADOR')")
+    @PutMapping("/me/empresa/{empresaId}")
+    public ResponseEntity<?> asignarEmpresa(@PathVariable Long empresaId, @AuthenticationPrincipal CustomUserDetails user) {
+        try {
+            Long usuarioId = user.getUsuarioId();
+            Reclutador reclutador = reclutadorService.asignarEmpresa(usuarioId, empresaId);
+            return ResponseEntity.ok(reclutador);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al asignar empresa: " + e.getMessage()));
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<?> getByEmpresa(@PathVariable Long empresaId) {
+        try {
+            List<Reclutador> reclutadores = reclutadorService.getByEmpresaId(empresaId);
+            return ResponseEntity.ok(reclutadores);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutadores: " + e.getMessage()));
+        }
+    }
+
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")

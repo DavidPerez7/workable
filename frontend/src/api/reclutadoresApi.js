@@ -113,6 +113,17 @@ const reclutadoresApi = {
       console.error(`Error deleting reclutador ${id}:`, error);
       throw error;
     }
+  },
+
+  // Asignar empresa al reclutador logueado
+  asignarEmpresa: async (empresaId) => {
+    try {
+      const response = await API.put(`/api/reclutador/me/empresa/${empresaId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error assigning empresa ${empresaId}:`, error);
+      throw error;
+    }
   }
 };
 

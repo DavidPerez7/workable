@@ -1,12 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { crearEmpresa } from "../../../api/empresaAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
+import reclutadoresApi from "../../../api/reclutadoresApi";
 import "./RegistrarEmpresa.css";
 
 const RegistrarEmpresa = () => {
   const formRef = useRef(null);
-  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [municipios, setMunicipios] = useState([]);
@@ -51,22 +50,6 @@ const RegistrarEmpresa = () => {
       return;
     }
 
-    const empresaData = {
-      nombre: data.nombreEmpresa,
-      nit: data.nit,
-      razonSocial: data.razonSocial,
-      descripcion: data.descripcionEmpresa,
-      numeroTrabajadores: Number(data.numeroTrabajadores),
-      emailContacto: data.emailContacto,
-      telefonoContacto: data.telefonoContacto,
-      ubicacion: data.ubicacion,
-      website: data.website || null,
-      categories: formData.getAll("categories"),
-      municipio: {
-        id: Number(data.municipioId),
-      },
-    };
-
     try {
       const categories = formData.getAll("categories");
       const empresaData = {
@@ -91,8 +74,17 @@ const RegistrarEmpresa = () => {
       const response = await crearEmpresa(empresaData);
       console.log("Empresa creada:", response);
 
-      // Actualizar localStorage con el empresaId
+      // Asignar la empresa al reclutador logueado
+      try {
+        await reclutadoresApi.asignarEmpresa(response.id);
+        console.log("Empresa asignada al reclutador");
+      } catch (err) {
+        console.warn("No se pudo asignar la empresa automáticamente:", err);
+      }
+
+      // Actualizar localStorage con los datos de la empresa
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+      user.empresa = { id: response.id };
       user.empresaId = response.id;
       user.empresaNombre = response.nombre;
       localStorage.setItem('user', JSON.stringify(user));
@@ -100,7 +92,10 @@ const RegistrarEmpresa = () => {
       alert("Empresa registrada con éxito");
       formRef.current.reset();
 
-      navigate("/Reclutador/EnterprisePage");
+      // Recargar la página para que los cambios se reflejen inmediatamente
+      setTimeout(() => {
+        window.location.href = "/Reclutador/EnterprisePage";
+      }, 500);
 
     } catch (error) {
       console.error("Error al registrar empresa:", error);

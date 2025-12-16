@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import { getOfertasPorReclutador, eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
+import { getOfertasPorEmpresa, eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
 import "./GestigOferts.css";
 
 const GestigOfertsPage = () => {
@@ -26,13 +26,13 @@ const GestigOfertsPage = () => {
       }
 
       const user = JSON.parse(userStr);
-      const reclutadorId = user.usuarioId;
+      const empresaId = user.empresa?.id;
 
-      if (!reclutadorId) {
-        throw new Error('No se encontró ID de reclutador');
+      if (!empresaId) {
+        throw new Error('No se encontró ID de empresa');
       }
 
-      const data = await getOfertasPorReclutador(reclutadorId);
+      const data = await getOfertasPorEmpresa(empresaId);
       setOfertas(data);
     } catch (err) {
       console.error('Error al cargar ofertas:', err);

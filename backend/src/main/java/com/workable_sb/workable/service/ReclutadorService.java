@@ -116,6 +116,15 @@ public class ReclutadorService {
         return reclutadorRepo.save(existingReclutador);
     }
 
+    // Asignar empresa al reclutador logueado
+    public Reclutador asignarEmpresa(Long reclutadorId, Long empresaId) {
+        Reclutador reclutador = getById(reclutadorId);
+        Empresa empresa = empresaRepo.findById(empresaId)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+        reclutador.setEmpresa(empresa);
+        return reclutadorRepo.save(reclutador);
+    }
+
     // ===== DELETE =====
     public void delete(Long id) {
         Reclutador reclutador = getById(id);
