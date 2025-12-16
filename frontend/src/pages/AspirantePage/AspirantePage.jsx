@@ -24,14 +24,14 @@ const AspirantePage = () => {
   const [hasRated, setHasRated] = useState(false);
 
   const [filters, setFilters] = useState({
+    nombre: "",
     ordenar: "",
     experiencia: "",
     salario: "",
-    jornada: "",
     contrato: "",
     modalidad: "",
-    fecha: "",
-    ciudad: "",
+    empresa: "",
+    ubicacion: "",
   });
 
   // ============================================
@@ -86,9 +86,15 @@ const AspirantePage = () => {
       (job.ubicacion || "").toLowerCase().includes(generalQuery) ||
       (job.empresa?.nombre || "").toLowerCase().includes(generalQuery);
 
-    // Filtro por experiencia (requerida)
+    // Filtro por nombre/título (nuevo)
+    const matchNombre = filters.nombre
+      ? (job.titulo || "").toLowerCase().includes(filters.nombre.toLowerCase()) ||
+        (job.descripcion || "").toLowerCase().includes(filters.nombre.toLowerCase())
+      : true;
+
+    // Filtro por nivel de experiencia
     const matchExperiencia = filters.experiencia
-      ? (job.nivelExperiencia || "").toLowerCase().includes(filters.experiencia.toLowerCase())
+      ? (job.nivelExperiencia || "") === filters.experiencia
       : true;
 
     // Filtro por salario (rango mínimo)
@@ -96,19 +102,24 @@ const AspirantePage = () => {
       ? Number(job.salario || 0) >= Number(filters.salario)
       : true;
 
-    // Filtro por jornada
-    const matchJornada = filters.jornada
-      ? (job.jornada || "").toLowerCase() === filters.jornada.toLowerCase()
-      : true;
-
     // Filtro por tipo de contrato
     const matchContrato = filters.contrato
-      ? (job.tipoContrato || "").toLowerCase() === filters.contrato.toLowerCase()
+      ? (job.tipoContrato || "") === filters.contrato
       : true;
 
     // Filtro por modalidad
     const matchModalidad = filters.modalidad
-      ? (job.modalidad || "").toLowerCase() === filters.modalidad.toLowerCase()
+      ? (job.modalidad || "") === filters.modalidad
+      : true;
+
+    // Filtro por empresa (nuevo)
+    const matchEmpresa = filters.empresa
+      ? (job.empresa?.nombre || "").toLowerCase().includes(filters.empresa.toLowerCase())
+      : true;
+
+    // Filtro por ubicación/municipio (nuevo)
+    const matchUbicacion = filters.ubicacion
+      ? (job.municipio?.nombre || "").toLowerCase().includes(filters.ubicacion.toLowerCase())
       : true;
 
     // Filtro por ciudad
@@ -129,11 +140,13 @@ const AspirantePage = () => {
       matchCargo &&
       matchCiudad &&
       matchesGeneral &&
+      matchNombre &&
       matchExperiencia &&
       matchSalario &&
-      matchJornada &&
       matchContrato &&
       matchModalidad &&
+      matchEmpresa &&
+      matchUbicacion &&
       matchCityFilter &&
       matchFecha
     );
@@ -170,9 +183,19 @@ const AspirantePage = () => {
   const handlePostularse = async (ofertaId) => {
     setPostulando(true);
     try {
-      await crearPostulacion(ofertaId);
+      const usuarioId = localStorage.getItem("usuarioId");
+      if (!usuarioId) {
+        alert("Debes iniciar sesión para postularte");
+        return;
+      }
+
+      const postulacionData = {
+        aspirante: { id: parseInt(usuarioId) },
+        oferta: { id: ofertaId }
+      };
+
+      await crearPostulacion(postulacionData);
       alert("¡Postulación exitosa!");
-      cargarOfertas();
     } catch (err) {
       console.error("Error al postularse:", err);
       alert("Error al postularse: " + err.message);
@@ -215,14 +238,14 @@ const AspirantePage = () => {
               className="btn-clear-filters-AP"
               onClick={() =>
                 setFilters({
+                  nombre: "",
                   ordenar: "",
                   experiencia: "",
                   salario: "",
-                  jornada: "",
                   contrato: "",
                   modalidad: "",
-                  fecha: "",
-                  ciudad: "",
+                  empresa: "",
+                  ubicacion: "",
                 })
               }
             >
@@ -248,7 +271,7 @@ const AspirantePage = () => {
 
           {/* Experiencia */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Experiencia</label>
+            <label className="filter-label-AP">Nivel de Experiencia</label>
             <select
               className="filter-select-AP"
               value={filters.experiencia}
@@ -256,10 +279,12 @@ const AspirantePage = () => {
                 setFilters({ ...filters, experiencia: e.target.value })
               }
             >
-              <option value="">Seleccionar</option>
-              <option value="junior">Junior</option>
-              <option value="semi">Semi-Senior</option>
-              <option value="senior">Senior</option>
+              <option value="">Todas</option>
+              <option value="SIN_EXPERIENCIA">Sin Experiencia</option>
+              <option value="BASICO">Básico</option>
+              <option value="INTERMEDIO">Intermedio</option>
+              <option value="AVANZADO">Avanzado</option>
+              <option value="EXPERTO">Experto</option>
             </select>
           </div>
 
@@ -273,16 +298,16 @@ const AspirantePage = () => {
                 setFilters({ ...filters, modalidad: e.target.value })
               }
             >
-              <option value="">Seleccionar</option>
-              <option value="Presencial">Presencial</option>
-              <option value="Remota">Remota</option>
-              <option value="Híbrida">Híbrida</option>
+              <option value="">Todas</option>
+              <option value="PRESENCIAL">Presencial</option>
+              <option value="REMOTO">Remoto</option>
+              <option value="HIBRIDO">Híbrido</option>
             </select>
           </div>
 
           {/* Tipo de contrato */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Tipo de contrato</label>
+            <label className="filter-label-AP">Tipo de Contrato</label>
             <select
               className="filter-select-AP"
               value={filters.contrato}
@@ -290,27 +315,12 @@ const AspirantePage = () => {
                 setFilters({ ...filters, contrato: e.target.value })
               }
             >
-              <option value="">Seleccionar</option>
-              <option value="Término Fijo">Término Fijo</option>
-              <option value="Término Indefinido">Término Indefinido</option>
-              <option value="Aprendiz">Aprendiz</option>
-            </select>
-          </div>
-
-          {/* Jornada */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Jornada</label>
-            <select
-              className="filter-select-AP"
-              value={filters.jornada}
-              onChange={(e) =>
-                setFilters({ ...filters, jornada: e.target.value })
-              }
-            >
-              <option value="">Seleccionar</option>
-              <option value="Completa">Completa</option>
-              <option value="Media Tiempo">Media Tiempo</option>
-              <option value="Por Horas">Por Horas</option>
+              <option value="">Todos</option>
+              <option value="TIEMPO_COMPLETO">Tiempo Completo</option>
+              <option value="MEDIO_TIEMPO">Medio Tiempo</option>
+              <option value="TEMPORAL">Temporal</option>
+              <option value="PRESTACION_SERVICIOS">Prestación de Servicios</option>
+              <option value="PRACTICAS">Prácticas</option>
             </select>
           </div>
 
@@ -328,35 +338,46 @@ const AspirantePage = () => {
             />
           </div>
 
-          {/* Ciudad */}
+          {/* Búsqueda por nombre/título */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Ciudad</label>
+            <label className="filter-label-AP">Buscar por nombre</label>
             <input
               className="filter-input-AP"
               type="text"
-              placeholder="Ej: Bogotá, Medellín"
-              value={filters.ciudad}
+              placeholder="Ej: Desarrollador, Diseñador..."
+              value={filters.nombre}
               onChange={(e) =>
-                setFilters({ ...filters, ciudad: e.target.value })
+                setFilters({ ...filters, nombre: e.target.value })
               }
             />
           </div>
 
-          {/* Fecha de publicación */}
+          {/* Filtro por empresa */}
           <div className="filter-group-AP">
-            <label className="filter-label-AP">Publicado hace</label>
-            <select
-              className="filter-select-AP"
-              value={filters.fecha}
+            <label className="filter-label-AP">Empresa</label>
+            <input
+              className="filter-input-AP"
+              type="text"
+              placeholder="Ej: Google, Microsoft..."
+              value={filters.empresa}
               onChange={(e) =>
-                setFilters({ ...filters, fecha: e.target.value })
+                setFilters({ ...filters, empresa: e.target.value })
               }
-            >
-              <option value="">Seleccionar</option>
-              <option value="1">Últimas 24 horas</option>
-              <option value="7">Últimos 7 días</option>
-              <option value="30">Últimos 30 días</option>
-            </select>
+            />
+          </div>
+
+          {/* Filtro por ubicación */}
+          <div className="filter-group-AP">
+            <label className="filter-label-AP">Ubicación</label>
+            <input
+              className="filter-input-AP"
+              type="text"
+              placeholder="Ej: Bogotá, Medellín..."
+              value={filters.ubicacion}
+              onChange={(e) =>
+                setFilters({ ...filters, ubicacion: e.target.value })
+              }
+            />
           </div>
         </aside>
 

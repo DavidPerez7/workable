@@ -71,7 +71,7 @@ const OfertaDetailScreen = () => {
           onPress: async () => {
             setApplying(true);
             try {
-              await createPostulacion(ofertaId);
+              await createPostulacion(ofertaId, user.usuarioId);
               Alert.alert('Éxito', 'Te has postulado exitosamente', [
                 { text: 'OK', onPress: () => {
                   setIsAlreadyApplied(true);

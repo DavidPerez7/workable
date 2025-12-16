@@ -5,10 +5,9 @@ import aspirantesApi from '../../../api/aspirantesApi';
 import reclutadoresApi from '../../../api/reclutadoresApi';
 import { getEmpresaById } from '/src/api/empresaAPI';
 import administradorAPI from '../../../api/administradorAPI';
+import { getMunicipios } from '../../../api/municipioAPI';
 import hojaDeVidaApi, { actualizarHojaDeVida as actualizarHojaDeVidaNamed } from '/src/api/hojaDeVidaAPI.js';
 import API from '/src/api/axiosConfig.js';
-import { obtenerEstudiosPorUsuario, crearEstudio, actualizarEstudio, eliminarEstudio } from '../../../api/estudioAPI';
-import { obtenerExperienciasPorUsuario, crearExperiencia, actualizarExperiencia, eliminarExperiencia } from '../../../api/experienciaAPI';
 import './AdminUsuarios.css';
 import HojaDeVidaModal from './components/HojaDeVidaModal';
 import CompanyModal from './components/CompanyModal';
@@ -24,6 +23,8 @@ export default function AdminUsuarios() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [municipios, setMunicipios] = useState([]);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(true);
 
   // Clear success messages after a short timeout
   useEffect(() => {
@@ -31,6 +32,27 @@ export default function AdminUsuarios() {
     const t = setTimeout(() => setSuccess(''), 3500);
     return () => clearTimeout(t);
   }, [success]);
+
+  // Cargar municipios
+  useEffect(() => {
+    const cargarMunicipios = async () => {
+      try {
+        setLoadingMunicipios(true);
+        const data = await getMunicipios();
+        setMunicipios(data || []);
+      } catch (err) {
+        console.error('Error cargando municipios:', err);
+      } finally {
+        setLoadingMunicipios(false);
+      }
+    };
+    cargarMunicipios();
+  }, []);
+
+  useEffect(() => {
+    cargarUsuarios();
+  }, []);
+
   const [showModal, setShowModal] = useState(false);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -42,11 +64,9 @@ export default function AdminUsuarios() {
     resumenProfesional: '',
     objetivoProfesional: '',
     redSocial1: '',
-    // redSocial2 replaced by contactoEmail (autocompletado desde Aspirante)
     idiomas: '',
     esPublica: false
   });
-  // Estudios & Experiencias forms moved into HojaDeVidaModal to simplify the page state.
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -57,16 +77,13 @@ export default function AdminUsuarios() {
     fechaNacimiento: '',
     genero: '',
     password: '',
-    rol: 'ASPIRANTE'
+    rol: 'ASPIRANTE',
+    municipioId: ''
   });
-  const [empresaMap, setEmpresaMap] = useState({}); // cache empresa.nombre by usuario id
+  const [empresaMap, setEmpresaMap] = useState({});
   const [companyModalVisible, setCompanyModalVisible] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [loadingCompany, setLoadingCompany] = useState(false);
-
-  useEffect(() => {
-    cargarUsuarios();
-  }, []);
 
   const cargarUsuarios = async () => {
     setLoading(true);
@@ -373,7 +390,8 @@ export default function AdminUsuarios() {
       genero: '',
       password: '',
       rol: role,
-      empresaId: ''
+      empresaId: '',
+      municipioId: ''
     });
     setShowRoleSelector(false);
     setShowModal(true);
@@ -429,7 +447,8 @@ export default function AdminUsuarios() {
         rol: rol,
         descripcion: usuario.descripcion || '',
         empresaId: usuario.empresa?.id || '',
-        ubicacion: usuario.ubicacion || ''
+        ubicacion: usuario.ubicacion || '',
+        municipioId: usuario.municipio?.id || ''
       });
       setShowModal(true);
     } catch (err) {
@@ -451,7 +470,11 @@ export default function AdminUsuarios() {
         setError('Contraseña es requerida');
         return;
       }
-      if (!formData.fechaNacimiento) {
+      if (formData.password.length < 8) {
+        setError('La contraseña debe tener mínimo 8 caracteres');
+        return;
+      }
+      if (formData.rol !== 'ADMIN' && !formData.fechaNacimiento) {
         setError('Fecha de nacimiento es requerida');
         return;
       }
@@ -489,6 +512,9 @@ export default function AdminUsuarios() {
           if (formData.ubicacion) {
             updateData.ubicacion = formData.ubicacion;
           }
+          if (formData.municipioId) {
+            updateData.municipio = { id: Number(formData.municipioId) };
+          }
         } else if (rol === 'RECLUTADOR') {
           // Reclutador: puede tener urlFotoPerfil y urlBanner
           if (formData.urlFotoPerfil) {
@@ -500,8 +526,15 @@ export default function AdminUsuarios() {
           if (formData.empresaId) {
             updateData.empresa = { id: Number(formData.empresaId) };
           }
+          if (formData.municipioId) {
+            updateData.municipio = { id: Number(formData.municipioId) };
+          }
+        } else if (rol === 'ADMIN') {
+          // Administrador: puede tener municipio
+          if (formData.municipioId) {
+            updateData.municipio = { id: Number(formData.municipioId) };
+          }
         }
-        // Administrador: solo campos básicos
         
         console.log('Actualizando usuario:', { id, rol, ...updateData });
         if (rol === 'ASPIRANTE') {
@@ -518,7 +551,11 @@ export default function AdminUsuarios() {
           setError('Contraseña es requerida');
           return;
         }
-        if (!formData.fechaNacimiento) {
+        if (formData.password.length < 8) {
+          setError('La contraseña debe tener mínimo 8 caracteres');
+          return;
+        }
+        if (formData.rol !== 'ADMIN' && !formData.fechaNacimiento) {
           setError('Fecha de nacimiento es requerida');
           return;
         }
@@ -528,7 +565,12 @@ export default function AdminUsuarios() {
         }
         
         updateData.password = formData.password;
-        updateData.fechaNacimiento = formData.fechaNacimiento;
+        // Para ADMIN, si no hay fechaNacimiento, usar una fecha por defecto
+        if (formData.rol === 'ADMIN' && !formData.fechaNacimiento) {
+          updateData.fechaNacimiento = '1990-01-01';
+        } else {
+          updateData.fechaNacimiento = formData.fechaNacimiento;
+        }
         
         // Campos específicos por rol
         const rol = formData.rol;
@@ -544,6 +586,9 @@ export default function AdminUsuarios() {
           if (formData.ubicacion) {
             updateData.ubicacion = formData.ubicacion;
           }
+          if (formData.municipioId) {
+            updateData.municipio = { id: Number(formData.municipioId) };
+          }
         } else if (rol === 'RECLUTADOR') {
           // Reclutador: agregar urlFotoPerfil y urlBanner
           if (formData.urlFotoPerfil) {
@@ -555,8 +600,15 @@ export default function AdminUsuarios() {
           if (formData.empresaId) {
             updateData.empresa = { id: Number(formData.empresaId) };
           }
+          if (formData.municipioId) {
+            updateData.municipio = { id: Number(formData.municipioId) };
+          }
+        } else if (rol === 'ADMIN') {
+          // Administrador: puede tener municipio
+          if (formData.municipioId) {
+            updateData.municipio = { id: Number(formData.municipioId) };
+          }
         }
-        // Administrador: sin campos adicionales especiales
         
         console.log('Creando usuario nuevo:', { ...updateData, rol });
         let respuesta = null;
@@ -983,17 +1035,50 @@ export default function AdminUsuarios() {
                     <input type="number" name="empresaId" value={formData.empresaId || ''} onChange={handleInputChange} placeholder="ID empresa (opcional)" />
                   </div>
                   <div className="form-group-UP">
+                    <label>Municipio {editingUser ? '' : '*'}</label>
+                    <select name="municipioId" value={formData.municipioId} onChange={handleInputChange} required={!editingUser} disabled={loadingMunicipios}>
+                      <option value="">Selecciona un municipio</option>
+                      {municipios.map(m => (
+                        <option key={m.id} value={m.id}>{m.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group-UP">
                     <label>Fecha de Nacimiento {editingUser ? '' : '*'}</label>
                     <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required={!editingUser} />
                   </div>
                 </>
               )}
 
-              {formData.rol === 'ADMIN' && editingUser && editingUser.data?.ultimoAcceso && (
-                <div className="form-group-UP">
-                  <label>Último acceso</label>
-                  <input type="text" value={editingUser.data.ultimoAcceso} disabled />
-                </div>
+              {formData.rol === 'ADMIN' && (
+                <>
+                  <div className="form-group-UP">
+                    <label>Municipio (Opcional)</label>
+                    <select name="municipioId" value={formData.municipioId} onChange={handleInputChange} disabled={loadingMunicipios}>
+                      <option value="">Selecciona un municipio</option>
+                      {municipios.map(m => (
+                        <option key={m.id} value={m.id}>{m.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group-UP">
+                    <label>Fecha de Nacimiento (Opcional)</label>
+                    <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} />
+                  </div>
+                  {editingUser && editingUser.data?.ultimoAcceso && (
+                    <div className="form-group-UP">
+                      <label>Último acceso</label>
+                      <input type="text" value={editingUser.data.ultimoAcceso} disabled />
+                    </div>
+                  )}
+                  {!editingUser && (
+                    <div className="form-group-UP">
+                      <small style={{ color: '#666', fontStyle: 'italic' }}>
+                        ℹ️ Los administradores no requieren fecha de nacimiento. Solo se necesita una contraseña segura (mínimo 8 caracteres).
+                      </small>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Show fields that are relevant to the role. Fecha de nacimiento is shown for aspirantes (required only on create),
@@ -1001,6 +1086,15 @@ export default function AdminUsuarios() {
 
               {formData.rol === 'ASPIRANTE' && (
                 <>
+                  <div className="form-group-UP">
+                    <label>Municipio {editingUser ? '' : '*'}</label>
+                    <select name="municipioId" value={formData.municipioId} onChange={handleInputChange} required={!editingUser} disabled={loadingMunicipios}>
+                      <option value="">Selecciona un municipio</option>
+                      {municipios.map(m => (
+                        <option key={m.id} value={m.id}>{m.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="form-group-UP">
                     <label>Fecha de Nacimiento {editingUser ? '' : '*'}</label>
                     <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleInputChange} required={!editingUser} />
@@ -1128,6 +1222,31 @@ export default function AdminUsuarios() {
                   }}
                 >
                   🔍 Reclutador
+                </button>
+
+                <button
+                  onClick={() => handleSelectRole('ADMIN')}
+                  style={{
+                    padding: '2rem 1rem',
+                    border: '2px solid #8B5CF6',
+                    borderRadius: '12px',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: '#8B5CF6'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = '#8B5CF6';
+                    e.target.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = '#fff';
+                    e.target.style.color = '#8B5CF6';
+                  }}
+                >
+                  🤵 Administrador
                 </button>
                 {selectedHojaDeVida ? (
                   <div className="hdv-summary-mini" style={{gridColumn: '1 / -1', textAlign: 'left'}}>

@@ -34,10 +34,14 @@ const reclutadoresApi = {
     }
   },
 
-  // Obtener mi perfil
+  // Obtener mi perfil (usa el ID del usuario en localStorage)
   getMyProfile: async () => {
     try {
-      const response = await API.get('/api/reclutador/me');
+      const reclutadorId = localStorage.getItem("usuarioId");
+      if (!reclutadorId) {
+        throw new Error("No se encontró ID de usuario en sesión");
+      }
+      const response = await API.get(`/api/reclutador/${reclutadorId}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching my profile:', error);

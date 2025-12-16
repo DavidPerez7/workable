@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../SideBar/Sidebar';
-import { obtenerTodasLasHabilidades, crearHabilidad, actualizarHabilidad, eliminarHabilidad } from '../../../api/habilidadAPI';
+// NOTA: Habilidades fueron removidas del backend, este componente no funciona actualmente
+// import { obtenerTodasLasHabilidades, crearHabilidad, actualizarHabilidad, eliminarHabilidad } from '../../../api/habilidadAPI';
 import aspirantesApi from '../../../api/aspirantesApi';
 import './AdminHabilidades.css';
 

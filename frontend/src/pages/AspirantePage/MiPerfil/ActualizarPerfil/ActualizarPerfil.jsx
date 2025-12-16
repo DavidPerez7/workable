@@ -17,7 +17,8 @@ Loader
 } from "lucide-react";
 import Header from "../../../../components/Header/Header";
 import footer from "../../../../components/Footer/footer";
-import { getUsuarioActual } from "../../../../api/usuarioAPI";
+import aspirantesApi from "../../../../api/aspirantesApi";
+import { getMunicipios } from "../../../../api/municipioAPI";
 import "./ActualizarPerfil.css";
 
 const ActualizarPerfil = () => {
@@ -50,7 +51,11 @@ const [previewImage, setPreviewImage] = useState(null);
 
 const cargarDatosPerfil = async () => {
 	try {
-	const data = await getUsuarioActual(rol);
+	const usuarioId = localStorage.getItem("usuarioId");
+	if (!usuarioId) {
+		throw new Error("No se encontró ID de usuario en sesión");
+	}
+	const data = await aspirantesApi.get(usuarioId);
 
 	const formattedData = {
 		nombre: data.nombre || "",
@@ -78,38 +83,14 @@ const cargarDatosPerfil = async () => {
 
 // ============================================================
 // Cargar lista de municipios
-// TODO: CONECTAR CON API - Por ahora usando datos de ejemplo
 // ============================================================
 const cargarMunicipios = async () => {
 	try {
-	// ❌ COMENTADO - Llamada a API
-	// const response = await fetch('http://localhost:8080/api/municipios', {
-	//   method: 'GET',
-	//   headers: {
-	//     Authorization: `Bearer ${token}`,
-	//     "Content-Type": "application/json",
-	//   },
-	// });
-
-	// if (!response.ok) throw new Error("Error al cargar municipios");
-	// const data = await response.json();
-
-	// ✅ DATOS DE EJEMPLO - Simula lista de municipios
-	const data = [
-		{ id: 1, nombre: "BOGOTA D.C" },
-		{ id: 2, nombre: "MEDELLIN" },
-		{ id: 3, nombre: "BELLO" },
-		{ id: 4, nombre: "ITAGUI" },
-		{ id: 5, nombre: "ENVIGADO" },
-		{ id: 6, nombre: "RIONEGRO" },
-		{ id: 7, nombre: "CALI" },
-		{ id: 8, nombre: "BARRANQUILLA" },
-		{ id: 9, nombre: "BUCARAMANGA" }
-	];
-
-	setMunicipios(data);
+	const data = await getMunicipios();
+	setMunicipios(data || []);
 	} catch (err) {
 	console.error("Error cargando municipios:", err);
+	setMunicipios([]); // Fallback a lista vacía
 	}
 };
 
@@ -202,32 +183,25 @@ const handleSubmit = async (e) => {
 	}
 
 	try {
-	// ❌ COMENTADO - Llamada a API
-	// const response = await fetch(`http://localhost:8080/api/aspirante/${idAspirante}`, {
-	//   method: 'PUT',
-	//   headers: {
-	//     Authorization: `Bearer ${token}`,
-	//     "Content-Type": "application/json",
-	//   },
-	//   body: JSON.stringify({
-	//     nom: formData.nombre,
-	//     ape: formData.apellido,
-	//     tel: formData.telefono,
-	//     ubi: formData.ubicacion,
-	//     feNa: formData.fechaNacimiento,
-	//     cargo: formData.cargo,
-	//     descripcion: formData.descripcion,
-	//     resumen: formData.resumen,
-	//     municipioId: formData.municipioId,
-	//     fotoPerfilUrl: formData.fotoPerfilUrl
-	//   })
-	// });
+	const usuarioId = localStorage.getItem("usuarioId");
+	if (!usuarioId) {
+		throw new Error("No se encontró ID de usuario en sesión");
+	}
 
-	// if (!response.ok) throw new Error("Error al actualizar perfil");
-	// const updatedData = await response.json();
+	// Preparar datos para actualizar
+	const updateData = {
+		nombre: formData.nombre,
+		apellido: formData.apellido,
+		telefono: formData.telefono,
+		fechaNacimiento: formData.fechaNacimiento,
+		cargo: formData.cargo,
+		descripcion: formData.descripcion,
+		municipioId: formData.municipioId ? parseInt(formData.municipioId) : null,
+		fotoPerfilUrl: formData.fotoPerfilUrl
+	};
 
-	// ✅ SIMULACIÓN - Por ahora simula actualización exitosa
-	await new Promise(resolve => setTimeout(resolve, 1500));
+	// Llamar a API para actualizar
+	const updatedData = await aspirantesApi.update(usuarioId, updateData);
 
 	// Actualizar datos originales con los nuevos
 	setOriginalData(formData);
@@ -243,7 +217,7 @@ const handleSubmit = async (e) => {
 
 	} catch (err) {
 	console.error("Error actualizando perfil:", err);
-	setError("No se pudo actualizar el perfil. Intenta de nuevo.");
+	setError("No se pudo actualizar el perfil: " + err.message);
 	} finally {
 	setSaving(false);
 	}

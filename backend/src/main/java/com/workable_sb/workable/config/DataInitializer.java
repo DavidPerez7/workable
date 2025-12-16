@@ -48,6 +48,10 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("▶ Creando usuarios de prueba...");
             recreateTestUsers();
 
+            // Crear HojaDeVida CON ESTUDIOS Y EXPERIENCIAS EMBEBIDOS - SEPARADO PARA GARANTIZAR EJECUCIÓN
+            System.out.println("▶ Creando HojaDeVida con estudios y experiencias...");
+            createHojasDeVidaWithData();
+
             // NOTA: no crear aspirantes, ofertas, estudios o experiencias genéricos aquí — dejamos solo datos mínimos de prueba
             
             System.out.println("=== DATA INITIALIZER COMPLETADO ===");
@@ -79,25 +83,33 @@ public class DataInitializer implements CommandLineRunner {
         Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
 
         // ===== CREAR ASPIRANTE =====
-        Aspirante aspirante = new Aspirante();
-        aspirante.setNombre("Aspirante");
-        aspirante.setApellido("Prueba");
-        aspirante.setCorreo("aspirante@example.com");
-        aspirante.setPassword(passwordEncoder.encode("pass123"));
-        aspirante.setTelefono("3105555555");
-        aspirante.setUrlFotoPerfil("https://example.com/avatars/aspirante.png");
-        aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
-        aspirante.setMunicipio(municipio);
-        aspirante.setGenero(Aspirante.Genero.MASCULINO);
-        aspirante.setIsActive(true);
-        aspirante.setDescripcion("Aspirante de prueba creado por DataInitializer para testing");
-        aspirante.setUbicacion("Bogotá, Colombia");
-        Map<Aspirante.HabilidadEnum, String> habilidades = new java.util.HashMap<>();
-        habilidades.put(Aspirante.HabilidadEnum.JAVA, "INTERMEDIO");
-        habilidades.put(Aspirante.HabilidadEnum.REACT, "BASICO");
-        aspirante.setHabilidades(habilidades);
-        aspiranteRepo.save(aspirante);
-        System.out.println("✓ Usuario ASPIRANTE recreado: aspirante@example.com / pass123");
+        Aspirante aspirante = null;
+        try {
+            // Intentar obtener aspirante existente
+            aspirante = aspiranteRepo.findByCorreo("aspirante@example.com").orElse(null);
+            if (aspirante != null) {
+                System.out.println("✓ Usuario ASPIRANTE existente encontrado: aspirante@example.com");
+            } else {
+                aspirante = new Aspirante();
+                aspirante.setNombre("Aspirante");
+                aspirante.setApellido("Prueba");
+                aspirante.setCorreo("aspirante@example.com");
+                aspirante.setPassword(passwordEncoder.encode("pass123"));
+                aspirante.setTelefono("3105555555");
+                aspirante.setUrlFotoPerfil("https://example.com/avatars/aspirante.png");
+                aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
+                aspirante.setMunicipio(municipio);
+                aspirante.setGenero(Aspirante.Genero.MASCULINO);
+                aspirante.setIsActive(true);
+                aspirante.setDescripcion("Aspirante de prueba creado por DataInitializer para testing");
+                aspirante.setUbicacion("Bogotá, Colombia");
+                aspiranteRepo.save(aspirante);
+                System.out.println("✓ Usuario ASPIRANTE recreado: aspirante@example.com / pass123");
+            }
+        } catch (Exception e) {
+            System.out.println("⚠ Error en aspirante: " + e.getMessage());
+            return; // No continuar si no hay aspirante
+        }
 
         // ===== CREAR ADMINISTRADOR =====
         try {
@@ -193,12 +205,17 @@ public class DataInitializer implements CommandLineRunner {
         } catch (Exception e) {
             System.out.println("⚠ Error creando oferta de prueba: " + e.getMessage());
         }
+    }
 
-        // ===== CREAR HOJA DE VIDA CON ESTUDIOS Y EXPERIENCIAS EMBEBIDOS =====
+    private void createHojasDeVidaWithData() {
         try {
+            // Obtener aspirante que ya fue creado
+            Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante@example.com")
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado para crear HojaDeVida"));
+            
+            // ===== CREAR HOJA DE VIDA CON ESTUDIOS Y EXPERIENCIAS EMBEBIDOS =====
             HojaVida hojaVida = new HojaVida();
-            Aspirante aspiranteHoja = aspiranteRepo.findById(1L).orElse(aspirante);
-            hojaVida.setAspirante(aspiranteHoja);
+            hojaVida.setAspirante(aspirante);
             hojaVida.setResumenProfesional("Profesional con experiencia en desarrollo de software con Java y tecnologías web modernas");
             hojaVida.setObjetivoProfesional("Desarrollador Senior en empresas de tecnología líderes");
             hojaVida.setContactoEmail("aspirante@example.com");

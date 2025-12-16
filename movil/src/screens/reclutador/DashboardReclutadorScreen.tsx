@@ -28,9 +28,15 @@ const DashboardReclutadorScreen = () => {
   }, []);
 
   const loadData = async () => {
+    if (!user?.usuarioId) {
+      Alert.alert('Error', 'No se pudo obtener el ID de usuario');
+      setLoading(false);
+      setRefreshing(false);
+      return;
+    }
     try {
       // Cargar perfil del reclutador
-      const perfilData = await getMyProfile();
+      const perfilData = await getMyProfile(user.usuarioId);
       setPerfil(perfilData);
 
       // Si tiene empresa asociada, cargarla

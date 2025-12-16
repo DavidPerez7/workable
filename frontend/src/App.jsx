@@ -32,13 +32,11 @@ import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEm
 // Pages for aspirants
 import AspirantePage from "./pages/AspirantePage/AspirantePage";
 import MiPerfil from "./pages/AspirantePage/MiPerfil/MiPerfil";
-import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
 import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
 import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 
 // Pages for administrators
 import AdminPage from "./pages/AdminPage/AdminPage";
-import AdminAccountsPage from "./pages/AdminPage/AdminPerfil/AdminAccountPage";
 import AdminEmpresas from "./pages/AdminPage/AdminEmpresas/AdminEmpresas";
 import OffersPage from "./pages/AdminPage/AdminOfertas/AdminOfertas";
 import UsersManagePage from "./pages/AdminPage/AdminUsuarios/AdminUsuarios";
@@ -78,13 +76,11 @@ function App() {
         {/* Rutas protegidas de Aspirante */}
         <Route path="/Aspirante" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspirantePage /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><MiPerfil /></ProtectedRoute>} />
-        <Route path="/ActualizarPerfil/ActualizarPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><ActualizarPerfil /></ProtectedRoute>} />
         <Route path="/MiPerfil/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
         <Route path="/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
         
         {/* Rutas protegidas de Administrador */}
         <Route path="/Administrador/*" element={<ProtectedRoute requiredRole="ADMIN"><AdminPage /></ProtectedRoute>} />
-        <Route path="/Administrador/CuentasInternas" element={<ProtectedRoute requiredRole="ADMIN"><AdminAccountsPage /></ProtectedRoute>} />
         <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><AdminEmpresas/></ProtectedRoute>} />
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />

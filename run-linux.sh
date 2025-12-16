@@ -548,6 +548,8 @@ run_backend_background() {
         print_error "Log: tail -f $BACKEND_LOG"
         return 1
     fi
+}
+
 run_frontend_background() {
     print_header "INSTALANDO E INICIANDO FRONTEND EN BACKGROUND"
     

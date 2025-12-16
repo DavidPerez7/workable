@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getUsuarioActual, getUsuarioById } from "../../../api/usuarioAPI";
-import { deletePublicUsuario } from "../../../api/usuarioAPI";
+import aspirantesApi from "../../../api/aspirantesApi";
 import { getMunicipios } from "../../../api/municipioAPI";
 import {
   FaUser,
@@ -42,19 +41,17 @@ const MiPerfil = () => {
 	const [loadingMunicipios, setLoadingMunicipios] = useState(true);
 	const navigate = useNavigate();
 
-	// getPerfil, token ya implementado
+	// getPerfil - obtener usuario actual usando aspirantesApi
 	const getUsuario = async () => {
-		const TOKEN = localStorage.getItem("token");
-		const rol = localStorage.getItem("rol"); // Obtener el rol del usuario
+		const usuarioId = localStorage.getItem("usuarioId");
 		setLoading(true);
 		setError(""); // limpiar errores previos
 
 		try {
-
-			if (!TOKEN) {
-				throw new Error("No se encontró token de autenticación");
+			if (!usuarioId) {
+				throw new Error("No se encontró ID de usuario en sesión");
 			}
-			const usuario = await getUsuarioActual(rol);
+			const usuario = await aspirantesApi.get(usuarioId);
 			console.log("Usuario obtenido:", usuario);
 			setUsuario(usuario); // Actualizar estado con datos obtenidos
 
@@ -72,21 +69,20 @@ const MiPerfil = () => {
 		}
 	};
 
-	// deleteUsuario, token ya implementado
+	// deleteUsuario - eliminar cuenta usando aspirantesApi
 	const eliminarCuenta = async () => {
 		if (!deletePassword || deletePassword.trim().length === 0) {
 			setDeleteError("Debes ingresar tu contraseña para confirmar");
 			return;
 		}
-		const TOKEN = localStorage.getItem("token");
 		const usuarioId = localStorage.getItem("usuarioId");
-		const rol = localStorage.getItem("rol");
 
 		try { 
-			const response = await deletePublicUsuario(usuarioId, TOKEN, rol)
+			// Usar aspirantesApi.deletePublic() para eliminar
+			const response = await aspirantesApi.deletePublic(usuarioId);
 
 			//Verificar si la respuesta indica éxito
-			if (response.status === 200 || response.status === 204) {
+			if (response && (response.id || response.message)) {
 				//Exito: limpiar estado, cerra modal, redirigir a login
 				setShowDeleteModal(false);
 				setDeletePassword("");
@@ -154,9 +150,7 @@ const MiPerfil = () => {
 	}, []);
 
 	const saveField = async (field) => {
-		const TOKEN = localStorage.getItem("token");
 		const usuarioId = localStorage.getItem("usuarioId");
-		const rol = localStorage.getItem("rol");
 		
 		setSavingField(field);
 		
@@ -165,11 +159,8 @@ const MiPerfil = () => {
 			
 			if (field === 'municipio') {
 				// Para municipio, enviar el ID del municipio seleccionado
-				const selectedMunicipio = municipios.find(m => m.id === parseInt(editValues[field]));
 				updateData = {
-					municipio: {
-						id: parseInt(editValues[field])
-					}
+					municipioId: parseInt(editValues[field])
 				};
 			} else {
 				updateData = {
@@ -177,43 +168,17 @@ const MiPerfil = () => {
 				};
 			}
 			
-			// Llamar a API para actualizar
-			const endpoint = rol === "ASPIRANTE" 
-				? `http://localhost:8080/api/aspirante/${usuarioId}` 
-				: `http://localhost:8080/api/reclutador/${usuarioId}`;
+			// Llamar a aspirantesApi para actualizar
+			const updatedUsuario = await aspirantesApi.update(usuarioId, updateData);
 			
-			const response = await fetch(endpoint, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${TOKEN}`
-				},
-				body: JSON.stringify(updateData)
-			});
-
-			if (response.ok) {
-				// Actualizar el estado local
-				if (field === 'municipio') {
-					const selectedMunicipio = municipios.find(m => m.id === parseInt(editValues[field]));
-					setUsuario({
-						...usuario,
-						municipio: selectedMunicipio
-					});
-				} else {
-					setUsuario({
-						...usuario,
-						[field]: editValues[field]
-					});
-				}
-				setEditingField(null);
-				setEditValues({});
-				alert("Campo actualizado exitosamente");
-			} else {
-				throw new Error("Error al actualizar el campo");
-			}
+			// Actualizar el estado local con los datos recibidos del servidor
+			setUsuario(updatedUsuario);
+			setEditingField(null);
+			setEditValues({});
+			alert("Campo actualizado exitosamente");
 		} catch (err) {
 			console.error("Error actualizando campo:", err);
-			alert("Error al actualizar. Por favor, intenta de nuevo.");
+			alert("Error al actualizar: " + (err.message || "Por favor, intenta de nuevo."));
 		} finally {
 			setSavingField(null);
 		}

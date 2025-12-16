@@ -96,46 +96,9 @@ public class Aspirante {
         MASCULINO, FEMENINO, OTRO
     }
 
-    public enum HabilidadEnum {
-        JAVA,
-        PYTHON,
-        JAVASCRIPT,
-        REACT,
-        SPRING_BOOT,
-        SQL,
-        DOCKER,
-        AWS,
-        GIT,
-        REST_API,
-        LIDERAZGO,
-        COMUNICACION,
-        TRABAJO_EQUIPO,
-        RESOLUCION_PROBLEMAS,
-        SCRUM,
-        ANALISIS_DATOS,
-        EXCEL_AVANZADO,
-        MARKETING_DIGITAL,
-        NEGOCIACION,
-        PENSAMIENTO_CRITICO
-    }
-
-    public enum NivelDominio {
-        BASICO, INTERMEDIO, AVANZADO
-    }
-
     @Size(max = 200, message = "La ubicación no puede exceder 200 caracteres")
     @Column(length = 200)
     private String ubicacion;
-
-    // Habilidades - Mapa de enum con nivel de dominio
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "aspirante_habilidades", joinColumns = @JoinColumn(name = "aspirante_id"))
-    @MapKeyEnumerated(EnumType.STRING)
-    @MapKeyColumn(name = "habilidad")
-    @Column(name = "nivel_dominio")
-    @JsonIgnore
-    private Map<HabilidadEnum, String> habilidades;
-
 
     @PrePersist
     protected void onCreate() {

@@ -2,9 +2,17 @@ import { api, getErrorMessage } from './config';
 import type { Postulacion } from '../types';
 
 // Create postulacion
-export const createPostulacion = async (ofertaId: number): Promise<Postulacion> => {
+export const createPostulacion = async (
+  ofertaId: number,
+  aspiranteId: number
+): Promise<Postulacion> => {
   try {
-    const response = await api.post<Postulacion>('/postulacion', { ofertaId });
+    const payload = {
+      aspirante: { id: aspiranteId },
+      oferta: { id: ofertaId },
+    };
+
+    const response = await api.post<Postulacion>('/api/postulacion', payload);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -14,7 +22,7 @@ export const createPostulacion = async (ofertaId: number): Promise<Postulacion> 
 // Get my postulaciones (aspirante)
 export const getMyPostulaciones = async (): Promise<Postulacion[]> => {
   try {
-    const response = await api.get<Postulacion[]>('/postulacion/aspirante');
+    const response = await api.get<Postulacion[]>('/api/postulacion/aspirante');
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -24,7 +32,7 @@ export const getMyPostulaciones = async (): Promise<Postulacion[]> => {
 // Get postulacion by ID
 export const getPostulacionById = async (id: number): Promise<Postulacion> => {
   try {
-    const response = await api.get<Postulacion>(`/postulacion/${id}`);
+    const response = await api.get<Postulacion>(`/api/postulacion/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -38,7 +46,7 @@ export const getPostulacionesByOferta = async (
 ): Promise<Postulacion[]> => {
   try {
     const response = await api.get<Postulacion[]>(
-      `/postulacion/oferta/${ofertaId}?usuarioIdActual=${usuarioIdActual}`
+      `/api/postulacion/oferta/${ofertaId}?usuarioIdActual=${usuarioIdActual}`
     );
     return response.data;
   } catch (error) {
@@ -53,7 +61,7 @@ export const getPostulacionesByUsuario = async (
 ): Promise<Postulacion[]> => {
   try {
     const response = await api.get<Postulacion[]>(
-      `/postulacion/usuario/${usuarioId}?usuarioIdActual=${usuarioIdActual}`
+      `/api/postulacion/usuario/${usuarioId}?usuarioIdActual=${usuarioIdActual}`
     );
     return response.data;
   } catch (error) {
@@ -69,7 +77,7 @@ export const getPostulacionesByOfertaYEstado = async (
 ): Promise<Postulacion[]> => {
   try {
     const response = await api.get<Postulacion[]>(
-      `/postulacion/oferta/${ofertaId}/estado?estado=${estado}&usuarioIdActual=${usuarioIdActual}`
+      `/api/postulacion/oferta/${ofertaId}/estado?estado=${estado}&usuarioIdActual=${usuarioIdActual}`
     );
     return response.data;
   } catch (error) {
@@ -83,9 +91,7 @@ export const changeEstadoPostulacion = async (
   nuevoEstado: 'POSTULADO' | 'EN_REVISION' | 'ENTREVISTA' | 'RECHAZADO' | 'ACEPTADO'
 ): Promise<Postulacion> => {
   try {
-    const response = await api.put<Postulacion>(
-      `/postulacion/${id}/cambiar-estado?nuevoEstado=${nuevoEstado}`
-    );
+    const response = await api.put<Postulacion>(`/api/postulacion/${id}`, { estado: nuevoEstado });
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -98,7 +104,7 @@ export const updatePostulacion = async (
   data: Partial<Postulacion>
 ): Promise<Postulacion> => {
   try {
-    const response = await api.put<Postulacion>(`/postulacion/${id}`, data);
+    const response = await api.put<Postulacion>(`/api/postulacion/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -108,7 +114,7 @@ export const updatePostulacion = async (
 // Delete postulacion
 export const deletePostulacion = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/postulacion/${id}/eliminar`);
+    await api.delete(`/api/postulacion/${id}`);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
@@ -117,7 +123,7 @@ export const deletePostulacion = async (id: number): Promise<void> => {
 // Get all postulaciones (ADMIN)
 export const getAllPostulaciones = async (): Promise<Postulacion[]> => {
   try {
-    const response = await api.get<Postulacion[]>('/postulacion/all');
+    const response = await api.get<Postulacion[]>('/api/postulacion/all');
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));

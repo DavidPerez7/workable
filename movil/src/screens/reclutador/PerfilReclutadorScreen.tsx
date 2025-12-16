@@ -28,8 +28,13 @@ const PerfilReclutadorScreen = () => {
   }, []);
 
   const loadPerfil = async () => {
+    if (!user?.usuarioId) {
+      Alert.alert('Error', 'No se pudo obtener el ID de usuario');
+      setLoading(false);
+      return;
+    }
     try {
-      const data = await getMyProfile();
+      const data = await getMyProfile(user.usuarioId);
       setPerfil(data);
       setFormData({
         nombre: data.nombre || '',

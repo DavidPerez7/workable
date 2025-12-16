@@ -36,7 +36,7 @@
 
 .opal-modal {
   width: 90%;
-  max-width: 900px;
+  max-width: 1200px;
   max-height: 90vh;
   background: var(--background-card);
   border-radius: var(--border-radius);
@@ -152,9 +152,9 @@
 
 .opal-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem;
+  flex-direction: column;
+  gap: 0;
+  padding: 1rem;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   background: white;
@@ -173,6 +173,8 @@
   gap: 1rem;
   align-items: center;
   flex: 1;
+  width: 100%;
+  margin-bottom: 8px;
 }
 
 .opal-avatar {
@@ -203,7 +205,11 @@
 .opal-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .opal-buttons {
@@ -333,4 +339,293 @@
 .edit-buttons-opm {
   display: flex;
   gap: 4px;
+}
+
+/* Estilos para detalles expandibles */
+.opal-details {
+  width: 100%;
+  display: block;
+}
+
+.opal-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 3px 0;
+  color: var(--primary-color);
+  transition: var(--transition);
+  user-select: none;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.opal-details summary:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+.opal-details summary::-webkit-details-marker {
+  color: var(--primary-color);
+  margin-right: 6px;
+}
+
+.opal-details[open] summary {
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* Contenedor principal de detalles - COMPACTO 4 COLUMNAS */
+.opal-details-content {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  width: 100%;
+}
+
+/* Cada sección de detalles - COMPACTA */
+.opal-detail-section {
+  background: #f9fafb;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  transition: var(--transition);
+}
+
+.opal-detail-section:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.08);
+}
+
+.opal-detail-section h4 {
+  margin: 0 0 8px 0;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  border-bottom: 1px solid var(--primary-color);
+  padding-bottom: 6px;
+}
+
+/* Contenedor de filas dentro de cada sección */
+.opal-detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Cada fila de detalle - COMPACTA */
+.opal-detail-row {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  padding: 3px 0;
+  border-bottom: none;
+  font-size: 0.8rem;
+}
+
+.opal-detail-row:last-child {
+  border-bottom: none;
+}
+
+/* Labels y valores - COMPACTOS */
+.opal-detail-label {
+  font-weight: 600;
+  color: var(--accent-neutral);
+  min-width: 80px;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+}
+
+.opal-detail-value {
+  color: var(--text-primary);
+  word-break: break-word;
+  flex: 1;
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+/* Links dentro de detalles */
+.opal-detail-value a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  font-weight: 500;
+  word-break: break-all;
+  font-size: 0.75rem;
+}
+
+.opal-detail-value a:hover {
+  color: var(--primary-hover);
+  text-decoration: none;
+}
+
+/* Status badges en detalles - COMPACTOS */
+.opal-detail-section .status {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+}
+
+.opal-detail-section .status.aceptado {
+  background: #dcfce7;
+  color: #065f46;
+}
+
+.opal-detail-section .status.rechazado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.opal-detail-section .status.pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.opal-detail-section .status.entrevista_programada {
+  background: #dbeafe;
+  color: #0c4a6e;
+}
+
+/* Mensaje sin datos */
+.opal-no-data {
+  color: var(--accent-neutral);
+  font-size: 0.75rem;
+  font-style: italic;
+  margin: 0;
+  padding: 4px 0;
+}
+
+/* Responsive: tablets 2x2 */
+@media (max-width: 1024px) {
+  .opal-details-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Responsive: mobile 1 columna */
+@media (max-width: 768px) {
+  .opal-details-content {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 8px 0;
+  }
+
+  .opal-detail-section {
+    padding: 8px 10px;
+  }
+
+  .opal-detail-label {
+    min-width: 70px;
+    font-size: 0.7rem;
+  }
+
+  .opal-detail-value {
+    font-size: 0.75rem;
+  }
+
+  .opal-detail-row {
+    gap: 4px;
+    padding: 2px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .opal-details-content {
+    gap: 6px;
+  }
+
+  .opal-detail-section h4 {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .opal-detail-label {
+    min-width: 60px;
+    font-size: 0.65rem;
+  }
+
+  .opal-detail-value {
+    font-size: 0.7rem;
+  }
+
+  .opal-detail-rows {
+    gap: 4px;
+  }
+
+  .opal-detail-row {
+    padding: 2px 0;
+  }
+}
+
+.opal-meta {
+  font-size: 0.8rem;
+  color: var(--accent-neutral);
+  margin-top: 2px;
+}
+
+/* Grid de detalles legacy (keep for compatibility) */
+.opal-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  font-size: 14px;
+}
+
+.opal-section {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.opal-section h4 {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.opal-section-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.opal-section-row {
+  display: flex;
+  gap: 4px;
+}
+
+.opal-section-label {
+  font-weight: 500;
+  color: #6b7280;
+  min-width: 120px;
+}
+
+.opal-section-value {
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.opal-section-value a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.opal-section-value a:hover {
+  color: var(--primary-hover);
+}
+
+.status.entrevista_programada {
+  background: #dbeafe;
+  color: #0c4a6e;
 }

@@ -1,10 +1,10 @@
 import { api, getErrorMessage } from './config';
 import type { Reclutador } from '../types';
 
-// Get my profile (JWT authenticated)
-export const getMyProfile = async (): Promise<Reclutador> => {
+// Get my profile (JWT authenticated) - Backend NO tiene /me, usar /{id}
+export const getMyProfile = async (userId: number): Promise<Reclutador> => {
   try {
-    const response = await api.get<Reclutador>('/reclutador/me');
+    const response = await api.get<Reclutador>(`/api/reclutador/${userId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -14,7 +14,7 @@ export const getMyProfile = async (): Promise<Reclutador> => {
 // Get all reclutadores (ADMIN)
 export const getAllReclutadores = async (): Promise<Reclutador[]> => {
   try {
-    const response = await api.get<Reclutador[]>('/reclutador');
+    const response = await api.get<Reclutador[]>('/api/reclutador');
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -24,7 +24,7 @@ export const getAllReclutadores = async (): Promise<Reclutador[]> => {
 // Get reclutador by ID
 export const getReclutadorById = async (id: number): Promise<Reclutador> => {
   try {
-    const response = await api.get<Reclutador>(`/reclutador/public/${id}`);
+    const response = await api.get<Reclutador>(`/api/reclutador/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -34,7 +34,7 @@ export const getReclutadorById = async (id: number): Promise<Reclutador> => {
 // Get reclutador by correo
 export const getReclutadorByCorreo = async (correo: string): Promise<Reclutador> => {
   try {
-    const response = await api.get<Reclutador>(`/reclutador/correo/${correo}`);
+    const response = await api.get<Reclutador>(`/api/reclutador/por-correo?correo=${correo}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -44,7 +44,7 @@ export const getReclutadorByCorreo = async (correo: string): Promise<Reclutador>
 // Get reclutadores by empresa
 export const getReclutadoresByEmpresa = async (empresaId: number): Promise<Reclutador[]> => {
   try {
-    const response = await api.get<Reclutador[]>(`/reclutador/empresa/${empresaId}`);
+    const response = await api.get<Reclutador[]>(`/api/reclutador/empresa/${empresaId}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -54,24 +54,24 @@ export const getReclutadoresByEmpresa = async (empresaId: number): Promise<Reclu
 // Create reclutador
 export const createReclutador = async (data: Reclutador): Promise<Reclutador> => {
   try {
-    const response = await api.post<Reclutador>('/reclutador', data);
+    const response = await api.post<Reclutador>('/api/reclutador', data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
 
-// Update reclutador
+// Update reclutador - Backend solo tiene PUT /{id}
 export const updateReclutador = async (id: number, data: Reclutador): Promise<Reclutador> => {
   try {
-    const response = await api.put<Reclutador>(`/reclutador/admin/${id}`, data);
+    const response = await api.put<Reclutador>(`/api/reclutador/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
 };
 
-// Update reclutador (requiere reclutadorIdActual como query param)
+// Update reclutador con reclutadorIdActual (para validación en backend)
 export const updateReclutadorWithActual = async (
   id: number,
   data: Partial<Reclutador>,
@@ -79,7 +79,7 @@ export const updateReclutadorWithActual = async (
 ): Promise<Reclutador> => {
   try {
     const response = await api.put<Reclutador>(
-      `/reclutador/${id}?reclutadorIdActual=${reclutadorIdActual}`,
+      `/api/reclutador/${id}?reclutadorIdActual=${reclutadorIdActual}`,
       data
     );
     return response.data;
@@ -91,7 +91,7 @@ export const updateReclutadorWithActual = async (
 // Delete reclutador (ADMIN)
 export const deleteReclutador = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/reclutador/${id}`);
+    await api.delete(`/api/reclutador/${id}`);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }

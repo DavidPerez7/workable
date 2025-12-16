@@ -4,7 +4,7 @@ import type { Empresa } from '../types';
 // Get all empresas
 export const getAllEmpresas = async (): Promise<Empresa[]> => {
   try {
-    const response = await api.get<Empresa[]>('/empresa');
+    const response = await api.get<Empresa[]>('/api/empresa');
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -14,7 +14,7 @@ export const getAllEmpresas = async (): Promise<Empresa[]> => {
 // Get empresa by ID
 export const getEmpresaById = async (id: number): Promise<Empresa> => {
   try {
-    const response = await api.get<Empresa>(`/empresa/${id}`);
+    const response = await api.get<Empresa>(`/api/empresa/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -24,7 +24,7 @@ export const getEmpresaById = async (id: number): Promise<Empresa> => {
 // Create empresa
 export const createEmpresa = async (data: Empresa): Promise<Empresa> => {
   try {
-    const response = await api.post<Empresa>('/empresa', data);
+    const response = await api.post<Empresa>('/api/empresa', data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -34,7 +34,7 @@ export const createEmpresa = async (data: Empresa): Promise<Empresa> => {
 // Update empresa
 export const updateEmpresa = async (id: number, data: Empresa): Promise<Empresa> => {
   try {
-    const response = await api.put<Empresa>(`/empresa/${id}`, data);
+    const response = await api.put<Empresa>(`/api/empresa/${id}`, data);
     return response.data;
   } catch (error) {
     throw new Error(getErrorMessage(error));
@@ -44,7 +44,7 @@ export const updateEmpresa = async (id: number, data: Empresa): Promise<Empresa>
 // Delete empresa
 export const deleteEmpresa = async (id: number): Promise<void> => {
   try {
-    await api.delete(`/empresa/${id}`);
+    await api.delete(`/api/empresa/${id}`);
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }
