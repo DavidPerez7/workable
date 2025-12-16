@@ -8,5 +8,6 @@ import com.workable_sb.workable.models.Administrador;
 
 @Repository
 public interface AdministradorRepo extends JpaRepository<Administrador, Long> {
+    // Buscar administrador por correo (para login)
     Optional<Administrador> findByCorreo(String correo);
 }

@@ -7,12 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Aspirante;
-import com.workable_sb.workable.models.Estudio;
-import com.workable_sb.workable.models.Experiencia;
 import com.workable_sb.workable.models.HojaVida;
 import com.workable_sb.workable.repository.AspiranteRepo;
-import com.workable_sb.workable.repository.EstudioRepo;
-import com.workable_sb.workable.repository.ExperienciaRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,12 +22,6 @@ public class HojaVidaService {
 
     @Autowired
     private AspiranteRepo aspiranteRepo;
-
-    @Autowired
-    private EstudioRepo estudioRepo;
-
-    @Autowired
-    private ExperienciaRepo experienciaRepo;
 
     // ===== CREATE (Manual, solo para ADMIN) =====
     public HojaVida crearHojaVidaManual(HojaVida hojaVida) {
@@ -201,16 +191,9 @@ public class HojaVidaService {
         Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
                 .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
-        List<Estudio> estudios = estudioRepo.findByAspiranteId(aspiranteId);
-        List<Experiencia> experiencias = experienciaRepo.findByAspiranteId(aspiranteId);
-
         // Buscar la hoja de vida existente (creada al registro)
         HojaVida hojaVida = hojaVidaRepo.findByAspiranteId(aspiranteId).stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("Hoja de vida no encontrada"));
-
-        // Asignar las listas para que la Hoja de Vida incluya estudios y experiencias
-        hojaVida.setEstudios(estudios);
-        hojaVida.setExperiencias(experiencias);
 
         // Autocompletar contacto desde el aspirante
         hojaVida.setContactoEmail(aspirante.getCorreo());
@@ -220,11 +203,11 @@ public class HojaVidaService {
         if (hojaVida.getResumenProfesional() == null || hojaVida.getResumenProfesional().isEmpty()) {
             StringBuilder resumen = new StringBuilder();
             resumen.append("Profesional con ");
-            if (!experiencias.isEmpty()) {
-                resumen.append(experiencias.size()).append(" experiencia(s) laboral(es). ");
+            if (hojaVida.getExperiencias() != null && !hojaVida.getExperiencias().isEmpty()) {
+                resumen.append(hojaVida.getExperiencias().size()).append(" experiencia(s) laboral(es). ");
             }
-            if (!estudios.isEmpty()) {
-                resumen.append("Formación académica en ").append(estudios.get(0).getTitulo()).append(".");
+            if (hojaVida.getEstudios() != null && !hojaVida.getEstudios().isEmpty()) {
+                resumen.append("Formación académica en ").append(hojaVida.getEstudios().get(0).getTitulo()).append(".");
             }
             hojaVida.setResumenProfesional(resumen.toString());
         }
@@ -235,11 +218,6 @@ public class HojaVidaService {
     // ---- Helpers ----
     private void populateRelated(HojaVida hoja) {
         if (hoja == null || hoja.getAspirante() == null || hoja.getAspirante().getId() == null) return;
-        Long aspiranteId = hoja.getAspirante().getId();
-        List<Estudio> estudios = estudioRepo.findByAspiranteId(aspiranteId);
-        List<Experiencia> experiencias = experienciaRepo.findByAspiranteId(aspiranteId);
-        hoja.setEstudios(estudios);
-        hoja.setExperiencias(experiencias);
         // Autocompletar contacto desde aspirante
         if (hoja.getAspirante() != null) {
             hoja.setContactoEmail(hoja.getAspirante().getCorreo());

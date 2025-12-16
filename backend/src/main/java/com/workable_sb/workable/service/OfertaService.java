@@ -10,7 +10,7 @@ import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.models.Oferta;
-import com.workable_sb.workable.repository.EmpresaRepo;
+import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
@@ -20,7 +20,7 @@ import com.workable_sb.workable.repository.OfertaRepo;
 public class OfertaService {
 
     @Autowired
-    private EmpresaRepo empresaRepo;
+    private EmpresaRepository empresaRepo;
 
     @Autowired
     private MunicipioRepo municipioRepo;

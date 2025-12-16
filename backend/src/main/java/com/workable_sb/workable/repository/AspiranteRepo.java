@@ -9,9 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AspiranteRepo extends JpaRepository<Aspirante, Long> {
-    // Buscar aspirante por correo (para login)
+    // Buscar aspirante por correo (para autenticación)
     Optional<Aspirante> findByCorreo(String correo);
-    
-    // Buscar aspirante por nombre
-    Optional<Aspirante> findByNombre(String nombre);
 }

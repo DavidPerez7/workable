@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import com.workable_sb.workable.models.Estudio;
-import com.workable_sb.workable.models.Experiencia;
+import com.workable_sb.workable.models.EstudioData;
+import com.workable_sb.workable.models.ExperienciaData;
 import com.workable_sb.workable.models.Aspirante.HabilidadEnum;
 
 import lombok.AllArgsConstructor;
@@ -45,10 +45,10 @@ public class CandidatoDetalleDto {
     private String idiomas;
 
     // Datos educativos
-    private List<Estudio> estudios;
+    private List<EstudioData> estudios;
 
     // Datos de experiencia laboral
-    private List<Experiencia> experiencias;
+    private List<ExperienciaData> experiencias;
 
     // Habilidades
     private Map<HabilidadEnum, String> habilidades;

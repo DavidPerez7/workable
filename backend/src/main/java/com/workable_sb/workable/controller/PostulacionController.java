@@ -2,7 +2,7 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.models.Postulacion.Estado;
-import com.workable_sb.workable.models.PostulacionCreateRequest;
+import com.workable_sb.workable.dto.PostulacionCreateRequest;
 import com.workable_sb.workable.service.PostulacionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

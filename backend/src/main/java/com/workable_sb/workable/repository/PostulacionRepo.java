@@ -7,32 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.workable_sb.workable.models.Postulacion;
-import com.workable_sb.workable.models.Postulacion.Estado;
 
 @Repository
 public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
     
-    // Buscar postulaciones por oferta
+    // Buscar postulaciones por oferta (getbyoferta)
     List<Postulacion> findByOfertaId(Long ofertaId);
     
-    // Buscar postulaciones por aspirante
+    // Buscar postulaciones por aspirante (getbyaspirante)
     List<Postulacion> findByAspiranteId(Long aspiranteId);
     
-    // Buscar postulaciones por oferta y estado
-    List<Postulacion> findByOfertaIdAndEstado(Long ofertaId, Estado estado);
-    
-    // Buscar postulaciones por aspirante y estado
-    List<Postulacion> findByAspiranteIdAndEstado(Long aspiranteId, Estado estado);
-    
-    // Buscar postulación específica de un aspirante a una oferta
+    // Validar postulación duplicada
     Optional<Postulacion> findByAspiranteIdAndOfertaId(Long aspiranteId, Long ofertaId);
-    
-    // Buscar postulaciones por oferta ordenadas por fecha
-    List<Postulacion> findByOfertaIdOrderByFechaCreacionDesc(Long ofertaId);
-    
-    // Buscar postulaciones por oferta y estado ordenadas por fecha
-    List<Postulacion> findByOfertaIdAndEstadoOrderByFechaCreacionDesc(Long ofertaId, Estado estado);
-    
-    // Contar postulaciones por oferta
-    long countByOfertaId(Long ofertaId);
 }

@@ -50,10 +50,6 @@ public class EmpresaService {
         return empresaRepository.findByIsActive(isActive);
     }
 
-    public List<Empresa> getByNombre(String nombre) {
-        return empresaRepository.findByNombreContainingIgnoreCase(nombre);
-    }
-
     // READ (para reclutadores de la empresa)
     public List<Reclutador> getReclutadores(Long empresaId) {
         Empresa empresa = empresaRepository.findById(empresaId).orElseThrow(() -> new RuntimeException("Empresa not found"));
