@@ -3,10 +3,12 @@ import { StyleSheet } from 'react-native';
 export const colors = {
   primary: '#1e6ff1',
   primaryDark: '#1d4ed8',
+  primaryLight: '#60a5fa',
   secondary: '#3B82F6',
   accent: '#F59E0B',
   success: '#10B981',
   error: '#EF4444',
+  danger: '#EF4444', // alias para error
   warning: '#F59E0B',
   info: '#3B82F6',
   
@@ -16,6 +18,7 @@ export const colors = {
   
   background: '#f8f9fa',
   backgroundDark: '#e2e8f0',
+  backgroundSecondary: '#f1f5f9',
   white: '#ffffff',
   border: '#e2e8f0',
   

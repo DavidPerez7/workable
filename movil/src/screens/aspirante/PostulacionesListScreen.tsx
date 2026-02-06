@@ -46,19 +46,25 @@ const PostulacionesListScreen = () => {
   const renderPostulacion = ({ item }: { item: Postulacion }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('PostulacionDetail', { postulacionId: item.id! })}
+      onPress={() => {
+        if (!item.id) {
+          Alert.alert('Error', 'ID de postulación inválido');
+          return;
+        }
+        navigation.navigate('PostulacionDetail', { postulacionId: item.id });
+      }}
     >
       <Text style={styles.ofertaTitle}>{item.oferta?.titulo}</Text>
       <Text style={styles.empresa}>{item.oferta?.empresa?.nombre}</Text>
       <View style={styles.statusRow}>
-        <View style={[styles.statusBadge, { backgroundColor: getEstadoColor(item.estado || '') + '20' }]}>
-          <Text style={[styles.statusText, { color: getEstadoColor(item.estado || '') }]}>
-            {item.estado}
+        <View style={[styles.statusBadge, { backgroundColor: (getEstadoColor(item.estado || '') || colors.textSecondary) + '20' }]}>
+          <Text style={[styles.statusText, { color: getEstadoColor(item.estado || '') || colors.textSecondary }]}>
+            {item.estado || 'DESCONOCIDO'}
           </Text>
         </View>
       </View>
       <Text style={styles.date}>
-        Postulado: {new Date(item.fechaPostulacion || '').toLocaleDateString()}
+        Postulado: {item.fechaPostulacion ? new Date(item.fechaPostulacion).toLocaleDateString() : '-'}
       </Text>
     </TouchableOpacity>
   );
@@ -70,7 +76,7 @@ const PostulacionesListScreen = () => {
       <FlatList
         data={postulaciones}
         renderItem={renderPostulacion}
-        keyExtractor={(item) => item.id!.toString()}
+        keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
         contentContainerStyle={styles.list}
         ListEmptyComponent={
           <EmptyState icon="document-text-outline" title="No tienes postulaciones" message="Postúlate a ofertas para verlas aquí" />
