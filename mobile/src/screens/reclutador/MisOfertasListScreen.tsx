@@ -18,14 +18,19 @@ const MisOfertasListScreen = () => {
 
   const loadOfertas = async () => {
     try {
-      if (user?.empresaId) {
-        // Si tenemos empresaId, filtrar por empresa
+      if (!user) {
+        setOfertas([]);
+        return;
+      }
+
+      if (user.empresaId) {
         const data = await getOfertasByEmpresa(user.empresaId);
-        setOfertas(data);
-      } else if (user?.reclutadorId) {
-        // Si no, obtener todas y filtrar del lado del cliente
+        setOfertas(Array.isArray(data) ? data : []);
+      } else if (user.reclutadorId) {
         const data = await getOfertasByReclutador(user.reclutadorId);
-        setOfertas(data);
+        setOfertas(Array.isArray(data) ? data : []);
+      } else {
+        setOfertas([]);
       }
     } catch (error: any) {
       Alert.alert('Error', error.message);
@@ -35,12 +40,18 @@ const MisOfertasListScreen = () => {
     }
   };
 
-  useFocusEffect(useCallback(() => { loadOfertas(); }, []));
+  useFocusEffect(useCallback(() => { loadOfertas(); }, [user?.empresaId, user?.reclutadorId]));
 
   const renderOferta = ({ item }: { item: Oferta }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('OfertaDetailReclutador' as never, { ofertaId: item.id } as never)}
+      onPress={() => {
+        if (!item.id) {
+          Alert.alert('Error', 'ID de oferta inválido');
+          return;
+        }
+        navigation.navigate('OfertaDetailReclutador' as never, { ofertaId: item.id } as never);
+      }}
     >
       <Text style={styles.cardTitle}>{item.titulo}</Text>
       <View style={[styles.badge, item.estado === 'ABIERTA' ? styles.badgeOpen : styles.badgeClosed]}>
@@ -55,12 +66,26 @@ const MisOfertasListScreen = () => {
 
   return (
     <View style={globalStyles.container}>
+      <View style={styles.headerActions}>
+        <Text style={styles.headerTitle}>Mis Ofertas</Text>
+        <Button title="Crear oferta" onPress={() => navigation.navigate('CrearOfertaTab' as never)} />
+      </View>
+
       <FlatList
         data={ofertas}
         renderItem={renderOferta}
-        keyExtractor={(item) => item.id!.toString()}
+        keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<EmptyState icon="briefcase-outline" title="No tienes ofertas publicadas" />}
+        ListEmptyComponent={
+          <EmptyState
+            icon="briefcase-outline"
+            title={user ? 'No tienes ofertas publicadas' : 'Usuario no identificado'}
+            message={user ? 'Crea una oferta para empezar' : 'Inicia sesión para ver tus ofertas'}
+            action={
+              <Button title="Crear oferta" onPress={() => navigation.navigate('CrearOfertaTab' as never)} />
+            }
+          />
+        }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadOfertas(); }} />}
       />
     </View>

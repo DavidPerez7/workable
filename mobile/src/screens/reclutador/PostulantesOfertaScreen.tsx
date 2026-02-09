@@ -52,6 +52,13 @@ const PostulantesOfertaScreen = () => {
 
   const loadData = async () => {
     if (!user?.usuarioId) return;
+    if (typeof ofertaId === 'undefined' || ofertaId === null) {
+      Alert.alert('Error', 'ID de la oferta inválido');
+      setLoading(false);
+      setPostulaciones([]);
+      setFilteredPostulaciones([]);
+      return;
+    }
     try {
       const [ofertaData, postulacionesData] = await Promise.all([
         getOfertaById(ofertaId),
@@ -171,6 +178,14 @@ const PostulantesOfertaScreen = () => {
   };
 
   if (loading) return <Loading />;
+
+  if (typeof ofertaId === 'undefined' || ofertaId === null) {
+    return (
+      <View style={[globalStyles.container, { padding: spacing.md }]}>
+        <Text style={{ color: colors.text, fontSize: fontSize.md }}>ID de oferta inválido.</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={globalStyles.container}>

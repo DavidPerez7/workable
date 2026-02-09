@@ -34,7 +34,7 @@
   margin: 0 auto;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  background: var(--background-card);
+  background: #E8EFFA;
   box-shadow: var(--shadow-medium);
   padding: 2rem;
 }

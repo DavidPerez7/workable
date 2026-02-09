@@ -16,6 +16,7 @@
   padding: 28px 28px;
   width: 100%;
   box-sizing: border-box;
+  flex: 1;
 }
 
 .container-admin-page-AP {

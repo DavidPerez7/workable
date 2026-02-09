@@ -96,33 +96,13 @@
   position: relative;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #3b82f6 0%, #f59e0b 100%);
-  transition: width 0.3s ease;
-}
-
 .nav-link:hover {
   color: #ebf3ff;
-}
-
-.nav-link:hover::after {
-  width: 80%;
 }
 
 .nav-link.active {
   color: #ebf3ff;
   background: rgba(59, 130, 246, 0.1);
-}
-
-.nav-link.active::after {
-  width: 80%;
 }
 
 /* User Menu */

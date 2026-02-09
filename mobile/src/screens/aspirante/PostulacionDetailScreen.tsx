@@ -19,6 +19,11 @@ const PostulacionDetailScreen = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof postulacionId === 'undefined' || postulacionId === null) {
+      Alert.alert('Error', 'ID de postulación inválido');
+      navigation.goBack();
+      return;
+    }
     loadPostulacion();
   }, []);
 
@@ -75,7 +80,7 @@ const PostulacionDetailScreen = () => {
         <Text style={styles.title}>{postulacion.oferta?.titulo}</Text>
         <Text style={styles.empresa}>{postulacion.oferta?.empresa?.nombre}</Text>
         <View style={[styles.estadoBadge, { backgroundColor: estadoBadge.backgroundColor, borderColor: estadoBadge.borderColor, borderWidth: 1 }]}>
-          <Iconicons name={getEstadoIcon()} size={16} color={estadoBadge.textColor} />
+          <Ionicons name={getEstadoIcon()} size={16} color={estadoBadge.textColor} />
           <Text style={[styles.estadoText, { color: estadoBadge.textColor }]}>
             {postulacion.estado ? postulacion.estado.replace(/_/g, ' ') : 'DESCONOCIDO'}
           </Text>
