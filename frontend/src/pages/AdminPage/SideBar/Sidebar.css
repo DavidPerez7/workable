@@ -38,6 +38,11 @@
   border-bottom: none;
 }
 
+.nav-link::after,
+.nav-link::before {
+  display: none !important;
+}
+
 .nav-icon {
   width: 20px;
   height: 20px;
@@ -77,6 +82,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.nav-link-perfil::after,
+.nav-link-perfil::before {
+  display: none !important;
 }
 
 .nav-link-perfil:hover {
