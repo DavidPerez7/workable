@@ -38,6 +38,7 @@ function AdminEmpresas() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const [municipios, setMunicipios] = useState([]);
   const [categories] = useState([
     'TECNOLOGIA', 'SOFTWARE', 'TELECOMUNICACIONES', 'SALUD', 'FARMACEUTICA', 'EDUCACION', 'FINANZAS', 'BANCA', 'SEGUROS', 'CONSULTORIA', 'LEGAL', 'MANUFACTURERA', 'AUTOMOTRIZ', 'CONSTRUCCION', 'INMOBILIARIA', 'ENERGIA', 'RETAIL', 'ECOMMERCE', 'ALIMENTACION', 'TRANSPORTE', 'LOGISTICA', 'MARKETING', 'PUBLICIDAD', 'TURISMO', 'HOTELERIA', 'RESTAURACION', 'RECURSOS_HUMANOS', 'AGRICULTURA', 'MEDIO_AMBIENTE', 'OTRO'
@@ -63,6 +64,7 @@ function AdminEmpresas() {
       setError(null);
       const data = await getAllEmpresasDto();
       setEmpresas(data);
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Error:', err);
       setError('Error al cargar empresas');
@@ -353,10 +355,8 @@ function AdminEmpresas() {
           
           <div className="header-section-CP">
             <div>
-              <h1 className="title-companies-CP">Gestión de Empresas</h1>
-              <p className="subtitle-companies-CP">
-                Administra las empresas registradas en la plataforma
-              </p>
+              <h1 className="title-companies-CP">GESTIÓN DE EMPRESAS</h1>
+              {lastUpdated && <div className="dashboard-subtitle">Última actualización: {lastUpdated.toLocaleString()}</div>}
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button 

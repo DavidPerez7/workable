@@ -27,13 +27,10 @@
 .main-offers-page-OP {
   flex: 1;
   margin-left: 250px;
-}
-
-.main-offers-page-OP {
   background: linear-gradient(180deg, #FFFFFF 0%, #F5F7FA 100%);
-  min-height: calc(100vh - 120px);
   padding: 40px 20px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-y: auto;
 }
 
 .container-offers-page-OP {
@@ -44,6 +41,9 @@
   background: #E0E7F0;
   box-shadow: var(--shadow-medium);
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* Header Section */
@@ -59,9 +59,10 @@
 .title-offers-OP {
   font-size: 2.4em;
   font-weight: 900;
-  color: var(--text-primary);
+  color: #1E3A8A;
   margin-bottom: 0.5rem;
   letter-spacing: -0.8px;
+  text-transform: uppercase;
 }
 
 .subtitle-offers-OP {
@@ -184,27 +185,30 @@
 /* Filters Section */
 .filters-section-OP {
   background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-  padding: 2.8rem 2rem 1.2rem 2rem;
+  padding: 3.5rem 2.5rem 1.5rem 2.5rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-medium);
   border: 1.5px solid var(--border-color);
   margin-bottom: 2rem;
   margin-top: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: stretch;
+  flex-direction: row;
+  gap: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   position: relative;
 }
 
 .filters-section-OP::before {
   content: "Buscar y Filtrar Ofertas";
   position: absolute;
-  top: 1.2rem;
-  left: 2rem;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 1.2em;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #1E3A8A;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   opacity: 0.95;
@@ -213,7 +217,7 @@
 .search-box-OP {
   position: relative;
   flex: 1;
-  min-width: 300px;
+  min-width: 400px;
   display: flex;
   align-items: center;
 }
@@ -284,7 +288,7 @@
 
 .filter-oferta1 {
   flex: 1;
-  min-width: 120px;
+  min-width: 140px;
   padding: 0.6rem 1.6rem;
   border: 2px solid #3B82F6;
   background-color: var(--background-card);
@@ -345,7 +349,7 @@
 
 .filter-oferta2 {
   flex: 1;
-  min-width: 120px;
+  min-width: 140px;
   padding: 0.6rem 1.6rem;
   border: 2px solid #10B981;
   background-color: var(--background-card);
@@ -399,7 +403,7 @@
 
 .filter-oferta3 {
   flex: 1;
-  min-width: 120px;
+  min-width: 140px;
   padding: 0.6rem 1.6rem;
   border: 2px solid #ef4444;
   background-color: var(--background-card);

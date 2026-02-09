@@ -18,6 +18,7 @@ function OffersPage() {
   const [empresas, setEmpresas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -63,6 +64,7 @@ function OffersPage() {
       );
       setOfertas(ofertasWithCount);
       setEmpresas(empresasData);
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Error:', err);
       setError('Error al cargar datos');
@@ -307,10 +309,8 @@ function OffersPage() {
           
           <div className="header-section-OP">
             <div>
-              <h1 className="title-offers-OP">Gestión de Ofertas Laborales</h1>
-              <p className="subtitle-offers-OP">
-                Supervisa y modera las ofertas laborales publicadas en la plataforma
-              </p>
+              <h1 className="title-offers-OP">GESTIONAR OFERTAS</h1>
+              <p className="subtitle-offers-OP">Última actualización: {lastUpdated?.toLocaleString()}</p>
             </div>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button 

@@ -25,6 +25,7 @@ export default function AdminUsuarios() {
   const [success, setSuccess] = useState('');
   const [municipios, setMunicipios] = useState([]);
   const [loadingMunicipios, setLoadingMunicipios] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   // Clear success messages after a short timeout
   useEffect(() => {
@@ -187,6 +188,7 @@ export default function AdminUsuarios() {
         mapUpdates[r.id] = r.empresa || '-';
       });
       setEmpresaMap(mapUpdates);
+      setLastUpdated(new Date());
     } catch (err) {
       setError('Error al cargar usuarios');
       console.error(err);
@@ -929,8 +931,8 @@ export default function AdminUsuarios() {
         <div className="container-users-manage-UP">
           <div className="header-section-UP">
             <div>
-              <h1 className="title-users-UP">Gestionar Usuarios</h1>
-              <p className="subtitle-users-UP">Administra todos los usuarios del sistema</p>
+              <h1 className="title-users-UP">GESTIONAR USUARIOS</h1>
+              <p className="subtitle-users-UP">Última actualización: {lastUpdated?.toLocaleString()}</p>
             </div>
             <button
               className="btn-create-UP"

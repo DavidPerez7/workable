@@ -18,6 +18,7 @@ export default function AdminPostulaciones() {
   const [citacionFormOpen, setCitacionFormOpen] = useState(null);
   const [citacionForm, setCitacionForm] = useState({ fecha: '', hora: '', linkMeet: '', estadoCitacion: 'PENDIENTE' });
   const [editForm, setEditForm] = useState({ estado: '' });
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   // Clear success messages after a short timeout
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function AdminPostulaciones() {
         }
       }
       setPostulaciones(todasLasPostulaciones);
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Error:', err);
       setError('Error al cargar datos');
@@ -178,8 +180,8 @@ export default function AdminPostulaciones() {
             {/* Header Section */}
             <div className="header-section-AP">
               <div>
-                <h1 className="title-postulaciones-AP">Gestión de Postulaciones</h1>
-                <p className="subtitle-postulaciones-AP">Administra y supervisa todas las postulaciones de aspirantes</p>
+                <h1 className="title-postulaciones-AP">GESTIONAR POSTULACIONES</h1>
+                <p className="subtitle-postulaciones-AP">Última actualización: {lastUpdated?.toLocaleString()}</p>
               </div>
               <button onClick={cargarDatos} className="btn-refresh-header-AP" title="Refrescar datos">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -263,7 +265,12 @@ export default function AdminPostulaciones() {
               onChange={(e) => setBusqueda(e.target.value)}
               className="search-input-AP"
             />
-            <button className="search-btn-AP">🔍</button>
+            <button className="search-btn-AP">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+            </button>
           </div>
 
           <div className="filter-buttons-AP">

@@ -10,6 +10,7 @@ function AdminCitaciones() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState('');
+  const [lastUpdated, setLastUpdated] = useState(null);
   
   // Modales
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -41,6 +42,7 @@ function AdminCitaciones() {
       ]);
       setCitaciones(citacionesData);
       setReclutadores(reclutadoresData);
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Error:', err);
       setError('Error al cargar datos');
@@ -133,20 +135,28 @@ function AdminCitaciones() {
         <div className="container-citaciones-CIT">
           <div className="header-section-CIT">
             <div>
-              <h1 className="title-citaciones-CIT">Gestión de Citaciones</h1>
-              <p className="subtitle-citaciones-CIT">Administra las citaciones con los aspirantes</p>
+              <h1 className="title-citaciones-CIT">GESTIONAR CITACIONES</h1>
+              <p className="subtitle-citaciones-CIT">Última actualización: {lastUpdated?.toLocaleString()}</p>
             </div>
             <button className="btn-crear-CIT" onClick={openCreateModal}>+ Nueva Citación</button>
           </div>
 
       <div className="filters-citaciones-CIT">
-        <input
-          type="text"
-          placeholder="Buscar citación..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className="search-input-CIT"
-        />
+        <div className="search-box-CIT">
+          <input
+            type="text"
+            placeholder="Buscar citación..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="search-input-CIT"
+          />
+          <button className="search-btn-CIT">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div className="table-container-CIT">
