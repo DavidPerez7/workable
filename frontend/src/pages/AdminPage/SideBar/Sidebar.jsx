@@ -1,8 +1,15 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { logout } from '../../../api/authApi';
 import './Sidebar.css';
 
 const Sidebar = () => {
+  const handleLogout = () => {
+    if (window.confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+      logout();
+    }
+  };
+
   return (
     <aside className="admin-sidebar">
       <div className="sidebar-brand">Workable Admin</div>
@@ -53,7 +60,13 @@ const Sidebar = () => {
           </svg>
           Mi Perfil
         </NavLink>
-        <small>Superusuario</small>
+        <button className="btn-logout-sidebar" onClick={handleLogout} title="Cerrar Sesión">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16,17 21,12 16,7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
       </div>
     </aside>
   );

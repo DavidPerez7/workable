@@ -16,17 +16,39 @@ function AdminPage() {
       <Sidebar />
       <div className="admin-content">
         <main className="main-admin-page-AP">
-          <div className="container-admin-page-AP">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/Usuarios" element={<AdminUsuarios />} />
-              <Route path="/Empresas" element={<AdminEmpresa />} />
-              <Route path="/Ofertas" element={<OffersPage />} />
-              <Route path="/Postulaciones" element={<AdminPostulaciones />} />
-              <Route path="/Perfil" element={<AdminPerfil />} />
-              <Route path="*" element={<Dashboard />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={
+              <div className="container-admin-page-AP">
+                <Dashboard />
+              </div>
+            } />
+            <Route path="/Usuarios" element={
+              <div className="container-admin-page-AP">
+                <AdminUsuarios />
+              </div>
+            } />
+            <Route path="/Empresas" element={
+              <div className="container-admin-page-AP">
+                <AdminEmpresa />
+              </div>
+            } />
+            <Route path="/Ofertas" element={
+              <div className="container-admin-page-AP">
+                <OffersPage />
+              </div>
+            } />
+            <Route path="/Postulaciones" element={<AdminPostulaciones />} />
+            <Route path="/Perfil" element={
+              <div className="container-admin-page-AP">
+                <AdminPerfil />
+              </div>
+            } />
+            <Route path="*" element={
+              <div className="container-admin-page-AP">
+                <Dashboard />
+              </div>
+            } />
+          </Routes>
         </main>
         <Footer />
       </div>
