@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import HeaderAdmin from '../../../components/HeaderAdmin/HeaderAdmin';
 import Footer from '../../../components/Footer/footer';
 import './AdminAccountPage.css';
 
@@ -147,7 +146,6 @@ function AdminAccountPage() {
 
   return (
     <>
-      <HeaderAdmin />
       <main className="main-admin-accounts-AAP">
         <div className="container-admin-accounts-AAP">
           
