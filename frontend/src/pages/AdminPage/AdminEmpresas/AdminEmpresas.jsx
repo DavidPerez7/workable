@@ -39,6 +39,8 @@ function AdminEmpresas() {
   const [submitting, setSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [municipios, setMunicipios] = useState([]);
   const [categories] = useState([
     'TECNOLOGIA', 'SOFTWARE', 'TELECOMUNICACIONES', 'SALUD', 'FARMACEUTICA', 'EDUCACION', 'FINANZAS', 'BANCA', 'SEGUROS', 'CONSULTORIA', 'LEGAL', 'MANUFACTURERA', 'AUTOMOTRIZ', 'CONSTRUCCION', 'INMOBILIARIA', 'ENERGIA', 'RETAIL', 'ECOMMERCE', 'ALIMENTACION', 'TRANSPORTE', 'LOGISTICA', 'MARKETING', 'PUBLICIDAD', 'TURISMO', 'HOTELERIA', 'RESTAURACION', 'RECURSOS_HUMANOS', 'AGRICULTURA', 'MEDIO_AMBIENTE', 'OTRO'
@@ -48,6 +50,11 @@ function AdminEmpresas() {
     fetchEmpresas();
     fetchMunicipios();
   }, []);
+
+  // Resetear página cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtroEstado, busqueda]);
 
   const fetchMunicipios = async () => {
     try {
@@ -80,6 +87,21 @@ function AdminEmpresas() {
                            (empresa.emailContacto && empresa.emailContacto.toLowerCase().includes(busqueda.toLowerCase()));
     return cumpleFiltro && cumpleBusqueda;
   });
+
+  // Paginación
+  const totalPages = Math.ceil(empresasFiltradas.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const empresasPaginadas = empresasFiltradas.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
 
   const handleAprobar = async (id) => {
     try {
@@ -358,7 +380,14 @@ function AdminEmpresas() {
               <h1 className="title-companies-CP">GESTIÓN DE EMPRESAS</h1>
               {lastUpdated && <div className="dashboard-subtitle">Última actualización: {lastUpdated.toLocaleString()}</div>}
             </div>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button onClick={() => { fetchEmpresas(); setCurrentPage(1); }} className="btn-refresh-header-CP" title="Refrescar datos">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"></path>
+                </svg>
+              </button>
               <button 
                 className="btn-back-CP"
                 onClick={() => setShowModal(true)}
@@ -428,30 +457,21 @@ function AdminEmpresas() {
                 </div>
                 
                 <div className="filter-buttons-CP">
-                  <button
-                    className={`filter-empresa1 ${filtroEstado === 'todas' ? 'active' : ''}`}
-                    onClick={() => setFiltroEstado('todas')}
+                  <select
+                    value={filtroEstado}
+                    onChange={(e) => setFiltroEstado(e.target.value)}
+                    className="filter-select-CP"
                   >
-                    Todas
-                  </button>
-                  <button
-                    className={`filter-empresa2 ${filtroEstado === 'Aprobado' ? 'active' : ''}`}
-                    onClick={() => setFiltroEstado('Aprobado')}
-                  >
-                    Activas
-                  </button>
-                  <button
-                    className={`filter-empresa3 ${filtroEstado === 'Inactivo' ? 'active' : ''}`}
-                    onClick={() => setFiltroEstado('Inactivo')}
-                  >
-                    Inactivas
-                  </button>
+                    <option value="todas">Todas las Empresas</option>
+                    <option value="Aprobado">Empresas Activas</option>
+                    <option value="Inactivo">Empresas Inactivas</option>
+                  </select>
                 </div>
               </div>
 
 
               <EmpresasTable
-                empresasFiltradas={empresasFiltradas}
+                empresasFiltradas={empresasPaginadas}
                 getEstadoBadgeClass={getEstadoBadgeClass}
                 handleEditEmpresa={handleEditEmpresa}
                 handleAprobar={handleAprobar}
@@ -460,6 +480,82 @@ function AdminEmpresas() {
                 onViewRecruiters={handleViewRecruiters}
                 processingId={processingId}
               />
+
+              {/* Controles de Paginación */}
+              {empresasFiltradas.length > 0 && (
+                <div className="pagination-controls-CP">
+                  <div className="pagination-info-CP">
+                    <span>
+                      Mostrando {startIndex + 1}-{Math.min(endIndex, empresasFiltradas.length)} de {empresasFiltradas.length} empresas
+                    </span>
+                  </div>
+                  
+                  <div className="pagination-items-per-page-CP">
+                    <label htmlFor="itemsPerPage">Mostrar:</label>
+                    <select
+                      id="itemsPerPage"
+                      value={itemsPerPage}
+                      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                      className="items-per-page-select-CP"
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span>por página</span>
+                  </div>
+
+                  <div className="pagination-buttons-CP">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="pagination-btn-CP"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="15,18 9,12 15,6"></polyline>
+                      </svg>
+                      Anterior
+                    </button>
+
+                    <div className="pagination-pages-CP">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`pagination-page-btn-CP ${currentPage === pageNum ? 'active' : ''}`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="pagination-btn-CP"
+                    >
+                      Siguiente
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9,18 15,12 9,6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -1,5 +1,27 @@
 /* AdminCitaciones - CIT */
 
+/* CSS Variables */
+:root {
+  --primary-color: #3B82F6;
+  --primary-hover: #1D4ED8;
+  --secondary-color: #64748B;
+  --accent-green: #10B981;
+  --accent-yellow: #F59E0B;
+  --accent-neutral: #6B7280;
+  --background-main: #FFFFFF;
+  --background-card: #FFFFFF;
+  --text-primary: #0A0E27;
+  --text-secondary: #3F4651;
+  --border-color: #A8B3C1;
+  --shadow-light: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-medium: 0 4px 16px rgba(59, 130, 246, 0.25);
+  --shadow-heavy: 0 8px 24px rgba(59, 130, 246, 0.35);
+  --border-radius: 10px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --gradient-primary: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  --gradient-accent: linear-gradient(90deg, #3B82F6 0%, #F59E0B 100%);
+}
+
 /* Layout */
 .main-citaciones-CIT {
   flex: 1;
@@ -436,4 +458,52 @@
 
 .modal-body-AE a:hover {
   text-decoration: underline;
+}
+
+/* Refresh button styles */
+.btn-refresh-header-CIT {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--border-radius);
+  font-size: 1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-medium);
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.btn-refresh-header-CIT:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-heavy);
+}
+
+.btn-refresh-header-CIT:hover::after {
+  content: "Refrescar";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9em;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.btn-refresh-header-CIT svg {
+  width: 20px;
+  height: 20px;
+  stroke: white;
+  stroke-width: 2;
 }

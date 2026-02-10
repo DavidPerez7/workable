@@ -26,6 +26,8 @@ export default function AdminUsuarios() {
   const [municipios, setMunicipios] = useState([]);
   const [loadingMunicipios, setLoadingMunicipios] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Clear success messages after a short timeout
   useEffect(() => {
@@ -53,6 +55,11 @@ export default function AdminUsuarios() {
   useEffect(() => {
     cargarUsuarios();
   }, []);
+
+  // Resetear página cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtroEstado, filtroRol, busqueda]);
 
   const [showModal, setShowModal] = useState(false);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
@@ -371,6 +378,21 @@ export default function AdminUsuarios() {
       usuario.correo.toLowerCase().includes(busqueda.toLowerCase());
     return cumpleEstado && cumpleRol && cumpleBusqueda;
   });
+
+  // Paginación
+  const totalPages = Math.ceil(usuariosFiltrados.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const usuariosPaginados = usuariosFiltrados.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
 
   const handleCrear = () => {
     setEditingUser(null);
@@ -934,16 +956,25 @@ export default function AdminUsuarios() {
               <h1 className="title-users-UP">GESTIONAR USUARIOS</h1>
               <p className="subtitle-users-UP">Última actualización: {lastUpdated?.toLocaleString()}</p>
             </div>
-            <button
-              className="btn-create-UP"
-              onClick={handleCrear}
-              style={{
-                background: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
-                boxShadow: '0 4px 16px rgba(59, 130, 246, 0.25)'
-              }}
-            >
-              + Crear Usuario
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button onClick={() => { cargarUsuarios(); setCurrentPage(1); }} className="btn-refresh-header-UP" title="Refrescar datos">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"></path>
+                </svg>
+              </button>
+              <button
+                className="btn-create-UP"
+                onClick={handleCrear}
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+                }}
+              >
+                + Nuevo Usuario
+              </button>
+            </div>
           </div>
 
           <StatsCards usuarios={usuarios} />
@@ -977,9 +1008,85 @@ export default function AdminUsuarios() {
 
           <UsersTable
             columns={getColumns()}
-            data={usuariosFiltrados}
+            data={usuariosPaginados}
             renderCell={(usuario, col) => getColumnValue(usuario, col)}
           />
+
+          {/* Controles de Paginación */}
+          {usuariosFiltrados.length > 0 && (
+            <div className="pagination-controls-UP">
+              <div className="pagination-info-UP">
+                <span>
+                  Mostrando {startIndex + 1}-{Math.min(endIndex, usuariosFiltrados.length)} de {usuariosFiltrados.length} usuarios
+                </span>
+              </div>
+              
+              <div className="pagination-items-per-page-UP">
+                <label htmlFor="itemsPerPage">Mostrar:</label>
+                <select
+                  id="itemsPerPage"
+                  value={itemsPerPage}
+                  onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                  className="items-per-page-select-UP"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+                <span>por página</span>
+              </div>
+
+              <div className="pagination-buttons-UP">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="pagination-btn-UP"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                  </svg>
+                  Anterior
+                </button>
+
+                <div className="pagination-pages-UP">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`pagination-page-btn-UP ${currentPage === pageNum ? 'active' : ''}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="pagination-btn-UP"
+                >
+                  Siguiente
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

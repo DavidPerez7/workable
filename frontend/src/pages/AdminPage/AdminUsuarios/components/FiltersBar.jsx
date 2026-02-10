@@ -22,45 +22,24 @@ export default function FiltersBar({
       </div>
 
       <div className="filter-buttons-UP">
-        <button
-          className={`filter-btn-UP ${filtroEstado === 'todos' ? 'active' : ''}`}
-          onClick={() => setFiltroEstado('todos')}
+        <select
+          value={filtroEstado}
+          onChange={(e) => setFiltroEstado(e.target.value)}
+          className="filter-select-UP"
         >
-          Todos
-        </button>
-        <button
-          className={`filter-btn-UP ${filtroEstado === 'activos' ? 'active' : ''}`}
-          onClick={() => setFiltroEstado('activos')}
+          <option value="todos">Todos los Estados</option>
+          <option value="activos">Usuarios Activos</option>
+          <option value="inactivos">Usuarios Inactivos</option>
+        </select>
+        <select
+          value={filtroRol}
+          onChange={(e) => setFiltroRol(e.target.value)}
+          className="filter-select-UP"
         >
-          Activos
-        </button>
-        <button
-          className={`filter-btn-UP ${filtroEstado === 'inactivos' ? 'active' : ''}`}
-          onClick={() => setFiltroEstado('inactivos')}
-        >
-          Inactivos
-        </button>
-      </div>
-
-      <div className="filter-buttons-UP">
-        <button
-          className={`filter-btn-UP ${filtroRol === 'aspirante' ? 'active' : ''}`}
-          onClick={() => setFiltroRol('aspirante')}
-        >
-          Aspirantes
-        </button>
-        <button
-          className={`filter-btn-UP ${filtroRol === 'reclutador' ? 'active' : ''}`}
-          onClick={() => setFiltroRol('reclutador')}
-        >
-          Reclutadores
-        </button>
-        <button
-          className={`filter-btn-UP ${filtroRol === 'admin' ? 'active' : ''}`}
-          onClick={() => setFiltroRol('admin')}
-        >
-          Administradores
-        </button>
+          <option value="aspirante">Aspirantes</option>
+          <option value="reclutador">Reclutadores</option>
+          <option value="admin">Administradores</option>
+        </select>
       </div>
     </div>
   );

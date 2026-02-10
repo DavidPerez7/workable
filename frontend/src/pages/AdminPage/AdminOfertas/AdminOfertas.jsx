@@ -4,7 +4,6 @@ import Footer from '../../../components/Footer/footer';
 import Sidebar from '../SideBar/Sidebar';
 import { getAllOfertas, crearOferta, actualizarOferta, eliminarOferta, cambiarEstadoOferta } from '../../../api/ofertasAPI';
 import { getAllEmpresasDto } from '../../../api/empresaAPI';
-import { obtenerConteoPostulacionesPorOferta } from '../../../api/postulacionesAPI';
 import './AdminOfertas.css';
 import OffersTable from './OffersTable';
 import OffersPostulacionesModal from './OffersPostulacionesModal/OffersPostulacionesModal';
@@ -19,6 +18,8 @@ function OffersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -42,6 +43,11 @@ function OffersPage() {
     fetchData();
   }, []);
 
+  // Resetear página cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtroEstado, filtroModalidad, busqueda]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -51,18 +57,20 @@ function OffersPage() {
         getAllEmpresasDto()
       ]);
       // Fetch postulaciones count for each oferta
-      const ofertasWithCount = await Promise.all(
-        ofertasData.map(async (oferta) => {
-          try {
-            const count = await obtenerConteoPostulacionesPorOferta(oferta.id);
-            return { ...oferta, postulacionesCount: count };
-          } catch (err) {
-            console.error(`Error fetching count for oferta ${oferta.id}:`, err);
-            return { ...oferta, postulacionesCount: 0 };
-          }
-        })
-      );
-      setOfertas(ofertasWithCount);
+      // TODO: Implementar endpoint en backend para obtener conteo de postulaciones por oferta
+      // const ofertasWithCount = await Promise.all(
+      //   ofertasData.map(async (oferta) => {
+      //     try {
+      //       const count = await obtenerConteoPostulacionesPorOferta(oferta.id);
+      //       return { ...oferta, postulacionesCount: count };
+      //     } catch (err) {
+      //       console.error(`Error fetching count for oferta ${oferta.id}:`, err);
+      //       return { ...oferta, postulacionesCount: 0 };
+      //     }
+      //   })
+      // );
+      // setOfertas(ofertasWithCount);
+      setOfertas(ofertasData);
       setEmpresas(empresasData);
       setLastUpdated(new Date());
     } catch (err) {
@@ -80,6 +88,21 @@ function OffersPage() {
                            (oferta.empresa?.nombre || '').toLowerCase().includes(busqueda.toLowerCase());
     return cumpleFiltroEstado && cumpleFiltroModalidad && cumpleBusqueda;
   });
+
+  // Paginación
+  const totalPages = Math.ceil(ofertasFiltradas.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const ofertasPaginadas = ofertasFiltradas.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -312,7 +335,14 @@ function OffersPage() {
               <h1 className="title-offers-OP">GESTIONAR OFERTAS</h1>
               <p className="subtitle-offers-OP">Última actualización: {lastUpdated?.toLocaleString()}</p>
             </div>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button onClick={() => { fetchData(); setCurrentPage(1); }} className="btn-refresh-header-OP" title="Refrescar datos">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"></path>
+                </svg>
+              </button>
               <button 
                 className="btn-back-OP"
                 onClick={() => setShowModal(true)}
@@ -346,7 +376,7 @@ function OffersPage() {
                     <div className="stat-label-OP">Total Ofertas</div>
                   </div>
                 </div>
-                <div className="stat-card-OP stat-activas-OP">
+                <div className="stat-card-OP stat-aprobadas-OP">
                   <svg className="stat-icon-OP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
@@ -385,29 +415,30 @@ function OffersPage() {
                 </div>
                 
                 <div className="filter-buttons-OP">
-                  <button
-                    className={`filter-oferta1 ${filtroEstado === 'todas' ? 'active' : ''}`}
-                    onClick={() => setFiltroEstado('todas')}
+                  <select
+                    value={filtroEstado}
+                    onChange={(e) => setFiltroEstado(e.target.value)}
+                    className="filter-select-OP"
                   >
-                    TODAS
-                  </button>
-                  <button
-                    className={`filter-oferta2 ${filtroEstado === 'ABIERTA' ? 'active' : ''}`}
-                    onClick={() => setFiltroEstado('ABIERTA')}
+                    <option value="todas">Todas las Ofertas</option>
+                    <option value="ABIERTA">Ofertas Abiertas</option>
+                    <option value="CERRADA">Ofertas Cerradas</option>
+                  </select>
+                  <select
+                    value={filtroModalidad}
+                    onChange={(e) => setFiltroModalidad(e.target.value)}
+                    className="filter-select-OP"
                   >
-                    ABIERTA
-                  </button>
-                  <button
-                    className={`filter-oferta3 ${filtroEstado === 'CERRADA' ? 'active' : ''}`}
-                    onClick={() => setFiltroEstado('CERRADA')}
-                  >
-                    CERRADA
-                  </button>
+                    <option value="todas">Todas las Modalidades</option>
+                    <option value="PRESENCIAL">Presencial</option>
+                    <option value="REMOTO">Remoto</option>
+                    <option value="HIBRIDO">Híbrido</option>
+                  </select>
                 </div>
               </div>
 
               <OffersTable
-                ofertas={ofertasFiltradas}
+                ofertas={ofertasPaginadas}
                 onEdit={handleEditOferta}
                 onChangeState={handleCambiarEstado}
                 onDelete={handleEliminar}
@@ -415,6 +446,82 @@ function OffersPage() {
                 onViewPostulaciones={handleViewPostulaciones}
                 getEstadoBadgeClass={getEstadoBadgeClass}
               />
+
+              {/* Controles de Paginación */}
+              {ofertasFiltradas.length > 0 && (
+                <div className="pagination-controls-OP">
+                  <div className="pagination-info-OP">
+                    <span>
+                      Mostrando {startIndex + 1}-{Math.min(endIndex, ofertasFiltradas.length)} de {ofertasFiltradas.length} ofertas
+                    </span>
+                  </div>
+                  
+                  <div className="pagination-items-per-page-OP">
+                    <label htmlFor="itemsPerPage">Mostrar:</label>
+                    <select
+                      id="itemsPerPage"
+                      value={itemsPerPage}
+                      onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                      className="items-per-page-select-OP"
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span>por página</span>
+                  </div>
+
+                  <div className="pagination-buttons-OP">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="pagination-btn-OP"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="15,18 9,12 15,6"></polyline>
+                      </svg>
+                      Anterior
+                    </button>
+
+                    <div className="pagination-pages-OP">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`pagination-page-btn-OP ${currentPage === pageNum ? 'active' : ''}`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="pagination-btn-OP"
+                    >
+                      Siguiente
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9,18 15,12 9,6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

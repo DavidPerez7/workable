@@ -19,6 +19,8 @@ export default function AdminPostulaciones() {
   const [citacionForm, setCitacionForm] = useState({ fecha: '', hora: '', linkMeet: '', estadoCitacion: 'PENDIENTE' });
   const [editForm, setEditForm] = useState({ estado: '' });
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Clear success messages after a short timeout
   useEffect(() => {
@@ -30,6 +32,11 @@ export default function AdminPostulaciones() {
   useEffect(() => {
     cargarDatos();
   }, []);
+
+  // Resetear página cuando cambian los filtros
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtroEstado, filtroOferta, busqueda]);
 
   const cargarDatos = async () => {
     try {
@@ -172,6 +179,21 @@ export default function AdminPostulaciones() {
     return cumpleFiltroEstado && cumpleFiltroOferta && cumpleBusqueda;
   });
 
+  // Paginación
+  const totalPages = Math.ceil(postulacionesFiltradas.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const postulacionesPaginadas = postulacionesFiltradas.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <div className="admin-layout">
@@ -183,13 +205,12 @@ export default function AdminPostulaciones() {
                 <h1 className="title-postulaciones-AP">GESTIONAR POSTULACIONES</h1>
                 <p className="subtitle-postulaciones-AP">Última actualización: {lastUpdated?.toLocaleString()}</p>
               </div>
-              <button onClick={cargarDatos} className="btn-refresh-header-AP" title="Refrescar datos">
+              <button onClick={() => { cargarDatos(); setCurrentPage(1); }} className="btn-refresh-header-AP" title="Refrescar datos">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M23 4v6h-6"></path>
                   <path d="M1 20v-6h6"></path>
                   <path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"></path>
                 </svg>
-                Refrescar
               </button>
             </div>
 
@@ -308,7 +329,7 @@ export default function AdminPostulaciones() {
                 </tr>
               </thead>
               <tbody>
-                {postulacionesFiltradas.map(p => (
+                {postulacionesPaginadas.map(p => (
                   <tr key={p.id} className={`row-${p.estado?.toLowerCase()}`}>
                     <td className="id-cell-AP">#{p.id}</td>
                     <td className="nombre-cell-AP">{p.aspirante?.nombre} {p.aspirante?.apellido || ''}</td>
@@ -393,6 +414,82 @@ export default function AdminPostulaciones() {
             </table>
           )}
         </div>
+
+        {/* Controles de Paginación */}
+        {postulacionesFiltradas.length > 0 && (
+          <div className="pagination-controls-AP">
+            <div className="pagination-info-AP">
+              <span>
+                Mostrando {startIndex + 1}-{Math.min(endIndex, postulacionesFiltradas.length)} de {postulacionesFiltradas.length} postulaciones
+              </span>
+            </div>
+            
+            <div className="pagination-items-per-page-AP">
+              <label htmlFor="itemsPerPage">Mostrar:</label>
+              <select
+                id="itemsPerPage"
+                value={itemsPerPage}
+                onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+                className="items-per-page-select-AP"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <span>por página</span>
+            </div>
+
+            <div className="pagination-buttons-AP">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn-AP"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="15,18 9,12 15,6"></polyline>
+                </svg>
+                Anterior
+              </button>
+
+              <div className="pagination-pages-AP">
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`pagination-page-btn-AP ${currentPage === pageNum ? 'active' : ''}`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-btn-AP"
+              >
+                Siguiente
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="9,18 15,12 9,6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Modal para programar citación */}
         {citacionFormOpen && (

@@ -138,7 +138,16 @@ function AdminCitaciones() {
               <h1 className="title-citaciones-CIT">GESTIONAR CITACIONES</h1>
               <p className="subtitle-citaciones-CIT">Última actualización: {lastUpdated?.toLocaleString()}</p>
             </div>
-            <button className="btn-crear-CIT" onClick={openCreateModal}>+ Nueva Citación</button>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <button onClick={fetchCitaciones} className="btn-refresh-header-CIT" title="Refrescar datos">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"></path>
+                </svg>
+              </button>
+              <button className="btn-crear-CIT" onClick={openCreateModal}>+ Nueva Citación</button>
+            </div>
           </div>
 
       <div className="filters-citaciones-CIT">
