@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../../components/Footer/footer';
 import Sidebar from '../SideBar/Sidebar';
@@ -6,7 +6,9 @@ import { getAllEmpresasDto, actualizarEmpresa, eliminarEmpresa, crearEmpresa } f
 import { getMunicipios } from '../../../api/municipioAPI';
 import EmpresasTable from './EmpresasTable';
 import RecruitersModal from './RecruitersModal';
+import { PieChart, Pie, Cell } from 'recharts';
 import './AdminEmpresas.css';
+import jsPDF from 'jspdf';
 
 function AdminEmpresas() {
   const navigate = useNavigate();
@@ -96,6 +98,40 @@ function AdminEmpresas() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Gestión de Empresas', 10, 20);
+    doc.setFontSize(12);
+    doc.text(`Fecha de generación: ${new Date().toLocaleString()}`, 10, 30);
+    doc.text(`Total Empresas: ${estadisticas.total}`, 10, 40);
+    doc.text(`Activas: ${estadisticas.activas} (${estadisticas.total > 0 ? ((estadisticas.activas / estadisticas.total) * 100).toFixed(1) : 0}%)`, 10, 50);
+    doc.text(`Inactivas: ${estadisticas.inactivas} (${estadisticas.total > 0 ? ((estadisticas.inactivas / estadisticas.total) * 100).toFixed(1) : 0}%)`, 10, 60);
+    
+    // Add categories
+    doc.text('Distribución por Categorías:', 10, 70);
+    let y = 80;
+    categoryStats.forEach(cat => {
+      doc.text(`${cat.name}: ${cat.value} (${((cat.value / categoryStats.reduce((sum, c) => sum + c.value, 0)) * 100).toFixed(1)}%)`, 10, y);
+      y += 10;
+    });
+    
+    // Add table
+    doc.text('Lista de Empresas:', 10, y + 10);
+    y += 20;
+    doc.setFontSize(10);
+    empresasFiltradas.forEach((empresa, index) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(`${index + 1}. ${empresa.nombre} - NIT: ${empresa.nit} - Estado: ${empresa.isActive ? 'Activa' : 'Inactiva'}`, 10, y);
+      y += 8;
+    });
+    
+    doc.save('empresas.pdf');
   };
 
   const handleItemsPerPageChange = (newItemsPerPage) => {
@@ -368,6 +404,20 @@ function AdminEmpresas() {
     inactivas: empresas.filter(e => e.isActive === false).length
   };
 
+  const categoryStats = useMemo(() => {
+    const categories = {};
+    empresas.forEach(empresa => {
+      if (empresa.categories) {
+        empresa.categories.forEach(cat => {
+          categories[cat] = (categories[cat] || 0) + 1;
+        });
+      }
+    });
+    return Object.entries(categories).map(([name, value]) => ({ name, value }));
+  }, [empresas]);
+
+  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316'];
+
   return (
     <>
       <div className="admin-layout">
@@ -388,11 +438,21 @@ function AdminEmpresas() {
                   <path d="M3.51 9a9 9 0 0114.85-3.36M20.49 15a9 9 0 01-14.85 3.36"></path>
                 </svg>
               </button>
+              <button className="btn-pdf-CP" onClick={handleDownloadPDF}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14,2 14,8 20,8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10,9 9,9 8,9"></polyline>
+                </svg>
+                Descargar PDF
+              </button>
               <button 
                 className="btn-back-CP"
                 onClick={() => setShowModal(true)}
                 style={{ 
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  background: '#059669',
                   boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
                 }}
               >
@@ -409,32 +469,68 @@ function AdminEmpresas() {
             <>
               <div className="stats-section-CP">
                 <div className="stat-card-CP stat-total-CP">
-                  <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                  </svg>
-                  <div>
+                  <div className="stat-label-CP">Total Empresas</div>
+                  <div className="stat-content-CP">
+                    <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
                     <div className="stat-number-CP">{estadisticas.total}</div>
-                    <div className="stat-label-CP">Total Empresas</div>
                   </div>
                 </div>
-                <div className="stat-card-CP stat-aprobadas-CP">
-                  <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-                  <div>
-                    <div className="stat-number-CP">{estadisticas.activas}</div>
-                    <div className="stat-label-CP">Activas</div>
+                <div className="stat-card-CP stat-estado-CP">
+                  <div className="stat-label-CP">Estado de Empresas</div>
+                  <div className="estado-section-CP">
+                    <div className="estado-item-CP">
+                      <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <div className="stat-number-CP">{estadisticas.activas}</div>
+                      <div className="stat-percentage-CP">
+                        {estadisticas.total > 0 ? ((estadisticas.activas / estadisticas.total) * 100).toFixed(1) : 0}% activas
+                      </div>
+                    </div>
+                    <div className="estado-item-CP">
+                      <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <div className="stat-number-CP">{estadisticas.inactivas}</div>
+                      <div className="stat-percentage-CP">
+                        {estadisticas.total > 0 ? ((estadisticas.inactivas / estadisticas.total) * 100).toFixed(1) : 0}% inactivas
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="stat-card-CP stat-inactivas-CP">
-                  <svg className="stat-icon-CP" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  <div>
-                    <div className="stat-number-CP">{estadisticas.inactivas}</div>
-                    <div className="stat-label-CP">Inactivas</div>
+                <div className="stat-card-CP stat-chart-CP">
+                  <div className="stat-label-CP">Distribución por Categoría</div>
+                  <div className="pie-chart-CP">
+                    <PieChart width={80} height={80}>
+                      <Pie
+                        data={categoryStats}
+                        cx={40}
+                        cy={40}
+                        outerRadius={35}
+                        paddingAngle={2}
+                        dataKey="value"
+                      >
+                        {categoryStats.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </div>
+                  <div className="chart-legend-CP">
+                    {categoryStats.map((entry, index) => {
+                      const total = categoryStats.reduce((sum, item) => sum + item.value, 0);
+                      const percentage = ((entry.value / total) * 100).toFixed(1);
+                      return (
+                        <div key={entry.name} className="legend-item-CP">
+                          <span className="legend-color-CP" style={{ backgroundColor: COLORS[index % COLORS.length] }}></span>
+                          <span className="legend-text-CP">{entry.name}: {percentage}%</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
