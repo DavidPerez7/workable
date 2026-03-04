@@ -8,10 +8,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
+import androidx.compose.ui.graphics.Color
+
 @Composable
 fun LoginScreen() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showText by remember { mutableStateOf(false) }
+    var textColor by remember { mutableStateOf(Color(0xFF6200EE)) } // Color primary
+    var contador by remember { mutableStateOf(0) }
 
     Column(
         modifier = Modifier
@@ -28,14 +33,67 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text (
+        Text(
             text = "Iniciar sesion",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
 
-        Button(onClick = { println("Login con Google")}) {
+        Text(
+            text = "Email",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Button(onClick = { showText = true }, enabled = email.isNotEmpty() && password.isNotEmpty()) {
             Text("Entrar")
         }
+
+        if (showText) {
+            Text("Hola, $email, tu contraseña es $password")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = {
+            email = ""
+            password = ""
+        }, enabled = email.isNotEmpty() && password.isNotEmpty()) {
+            Text("Limpiar")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(onClick = { textColor = Color(0xFF03DAC6) }) { // Color secondary
+            Text("Cambiar color")
+        }
+
+        Text(
+            text = "sunga",
+            color = textColor
+        )
+
+        Button(onClick = { contador++ }) {
+            Text("Contar")
+        }
+
+        Text(
+            text = "Contador: $contador",
+            color = textColor
+        )
     }
 }
