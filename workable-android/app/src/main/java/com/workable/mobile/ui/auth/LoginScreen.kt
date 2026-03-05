@@ -7,11 +7,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showText by remember { mutableStateOf(false) }
@@ -59,8 +60,12 @@ fun LoginScreen() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Button(onClick = { showText = true }, enabled = email.isNotEmpty() && password.isNotEmpty()) {
-            Text("Entrar")
+        Button(onClick = { navController.navigate("register")}) {
+            Text("Registrarse")
+        }
+
+        Button(onClick = { navController.navigate("aspirante") }) {
+            Text("Entrar Aspirante")
         }
 
         if (showText) {
