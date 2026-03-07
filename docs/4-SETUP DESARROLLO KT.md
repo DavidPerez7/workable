@@ -840,6 +840,100 @@ O mejor: Usar script `.bat` desde CMD.
 
 ---
 
+### Problema 6: Acceso Denegado en %TEMP% al Descargar ZIP
+
+**Síntoma:**
+```powershell
+Invoke-WebRequest -OutFile "$env:TEMP\cmdline-tools.zip" ...
+# Acceso denegado a la ruta
+```
+
+**Causa:**
+`$env:TEMP` puede apuntar a una ruta con permisos restringidos o configuración del sistema.
+
+**Solución:**
+Usar `curl` en lugar de `Invoke-WebRequest`:
+```bash
+curl -o 'C:\Temp\cmdline-tools.zip' 'https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip'
+```
+O crear directorio alternativo y usar `Start-BitsTransfer` para descargas grandes.
+
+---
+
+### Problema 7: Ruta Incorrecta de JAVA_HOME (Versión Específica)
+
+**Síntoma:**
+```bash
+sdkmanager --version
+# ERROR: JAVA_HOME is set to an invalid directory: C:\Program Files\Java\jdk-21
+```
+
+**Causa:**
+La instalación crea carpetas con versiones específicas (ej. `jdk-21.0.10`), no genéricas.
+
+**Solución:**
+Verificar ruta real:
+```bash
+dir "C:\Program Files\Java"
+```
+Configurar con ruta exacta:
+```bash
+setx JAVA_HOME "C:\Program Files\Java\jdk-21.0.10"
+```
+
+---
+
+### Problema 8: Archivo local.properties Requerido
+
+**Síntoma:**
+```bash
+gradlew.bat assembleDebug
+# SDK location not found. Define sdk.dir in local.properties
+```
+
+**Causa:**
+Gradle requiere `local.properties` para localizar el SDK, incluso con ANDROID_HOME configurado.
+
+**Solución:**
+Crear `local.properties` en la raíz del proyecto:
+```
+sdk.dir=C:\\Users\\<usuario>\\AppData\\Local\\Android\\Sdk
+```
+Reemplazar `<usuario>` con el nombre real (ej. `SENA`).
+
+---
+
+### Problema 9: Advertencia de Parámetro No Usado en Kotlin
+
+**Síntoma:**
+```kotlin
+// Línea 8: Parameter 'navController' is never used
+fun AspiranteScreen(navController: NavController) { ... }
+```
+
+**Causa:**
+Parámetros declarados pero no utilizados generan warnings en compilación.
+
+**Solución:**
+- Usar el parámetro (ej. `navController.navigate(...)`).
+- Prefijar con `_` si no se usa: `fun AspiranteScreen(_navController: NavController)`.
+- Suprimir warning: `@Suppress("UNUSED_PARAMETER")`.
+
+---
+
+### Problema 10: Licencias SDK Aceptadas Automáticamente en Instalación
+
+**Síntoma:**
+Durante instalación de componentes, licencias se aceptan sin intervención.
+
+**Causa:**
+Versiones recientes de sdkmanager aceptan licencias automáticamente durante instalación.
+
+**Solución:**
+Si falla, revertir al script batch documentado en Problema 2. Para setups nuevos, intentar instalación directa primero.
+
+---
+
 ## 📚 Comandos Útiles
 
 ### Android SDK Manager

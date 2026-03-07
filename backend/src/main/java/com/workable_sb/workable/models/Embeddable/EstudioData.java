@@ -1,4 +1,4 @@
-package com.workable_sb.workable.models;
+package com.workable_sb.workable.models.Embeddable;
 
 import java.time.LocalDate;
 import jakarta.persistence.*;

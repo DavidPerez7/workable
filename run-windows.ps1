@@ -1,4 +1,4 @@
-# Script principal para ejecutar el proyecto Workable (Backend + Frontend) en Windows
+﻿# Script principal para ejecutar el proyecto Workable (Backend + Frontend) en Windows
 # Version: PowerShell
 # Este script proporciona opciones para ejecutar backend, frontend o ambos
 
@@ -6,7 +6,7 @@ param(
     [string]$Action = "menu"
 )
 
-# Configuración
+# ConfiguraciÃ³n
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BackendDir = Join-Path $ScriptDir "backend"
 $FrontendDir = Join-Path $ScriptDir "frontend"
@@ -35,17 +35,17 @@ function Print-Header {
 
 function Print-Success {
     param([string]$Message)
-    Write-Host "[✓] $Message" -ForegroundColor Green
+    Write-Host "[OK] $Message" -ForegroundColor Green
 }
 
 function Print-Error {
     param([string]$Message)
-    Write-Host "[✗] $Message" -ForegroundColor Red
+    Write-Host "[ERROR] $Message" -ForegroundColor Red
 }
 
 function Print-Warning {
     param([string]$Message)
-    Write-Host "[⚠] $Message" -ForegroundColor Yellow
+    Write-Host "[WARN] $Message" -ForegroundColor Yellow
 }
 
 function Print-Info {
@@ -53,7 +53,7 @@ function Print-Info {
     Write-Host "[i] $Message" -ForegroundColor Cyan
 }
 
-# Verificar si una herramienta está disponible
+# Verificar si una herramienta estÃ¡ disponible
 function Test-Command {
     param([string]$Command)
     
@@ -79,7 +79,7 @@ function Check-Dependencies {
         Print-Success "Node.js encontrado: $NodeVersion"
     }
     else {
-        Print-Error "Node.js no está instalado"
+        Print-Error "Node.js no estÃ¡ instalado"
         $DepsOk = $false
     }
     
@@ -89,7 +89,7 @@ function Check-Dependencies {
         Print-Success "npm encontrado: $NpmVersion"
     }
     else {
-        Print-Error "npm no está instalado"
+        Print-Error "npm no estÃ¡ instalado"
         $DepsOk = $false
     }
     
@@ -99,7 +99,7 @@ function Check-Dependencies {
         Print-Success "Java encontrado: $JavaVersion"
     }
     else {
-        Print-Error "Java no está instalado"
+        Print-Error "Java no estÃ¡ instalado"
         $DepsOk = $false
     }
     
@@ -109,16 +109,16 @@ function Check-Dependencies {
         Print-Success "Maven encontrado: $MavenVersion"
     }
     else {
-        Print-Error "Maven no está instalado"
+        Print-Error "Maven no estÃ¡ instalado"
         $DepsOk = $false
     }
     
     if ($DepsOk) {
-        Print-Success "Todas las dependencias están disponibles"
+        Print-Success "Todas las dependencias estÃ¡n disponibles"
         return $true
     }
     else {
-        Print-Error "Faltan algunas dependencias. Instálalas e intenta de nuevo."
+        Print-Error "Faltan algunas dependencias. InstÃ¡lalas e intenta de nuevo."
         return $false
     }
 }
@@ -186,7 +186,7 @@ function Stop-AllProcesses {
         Print-Success "Todos los procesos han sido detenidos correctamente"
     }
     else {
-        Print-Warning "No hay procesos en ejecución"
+        Print-Warning "No hay procesos en ejecuciÃ³n"
     }
 }
 
@@ -302,15 +302,15 @@ function Run-Both {
     Print-Header "AMBOS SERVICIOS INICIADOS"
     Print-Info "Backend: http://localhost:$BackendPort"
     Print-Info "Frontend: http://localhost:$FrontendPort"
-    Print-Info "Ambas ventanas permanecerán abiertas"
+    Print-Info "Ambas ventanas permanecerÃ¡n abiertas"
     
     return $true
 }
 
 function Show-Menu {
     Write-Host ""
-    Print-Header "WORKABLE PROJECT MANAGER - MENÚ PRINCIPAL"
-    Write-Host "Selecciona una opción:" -ForegroundColor Yellow
+    Print-Header "WORKABLE PROJECT MANAGER - MENÃš PRINCIPAL"
+    Write-Host "Selecciona una opciÃ³n:" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "  1) Iniciar Backend (Terminal actual)"
     Write-Host "  2) Iniciar Frontend (Terminal actual)"
@@ -327,20 +327,20 @@ if ($Action -eq "menu" -or $Action -eq "") {
     while ($true) {
         Clear-Host
         Show-Menu
-        $Choice = Read-Host "Ingresa el número de tu opción (1-6)"
+        $Choice = Read-Host "Ingresa el nÃºmero de tu opciÃ³n (1-6)"
         
         switch ($Choice) {
-            "1" { Run-Backend; Read-Host "Presiona Enter para volver al menú" }
-            "2" { Run-Frontend; Read-Host "Presiona Enter para volver al menú" }
+            "1" { Run-Backend; Read-Host "Presiona Enter para volver al menÃº" }
+            "2" { Run-Frontend; Read-Host "Presiona Enter para volver al menÃº" }
             "3" { Run-Both; exit }
-            "4" { Stop-AllProcesses; Read-Host "Presiona Enter para volver al menú" }
-            "5" { Check-Dependencies; Read-Host "Presiona Enter para volver al menú" }
+            "4" { Stop-AllProcesses; Read-Host "Presiona Enter para volver al menÃº" }
+            "5" { Check-Dependencies; Read-Host "Presiona Enter para volver al menÃº" }
             "6" { 
                 Print-Success "¡Hasta luego!"
                 exit
             }
             default {
-                Print-Error "Opción inválida. Por favor ingresa un número entre 1 y 6."
+                Print-Error "OpciÃ³n invÃ¡lida. Por favor ingresa un nÃºmero entre 1 y 6."
                 Start-Sleep -Seconds 2
             }
         }
@@ -367,9 +367,9 @@ elseif ($Action -eq "check") {
     Check-Dependencies
 }
 else {
-    Print-Error "Acción desconocida: $Action"
+    Print-Error "AcciÃ³n desconocida: $Action"
     Write-Host "Usos:"
-    Write-Host "  .\run-project-windows.ps1                # Muestra el menú"
+    Write-Host "  .\run-project-windows.ps1                # Muestra el menÃº"
     Write-Host "  .\run-project-windows.ps1 -Action backend # Inicia backend"
     Write-Host "  .\run-project-windows.ps1 -Action frontend # Inicia frontend"
     Write-Host "  .\run-project-windows.ps1 -Action both     # Inicia ambos"
