@@ -1,14 +1,12 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import jakarta.persistence.Transient;
-
-import jakarta.persistence.CascadeType;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -23,9 +21,7 @@ import jakarta.persistence.JoinColumn;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,111 +35,69 @@ public class Empresa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //atributos obligatorios
+    @NotBlank(message = "El nombre es obligatorio")
     @Column(nullable = false, length = 255)
     private String nombre;
 
-    @Column(nullable = false, length = 255)
-    private String descripcion;
-
+    @NotNull(message = "El número de trabajadores es obligatorio")
     @Column(nullable = false)
     private Integer numeroTrabajadores;
+
+    @NotBlank(message = "El correo de contacto es obligatorio")
+    @Email(message = "El correo debe tener un formato válido")
+    @Column(length = 255, nullable = false)
+    private String email;
+
+    @NotBlank(message = "El teléfono de contacto es obligatorio")
+    @Column(length = 50, nullable = false)
+    private String telefono;
+
+    @NotBlank(message = "El NIT es obligatorio")
+    @Column(length = 12, unique = true, nullable = false)
+    private String nit;
+
+    @NotEmpty(message = "La dirección es obligatoria")
+    @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "empresa_category_enum", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria", length = 50, nullable = false)
+    private Set<Category> categories = new HashSet<>();
+
+    @NotNull(message = "El municipio es obligatorio")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    private Municipio municipio;
+
+    //atributos adicionales
+    @Column(length = 255)
+    private String descripcion;
+
+    @Column(length = 20, unique = true)
+    private String codigoInvitacion;
+
+    @Column(length = 500)
+    private String logoUrl;
+
+    private Boolean isActive;
 
     private float puntuacion = 0.0f;
 
     private LocalDate fechaCreacion;
 
-    // Información de contacto
-    @Column(length = 255)
-    private String emailContacto;
-
-    @Column(length = 50)
-    private String telefonoContacto;
-
-    @Column(length = 255)
-    private String website;
-
-    @Column(length = 500)
-    private String logoUrl;
-
-    @Column(nullable = false)
-    private List<String> redesSociales = new ArrayList<>();
-    
-    @Column(nullable = false)
-    private List<String> direcciones = new ArrayList<>();
-
-    // Identificación legal/fiscal
-    @Column(length = 50, unique = true)
-    private String nit;
-
-    @Column(length = 255)
-    private String razonSocial;
-
-    // Estado de la empresa
-    @Column(nullable = false)
-    private Boolean isActive;
-
-    // Código de invitación para que otros reclutadores se unan
-    @Column(length = 20, unique = true)
-    private String codigoInvitacion;
-
-    // Reclutador que creó la empresa (owner/administrador principal)
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "reclutador_owner_id", referencedColumnName = "id", nullable = true)
-    private Reclutador reclutadorOwner;
-
-    @ElementCollection(targetClass = Category.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "empresa_category_enum", joinColumns = @JoinColumn(name = "empresa_id", referencedColumnName = "id"))
-    @Enumerated(EnumType.STRING)
-    @Column(name = "categoria", length = 50)
-    private Set<Category> categories = new HashSet<>();
-    
     public enum Category {
         TECNOLOGIA,
-        SOFTWARE,
-        TELECOMUNICACIONES,
         SALUD,
-        FARMACEUTICA,
         EDUCACION,
         FINANZAS,
-        BANCA,
-        SEGUROS,
-        CONSULTORIA,
-        LEGAL,
-        MANUFACTURERA,
-        AUTOMOTRIZ,
+        MANUFACTURA,
+        COMERCIO,
         CONSTRUCCION,
-        INMOBILIARIA,
-        ENERGIA,
-        RETAIL,
-        ECOMMERCE,
-        ALIMENTACION,
-        TRANSPORTE,
-        LOGISTICA,
-        MARKETING,
-        PUBLICIDAD,
-        TURISMO,
-        HOTELERIA,
-        RESTAURACION,
-        RECURSOS_HUMANOS,
+        SERVICIOS,
         AGRICULTURA,
-        MEDIO_AMBIENTE,
         OTRO
     }
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
-    private Municipio municipio;
-
-    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Oferta> ofertas = new ArrayList<>();
-
-    // Relación unidireccional: La empresa conoce sus reclutadores
-    // Se crea una columna empresa_id en la tabla reclutador
-    // IMPORTANTE: Usar @Transient para evitar ConcurrentModificationException durante serialización JSON
-    @Transient
-    private List<Reclutador> reclutadores = Collections.synchronizedList(new ArrayList<>());
 
     @PrePersist
     protected void onCreate() {
@@ -151,15 +105,11 @@ public class Empresa {
             fechaCreacion = LocalDate.now();
             isActive = true;
         }
-        // Generar código de invitación si no existe
         if (codigoInvitacion == null || codigoInvitacion.isEmpty()) {
             generarCodigoInvitacion();
         }
     }
 
-    /**
-     * Genera un código de invitación único de 12 caracteres
-     */
     public void generarCodigoInvitacion() {
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder codigo = new StringBuilder();
@@ -168,7 +118,6 @@ public class Empresa {
         for (int i = 0; i < 12; i++) {
             codigo.append(caracteres.charAt(random.nextInt(caracteres.length())));
         }
-        
         this.codigoInvitacion = codigo.toString();
     }
 }

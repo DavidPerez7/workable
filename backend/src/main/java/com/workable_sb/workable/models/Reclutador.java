@@ -88,7 +88,6 @@ public class Reclutador {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "empresa_id", nullable = true, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "reclutadores", "reclutadorOwner"})
     private Empresa empresa;
 
     @PrePersist

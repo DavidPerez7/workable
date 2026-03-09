@@ -14,6 +14,7 @@ import com.workable_sb.workable.models.Embeddable.ExperienciaData;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "hoja_vida")
 public class HojaVida {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

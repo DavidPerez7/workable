@@ -45,7 +45,7 @@
 
 Esta Especificación de Requisitos de Software (SRS) define las capacidades técnicas y funcionales de Workable, una plataforma de intermediación laboral diseñada para conectar aspirantes con reclutadores. El sistema se basa en una arquitectura desacoplada con Spring Boot (Java) para el backend y React para el frontend, empleando MySQL gestionado mediante XAMPP y un despliegue final proyectado en AWS.
 
-El alcance incluye la gestión de seguridad mediante JWT y Bcrypt, el ciclo de vida de ofertas laborales, la carga de hojas de vida exclusivamente en formato PDF y un panel administrativo para la moderación de contenido y análisis de métricas. Este documento actúa como la guía técnica oficial para el equipo de desarrollo del proyecto, detallando los requerimientos funcionales y los estándares de rendimiento, seguridad y disponibilidad necesarios para la sustentación del proyecto.
+El alcance incluye la gestión de seguridad mediante JWT y Bcrypt, el ciclo de vida de ofertas laborales y un panel administrativo para la moderación de contenido y análisis de métricas. Este documento actúa como la guía técnica oficial para el equipo de desarrollo del proyecto, detallando los requerimientos funcionales y los estándares de rendimiento, seguridad y disponibilidad necesarios para la sustentación del proyecto.
 
 # **1.1 PROPÓSITO**
 
@@ -66,7 +66,7 @@ El producto objeto de esta especificación se identifica con el nombre comercial
 
 En concordancia con la descripción general del sistema, el alcance de Workable comprende el desarrollo de una solución integral basada en una arquitectura desacoplada. Esto incluye la implementación de un Backend robusto en Spring Boot para la lógica de negocio y un Frontend en React para la interfaz de usuario. 
 
-El sistema permitirá gestionar el ciclo completo de reclutamiento: desde el registro y autenticación segura de usuarios (Aspirantes, Reclutadores y Administradores) mediante JWT, hasta la publicación, búsqueda y postulación a vacantes laborales, permitiendo además la carga de hojas de vida exclusivamente en formato PDF.
+El sistema permitirá gestionar el ciclo completo de reclutamiento: desde el registro y autenticación segura de usuarios (Aspirantes, Reclutadores y Administradores) mediante JWT, hasta la publicación, búsqueda y postulación a vacantes laborales.
 
 El entorno afectado por esta Especificación de Requerimientos de Software (SRS) se enmarca en el ecosistema de aplicaciones del SENA para el programa de Análisis y Desarrollo de Software. Los proyectos e infraestructuras influenciados incluyen:
 
@@ -138,9 +138,9 @@ Esta estructura permite que el producto sea escalable y fácil de mantener. En t
 
 La plataforma Workable está diseñada para centralizar el proceso de reclutamiento mediante una estructura de módulos interconectados. A continuación, se resumen las funcionalidades principales organizadas por áreas operativas:
 
-- Gestión de Usuarios y Seguridad: El sistema permite el registro, inicio de sesión y recuperación de cuentas mediante mensaje a correo electrónico para 2 roles definidos (Aspirante, Reclutador) mientras que el rol de Administrador tendrá las funciones anteriormente mencionadas excluyendo la recuperación de cuenta. La seguridad se garantiza mediante la implementación de tokens JWT y el cifrado de contraseñas con Bcrypt.   
+- Gestión de Usuarios y Seguridad: El sistema permite el registro, inicio de sesión y recuperación de cuentas mediante mensaje a correo electrónico para 2 roles definidos (Aspirante, Reclutador). El rol de Administrador no dispone de registro público; un administrador inicial es pre-generado en la ejecución del backend y puede crear adicionales para el personal de TI que mantenga la plataforma. La seguridad se garantiza mediante la implementación de tokens JWT para todos los roles y el cifrado de contraseñas con Bcrypt.   
     
-- Módulo de Aspirantes: Los usuarios pueden gestionar su perfil profesional, cargar su hoja de vida en formato PDF, buscar vacantes mediante filtros avanzados (por ubicación o categoría) y realizar postulaciones a las ofertas de su interés.  
+- Módulo de Aspirantes: Los usuarios pueden gestionar su perfil profesional, buscar vacantes mediante filtros avanzados (por ubicación o categoría) y realizar postulaciones a las ofertas de su interés.  
     
 - Módulo de Reclutadores: Permite a las empresas o reclutadores la creación, edición y publicación de ofertas laborales. Incluye herramientas para visualizar las hojas de vida de los postulados y gestionar el estado de las vacantes.  
     
@@ -155,7 +155,7 @@ A continuación, se describen los perfiles de usuario que interactuaron con la p
 | Tipo de usuario | Aspirante |
 | :---: | :---: |
 | Formación | Estudiantes, técnicos, tecnólogos o profesionales en búsqueda de empleo. |
-| Habilidades | Conocimientos básicos en navegación web, manejo de archivos digitales (PDF) y uso de correo electrónico. |
+| Habilidades | Conocimientos básicos en navegación web y uso de correo electrónico. |
 | Actividades | Registro de perfil, carga de hoja de vida, búsqueda de vacantes mediante filtros y postulación a ofertas laborales. |
 
 | Tipo de usuario | Reclutador |
@@ -168,7 +168,7 @@ A continuación, se describen los perfiles de usuario que interactuaron con la p
 | :---: | :---: |
 | Formación | Personal técnico o analistas de sistemas (equipo de desarrollo ADSO). |
 | Habilidades | Conocimientos avanzados en gestión de plataformas web, bases de datos y moderación de contenido digital. |
-| Actividades | Gestión y bloqueo de usuarios, moderación de ofertas publicadas, monitoreo del rendimiento del sistema en AWS y generación de reportes generales de actividad. |
+| Actividades | Gestión y creación de nuevas cuentas administrativas, bloqueo de usuarios, moderación de ofertas publicadas y generación de reportes generales de actividad. |
 
 # **2.4 RESTRICCIONES**
 
@@ -180,8 +180,7 @@ El diseño y desarrollo de la plataforma Workable están sujetos a las siguiente
     
 - Restricciones de Despliegue: Dado que el proyecto se encuentra en fase de entrega final, el sistema debe ser desplegado al 100% en la nube mediante los servicios de AWS (Amazon Web Services), asegurando que el acceso sea público para las pruebas de sustentación.   
     
-- Restricción de Archivos: El sistema limita la carga de documentos a los siguientes mencionados, perfiles profesionales (Hojas de Vida) única y exclusivamente al formato PDF, rechazando cualquier otro tipo de extensión de archivo para mantener la integridad y seguridad del servidor  
-    
+
 - Normativas de Seguridad: Es obligatorio el uso del estándar JWT (JSON Web Token) para la gestión de sesiones y el algoritmo Bcrypt para el cifrado de contraseñas, prohibiendo el almacenamiento de credenciales en texto plano dentro de la base de datos MySQL.   
     
 - Limitación Académica: Al tratarse de un proyecto formativo para el SENA, el sistema debe priorizar la funcionalidad core (los 17 RF establecidos) sobre integraciones complejas de terceros, como pasarelas de pago o APIs de redes sociales.
@@ -230,8 +229,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
     
 - Selectores de Opción Múltiple y Estados (Checkboxes): La interfaz utiliza controles de tipo checkbox para la captura de preferencias y características específicas. Estos permiten a los reclutadores marcar múltiples atributos o requisitos de una oferta y a los aspirantes definir sus intereses profesionales. Estos datos se envían al servidor estructurados como arreglos (arrays) de valores para su posterior filtrado.  
     
--  Módulo de Carga de Archivos Binarios: El sistema dispone de una interfaz dedicada a la subida de documentos oficiales. Este componente está restringido mediante validaciones de tipo MIME para aceptar exclusivamente archivos en formato PDF (Hojas de Vida). El proceso captura el archivo binario del usuario, lo procesa mediante el Frontend y lo envía al Backend para su almacenamiento y posterior asociación con el perfil del aspirante.  
-    
+
 - Campos de Texto y Entrada de Credenciales: Se implementan campos de entrada de texto con validaciones de longitud y formato. Los campos de contraseña cuentan con máscaras de seguridad para ocultar la información en pantalla, mientras que los campos de descripción (TextArea) permiten la entrada de texto extenso para detalles de la vacante o perfil profesional. Todos los datos de texto son saneados para evitar ataques de inyección de código.
 
 **Interfaces de Salida (Resultados):** El sistema procesa y entrega información a través de múltiples canales, transformando los datos del Backend en recursos visuales y documentos funcionales:
@@ -326,7 +324,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | :---: | ----- |
 | **Nombre del requerimiento:** | GESTIÓN DE ENTIDAD CORPORATIVA Y VINCULACIÓN |
 | **Características:** | Centraliza la identidad jurídica de las organizaciones y gestiona de forma segura la vinculación de múltiples reclutadores a una misma empresa. |
-| **Descripción del requerimiento:** | El sistema gestionará la entidad Empresa bajo la siguiente lógica estructural:  Creación y Token de Seguridad: Al registrarse un reclutador con estado inicial FK\_empresa \= null, puede crear una empresa ingresando un NIT nuevo. El sistema validará que sea un NIT colombiano válido y generará automáticamente un "Token/Código de Empresa" único que se le entregará a este primer reclutador (Validación de NIT y Token pendientes de programar). Vinculación Segura: Para que un nuevo reclutador se una a una empresa existente (ej. Coca-Cola), el sistema le exigirá ingresar tanto el NIT como el Token de Empresa.  Perfil Interno: La plataforma generará una vista de perfil de la empresa (no externa) que mostrará: Información general de la entidad, listado de ofertas activas y los nombres de los reclutadores vinculados a la misma. Reglas de Borrado Físico:  Si se elimina la Empresa, se ejecuta un borrado en cascada de todos sus reclutadores y ofertas. Si todos los reclutadores de una empresa eliminan sus cuentas (total de vinculados \= 0), el sistema ejecutará automáticamente la eliminación física de la Empresa para no dejar registros fantasma en la base de datos (Lógica de borrado en 0 pendiente de programar). |
+| **Descripción del requerimiento:** | El sistema gestionará la entidad Empresa bajo la siguiente lógica estructural:  Creación y Token de Seguridad: Al registrarse un reclutador con estado inicial FK\_empresa \= null, puede crear una empresa ingresando un NIT nuevo. El sistema validará que sea un NIT colombiano válido y generará automáticamente un "Token/Código de Empresa" único que se le entregará a este primer reclutador (Validación de NIT y Token pendientes de programar). Vinculación Segura: Para que un nuevo reclutador se una a una empresa existente (ej. Coca-Cola), el sistema le exigirá ingresar tanto el NIT como el Token de Empresa.  Perfil Interno: La plataforma generará una vista de perfil de la empresa (no externa) que mostrará: Información general de la entidad, listado de ofertas activas y los nombres de los reclutadores vinculados a la misma. El backend expone la entidad Empresa con sus datos básicos; el frontend realiza consultas separadas (GET /ofertas?empresa_id={id} y GET /reclutadores?empresa_id={id}) para obtener ofertas y reclutadores relacionados. Reglas de Borrado Físico:  Si se elimina la Empresa, se ejecuta un borrado en cascada de todos sus reclutadores y ofertas. Si todos los reclutadores de una empresa eliminan sus cuentas (total de vinculados \= 0), el sistema ejecutará automáticamente la eliminación física de la Empresa para no dejar registros fantasma en la base de datos (Lógica de borrado en 0 pendiente de programar). Las empresas requerirán campos obligatorios como nombre, número de trabajadores, email, teléfono, NIT, categorías y municipio. |
 | **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- CONFIRMACIÓN OBLIGATORIA)  RNF-04 (USABILIDAD \- ADVERTENCIA DE BORRADO)  RNF-05 (CUMPLIMIENTO LEGAL \- DERECHO AL OLVIDO) |
 
 | Identificación del requerimiento: | RF06 |

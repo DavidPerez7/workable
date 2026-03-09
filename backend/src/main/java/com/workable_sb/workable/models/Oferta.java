@@ -87,7 +87,6 @@ public class Oferta {
 
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
-	@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"reclutadores", "reclutadorOwner"})
 	private Empresa empresa;
 
 	@ElementCollection(fetch = FetchType.LAZY)
