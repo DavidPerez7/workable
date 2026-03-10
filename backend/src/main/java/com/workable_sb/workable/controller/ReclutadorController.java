@@ -20,7 +20,7 @@ public class ReclutadorController {
     @Autowired
     private ReclutadorService reclutadorService;
 
-    // ===== CREATE =====
+    // CREATE
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Reclutador reclutador) {
@@ -34,7 +34,7 @@ public class ReclutadorController {
         }
     }
 
-    // ===== READ =====
+    // READ
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
@@ -66,6 +66,8 @@ public class ReclutadorController {
             Long usuarioId = user.getUsuarioId();
             Reclutador reclutador = reclutadorService.getById(usuarioId);
             return ResponseEntity.ok(reclutador);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al obtener perfil: " + e.getMessage()));
         }
@@ -98,7 +100,7 @@ public class ReclutadorController {
         }
     }
 
-    // ===== UPDATE =====
+    // UPDATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Reclutador reclutador) {
@@ -114,7 +116,7 @@ public class ReclutadorController {
         }
     }
 
-    // ===== DELETE =====
+    // DELETE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {

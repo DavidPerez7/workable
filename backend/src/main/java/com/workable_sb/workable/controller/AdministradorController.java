@@ -18,7 +18,7 @@ public class AdministradorController {
     @Autowired
     private AdministradorService administradorService;
 
-    // ===== CREATE =====
+    // CREATE
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Administrador administrador) {
@@ -32,7 +32,7 @@ public class AdministradorController {
         }
     }
 
-    // ===== READ =====
+    // READ
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
@@ -55,7 +55,7 @@ public class AdministradorController {
         }
     }
 
-    // ===== UPDATE =====
+    // UPDATE
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Administrador administrador) {
@@ -67,7 +67,7 @@ public class AdministradorController {
         }
     }
 
-    // ===== DELETE =====
+    // DELETE
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {

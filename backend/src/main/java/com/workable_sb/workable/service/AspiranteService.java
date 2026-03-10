@@ -2,8 +2,6 @@ package com.workable_sb.workable.service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,12 +49,12 @@ public class AspiranteService {
         return aspiranteRepo.findAll();
     }
 
-    public Optional<Aspirante> getById(Long id) {
-        return aspiranteRepo.findById(id);
+    public Aspirante getById(Long id) {
+        return aspiranteRepo.findById(id).orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
     }
 
-    public Optional<Aspirante> getByCorreo(String correo) {
-        return aspiranteRepo.findByCorreo(correo);
+    public Aspirante getByCorreo(String correo) {
+        return aspiranteRepo.findByCorreo(correo).orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
     }
 
 
@@ -96,6 +94,7 @@ public class AspiranteService {
 
     // DELETE
     public void delete(Long id) {
-        aspiranteRepo.deleteById(id); // getById ya valida que exista
+        Aspirante existing = getById(id); // valida que exista
+        aspiranteRepo.delete(existing);
     }
 }

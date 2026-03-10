@@ -73,6 +73,7 @@ public class PostulacionService {
 
 	// DELETE
 	public void delete(Long id) {
-		postulacionRepo.deleteById(id);
+		Postulacion existing = getById(id); // valida que exista
+		postulacionRepo.delete(existing);
 	}
 }

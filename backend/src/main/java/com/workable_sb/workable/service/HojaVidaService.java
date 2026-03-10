@@ -21,9 +21,16 @@ public class HojaVidaService {
         return hojaVidaRepo.save(request);
     }
 
-    // READ
     public HojaVida getById(Long id) {
         return hojaVidaRepo.findById(id).orElseThrow(() -> new RuntimeException("Hoja de vida no encontrada"));
+    }
+
+    public HojaVida getByAspiranteId(Long aspiranteId) {
+        List<HojaVida> hojas = hojaVidaRepo.findByAspiranteId(aspiranteId);
+        if (hojas.isEmpty()) {
+            throw new RuntimeException("Hoja de vida no encontrada");
+        }
+        return hojas.get(0);
     }
 
     public List<HojaVida> getAll() {
@@ -44,6 +51,7 @@ public class HojaVidaService {
 
     // DELETE
     public void delete(Long id) {
-        hojaVidaRepo.deleteById(id);
+        HojaVida existing = getById(id); // valida que exista
+        hojaVidaRepo.delete(existing);
     }
 }

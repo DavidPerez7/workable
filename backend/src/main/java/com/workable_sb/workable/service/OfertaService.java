@@ -1,6 +1,7 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,9 +78,28 @@ public class OfertaService {
         return ofertaRepository.findByMunicipioId(municipioId);
     }
 
+    public List<Oferta> getByCategoria(String categoria) {
+        Empresa.Category cat = Empresa.Category.valueOf(categoria.toUpperCase());
+        return ofertaRepository.findByCategoria(cat);
+    }
+
+    public List<Oferta> getBySalarioRange(BigDecimal min, BigDecimal max) {
+        return ofertaRepository.findBySalarioRange(min, max);
+    }
+
+    public Oferta updateEstado(Long id, Oferta.EstadoOferta estado) {
+        Oferta existing = getById(id);
+        existing.setEstado(estado);
+        return ofertaRepository.save(existing);
+    }
+
     // UPDATE
     public Oferta update(Long id, Oferta request) {
         Oferta existing = getById(id);
+
+        if (existing.getEstado() != Oferta.EstadoOferta.INACTIVA) {
+            throw new RuntimeException("Solo se puede editar ofertas inactivas");
+        }
 
         if (request.getTitulo() != null) existing.setTitulo(request.getTitulo());
         if (request.getDescripcion() != null) existing.setDescripcion(request.getDescripcion());

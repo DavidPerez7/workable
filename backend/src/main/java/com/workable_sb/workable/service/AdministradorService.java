@@ -2,7 +2,6 @@ package com.workable_sb.workable.service;
 
 import java.util.List;
 import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,6 +67,7 @@ public class AdministradorService {
 
     // DELETE
     public void delete(Long id) {
-        administradorRepo.deleteById(id); // getById ya valida que exista
+        Administrador existing = getById(id); // valida que exista
+        administradorRepo.delete(existing);
     }
 }

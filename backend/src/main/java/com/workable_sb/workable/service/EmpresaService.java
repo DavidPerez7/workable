@@ -1,8 +1,6 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,12 +40,12 @@ public class EmpresaService {
         return empresaRepository.findAll();
     }
 
-    public Optional<Empresa> getById(Long id) {
-        return empresaRepository.findById(id);
+    public Empresa getById(Long id) {
+        return empresaRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
     }
 
-    public Optional<Empresa> getByNit(String nit) {
-        return empresaRepository.findByNit(nit);
+    public Empresa getByNit(String nit) {
+        return empresaRepository.findByNit(nit).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
     }
 
     public List<Empresa> getByIsActive(Boolean isActive) {
@@ -75,6 +73,7 @@ public class EmpresaService {
 
     // DELETE
     public void delete(Long id) {
-        empresaRepository.deleteById(id);
+        Empresa existing = getById(id); // valida que exista
+        empresaRepository.delete(existing);
     }
 }

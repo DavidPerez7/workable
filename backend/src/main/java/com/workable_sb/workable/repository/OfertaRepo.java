@@ -2,14 +2,13 @@ package com.workable_sb.workable.repository;
 
 import java.util.List;
 import java.math.BigDecimal;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.Modalidad;
+import com.workable_sb.workable.models.Empresa;
 
 @Repository
 public interface OfertaRepo extends JpaRepository<Oferta, Long> {
@@ -40,4 +39,8 @@ public interface OfertaRepo extends JpaRepository<Oferta, Long> {
     // Buscar ofertas activas por empresa
     @Query("SELECT o FROM Oferta o WHERE o.empresa.id = :empresaId AND o.estado = 'ACTIVA'")
     List<Oferta> findByEmpresaIdAndActive(@Param("empresaId") Long empresaId);
+
+    // Buscar ofertas activas por categoría
+    @Query("SELECT o FROM Oferta o WHERE :categoria MEMBER OF o.empresa.categories AND o.estado = 'ACTIVA'")
+    List<Oferta> findByCategoria(@Param("categoria") Empresa.Category categoria);
 }

@@ -18,7 +18,7 @@ public class HojaVidaController {
     @Autowired
     private HojaVidaService hojaVidaService;
 
-    // ===== CREATE =====
+    // CREATE
     @PreAuthorize("hasRole('ASPIRANTE')")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida) {
@@ -32,7 +32,7 @@ public class HojaVidaController {
         }
     }
 
-    // ===== READ =====
+    // READ
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
@@ -70,7 +70,7 @@ public class HojaVidaController {
         }
     }
 
-    // ===== UPDATE =====
+    // UPDATE
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody HojaVida hojaVida) {
@@ -86,7 +86,7 @@ public class HojaVidaController {
         }
     }
 
-    // ===== DELETE =====
+    // DELETE
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {

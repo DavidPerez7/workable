@@ -20,7 +20,7 @@ public class OfertaController {
     @Autowired
     private OfertaService ofertaService;
 
-    // ===== CREATE =====
+    // CREATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
     public ResponseEntity<?> criarOferta(@RequestBody Oferta oferta) {
@@ -37,7 +37,7 @@ public class OfertaController {
         }
     }
 
-    // ===== GET ALL =====
+    // READ
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping
     public ResponseEntity<?> listarTodas() {
@@ -49,7 +49,6 @@ public class OfertaController {
         }
     }
 
-    // ===== GET BY ID =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
@@ -63,9 +62,9 @@ public class OfertaController {
         }
     }
 
-    // ===== FILTROS / BÚSQUEDA =====
+    // Filtros / Búsqueda
     
-    // RF11 - Buscar por nombre/título
+    // Buscar por nombre/título
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/nombre")
     public ResponseEntity<?> buscarPorNombre(@RequestParam String nombre) {
@@ -79,7 +78,7 @@ public class OfertaController {
         }
     }
 
-    // RF12 - Buscar por rango de salario
+    // Buscar por rango de salario
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/salario")
     public ResponseEntity<?> buscarPorSalario(
@@ -95,7 +94,7 @@ public class OfertaController {
         }
     }
 
-    // RF12 - Buscar por ubicación (municipio)
+    // Buscar por ubicación (municipio)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/ubicacion/{municipioId}")
     public ResponseEntity<?> buscarPorUbicacion(@PathVariable Long municipioId) {
@@ -111,7 +110,7 @@ public class OfertaController {
         }
     }
 
-    // RF11 - Buscar por nivel de experiencia
+    // Buscar por nivel de experiencia
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/experiencia/{nivel}")
     public ResponseEntity<?> buscarPorExperiencia(@PathVariable String nivel) {
@@ -125,7 +124,7 @@ public class OfertaController {
         }
     }
 
-    // RF12 - Buscar por modalidad (horarios)
+    // Buscar por modalidad (horarios)
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
     @GetMapping("/modalidad/{modalidad}")
     public ResponseEntity<?> buscarPorModalidad(@PathVariable String modalidad) {
@@ -153,7 +152,21 @@ public class OfertaController {
         }
     }
 
-    // ===== UPDATE =====
+    // Buscar por categoría laboral
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<?> buscarPorCategoria(@PathVariable String categoria) {
+        try {
+            List<Oferta> ofertas = ofertaService.getByCategoria(categoria);
+            return ResponseEntity.ok(ofertas);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
+        }
+    }
+
+    // UPDATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarOferta(@PathVariable Long id, @RequestBody Oferta oferta) {
@@ -169,7 +182,6 @@ public class OfertaController {
         }
     }
 
-    // ===== UPDATE ESTADO (PATCH) =====
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PatchMapping("/{id}/estado")
     public ResponseEntity<?> actualizarEstado(
@@ -188,7 +200,7 @@ public class OfertaController {
         }
     }
 
-    // ===== DELETE =====
+    // DELETE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarOferta(@PathVariable Long id) {

@@ -16,14 +16,14 @@ public class MunicipioController {
     @Autowired
     private MunicipioService municipioService;
 
-    // ===== READ =====
+    // READ
     @GetMapping
-    public ResponseEntity<List<Municipio>> obtenerTodos() {
+    public ResponseEntity<?> obtenerTodos() {
         try {
             List<Municipio> municipios = municipioService.getAll();
             return ResponseEntity.ok(municipios);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);
+            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }
     }
 
