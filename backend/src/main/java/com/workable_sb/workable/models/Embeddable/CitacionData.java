@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models.Embeddable;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,9 @@ public class CitacionData {
     @Column
     private LocalDate fecha;
 
-    @NotBlank(message = "La hora es obligatoria (formato HH:MM)")
-    @Pattern(regexp = "^([0-1][0-9]|2[0-3]):[0-5][0-9]$")
-    @Column(length = 5)
-    private String hora;
+    @NotNull(message = "La hora es obligatoria")
+    @Column
+    private LocalTime hora;
 
     @Size(max = 500)
     @Column(length = 500)
@@ -31,6 +31,6 @@ public class CitacionData {
     private EstadoCitacion estadoCitacion = EstadoCitacion.PENDIENTE;
 
     public enum EstadoCitacion {
-        PENDIENTE, CONFIRMADA, ASISTIO, NO_ASISTIO, CANCELADA
+        PENDIENTE, CONFIRMADA, CANCELADA
     }
 }

@@ -28,12 +28,6 @@ public class ExperienciaData {
     @Column
     private LocalDate fechaFin;
 
-    @Column(length = 200)
-    private String municipio;
-
-    @Column(length = 1000)
-    private String descripcion;
-
     @Column(length = 500)
     private String certificadoUrl;
 }

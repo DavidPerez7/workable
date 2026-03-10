@@ -32,24 +32,8 @@ public class EstudioData {
     @Column
     private LocalDate fechaFin;
 
-    @Column
-    private Boolean enCurso = false;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private Modalidad modalidad;
-
-    @Column(length = 1000)
-    private String descripcion;
-
     @Column(length = 500)
     private String certificadoUrl;
-
-    public enum Modalidad {
-        PRESENCIAL,
-        VIRTUAL,
-        HIBRIDA
-    }
 
     public enum NivelEducativo {
         PRIMARIA,

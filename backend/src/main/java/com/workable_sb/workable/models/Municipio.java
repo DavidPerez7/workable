@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import com.workable_sb.workable.config.DepartamentoDeserializer;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "municipio")
 public class Municipio {
     @Id
     private Long id;

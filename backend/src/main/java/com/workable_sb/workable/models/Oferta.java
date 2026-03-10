@@ -4,10 +4,11 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.HashSet;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,10 +17,78 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "oferta")
 public class Oferta {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	//atributos obligatorios
+	@NotBlank(message = "El título es obligatorio")
+	@Column(nullable = false, length = 255)
+	private String titulo;
+
+	@NotBlank(message = "La descripción es obligatoria")
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String descripcion;
+
+	@NotNull(message = "La fecha límite es obligatoria")
+	@Column(nullable = false)
+	private LocalDate fechaLimite;
 	
+	@NotNull(message = "El salario es obligatorio")
+	@Column(nullable = false)
+	private Long salario;
+
+	@NotNull(message = "El número de vacantes es obligatorio")
+	@Column(nullable = false)
+	private Integer numeroVacantes;
+
+	@NotNull(message = "El nivel de experiencia es obligatorio")
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private NivelExperiencia nivelExperiencia;
+
+	@NotBlank(message = "Los requisitos son obligatorios")
+	@Column(nullable = false, length = 500)
+	private String requisitos;
+
+	@NotNull(message = "El municipio es obligatorio")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.RESTRICT)
+	private Municipio municipio;
+
+	@NotEmpty(message = "La modalidad es obligatoria")
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private Modalidad modalidad;
+
+	@NotEmpty(message = "El tipo de contrato es obligatorio")
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 30)
+	private TipoContrato tipoContrato;
+
+	//beneficios adicionales
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = 20)
+	private EstadoOferta estado;
+
+	private Float puntuacion = 0.0f;
+
+	private LocalDate fechaPublicacion;
+
+	//relaciones
+	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	private Set<Postulacion> postulaciones = new HashSet<>();
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
+	private Empresa empresa;
+
 	public enum EstadoOferta {
-		ABIERTA, CERRADA, PAUSADA
+		ACTIVA, INACTIVA, FINALIZADA
 	}
 	
 	public enum Modalidad {
@@ -30,88 +99,17 @@ public class Oferta {
 		TIEMPO_COMPLETO, MEDIO_TIEMPO, TEMPORAL, PRESTACION_SERVICIOS, PRACTICAS
 	}
 	
-	public enum Beneficio {
-		SEGUROSALUD, SEGUROVIDA, BONOS, AUXILIOTRANSPORTE, AUXILIOALIMENTACION,
-		CAPACITACIONES, TELETRABAJO, HORARIOFLEXIBLE, VACACIONESADICIONALES, GIMNASIO,
-		DIASCOMPENSATORIOS, PLANCARRERA, DESCUENTOSCOMERCIALESAUX, AUXILIOEDUCATIVO, PRIMAEXTRALEGAL
-	}
-	
 	public enum NivelExperiencia {
 		SIN_EXPERIENCIA, BASICO, INTERMEDIO, AVANZADO, EXPERTO
 	}
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(nullable = false, length = 255)
-	private String titulo;
-
-	@Column(nullable = false, columnDefinition = "TEXT")
-	private String descripcion;
-
-	@Column(nullable = false)
-	private LocalDate fechaLimite;
-	
-	private LocalDate fechaPublicacion;
-
-	@Column(nullable = false)
-	private Long salario;
-
-	@Column(nullable = false)
-	private Integer numeroVacantes = 1;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 20)
-	private NivelExperiencia nivelExperiencia;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 20, columnDefinition = "VARCHAR(20) DEFAULT 'ABIERTA'")
-	private EstadoOferta estado = EstadoOferta.ABIERTA;
-
-	@Column(nullable = false, length = 500)
-	private String requisitos;
-
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
-	@OnDelete(action = OnDeleteAction.SET_NULL)
-	private Municipio municipio;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 20)
-	private Modalidad modalidad;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 30)
-	private TipoContrato tipoContrato;
-
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(name = "empresa_id", nullable = false, referencedColumnName = "id")
-	private Empresa empresa;
-
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(
-		name = "oferta_beneficios",
-		joinColumns = @JoinColumn(name = "oferta_id", referencedColumnName = "id")
-	)
-	@Enumerated(EnumType.STRING)
-	@Column(name = "beneficio", length = 30, nullable = false)
-	private Set<Beneficio> beneficios = new HashSet<>();
-
-	@OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
-	@com.fasterxml.jackson.annotation.JsonIgnore
-	private Set<Postulacion> postulaciones = new HashSet<>();
-
-	private Float puntuacion = 0.0f;
-
-	@Column(nullable = false)
-	private Boolean isActive = true;
 
 	@PrePersist
 	protected void onCreate() {
-		if (this.fechaPublicacion == null || this.isActive == null) {
+		if (this.fechaPublicacion == null) {
 			this.fechaPublicacion = LocalDate.now();
-			this.isActive = true;
+		}
+		if (this.estado == null) {
+			this.estado = EstadoOferta.ACTIVA;
 		}
 		validateFechas();
 	}

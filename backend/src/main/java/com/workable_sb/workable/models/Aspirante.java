@@ -73,10 +73,6 @@ public class Aspirante {
     @Column(length = 500)
     private String urlFotoPerfil;
 
-    @Size(max = 1000, message = "La descripción no puede exceder 1000 caracteres")
-    @Column(length = 1000)
-    private String descripcion;
-
     @Size(max = 200, message = "La ubicación no puede exceder 200 caracteres")
     @Column(length = 200)
     private String ubicacion;
