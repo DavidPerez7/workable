@@ -684,6 +684,37 @@ vscjava.vscode-maven
 
 ---
 
+### 🧹 Recomendación: Limpiar Extensiones Innecesarias
+
+Si en algún momento tienes muchas extensiones instaladas y deseas desinstalar todas las innecesarias manteniendo solo `github.copilot-chat`, puedes ejecutar este comando:
+
+**Comando para desinstalar todas EXCEPTO copilot-chat:**
+```powershell
+code --list-extensions | Where-Object { $_ -ne 'github.copilot-chat' } | ForEach-Object { code --uninstall-extension $_ }
+```
+
+**Explicación:**
+- `code --list-extensions` → Lista todas las extensiones instaladas
+- `Where-Object { $_ -ne 'github.copilot-chat' }` → Filtra excluyendo la extensión de copilot
+- `ForEach-Object { code --uninstall-extension $_ }` → Desinstala cada una de las extensiones filtradas
+
+**Resultado:**
+```
+Uninstalling extension1...
+Extension 'extension1' was successfully uninstalled!
+Uninstalling extension2...
+Extension 'extension2' was successfully uninstalled!
+...
+```
+
+**Ventajas:**
+- ✅ Mantiene VS Code limpio y rápido
+- ✅ Preserva GitHub Copilot Chat (útil para desarrollo)
+- ✅ Reduce conflictos de dependencias entre extensiones
+- ✅ Permite instalar solo lo necesario según el proyecto
+
+---
+
 ## ✅ Verificación Final
 
 ### Checklist Completo

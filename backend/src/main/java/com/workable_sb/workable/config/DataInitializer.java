@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import com.workable_sb.workable.models.*;
+import com.workable_sb.workable.models.Embeddable.CitacionData;
+import com.workable_sb.workable.models.Embeddable.EstudioData;
+import com.workable_sb.workable.models.Embeddable.ExperienciaData;
 import com.workable_sb.workable.repository.*;
-
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -25,118 +26,85 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private HojaVidaRepo hojaVidaRepo;
     @Autowired private PasswordEncoder passwordEncoder;
 
+    // INICIALIZACIÓN PRINCIPAL
     @Override
     public void run(String... args) throws Exception {
         try {
-            System.out.println("=== INICIANDO DATA INITIALIZER ===");
+            System.out.println("🚀 INICIANDO DATA INITIALIZER 🚀");
             
-            // Inicializar municipios solo si la base de datos está vacía
             if (municipioRepo.count() == 0) {
-                initializeMunicipios();
-                System.out.println("✓ Base de datos inicializada con municipios");
+                inicializarMunicipios();
+                System.out.println("✅ BASE DE DATOS INICIALIZADA CON MUNICIPIOS");
             }
 
-            // Siempre limpiar datos existentes y recrear datos de prueba
-            System.out.println("▶ Limpiando datos existentes...");
-            cleanupExistingData();
+            System.out.println("🔄 LIMPIANDO DATOS EXISTENTES...");
+            limpiarDatosExistentes();
 
-            // Crear empresas básicas
-            System.out.println("▶ Creando empresas...");
-            recreateEmpresas();
+            System.out.println("🏢 CREANDO EMPRESAS...");
+            recrearEmpresas();
 
-            // Crear usuarios de prueba (solo el aspirante de prueba)
-            System.out.println("▶ Creando usuarios de prueba...");
-            recreateTestUsers();
+            System.out.println("👥 CREANDO USUARIOS DE PRUEBA...");
+            recrearUsuarios();
 
-            // Crear HojaDeVida CON ESTUDIOS Y EXPERIENCIAS EMBEBIDOS - SEPARADO PARA GARANTIZAR EJECUCIÓN
-            System.out.println("▶ Creando HojaDeVida con estudios y experiencias...");
-            createHojasDeVidaWithData();
+            System.out.println("� CREANDO OFERTAS DE PRUEBA...");
+            crearOfertasPrueba();
 
-            // NOTA: no crear aspirantes, ofertas, estudios o experiencias genéricos aquí — dejamos solo datos mínimos de prueba
+            System.out.println("📝 CREANDO POSTULACIONES DE PRUEBA...");
+            crearPostulacionesPrueba();
+
+            System.out.println("�📄 CREANDO HOJAS DE VIDA...");
+            crearHojasDeVidaConDatos();
             
-            System.out.println("=== DATA INITIALIZER COMPLETADO ===");
+            System.out.println("🎉 DATA INITIALIZER COMPLETADO 🎉");
         } catch (Exception e) {
-            System.err.println("ERROR CRÍTICO en DataInitializer: " + e.getMessage());
+            System.err.println("❌ ERROR CRÍTICO EN DATA INITIALIZER: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void cleanupExistingData() {
+    // LIMPIEZA DE DATOS
+    private void limpiarDatosExistentes() {
         try {
-            // Limpiar datos en orden inverso a las dependencias (entidades dependientes primero)
-            try { postulacionRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando postulaciones: " + e.getMessage()); }
-            try { ofertaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando ofertas: " + e.getMessage()); }
-            try { reclutadorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando reclutadores: " + e.getMessage()); }
-            try { aspiranteRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando aspirantes: " + e.getMessage()); }
-            try { administradorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando administradores: " + e.getMessage()); }
-            try { empresaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠ Error eliminando empresas: " + e.getMessage()); }
+            try { postulacionRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠️ ERROR ELIMINANDO POSTULACIONES: " + e.getMessage()); }
+            try { ofertaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠️ ERROR ELIMINANDO OFERTAS: " + e.getMessage()); }
+            try { reclutadorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠️ ERROR ELIMINANDO RECLUTADORES: " + e.getMessage()); }
+            try { aspiranteRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠️ ERROR ELIMINANDO ASPIRANTES: " + e.getMessage()); }
+            try { administradorRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠️ ERROR ELIMINANDO ADMINISTRADORES: " + e.getMessage()); }
+            try { empresaRepo.deleteAll(); } catch (Exception e) { System.out.println("⚠️ ERROR ELIMINANDO EMPRESAS: " + e.getMessage()); }
             
-            System.out.println("✓ Datos existentes limpiados");
+            System.out.println("🧹 DATOS EXISTENTES LIMPIADOS");
         } catch (Exception e) {
-            System.err.println("Error limpiando datos: " + e.getMessage());
+            System.err.println("❌ ERROR LIMPIANDO DATOS: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void recreateTestUsers() {
-        // Obtener un municipio por defecto para los usuarios
+    // CREACIÓN DE USUARIOS
+    private void recrearUsuarios() {
         Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
 
-        // ===== CREAR ASPIRANTE =====
-        Aspirante aspirante = null;
-        try {
-            // Intentar obtener aspirante existente
-            aspirante = aspiranteRepo.findByCorreo("aspirante@example.com").orElse(null);
-            if (aspirante != null) {
-                System.out.println("✓ Usuario ASPIRANTE existente encontrado: aspirante@example.com");
-            } else {
-                aspirante = new Aspirante();
-                aspirante.setNombre("Aspirante");
-                aspirante.setApellido("Prueba");
-                aspirante.setCorreo("aspirante@example.com");
-                aspirante.setPassword(passwordEncoder.encode("pass123"));
-                aspirante.setTelefono("3105555555");
-                aspirante.setUrlFotoPerfil("https://example.com/avatars/aspirante.png");
-                aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
-                aspirante.setMunicipio(municipio);
-                aspirante.setGenero(Aspirante.Genero.MASCULINO);
-                aspirante.setIsActive(true);
-                aspirante.setDescripcion("Aspirante de prueba creado por DataInitializer para testing");
-                aspirante.setUbicacion("Bogotá, Colombia");
-                aspiranteRepo.save(aspirante);
-                System.out.println("✓ Usuario ASPIRANTE recreado: aspirante@example.com / pass123");
-            }
-        } catch (Exception e) {
-            System.out.println("⚠ Error en aspirante: " + e.getMessage());
-            return; // No continuar si no hay aspirante
-        }
-
-        // ===== CREAR ADMINISTRADOR =====
-        try {
-            administradorRepo.deleteById(administradorRepo.findByCorreo("admin@example.com").orElse(new Administrador()).getId());
-        } catch (Exception e) {
-            // Ignorar si no existe
-        }
+        Aspirante aspirante = new Aspirante();
+        aspirante.setNombre("Aspirante");
+        aspirante.setApellido("Prueba");
+        aspirante.setCorreo("aspirante@example.com");
+        aspirante.setPassword(passwordEncoder.encode("pass123"));
+        aspirante.setTelefono("3105555555");
+        aspirante.setUrlFotoPerfil("https://example.com/avatars/aspirante.png");
+        aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
+        aspirante.setMunicipio(municipio);
+        aspirante.setGenero(Aspirante.Genero.MASCULINO);
+        aspirante.setUbicacion("Bogotá, Colombia");
+        aspiranteRepo.save(aspirante);
+        System.out.println("✅ USUARIO ASPIRANTE CREADO: aspirante@example.com / pass123");
 
         Administrador admin = new Administrador();
         admin.setNombre("Sistema");
         admin.setApellido("Administrador");
         admin.setCorreo("admin@example.com");
         admin.setPassword(passwordEncoder.encode("admin123"));
-        admin.setTelefono("3001111111");
-        admin.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-        admin.setMunicipio(municipio);
         admin.setIsActive(true);
-        admin.setUltimoAcceso(java.time.LocalDateTime.now());
         administradorRepo.save(admin);
-        System.out.println("✓ Usuario ADMINISTRADOR recreado: admin@example.com / admin123");
-
-        // ===== CREAR RECLUTADOR =====
-        try {
-            reclutadorRepo.deleteById(reclutadorRepo.findByCorreo("reclutador@example.com").orElse(new Reclutador()).getId());
-        } catch (Exception e) {
-            // Ignorar si no existe
-        }
+        System.out.println("✅ USUARIO ADMINISTRADOR CREADO: admin@example.com / admin123");
 
         Reclutador reclutador = new Reclutador();
         reclutador.setNombre("Reclutador");
@@ -147,177 +115,129 @@ public class DataInitializer implements CommandLineRunner {
         reclutador.setFechaNacimiento(LocalDate.of(1990, 9, 20));
         reclutador.setMunicipio(municipio);
         reclutador.setIsActive(true);
-        reclutador.setUrlFotoPerfil("https://example.com/avatars/reclutador.png");
-        reclutador.setUrlBanner("https://example.com/banners/reclutador-banner.png");
-        // Asignar empresa al reclutador de prueba (Bancolombia)
         Empresa empresa = empresaRepo.findById(1L).orElse(null);
         reclutador.setEmpresa(empresa);
         reclutadorRepo.save(reclutador);
-        System.out.println("✓ Usuario RECLUTADOR recreado: reclutador@example.com / pass123");
-
-        // ===== CREAR OFERTA DE PRUEBA =====
-        try {
-            Oferta oferta = new Oferta();
-            oferta.setTitulo("Desarrollador Java - Prueba");
-            oferta.setDescripcion("Oferta de prueba generada por DataInitializer");
-            oferta.setFechaPublicacion(LocalDate.now());
-            oferta.setFechaLimite(LocalDate.now().plusDays(30));
-            oferta.setSalario(3500000L);
-            oferta.setNumeroVacantes(2);
-            oferta.setNivelExperiencia(Oferta.NivelExperiencia.INTERMEDIO);
-            oferta.setEstado(Oferta.EstadoOferta.ABIERTA);
-            oferta.setRequisitos("Java, Spring Boot, SQL");
-            oferta.setMunicipio(municipio);
-            oferta.setModalidad(Oferta.Modalidad.REMOTO);
-            oferta.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
-            oferta.setEmpresa(empresa);
-            // agregar un beneficio de ejemplo
-            try {
-                oferta.getBeneficios().add(Oferta.Beneficio.TELETRABAJO);
-            } catch (Exception ignore) {}
-            oferta.setPuntuacion(0.0f);
-            ofertaRepo.save(oferta);
-            System.out.println("✓ Oferta de prueba creada: " + oferta.getTitulo());
-
-            // ===== CREAR POSTULACIÓN para aspirante id=1 (si existe) o para el aspirante recién creado =====
-            try {
-                Postulacion postulacion = new Postulacion();
-                postulacion.setOferta(oferta);
-                Aspirante postulante = aspiranteRepo.findById(1L).orElse(aspirante);
-                postulacion.setAspirante(postulante);
-                postulacion.setFechaCreacion(LocalDate.now());
-                postulacion.setIsActive(true);
-                postulacion.setEstado(Postulacion.Estado.ENTREVISTA_PROGRAMADA);
-                
-                // Agregar CitacionData embebida
-                CitacionData citacion = new CitacionData();
-                citacion.setFecha(LocalDate.now().plusDays(5));
-                citacion.setHora("14:30");
-                citacion.setLinkMeet("https://meet.google.com/abc-defg-hij");
-                citacion.setEstadoCitacion(CitacionData.EstadoCitacion.PENDIENTE);
-                postulacion.setCitacionData(citacion);
-                
-                postulacionRepo.save(postulacion);
-                System.out.println("✓ Postulación creada para oferta '" + oferta.getTitulo() + "' con CitacionData embebida");
-            } catch (Exception e) {
-                System.out.println("⚠ Error creando postulacion de prueba: " + e.getMessage());
-            }
-        } catch (Exception e) {
-            System.out.println("⚠ Error creando oferta de prueba: " + e.getMessage());
-        }
+        System.out.println("✅ USUARIO RECLUTADOR CREADO: reclutador@example.com / pass123");
     }
 
-    private void createHojasDeVidaWithData() {
-        try {
-            // Obtener aspirante que ya fue creado
-            Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante@example.com")
-                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado para crear HojaDeVida"));
-            
-            // ===== CREAR HOJA DE VIDA CON ESTUDIOS Y EXPERIENCIAS EMBEBIDOS =====
-            HojaVida hojaVida = new HojaVida();
-            hojaVida.setAspirante(aspirante);
-            hojaVida.setResumenProfesional("Profesional con experiencia en desarrollo de software con Java y tecnologías web modernas");
-            hojaVida.setContactoEmail("aspirante@example.com");
-            hojaVida.setTelefono("3105555555");
-            hojaVida.setIdiomas("Español (Nativo), Inglés (Intermedio)");
-            
-            // Crear lista de estudios
-            List<EstudioData> estudios = new java.util.ArrayList<>();
-            EstudioData estudio1 = new EstudioData();
-            estudio1.setTitulo("Ingeniería de Sistemas");
-            estudio1.setInstitucion("Universidad Nacional de Colombia");
-            estudio1.setNivelEducativo(EstudioData.NivelEducativo.UNIVERSITARIO);
-            estudio1.setFechaInicio(LocalDate.of(2018, 1, 15));
-            estudio1.setFechaFin(LocalDate.of(2022, 12, 10));
-            estudio1.setEnCurso(false);
-            estudio1.setModalidad(EstudioData.Modalidad.PRESENCIAL);
-            estudio1.setDescripcion("Formación en ingeniería de software, bases de datos y desarrollo web");
-            estudio1.setCertificadoUrl("https://example.com/certificados/ingenieria-sistemas.pdf");
-            estudios.add(estudio1);
-            
-            EstudioData estudio2 = new EstudioData();
-            estudio2.setTitulo("Especialización en Desarrollo Java");
-            estudio2.setInstitucion("Instituto Tecnológico de Colombia");
-            estudio2.setNivelEducativo(EstudioData.NivelEducativo.ESPECIALIZACION);
-            estudio2.setFechaInicio(LocalDate.of(2023, 2, 1));
-            estudio2.setFechaFin(null);
-            estudio2.setEnCurso(true);
-            estudio2.setModalidad(EstudioData.Modalidad.VIRTUAL);
-            estudio2.setDescripcion("Especialización en Spring Boot, Microservicios y Arquitectura");
-            estudio2.setCertificadoUrl(null);
-            estudios.add(estudio2);
-            
-            hojaVida.setEstudios(estudios);
-            
-            // Crear lista de experiencias
-            List<ExperienciaData> experiencias = new java.util.ArrayList<>();
-            ExperienciaData exp1 = new ExperienciaData();
-            exp1.setCargo("Desarrollador Java Junior");
-            exp1.setEmpresa("Tech Solutions Colombia");
-            exp1.setFechaInicio(LocalDate.of(2021, 6, 1));
-            exp1.setFechaFin(LocalDate.of(2022, 12, 31));
-            exp1.setMunicipio("Bogotá");
-            exp1.setDescripcion("Desarrollo de aplicaciones backend con Spring Boot, implementación de APIs REST y bases de datos");
-            exp1.setCertificadoUrl("https://example.com/certificados/tech-solutions.pdf");
-            experiencias.add(exp1);
-            
-            ExperienciaData exp2 = new ExperienciaData();
-            exp2.setCargo("Desarrollador Java Intermedio");
-            exp2.setEmpresa("Innovate Systems");
-            exp2.setFechaInicio(LocalDate.of(2023, 1, 15));
-            exp2.setFechaFin(null);
-            exp2.setMunicipio("Bogotá");
-            exp2.setDescripcion("Desarrollo de microservicios, arquitectura de software, mentoring de juniors");
-            exp2.setCertificadoUrl(null);
-            experiencias.add(exp2);
-            
-            hojaVida.setExperiencias(experiencias);
-            
-            hojaVidaRepo.save(hojaVida);
-            System.out.println("✓ HojaVida de prueba creada con " + estudios.size() + " estudios y " + experiencias.size() + " experiencias embebidas");
-        } catch (Exception e) {
-            System.out.println("⚠ Error creando hoja de vida de prueba: " + e.getMessage());
-            e.printStackTrace();
-        }
+    // CREACIÓN DE OFERTAS
+    private void crearOfertasPrueba() {
+        Municipio municipio = municipioRepo.findAll().stream().findFirst().orElse(null);
+        Empresa empresa = empresaRepo.findById(1L).orElse(null);
+
+        Oferta oferta = new Oferta();
+        oferta.setTitulo("Desarrollador Java - Prueba");
+        oferta.setDescripcion("Oferta de prueba generada por DataInitializer");
+        oferta.setFechaLimite(LocalDate.now().plusDays(30));
+        oferta.setSalario(3500000L);
+        oferta.setNumeroVacantes(2);
+        oferta.setNivelExperiencia(Oferta.NivelExperiencia.INTERMEDIO);
+        oferta.setEstado(Oferta.EstadoOferta.ACTIVA);
+        oferta.setRequisitos("Java, Spring Boot, SQL");
+        oferta.setMunicipio(municipio);
+        oferta.setModalidad(Oferta.Modalidad.REMOTO);
+        oferta.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
+        oferta.setEmpresa(empresa);
+        oferta.setPuntuacion(0.0f);
+        ofertaRepo.save(oferta);
+        System.out.println("✅ OFERTA DE PRUEBA CREADA: " + oferta.getTitulo());
     }
 
-    private void recreateEmpresas() {
-        try {
-            Municipio municipioBogota = municipioRepo.findAll().stream().filter(m -> m.getNombre() != null && m.getNombre().equals("Bogotá")).findFirst().orElse(null);
-
-            // EMPRESA 1 - Bancolombia
-            Empresa empresa1 = new Empresa();
-            empresa1.setNombre("Bancolombia");
-            empresa1.setDescripcion("Banco líder en Colombia");
-            empresa1.setNit("860002964");
-            empresa1.setEmailContacto("contacto@bancolombia.com.co");
-            empresa1.setTelefonoContacto("6013078000");
-            empresa1.setNumeroTrabajadores(5000);
-            empresa1.setPuntuacion(4.5f);
-            empresa1.setWebsite("www.bancolombia.com");
-            empresa1.setLogoUrl("https://www.bancolombia.com/wcm/connect/www.bancolombia.com-1.0.0/hogar/imagenes/logo-bancolombia.png");
-            empresa1.getRedesSociales().add("https://www.facebook.com/Bancolombia");
-            empresa1.getRedesSociales().add("https://www.instagram.com/bancolombia");
-            empresa1.getRedesSociales().add("https://www.twitter.com/Bancolombia");
-            empresa1.getDirecciones().add("Carrera 48 # 26-85, Medellín, Colombia");
-            empresa1.getDirecciones().add("Calle 72 # 7-83, Bogotá, Colombia");
-            empresa1.setRazonSocial("Bancolombia S.A.");
-            empresa1.setMunicipio(municipioBogota);
-            empresa1.setIsActive(true);
-            empresa1.getCategories().add(Empresa.Category.BANCA);
-            empresa1.getCategories().add(Empresa.Category.FINANZAS);
-            empresaRepo.save(empresa1);
-            System.out.println("✓ Empresa 1 creada: Bancolombia");
-
-            System.out.println("✓ Empresas recreadas: 1 empresa disponible");
-        } catch (Exception e) {
-            System.err.println("Error en recreateEmpresas: " + e.getMessage());
-            e.printStackTrace();
+    // CREACIÓN DE POSTULACIONES
+    private void crearPostulacionesPrueba() {
+        Oferta oferta = ofertaRepo.findAll().stream().findFirst().orElse(null);
+        if (oferta == null) {
+            System.out.println("⚠️ NO HAY OFERTAS DISPONIBLES PARA CREAR POSTULACIONES");
+            return;
         }
+
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante@example.com").orElse(null);
+        if (aspirante == null) {
+            System.out.println("⚠️ NO HAY ASPIRANTE DISPONIBLE PARA CREAR POSTULACIONES");
+            return;
+        }
+
+        Postulacion postulacion = new Postulacion();
+        postulacion.setOferta(oferta);
+        postulacion.setAspirante(aspirante);
+        postulacion.setEstado(Postulacion.Estado.ENTREVISTA_PROGRAMADA);
+        
+        CitacionData citacion = new CitacionData();
+        citacion.setFecha(LocalDate.now().plusDays(5));
+        citacion.setHora(LocalTime.of(14, 30));
+        citacion.setLinkMeet("https://meet.google.com/abc-defg-hij");
+        citacion.setEstadoCitacion(CitacionData.EstadoCitacion.PENDIENTE);
+        postulacion.setCitacion(citacion);
+        
+        postulacionRepo.save(postulacion);
+        System.out.println("✅ POSTULACIÓN CREADA PARA OFERTA '" + oferta.getTitulo() + "' CON CITACIONDATA EMBEBIDA");
     }
 
-    private void initializeMunicipios() {
-        // Municipios reales de Colombia con IDs reales
+    // CREACIÓN DE HOJAS DE VIDA
+    private void crearHojasDeVidaConDatos() {
+        Aspirante aspirante = aspiranteRepo.findByCorreo("aspirante@example.com")
+            .orElseThrow(() -> new RuntimeException("Aspirante no encontrado para crear HojaDeVida"));
+        
+        HojaVida hojaVida = new HojaVida();
+        hojaVida.setAspirante(aspirante);
+        hojaVida.setResumenProfesional("Profesional con experiencia en desarrollo de software con Java y tecnologías web modernas");
+        hojaVida.setCorreoElectronico("aspirante@example.com");
+        hojaVida.setTelefono("3105555555");
+        hojaVida.setRedSocial("https://linkedin.com/in/aspirante");
+        
+        List<EstudioData> estudios = new java.util.ArrayList<>();
+        EstudioData estudio1 = new EstudioData();
+        estudio1.setTitulo("Ingeniería de Sistemas");
+        estudio1.setInstitucion("Universidad Nacional de Colombia");
+        estudio1.setNivelEducativo(EstudioData.NivelEducativo.UNIVERSITARIO);
+        estudio1.setFechaInicio(LocalDate.of(2018, 1, 15));
+        estudio1.setFechaFin(LocalDate.of(2022, 12, 10));
+        estudio1.setCertificadoUrl("https://example.com/certificados/ingenieria-sistemas.pdf");
+        estudios.add(estudio1);
+        
+        hojaVida.setEstudios(estudios);
+        
+        List<ExperienciaData> experiencias = new java.util.ArrayList<>();
+        ExperienciaData exp1 = new ExperienciaData();
+        exp1.setCargo("Desarrollador Java Junior");
+        exp1.setEmpresa("Tech Solutions Colombia");
+        exp1.setFechaInicio(LocalDate.of(2021, 6, 1));
+        exp1.setFechaFin(LocalDate.of(2022, 12, 31));
+        exp1.setCertificadoUrl("https://example.com/certificados/tech-solutions.pdf");
+        experiencias.add(exp1);
+        
+        hojaVida.setExperiencias(experiencias);
+        
+        hojaVidaRepo.save(hojaVida);
+        System.out.println("✅ HOJAVIDA DE PRUEBA CREADA CON " + estudios.size() + " ESTUDIOS Y " + experiencias.size() + " EXPERIENCIAS EMBEBIDAS");
+    }
+
+    // CREACIÓN DE EMPRESAS
+    private void recrearEmpresas() {
+        Municipio municipioBogota = municipioRepo.findAll().stream().filter(m -> m.getNombre() != null && m.getNombre().equals("Bogotá")).findFirst().orElse(null);
+
+        Empresa empresa1 = new Empresa();
+        empresa1.setNombre("Bancolombia");
+        empresa1.setDescripcion("Banco líder en Colombia");
+        empresa1.setNit("860002964");
+        empresa1.setEmail("contacto@bancolombia.com.co");
+        empresa1.setTelefono("6013078000");
+        empresa1.setNumeroTrabajadores(5000);
+        empresa1.setPuntuacion(4.5f);
+        empresa1.setLogoUrl("https://www.bancolombia.com/wcm/connect/www.bancolombia.com-1.0.0/hogar/imagenes/logo-bancolombia.png");
+        empresa1.setMunicipio(municipioBogota);
+        empresa1.setIsActive(true);
+        empresa1.getCategories().add(Empresa.Category.FINANZAS);
+        empresa1.getCategories().add(Empresa.Category.TECNOLOGIA);
+        empresaRepo.save(empresa1);
+        System.out.println("✅ EMPRESA CREADA: BANCOLOMBIA");
+
+        System.out.println("✅ EMPRESAS RECREADAS: 1 EMPRESA DISPONIBLE");
+    }
+
+    // INICIALIZACIÓN DE MUNICIPIOS
+    private void inicializarMunicipios() {
         Object[][] municipiosData = {
             {1L, "Bogotá", Municipio.Departamento.BOGOTA_DC},
             {2L, "Medellín", Municipio.Departamento.ANTIOQUIA},
@@ -349,14 +269,4 @@ public class DataInitializer implements CommandLineRunner {
             municipioRepo.save(municipio);
         }
     }
-
-    // createGenericUsersAndCompanies removed: no generic users/companies/offers created here
-    // NO crear postulaciones genéricas aquí para evitar problemas con entidades desacopladas
-
-    // recreateEducacionYExperiencia removed: estudios y experiencias no inicializados por DataInitializer
-
-    // initializeOfertas removed: offers are not auto-initialized here anymore
-
-    // Removed generic initialization methods: no generic aspirantes, reclutadores, empresas, ofertas, feedbacks,
-    // notificaciones or habilidades are created by DataInitializer anymore. These responsibilities moved elsewhere.
 }
