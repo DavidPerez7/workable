@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.EstadoOferta;
 import com.workable_sb.workable.models.Postulacion;
-import com.workable_sb.workable.models.Postulacion.Estado;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.repository.OfertaRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
@@ -27,57 +26,35 @@ public class PostulacionService {
 	@Autowired
 	private OfertaRepo ofertaRepo;
 
-	// ===== GET ALL (ADMIN) =====
-	public List<Postulacion> getAll() {
-		return postulacionRepo.findAll();
-	}
-
-	// ===== CREATE =====
+	// CREATE
 	public Postulacion create(Postulacion postulacion) {
-		if (postulacion.getAspirante() == null || postulacion.getAspirante().getId() == null) {
-			throw new IllegalArgumentException("El ID del aspirante es obligatorio");
-		}
-		if (postulacion.getOferta() == null || postulacion.getOferta().getId() == null) {
-			throw new IllegalArgumentException("El ID de la oferta es obligatorio");
-		}
-
 		Long aspiranteId = postulacion.getAspirante().getId();
 		Long ofertaId = postulacion.getOferta().getId();
 
-		// Validar que no exista ya una postulación
-		if (postulacionRepo.findByAspiranteIdAndOfertaId(aspiranteId, ofertaId).isPresent()) {
-			throw new IllegalStateException("Ya existe una postulación para este aspirante en esta oferta");
+		Aspirante aspirante = aspiranteRepo.findById(aspiranteId).orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+
+		Oferta oferta = ofertaRepo.findById(ofertaId).orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
+
+		if (oferta.getEstado() != EstadoOferta.ACTIVA) {
+			throw new IllegalStateException("Solo puedes postularte a ofertas activas");
 		}
 
-		Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
-			.orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
-
-		Oferta oferta = ofertaRepo.findById(ofertaId)
-			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
-
-		// Validar que la oferta está ABIERTA
-		if (oferta.getEstado() != EstadoOferta.ABIERTA) {
-			throw new IllegalStateException("Solo puedes postularte a ofertas abiertas");
-		}
-
-		// Crear postulación
 		postulacion.setAspirante(aspirante);
 		postulacion.setOferta(oferta);
-		postulacion.setEstado(Estado.PENDIENTE);
-		postulacion.setIsActive(true);
 
 		return postulacionRepo.save(postulacion);
 	}
 
-	// ===== READ =====
+	// READ
+	public List<Postulacion> getAll() {
+		return postulacionRepo.findAll();
+	}
+
 	public Postulacion getById(Long id) {
-		return postulacionRepo.findById(id)
-			.orElseThrow(() -> new RuntimeException("Postulación no encontrada con id: " + id));
+		return postulacionRepo.findById(id).orElseThrow(() -> new RuntimeException("Postulación no encontrada con id: " + id));
 	}
 
 	public List<Postulacion> getByOfertaId(Long ofertaId) {
-		ofertaRepo.findById(ofertaId)
-			.orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
 		return postulacionRepo.findByOfertaId(ofertaId);
 	}
 
@@ -85,7 +62,7 @@ public class PostulacionService {
 		return postulacionRepo.findByAspiranteId(aspiranteId);
 	}
 
-	// ===== UPDATE =====
+	// UPDATE
 	public Postulacion update(Long id, Postulacion postulacion) {
 		Postulacion existing = getById(id);
 		if (postulacion.getEstado() != null) {
@@ -94,9 +71,8 @@ public class PostulacionService {
 		return postulacionRepo.save(existing);
 	}
 
-	// ===== DELETE =====
+	// DELETE
 	public void delete(Long id) {
-		Postulacion postulacion = getById(id);
-		postulacionRepo.delete(postulacion);
+		postulacionRepo.deleteById(id);
 	}
 }

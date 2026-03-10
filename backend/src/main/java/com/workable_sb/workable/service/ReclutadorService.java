@@ -1,6 +1,7 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,33 +31,22 @@ public class ReclutadorService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ===== CREATE =====
+    // CREATE
     public Reclutador create(Reclutador request) {
-        // Validar que el correo no existe
         if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new RuntimeException("Correo already in use");
+            throw new RuntimeException("Correo ya está en uso");
         }
 
-        // Validar campos obligatorios
-        if (request.getNombre() == null || request.getNombre().isEmpty()) {
-            throw new IllegalArgumentException("El nombre es obligatorio");
-        }
-        if (request.getCorreo() == null || request.getCorreo().isEmpty()) {
-            throw new IllegalArgumentException("El correo es obligatorio");
-        }
-        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña es requerida");
-        }
-
-        // Encriptar contraseña
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        request.setRol(Reclutador.Rol.RECLUTADOR);
-        request.setIsActive(true);
 
         return reclutadorRepo.save(request);
     }
 
-    // ===== READ =====
+    // READ
+    public List<Reclutador> getAll() {
+        return reclutadorRepo.findAll();
+    }
+
     public Reclutador getById(Long id) {
         return reclutadorRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
@@ -67,68 +57,50 @@ public class ReclutadorService {
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
     }
 
-    public List<Reclutador> getAll() {
-        return reclutadorRepo.findAll();
-    }
-
     public List<Reclutador> getByEmpresaId(Long empresaId) {
         return reclutadorRepo.findAll().stream()
                 .filter(r -> r.getEmpresa() != null && r.getEmpresa().getId().equals(empresaId))
                 .toList();
     }
 
-    // ===== UPDATE =====
+    // UPDATE
     public Reclutador update(Long id, Reclutador request) {
-        Reclutador existingReclutador = getById(id);
+        Reclutador existing = getById(id);
 
-        // Validar correo único si cambió
-        if (request.getCorreo() != null && !existingReclutador.getCorreo().equals(request.getCorreo())) {
+        if (!Objects.equals(existing.getCorreo(), request.getCorreo())) {
             if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
-                throw new RuntimeException("Correo already in use");
+                throw new RuntimeException("Correo ya está en uso");
             }
-            existingReclutador.setCorreo(request.getCorreo());
+            existing.setCorreo(request.getCorreo());
         }
 
-        if (request.getNombre() != null) existingReclutador.setNombre(request.getNombre());
-        if (request.getApellido() != null) existingReclutador.setApellido(request.getApellido());
-        if (request.getTelefono() != null) existingReclutador.setTelefono(request.getTelefono());
-        if (request.getUrlFotoPerfil() != null) existingReclutador.setUrlFotoPerfil(request.getUrlFotoPerfil());
-        if (request.getUrlBanner() != null) existingReclutador.setUrlBanner(request.getUrlBanner());
-        if (request.getFechaNacimiento() != null) existingReclutador.setFechaNacimiento(request.getFechaNacimiento());
-        if (request.getIsActive() != null) existingReclutador.setIsActive(request.getIsActive());
+        if (request.getNombre() != null) existing.setNombre(request.getNombre());
+        if (request.getApellido() != null) existing.setApellido(request.getApellido());
+        if (request.getTelefono() != null) existing.setTelefono(request.getTelefono());
+        if (request.getFechaNacimiento() != null) existing.setFechaNacimiento(request.getFechaNacimiento());
+        if (request.getIsActive() != null) existing.setIsActive(request.getIsActive());
 
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            existingReclutador.setPassword(passwordEncoder.encode(request.getPassword()));
+            existing.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        if (request.getMunicipio() != null) {
+        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
             Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                    .orElseThrow(() -> new RuntimeException("Municipio not found"));
-            existingReclutador.setMunicipio(municipio);
+                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+            existing.setMunicipio(municipio);
         }
 
-        if (request.getEmpresa() != null) {
+        if (request.getEmpresa() != null && request.getEmpresa().getId() != null) {
             Empresa empresa = empresaRepo.findById(request.getEmpresa().getId())
-                    .orElseThrow(() -> new RuntimeException("Empresa not found"));
-            existingReclutador.setEmpresa(empresa);
+                    .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+            existing.setEmpresa(empresa);
         }
 
-        return reclutadorRepo.save(existingReclutador);
+        return reclutadorRepo.save(existing);
     }
 
-    // Asignar empresa al reclutador logueado
-    public Reclutador asignarEmpresa(Long reclutadorId, Long empresaId) {
-        Reclutador reclutador = getById(reclutadorId);
-        Empresa empresa = empresaRepo.findById(empresaId)
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        reclutador.setEmpresa(empresa);
-        return reclutadorRepo.save(reclutador);
-    }
-
-    // ===== DELETE =====
+    // DELETE
     public void delete(Long id) {
-        Reclutador reclutador = getById(id);
-        reclutador.setIsActive(false);
-        reclutadorRepo.save(reclutador);
+        reclutadorRepo.deleteById(id);
     }
 }

@@ -4,10 +4,12 @@ import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.MunicipioRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class MunicipioService {
 
     @Autowired
@@ -18,8 +20,7 @@ public class MunicipioService {
     }
 
     public Municipio getById(Long id) {
-        return municipioRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+        return municipioRepo.findById(id).orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
     }
 
     public Municipio create(Municipio municipio) {

@@ -10,7 +10,7 @@ import com.workable_sb.workable.models.Postulacion;
 
 @Repository
 public interface PostulacionRepo extends JpaRepository<Postulacion, Long> {
-    
+
     // Buscar postulaciones por oferta (getbyoferta)
     List<Postulacion> findByOfertaId(Long ofertaId);
     

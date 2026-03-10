@@ -24,11 +24,13 @@ public class Postulacion {
 	@Column(nullable = false, length = 30)
 	private Estado estado = Estado.PENDIENTE;
 
+	@NotNull(message = "La oferta es obligatoria")
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "oferta_id", nullable = false, referencedColumnName = "id")
 	@JsonIgnoreProperties({"postulaciones", "requisitos", "hibernateLazyInitializer", "handler"}) // Evita bucle infinito al serializar y campos innecesarios
 	private Oferta oferta;
 
+	@NotNull(message = "El aspirante es obligatorio")
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "aspirante_id", nullable = false, referencedColumnName = "id")
 	@JsonIgnoreProperties({"password", "hibernateLazyInitializer", "handler"})

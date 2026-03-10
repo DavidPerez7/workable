@@ -38,7 +38,6 @@ public class Administrador {
     @Column(nullable = false, length = 500)
     private String password;
 
-    @NotNull(message = "El rol es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rol rol = Rol.ADMIN;

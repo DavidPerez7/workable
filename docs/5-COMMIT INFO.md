@@ -106,6 +106,46 @@ refactor: Simplificación de EstudioData y ExperienciaData para MVP de 7 días (
 
 ---
 
+## Análisis de Preferencias de Usuario (Basado en Iteraciones de Commit)
+
+### Contexto
+Durante el desarrollo, se iteraron nombres de commit para un refactor masivo de servicios backend. El usuario prefirió versiones más detalladas y justificadas, priorizando claridad sobre brevedad.
+
+### Comparación de Nombres Iterados
+1. **Versión Inicial (Básica):**
+   ```
+   refactor: Simplificación de servicios backend para optimización y alineación RF (Empresa, Reclutador, Oferta, Postulacion, HojaVida, Municipio; @NotNull en Postulacion)
+   ```
+   - **Fortalezas:** Lista detalles específicos, incluye contexto.
+   - **Debilidades:** Faltaba especificar "eliminando redundancias" y "delegación de validaciones".
+
+2. **Versión Ajustada (Media):**
+   ```
+   refactor: Simplificación de servicios backend y delegación de validaciones a modelos/controllers (Empresa, Reclutador, Oferta, Postulacion, HojaVida, Municipio)
+   ```
+   - **Fortalezas:** Agrega "delegación de validaciones", más técnico.
+   - **Debilidades:** Aún corto en descripción de cambios específicos.
+
+3. **Versión Ganadora (Detallada):**
+   ```
+   refactor: Simplificación de servicios backend eliminando redundancias y delegación de validaciones a modelos/controllers para optimización y alineación RF (Empresa, Reclutador, Oferta, Postulacion, HojaVida, Municipio)
+   ```
+   - **Fortalezas:** Expande con "eliminando redundancias" (acción específica), contexto completo ("para optimización y alineación RF"), y lista de servicios.
+   - **Debilidades:** Más largo (~140 caracteres), pero aceptable.
+
+### Lecciones Aprendidas
+- **Preferencia por Largo sobre Compacto:** Para cambios complejos, el usuario elige descripciones expansivas que expliquen "qué" (simplificación, delegación), "cómo" (eliminando redundancias), y "por qué" (optimización, RF, tiempo limitado).
+- **Incluir Acción Específica:** Palabras como "eliminando", "delegación" hacen el commit autoexplicativo sin leer código.
+- **Contexto Obligatorio:** Siempre justificar con "para [motivo]" (ej. alineación RF, optimización).
+- **Detalles en Paréntesis:** Lista de módulos/afectados para precisión.
+- **Iterar Basado en Feedback:** Empezar básico, refinar con más detalle técnico y justificación hasta satisfacción.
+
+### Recomendación Actualizada
+- Para commits grandes: Usar estilo LARGO con acción + contexto + detalles.
+- Ejemplo Ideal: `refactor: [Acción específica] para [contexto] ([detalles afectados])`.
+
+---
+
 ## Notas Finales
 - Preferir estilo **LARGO** para cambios complejos/múltiples (refactorización, RF updates).
 - Preferir estilo **COMPACTO** para cambios pequeños/puntuales.
