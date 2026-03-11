@@ -12,35 +12,24 @@ import com.workable_sb.workable.models.Empresa;
 
 @Repository
 public interface OfertaRepo extends JpaRepository<Oferta, Long> {
-    
-    // getbyempresa - Buscar ofertas por empresa
-    List<Oferta> findByEmpresaId(Long empresaId);
-    
-    // getbyubicacion - Buscar ofertas activas por municipio
-    @Query("SELECT o FROM Oferta o WHERE o.municipio.id = :municipioId AND o.estado = 'ACTIVA'")
-    List<Oferta> findByMunicipioId(@Param("municipioId") Long municipioId);
-    
-    // getbyhorarios - Buscar ofertas activas por modalidad
-    @Query("SELECT o FROM Oferta o WHERE o.modalidad = :modalidad AND o.estado = 'ACTIVA'")
-    List<Oferta> findByModalidad(@Param("modalidad") Modalidad modalidad);
-    
-    // getbysalario - Buscar ofertas activas por rango de salario
-    @Query("SELECT o FROM Oferta o WHERE o.salario BETWEEN :salarioMinimo AND :salarioMaximo AND o.estado = 'ACTIVA'")
-    List<Oferta> findBySalarioRange(@Param("salarioMinimo") BigDecimal salarioMinimo, @Param("salarioMaximo") BigDecimal salarioMaximo);
-    
-    // getbyexprequerida - Buscar ofertas activas por nivel de experiencia
-    @Query("SELECT o FROM Oferta o WHERE o.nivelExperiencia = :nivelExperiencia AND o.estado = 'ACTIVA'")
-    List<Oferta> findByNivelExperiencia(@Param("nivelExperiencia") String nivelExperiencia);
-    
-    // Métodos auxiliares para búsqueda por título exacto
-    @Query("SELECT o FROM Oferta o WHERE LOWER(o.titulo) LIKE LOWER(CONCAT('%', :nombre, '%')) AND o.estado = 'ACTIVA'")
-    List<Oferta> findByTituloContainingIgnoreCase(@Param("nombre") String nombre);
-    
-    // Buscar ofertas activas por empresa
-    @Query("SELECT o FROM Oferta o WHERE o.empresa.id = :empresaId AND o.estado = 'ACTIVA'")
-    List<Oferta> findByEmpresaIdAndActive(@Param("empresaId") Long empresaId);
 
-    // Buscar ofertas activas por categoría
-    @Query("SELECT o FROM Oferta o WHERE :categoria MEMBER OF o.empresa.categories AND o.estado = 'ACTIVA'")
-    List<Oferta> findByCategoria(@Param("categoria") Empresa.Category categoria);
+    // BÚSQUEDA UNIFICADA CON FILTROS COMBINABLES
+    @Query("SELECT DISTINCT o FROM Oferta o LEFT JOIN o.empresa e WHERE o.estado = 'ACTIVA'" +
+            " AND (:nombre IS NULL OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :nombre, '%')))" +
+            " AND (:municipioId IS NULL OR o.municipio.id = :municipioId)" +
+            " AND (:salarioMin IS NULL OR o.salario >= :salarioMin)" +
+            " AND (:salarioMax IS NULL OR o.salario <= :salarioMax)" +
+            " AND (:experiencia IS NULL OR o.nivelExperiencia = :experiencia)" +
+            " AND (:modalidad IS NULL OR o.modalidad = :modalidad)" +
+            " AND (:categoria IS NULL OR :categoria MEMBER OF e.categories)" +
+            " AND (:empresaId IS NULL OR e.id = :empresaId)")
+    List<Oferta> buscarConFiltros(
+            @Param("nombre") String nombre,
+            @Param("municipioId") Long municipioId,
+            @Param("salarioMin") BigDecimal salarioMin,
+            @Param("salarioMax") BigDecimal salarioMax,
+            @Param("experiencia") String experiencia,
+            @Param("modalidad") Modalidad modalidad,
+            @Param("categoria") Empresa.Category categoria,
+            @Param("empresaId") Long empresaId);
 }

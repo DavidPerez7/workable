@@ -1,15 +1,13 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
-import java.math.BigDecimal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
+import com.workable_sb.workable.dto.OfertaSearchDTO;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
@@ -56,35 +54,43 @@ public class OfertaService {
                 .orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
     }
 
-    public List<Oferta> getByNombre(String nombre) {
-        return ofertaRepository.findByTituloContainingIgnoreCase(nombre);
-    }
 
-    public List<Oferta> getByNivelExperiencia(String nivelExperiencia) {
-        return ofertaRepository.findByNivelExperiencia(nivelExperiencia);
-    }
+    // BÚSQUEDA UNIFICADA CON FILTROS COMBINABLES
+    public List<Oferta> buscarConFiltros(OfertaSearchDTO filtros) {
+        Oferta.Modalidad modalidadEnum = null;
+        Empresa.Category categoriaEnum = null;
 
-    public List<Oferta> getByModalidad(String modalidad) {
-        return ofertaRepository.findByModalidad(Oferta.Modalidad.valueOf(modalidad.toUpperCase()));
-    }
+        if (filtros.getMunicipioId() != null) {
+            municipioRepo.findById(filtros.getMunicipioId())
+                    .orElseThrow(() -> new IllegalArgumentException("Municipio no encontrado"));
+        }
 
-    public List<Oferta> getByEmpresa(Long empresaId) {
-        return ofertaRepository.findByEmpresaId(empresaId);
-    }
+        if (filtros.getModalidad() != null) {
+            try {
+                modalidadEnum = Oferta.Modalidad.valueOf(filtros.getModalidad().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Modalidad no válida: " + filtros.getModalidad());
+            }
+        }
 
-    public List<Oferta> getByUbicacion(Long municipioId) {
-        municipioRepo.findById(municipioId)
-                .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
-        return ofertaRepository.findByMunicipioId(municipioId);
-    }
-
-    public List<Oferta> getByCategoria(String categoria) {
-        Empresa.Category cat = Empresa.Category.valueOf(categoria.toUpperCase());
-        return ofertaRepository.findByCategoria(cat);
-    }
-
-    public List<Oferta> getBySalarioRange(BigDecimal min, BigDecimal max) {
-        return ofertaRepository.findBySalarioRange(min, max);
+        if (filtros.getCategoria() != null) {
+            try {
+                categoriaEnum = Empresa.Category.valueOf(filtros.getCategoria().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Categoría no válida: " + filtros.getCategoria());
+            }
+        }
+        
+        return ofertaRepository.buscarConFiltros(
+                filtros.getNombre(),
+                filtros.getMunicipioId(),
+                filtros.getSalarioMin(),
+                filtros.getSalarioMax(),
+                filtros.getExperiencia(),
+                modalidadEnum,
+                categoriaEnum,
+                filtros.getEmpresaId()
+        );
     }
 
     public Oferta updateEstado(Long id, Oferta.EstadoOferta estado) {

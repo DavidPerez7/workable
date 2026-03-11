@@ -5,12 +5,12 @@ package com.workable_sb.workable.controller;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.EstadoOferta;
 import com.workable_sb.workable.service.OfertaService;
+import com.workable_sb.workable.dto.OfertaSearchDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.math.BigDecimal;
 import java.util.Map;
 
 @RestController
@@ -62,107 +62,16 @@ public class OfertaController {
         }
     }
 
-    // Filtros / Búsqueda
-    
-    // Buscar por nombre/título
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
-    @GetMapping("/nombre")
-    public ResponseEntity<?> buscarPorNombre(@RequestParam String nombre) {
+    // BÚSQUEDA UNIFICADA CON FILTROS COMBINABLES
+    @PostMapping("/search")
+    public ResponseEntity<?> search(@RequestBody OfertaSearchDTO filtros) {
         try {
-            List<Oferta> ofertas = ofertaService.getByNombre(nombre);
+            List<Oferta> ofertas = ofertaService.buscarConFiltros(filtros);
             return ResponseEntity.ok(ofertas);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por rango de salario
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
-    @GetMapping("/salario")
-    public ResponseEntity<?> buscarPorSalario(
-            @RequestParam BigDecimal min,
-            @RequestParam BigDecimal max) {
-        try {
-            List<Oferta> ofertas = ofertaService.getBySalarioRange(min, max);
-            return ResponseEntity.ok(ofertas);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por ubicación (municipio)
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
-    @GetMapping("/ubicacion/{municipioId}")
-    public ResponseEntity<?> buscarPorUbicacion(@PathVariable Long municipioId) {
-        try {
-            List<Oferta> ofertas = ofertaService.getByUbicacion(municipioId);
-            return ResponseEntity.ok(ofertas);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por nivel de experiencia
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
-    @GetMapping("/experiencia/{nivel}")
-    public ResponseEntity<?> buscarPorExperiencia(@PathVariable String nivel) {
-        try {
-            List<Oferta> ofertas = ofertaService.getByNivelExperiencia(nivel);
-            return ResponseEntity.ok(ofertas);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por modalidad (horarios)
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
-    @GetMapping("/modalidad/{modalidad}")
-    public ResponseEntity<?> buscarPorModalidad(@PathVariable String modalidad) {
-        try {
-            List<Oferta> ofertas = ofertaService.getByModalidad(modalidad);
-            return ResponseEntity.ok(ofertas);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por empresa
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<?> buscarPorEmpresa(@PathVariable Long empresaId) {
-        try {
-            List<Oferta> ofertas = ofertaService.getByEmpresa(empresaId);
-            return ResponseEntity.ok(ofertas);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // Buscar por categoría laboral
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN', 'ASPIRANTE')")
-    @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<?> buscarPorCategoria(@PathVariable String categoria) {
-        try {
-            List<Oferta> ofertas = ofertaService.getByCategoria(categoria);
-            return ResponseEntity.ok(ofertas);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error en búsqueda: " + e.getMessage()));
         }
     }
 

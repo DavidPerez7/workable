@@ -49,7 +49,7 @@ public class Aspirante {
 
     @NotNull(message = "El municipio es obligatorio")
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "municipio_id", nullable = true, referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Municipio municipio;

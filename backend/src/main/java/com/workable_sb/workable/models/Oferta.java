@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.HashSet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -59,12 +58,12 @@ public class Oferta {
 	@OnDelete(action = OnDeleteAction.RESTRICT)
 	private Municipio municipio;
 
-	@NotEmpty(message = "La modalidad es obligatoria")
+	@NotNull(message = "La modalidad es obligatoria")
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	private Modalidad modalidad;
 
-	@NotEmpty(message = "El tipo de contrato es obligatorio")
+	@NotNull(message = "El tipo de contrato es obligatorio")
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 30)
 	private TipoContrato tipoContrato;
