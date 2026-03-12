@@ -74,6 +74,7 @@ feat: Refactorización de estados de ofertas y simplificación de embeddables [A
 ## Checklist para Commits
 
 Antes de hacer commit, verifica:
+- ✅ **IMPORTANTE:** Siempre ejecutar `git status` para identificar con precisión los archivos modificados y tener los detalles necesarios para generar el nombre del commit.
 - ✅ Nombre alineado en español (descripción) + inglés (tipo).
 - ✅ Describe qué cambió: modelo, RF, relaciones, validaciones.
 - ✅ Incluye contexto: "para alinear con RF", "para optimizar", "para 7 días límite".

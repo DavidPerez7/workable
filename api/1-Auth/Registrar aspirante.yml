@@ -1,0 +1,29 @@
+info:
+  name: Registrar aspirante
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/register-aspirante"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "correo": "juan.perez@ejemplo.com",
+        "password": "miPassword123",
+        "fechaNacimiento": "1995-05-15",
+        "genero": "MASCULINO",
+        "municipio": {
+          "id": 1
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

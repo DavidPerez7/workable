@@ -1,0 +1,29 @@
+info:
+  name: Registrar reclutador
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/auth/register-reclutador"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Ana",
+        "apellido": "García",
+        "correo": "ana.garcia@empresa.com",
+        "telefono": "3001234567",
+        "password": "passwordRec123",
+        "fechaNacimiento": "1988-10-20",
+        "municipio": {
+          "id": 1
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
