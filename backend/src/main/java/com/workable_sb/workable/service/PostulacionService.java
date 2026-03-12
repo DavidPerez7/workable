@@ -28,8 +28,15 @@ public class PostulacionService {
 
 	// CREATE
 	public Postulacion create(Postulacion postulacion) {
+		if (postulacion.getAspirante() == null || postulacion.getOferta() == null) {
+			throw new IllegalArgumentException("Aspirante y Oferta son obligatorios");
+		}
 		Long aspiranteId = postulacion.getAspirante().getId();
 		Long ofertaId = postulacion.getOferta().getId();
+
+		if (aspiranteId == null || ofertaId == null) {
+			throw new IllegalArgumentException("IDs de Aspirante y Oferta son obligatorios");
+		}
 
 		Aspirante aspirante = aspiranteRepo.findById(aspiranteId).orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
@@ -51,20 +58,31 @@ public class PostulacionService {
 	}
 
 	public Postulacion getById(Long id) {
+		if (id == null) {
+			throw new IllegalArgumentException("El ID no puede ser nulo");
+		}
 		return postulacionRepo.findById(id).orElseThrow(() -> new RuntimeException("Postulación no encontrada con id: " + id));
 	}
 
 	public List<Postulacion> getByOfertaId(Long ofertaId) {
+		if (ofertaId == null) return List.of();
 		return postulacionRepo.findByOfertaId(ofertaId);
 	}
 
 	public List<Postulacion> getByAspiranteId(Long aspiranteId) {
+		if (aspiranteId == null) return List.of();
 		return postulacionRepo.findByAspiranteId(aspiranteId);
 	}
 
 	// UPDATE
 	public Postulacion update(Long id, Postulacion postulacion) {
+		if (id == null) {
+			throw new IllegalArgumentException("El ID no puede ser nulo");
+		}
 		Postulacion existing = getById(id);
+		if (existing == null) {
+			throw new RuntimeException("Postulación no encontrada");
+		}
 		if (postulacion.getEstado() != null) {
 			existing.setEstado(postulacion.getEstado());
 		}
@@ -73,7 +91,10 @@ public class PostulacionService {
 
 	// DELETE
 	public void delete(Long id) {
+		if (id == null) return;
 		Postulacion existing = getById(id); // valida que exista
-		postulacionRepo.delete(existing);
+		if (existing != null) {
+			postulacionRepo.delete(existing);
+		}
 	}
 }

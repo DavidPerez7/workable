@@ -22,7 +22,7 @@ public class AdministradorService {
     // CREATE
     public Administrador create(Administrador request) {
         if (administradorRepo.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new RuntimeException("Correo ya en uso");
+            throw new IllegalArgumentException("Correo ya en uso");
         }
 
         request.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -36,11 +36,14 @@ public class AdministradorService {
     }
 
     public Administrador getById(Long id) {
-        return administradorRepo.findById(id).orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
+        return administradorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Administrador no encontrado"));
     }
 
     public Administrador getByCorreo(String correo) {
-        return administradorRepo.findByCorreo(correo).orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
+        return administradorRepo.findByCorreo(correo).orElseThrow(() -> new IllegalArgumentException("Administrador no encontrado"));
     }
 
 
@@ -50,7 +53,7 @@ public class AdministradorService {
 
         if (!Objects.equals(existing.getCorreo(), request.getCorreo())) {
             if (administradorRepo.findByCorreo(request.getCorreo()).isPresent()) {
-                throw new RuntimeException("Correo ya en uso");
+                throw new IllegalArgumentException("Correo ya en uso");
             }
             existing.setCorreo(request.getCorreo());
         }
@@ -67,7 +70,10 @@ public class AdministradorService {
 
     // DELETE
     public void delete(Long id) {
-        Administrador existing = getById(id); // valida que exista
-        administradorRepo.delete(existing);
+        if (id == null) return;
+        Administrador existing = getById(id);
+        if (existing != null) {
+            administradorRepo.delete(existing);
+        }
     }
 }

@@ -50,6 +50,9 @@ public class AspiranteService {
     }
 
     public Aspirante getById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
         return aspiranteRepo.findById(id).orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
     }
 
@@ -60,6 +63,9 @@ public class AspiranteService {
 
     // UPDATE
     public Aspirante update(Long id, Aspirante request) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
         Aspirante existing = aspiranteRepo.findById(id).orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
 
         if (!Objects.equals(existing.getCorreo(), request.getCorreo())) {
@@ -82,10 +88,12 @@ public class AspiranteService {
             existing.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
-            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
-            existing.setMunicipio(municipio);
+        if (request.getMunicipio() != null) {
+            Long municipioId = request.getMunicipio().getId();
+            if (municipioId != null) {
+                Municipio municipio = municipioRepo.findById(municipioId).orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+                existing.setMunicipio(municipio);
+            }
         }
 
         return aspiranteRepo.save(existing);
@@ -94,7 +102,10 @@ public class AspiranteService {
 
     // DELETE
     public void delete(Long id) {
+        if (id == null) return;
         Aspirante existing = getById(id); // valida que exista
-        aspiranteRepo.delete(existing);
+        if (existing != null) {
+            aspiranteRepo.delete(existing);
+        }
     }
 }

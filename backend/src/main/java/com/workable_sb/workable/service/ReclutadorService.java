@@ -48,6 +48,9 @@ public class ReclutadorService {
     }
 
     public Reclutador getById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
         return reclutadorRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
     }
@@ -58,21 +61,34 @@ public class ReclutadorService {
     }
 
     public List<Reclutador> getByEmpresaId(Long empresaId) {
+        if (empresaId == null) return List.of();
         return reclutadorRepo.findAll().stream()
-                .filter(r -> r.getEmpresa() != null && r.getEmpresa().getId().equals(empresaId))
+                .filter(r -> r.getEmpresa() != null && empresaId.equals(r.getEmpresa().getId()))
                 .toList();
     }
 
     public Reclutador asignarEmpresa(Long reclutadorId, Long empresaId) {
+        if (reclutadorId == null || empresaId == null) {
+            throw new IllegalArgumentException("IDs de Reclutador y Empresa son obligatorios");
+        }
         Reclutador reclutador = getById(reclutadorId);
         Empresa empresa = empresaRepo.findById(empresaId).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        reclutador.setEmpresa(empresa);
-        return reclutadorRepo.save(reclutador);
+        if (reclutador != null) {
+            reclutador.setEmpresa(empresa);
+            return reclutadorRepo.save(reclutador);
+        }
+        throw new RuntimeException("Reclutador no encontrado");
     }
 
     // UPDATE
     public Reclutador update(Long id, Reclutador request) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
         Reclutador existing = getById(id);
+        if (existing == null) {
+            throw new RuntimeException("Reclutador no encontrado");
+        }
 
         if (!Objects.equals(existing.getCorreo(), request.getCorreo())) {
             if (reclutadorRepo.findByCorreo(request.getCorreo()).isPresent()) {
@@ -91,16 +107,22 @@ public class ReclutadorService {
             existing.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
-            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
-            existing.setMunicipio(municipio);
+        if (request.getMunicipio() != null) {
+            Long municipioId = request.getMunicipio().getId();
+            if (municipioId != null) {
+                Municipio municipio = municipioRepo.findById(municipioId)
+                        .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+                existing.setMunicipio(municipio);
+            }
         }
 
-        if (request.getEmpresa() != null && request.getEmpresa().getId() != null) {
-            Empresa empresa = empresaRepo.findById(request.getEmpresa().getId())
-                    .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-            existing.setEmpresa(empresa);
+        if (request.getEmpresa() != null) {
+            Long empId = request.getEmpresa().getId();
+            if (empId != null) {
+                Empresa empresa = empresaRepo.findById(empId)
+                        .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+                existing.setEmpresa(empresa);
+            }
         }
 
         return reclutadorRepo.save(existing);
@@ -108,7 +130,10 @@ public class ReclutadorService {
 
     // DELETE
     public void delete(Long id) {
+        if (id == null) return;
         Reclutador existing = getById(id); // valida que exista
-        reclutadorRepo.delete(existing);
+        if (existing != null) {
+            reclutadorRepo.delete(existing);
+        }
     }
 }

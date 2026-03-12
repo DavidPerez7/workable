@@ -26,10 +26,13 @@ public class EmpresaService {
             throw new RuntimeException("NIT ya está en uso");
         }
 
-        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
-            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
-            request.setMunicipio(municipio);
+        if (request.getMunicipio() != null) {
+            Long municipioId = request.getMunicipio().getId();
+            if (municipioId != null) {
+                Municipio municipio = municipioRepo.findById(municipioId)
+                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+                request.setMunicipio(municipio);
+            }
         }
 
         return empresaRepository.save(request);
@@ -41,6 +44,9 @@ public class EmpresaService {
     }
 
     public Empresa getById(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
         return empresaRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
     }
 
@@ -54,6 +60,9 @@ public class EmpresaService {
 
     // UPDATE
     public Empresa update(Long id, Empresa request) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
         Empresa existing = empresaRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
 
         if (request.getNombre() != null) existing.setNombre(request.getNombre());
@@ -62,10 +71,17 @@ public class EmpresaService {
         if (request.getIsActive() != null) existing.setIsActive(request.getIsActive());
         if (request.getCategories() != null) existing.setCategories(request.getCategories());
 
-        if (request.getMunicipio() != null && request.getMunicipio().getId() != null) {
-            Municipio municipio = municipioRepo.findById(request.getMunicipio().getId())
-                .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
-            existing.setMunicipio(municipio);
+        if (request.getMunicipio() != null) {
+            Long municipioId = request.getMunicipio().getId();
+            if (municipioId != null) {
+                Municipio municipio = municipioRepo.findById(municipioId)
+                    .orElseThrow(() -> new RuntimeException("Municipio no encontrado"));
+                existing.setMunicipio(municipio);
+            }
+        }
+
+        if (existing == null) {
+            throw new RuntimeException("Empresa no encontrada");
         }
 
         return empresaRepository.save(existing);
@@ -73,7 +89,10 @@ public class EmpresaService {
 
     // DELETE
     public void delete(Long id) {
+        if (id == null) return;
         Empresa existing = getById(id); // valida que exista
-        empresaRepository.delete(existing);
+        if (existing != null) {
+            empresaRepository.delete(existing);
+        }
     }
 }
