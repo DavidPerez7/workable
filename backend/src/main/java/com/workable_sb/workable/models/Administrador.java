@@ -42,17 +42,12 @@ public class Administrador {
     @Column(nullable = false)
     private Rol rol = Rol.ADMIN;
 
-    private Boolean isActive;
-
     public enum Rol {
         ADMIN
     }
 
     @PrePersist
     protected void onCreate() {
-        if (this.isActive == null) {
-            this.isActive = true;
-        }
         if (this.rol == null) {
             this.rol = Rol.ADMIN;
         }

@@ -102,7 +102,6 @@ public class DataInitializer implements CommandLineRunner {
         admin.setApellido("Administrador");
         admin.setCorreo("admin@example.com");
         admin.setPassword(passwordEncoder.encode("admin123"));
-        admin.setIsActive(true);
         administradorRepo.save(admin);
         System.out.println("✅ USUARIO ADMINISTRADOR CREADO: admin@example.com / admin123");
 
@@ -114,7 +113,6 @@ public class DataInitializer implements CommandLineRunner {
         reclutador.setTelefono("3105555556");
         reclutador.setFechaNacimiento(LocalDate.of(1990, 9, 20));
         reclutador.setMunicipio(municipio);
-        reclutador.setIsActive(true);
         Empresa empresa = empresaRepo.findById(1L).orElse(null);
         reclutador.setEmpresa(empresa);
         reclutadorRepo.save(reclutador);
@@ -140,6 +138,7 @@ public class DataInitializer implements CommandLineRunner {
         oferta.setTipoContrato(Oferta.TipoContrato.TIEMPO_COMPLETO);
         oferta.setEmpresa(empresa);
         oferta.setPuntuacion(0.0f);
+        oferta.setRequisitos("Java, Spring Boot, SQL");
         ofertaRepo.save(oferta);
         System.out.println("✅ OFERTA DE PRUEBA CREADA: " + oferta.getTitulo());
     }
@@ -227,7 +226,6 @@ public class DataInitializer implements CommandLineRunner {
         empresa1.setPuntuacion(4.5f);
         empresa1.setLogoUrl("https://www.bancolombia.com/wcm/connect/www.bancolombia.com-1.0.0/hogar/imagenes/logo-bancolombia.png");
         empresa1.setMunicipio(municipioBogota);
-        empresa1.setIsActive(true);
         empresa1.getCategories().add(Empresa.Category.FINANZAS);
         empresa1.getCategories().add(Empresa.Category.TECNOLOGIA);
         empresaRepo.save(empresa1);

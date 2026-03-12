@@ -18,6 +18,13 @@ request:
   variables:
     - name: baseUrl
       value: http://localhost:8080
+    - name: authToken
+      value: ""
+
+auth:
+  type: bearer
+  bearer:
+    token: "{{authToken}}"
 bundled: false
 extensions:
   bruno:

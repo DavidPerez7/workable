@@ -82,8 +82,6 @@ public class Empresa {
     @Column(length = 500)
     private String logoUrl;
 
-    private Boolean isActive;
-
     private float puntuacion = 0.0f;
 
     private LocalDate fechaCreacion;
@@ -103,9 +101,8 @@ public class Empresa {
 
     @PrePersist
     protected void onCreate() {
-        if (fechaCreacion == null || isActive == null) {
+        if (fechaCreacion == null) {
             fechaCreacion = LocalDate.now();
-            isActive = true;
         }
         if (codigoInvitacion == null || codigoInvitacion.isEmpty()) {
             generarCodigoInvitacion();

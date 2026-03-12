@@ -1,0 +1,161 @@
+
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:419) ~[spring-orm-6.2.9.jar:6.2.9]
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:400) ~[spring-orm-6.2.9.jar:6.2.9]  
+        at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1873) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1822) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.9.jar:6.2.9]        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:207) ~[spring-beans-6.2.9.jar:6.2.9]
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:970) ~[spring-context-6.2.9.jar:6.2.9]
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:627) ~[spring-context-6.2.9.jar:6.2.9]
+        at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.4.jar:3.5.4]
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.4.jar:3.5.4]
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.4.jar:3.5.4]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.4.jar:3.5.4]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.4.jar:3.5.4]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.4.jar:3.5.4]
+        at com.workable_sb.workable.WorkableApplication.main(WorkableApplication.java:10) ~[classes/:na]
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+        at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50) ~[spring-boot-devtools-3.5.4.jar:3.5.4]
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`workable`.`#sql-2ab8_12`, CONSTRAINT `FKkgopybsgiw62vsvo2n8f3kq4a` FOREIGN KEY (`municipio_id`) REFERENCES `municipio` (`id`))
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:109) ~[mysql-connector-j-9.3.0.jar:9.3.0]
+        at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114) ~[mysql-connector-j-9.3.0.jar:9.3.0]
+        at com.mysql.cj.jdbc.StatementImpl.executeInternal(StatementImpl.java:837) ~[mysql-connector-j-9.3.0.jar:9.3.0]
+        at com.mysql.cj.jdbc.StatementImpl.execute(StatementImpl.java:685) ~[mysql-connector-j-9.3.0.jar:9.3.0]
+        at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:95) ~[HikariCP-6.3.1.jar:na]
+        at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-6.3.1.jar:na]
+        at org.hibernate.tool.schema.internal.exec.GenerationTargetToDatabase.accept(GenerationTargetToDatabase.java:80) ~[hibernate-core-6.6.22.Final.jar:6.6.22.Final]
+        ... 41 common frames omitted
+
+2026-03-12T16:03:32.896-05:00  INFO 9516 --- [workable] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-12T16:03:33.529-05:00  INFO 9516 --- [workable] [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-12T16:03:35.486-05:00  INFO 9516 --- [workable] [  restartedMain] c.w.workable.security.SecurityConfig     : SecurityConfig inicializado
+2026-03-12T16:03:35.728-05:00  WARN 9516 --- [workable] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-12T16:03:35.886-05:00  INFO 9516 --- [workable] [  restartedMain] c.w.workable.security.SecurityConfig     : Configurando cadena de filtros de seguridad
+2026-03-12T16:03:36.310-05:00  INFO 9516 --- [workable] [  restartedMain] c.w.workable.security.SecurityConfig     : Configuración de seguridad completada
+2026-03-12T16:03:36.817-05:00  INFO 9516 --- [workable] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-03-12T16:03:36.871-05:00  INFO 9516 --- [workable] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context 
+path '/'
+2026-03-12T16:03:36.885-05:00  INFO 9516 --- [workable] [  restartedMain] c.w.workable.WorkableApplication         : Started WorkableApplication in 11.745 seconds (process running for 12.451)
+🚀 INICIANDO DATA INITIALIZER 🚀
+✅ BASE DE DATOS INICIALIZADA CON MUNICIPIOS
+🔄 LIMPIANDO DATOS EXISTENTES...
+⚠️ ERROR ELIMINANDO OFERTAS: Unable to find com.workable_sb.workable.models.Empresa with id 1
+🧹 DATOS EXISTENTES LIMPIADOS
+🏢 CREANDO EMPRESAS...
+✅ EMPRESA CREADA: BANCOLOMBIA
+✅ EMPRESAS RECREADAS: 1 EMPRESA DISPONIBLE
+👥 CREANDO USUARIOS DE PRUEBA...
+✅ USUARIO ASPIRANTE CREADO: aspirante@example.com / pass123
+✅ USUARIO ADMINISTRADOR CREADO: admin@example.com / admin123
+✅ USUARIO RECLUTADOR CREADO: reclutador@example.com / pass123
+� CREANDO OFERTAS DE PRUEBA...
+2026-03-12T16:03:37.696-05:00  WARN 9516 --- [workable] [  restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 1364, SQLState: HY000
+2026-03-12T16:03:37.696-05:00 ERROR 9516 --- [workable] [  restartedMain] o.h.engine.jdbc.spi.SqlExceptionHelper   : Field 'is_active' doesn't have a default value  
+❌ ERROR CRÍTICO EN DATA INITIALIZER: could not execute statement [Field 'is_active' doesn't have a default value] [insert into oferta (descripcion,empresa_id,estado,
+fecha_limite,fecha_publicacion,modalidad,municipio_id,nivel_experiencia,numero_vacantes,puntuacion,requisitos,salario,tipo_contrato,titulo) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)]
+org.springframework.orm.jpa.JpaSystemException: could not execute statement [Field 'is_active' doesn't have a default value] [insert into oferta (descripcion,empresa_id,estado,fecha_limite,fecha_publicacion,modalidad,municipio_id,nivel_experiencia,numero_vacantes,puntuacion,requisitos,salario,tipo_contrato,titulo) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)]
+        at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:348)
+        at org.springframework.orm.jpa.vendor.HibernateJpaDialect.convertHibernateAccessException(HibernateJpaDialect.java:256)
+        at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:241)
+        at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:560)
+        at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+        at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:343)
+        at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:160)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+        at org.springframework.data.jpa.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:165)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223)
+        at jdk.proxy4/jdk.proxy4.$Proxy162.save(Unknown Source)
+        at com.workable_sb.workable.config.DataInitializer.crearOfertasPrueba(DataInitializer.java:144)
+        at com.workable_sb.workable.config.DataInitializer.run(DataInitializer.java:50)
+        at org.springframework.boot.SpringApplication.lambda$callRunner$5(SpringApplication.java:788)
+        at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:82)
+        at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60)
+        at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:86)
+        at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:796)
+        at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:787)
+        at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:772)
+        at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+        at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357)
+        at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:510)
+        at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+        at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)
+        at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)
+        at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+        at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)
+        at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:772)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:325)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361)
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350)
+        at com.workable_sb.workable.WorkableApplication.main(WorkableApplication.java:10)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: org.hibernate.exception.GenericJDBCException: could not execute statement [Field 'is_active' doesn't have a default value] [insert into oferta (descripcion,empresa_id,estado,fecha_limite,fecha_publicacion,modalidad,municipio_id,nivel_experiencia,numero_vacantes,puntuacion,requisitos,salario,tipo_contrato,titulo) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)]
+        at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:63)
+        at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
+        at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:197)
+        at org.hibernate.id.insert.GetGeneratedKeysDelegate.performMutation(GetGeneratedKeysDelegate.java:116)
+        at org.hibernate.engine.jdbc.mutation.internal.MutationExecutorSingleNonBatched.performNonBatchedOperations(MutationExecutorSingleNonBatched.java:47)        
+        at org.hibernate.engine.jdbc.mutation.internal.AbstractMutationExecutor.execute(AbstractMutationExecutor.java:55)
+        at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.doStaticInserts(InsertCoordinatorStandard.java:194)
+        at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.coordinateInsert(InsertCoordinatorStandard.java:132)
+        at org.hibernate.persister.entity.mutation.InsertCoordinatorStandard.insert(InsertCoordinatorStandard.java:95)
+        at org.hibernate.action.internal.EntityIdentityInsertAction.execute(EntityIdentityInsertAction.java:85)
+        at org.hibernate.engine.spi.ActionQueue.execute(ActionQueue.java:682)
+        at org.hibernate.engine.spi.ActionQueue.addResolvedEntityInsertAction(ActionQueue.java:293)
+        at org.hibernate.engine.spi.ActionQueue.addInsertAction(ActionQueue.java:274)
+        at org.hibernate.engine.spi.ActionQueue.addAction(ActionQueue.java:324)
+        at org.hibernate.event.internal.AbstractSaveEventListener.addInsertAction(AbstractSaveEventListener.java:394)
+        at org.hibernate.event.internal.AbstractSaveEventListener.performSaveOrReplicate(AbstractSaveEventListener.java:308)
+        at org.hibernate.event.internal.AbstractSaveEventListener.performSave(AbstractSaveEventListener.java:224)
+        at org.hibernate.event.internal.AbstractSaveEventListener.saveWithGeneratedId(AbstractSaveEventListener.java:136)
+        at org.hibernate.event.internal.DefaultPersistEventListener.entityIsTransient(DefaultPersistEventListener.java:177)
+        at org.hibernate.event.internal.DefaultPersistEventListener.persist(DefaultPersistEventListener.java:95)
+        at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:79)
+        at org.hibernate.event.internal.DefaultPersistEventListener.onPersist(DefaultPersistEventListener.java:55)
+        at org.hibernate.event.service.internal.EventListenerGroupImpl.fireEventOnEachListener(EventListenerGroupImpl.java:127)
+        at org.hibernate.internal.SessionImpl.firePersist(SessionImpl.java:761)
+        at org.hibernate.internal.SessionImpl.persist(SessionImpl.java:745)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:320)
+        at jdk.proxy4/jdk.proxy4.$Proxy152.persist(Unknown Source)
+        at org.springframework.data.jpa.repository.support.SimpleJpaRepository.save(SimpleJpaRepository.java:654)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+        at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+        at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277)   
+        at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170)
+        at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158)
+        at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:515)
+        at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:284)
+        at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:734)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+        at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:174)
+        at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:149)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+        at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:69)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+        at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380)
+        at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+        at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:138)
+        ... 30 more
+Caused by: java.sql.SQLException: Field 'is_active' doesn't have a default value
+        at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+        at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114)
+        at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:990)
+        at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1168)
+        at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdateInternal(ClientPreparedStatement.java:1103)
+        at com.mysql.cj.jdbc.ClientPreparedStatement.executeLargeUpdate(ClientPreparedStatement.java:1450)
+        at com.mysql.cj.jdbc.ClientPreparedStatement.executeUpdate(ClientPreparedStatement.java:1086)
+        at com.zaxxer.hikari.pool.ProxyPreparedStatement.executeUpdate(ProxyPreparedStatement.java:61)
+        at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.executeUpdate(HikariProxyPreparedStatement.java)
+        at org.hibernate.engine.jdbc.internal.ResultSetReturnImpl.executeUpdate(ResultSetReturnImpl.java:194)
+        ... 76 more

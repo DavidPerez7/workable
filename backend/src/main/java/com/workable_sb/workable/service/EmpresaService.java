@@ -54,10 +54,6 @@ public class EmpresaService {
         return empresaRepository.findByNit(nit).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
     }
 
-    public List<Empresa> getByIsActive(Boolean isActive) {
-        return empresaRepository.findByIsActive(isActive);
-    }
-
     // UPDATE
     public Empresa update(Long id, Empresa request) {
         if (id == null) {
@@ -68,7 +64,6 @@ public class EmpresaService {
         if (request.getNombre() != null) existing.setNombre(request.getNombre());
         if (request.getDescripcion() != null) existing.setDescripcion(request.getDescripcion());
         if (request.getNumeroTrabajadores() != null) existing.setNumeroTrabajadores(request.getNumeroTrabajadores());
-        if (request.getIsActive() != null) existing.setIsActive(request.getIsActive());
         if (request.getCategories() != null) existing.setCategories(request.getCategories());
 
         if (request.getMunicipio() != null) {

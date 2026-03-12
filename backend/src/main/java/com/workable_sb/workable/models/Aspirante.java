@@ -78,8 +78,6 @@ public class Aspirante {
     private String ubicacion;
     
     private LocalDate fechaCreacion;
-    
-    private Boolean isActive;
 
     public enum Rol {
         ASPIRANTE
@@ -93,9 +91,6 @@ public class Aspirante {
     protected void onCreate() {
         if (this.fechaCreacion == null) {
             this.fechaCreacion = LocalDate.now();
-        }
-        if (this.isActive == null) {
-            this.isActive = true;
         }
         if (this.rol == null) {
             this.rol = Rol.ASPIRANTE;

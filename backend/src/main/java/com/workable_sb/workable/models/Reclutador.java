@@ -70,17 +70,12 @@ public class Reclutador {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Empresa empresa;
 
-    private Boolean isActive;
-
     public enum Rol {
         RECLUTADOR
     }
 
     @PrePersist
     protected void onCreate() {
-        if (this.isActive == null) {
-            this.isActive = true;
-        }
         if (this.rol == null) {
             this.rol = Rol.RECLUTADOR;
         }

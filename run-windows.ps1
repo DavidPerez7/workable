@@ -22,6 +22,48 @@ $Colors = @{
     Info    = "Cyan"
 }
 
+# ===== FUNCIONES DE SERVICIOS (XAMPP) =====
+
+function Start-XAMPPServices {
+    # ... código existente (Start-XAMPPServices)
+}
+
+# ===== FUNCIONES DE BASE DE DATOS =====
+
+function Reset-Database {
+    Print-Header "RESETEANDO BASE DE DATOS (MYSQL/XAMPP)"
+    
+    $XamppPath = "C:\xampp"
+    $MysqlExe = Join-Path $XamppPath "mysql\bin\mysql.exe"
+    
+    if (-not (Test-Path $MysqlExe)) {
+        Print-Error "No se encontró el ejecutable de MySQL en $MysqlExe"
+        return $false
+    }
+
+    # Verificar si MySQL está prendido, si no iniciarlo
+    $MysqlProc = Get-Process -Name mysqld -ErrorAction SilentlyContinue
+    if (-not $MysqlProc) {
+        Print-Warning "MySQL no está corriendo. Intentando iniciar..."
+        Start-XAMPPServices
+        Start-Sleep -Seconds 5
+    }
+
+    Print-Info "Borrando y recreando base de datos 'workable'..."
+    try {
+        & $MysqlExe -u root -e "DROP DATABASE IF EXISTS workable; CREATE DATABASE workable;"
+        if ($LASTEXITCODE -eq 0) {
+            Print-Success "Base de datos reseteada correctamente."
+        }
+        else {
+            Print-Error "Error ejecutando el comando SQL. Verifica que el usuario 'root' no tenga contraseña o ajústalo en el script."
+        }
+    }
+    catch {
+        Print-Error "No se pudo realizar el reseteo: $_"
+    }
+}
+
 # ===== FUNCIONES AUXILIARES =====
 
 function Print-Header {
@@ -193,39 +235,50 @@ function Stop-AllProcesses {
 # ===== FUNCIONES PRINCIPALES =====
 
 function Run-Backend {
+    param([switch]$RunJarOnly)
+
+    if (-not (Start-XAMPPServices)) {
+        Print-Warning "Continuando sin confirmación de MySQL..."
+    }
+
     Print-Header "INICIANDO BACKEND (Spring Boot)"
-    
     Push-Location $BackendDir
-    
-    if (-not (Test-Path "pom.xml")) {
-        Print-Error "No se encuentra pom.xml en $BackendDir"
-        Pop-Location
-        return $false
-    }
-    
-    Print-Info "Compilando proyecto con Maven..."
-    & mvn clean package -DskipTests -q
-    
-    if ($LASTEXITCODE -ne 0) {
-        Print-Error "Error compilando el backend"
-        Pop-Location
-        return $false
-    }
-    
-    Print-Success "Iniciando Spring Boot en puerto $BackendPort..."
-    Print-Info "Presiona Ctrl+C para detener el backend"
-    
-    & java -jar target/workable-0.0.1-SNAPSHOT.jar
-    
-    if ($LASTEXITCODE -eq 0) {
-        Print-Success "Backend detenido correctamente"
+
+    $JarFile = Join-Path "target" "workable-0.0.1-SNAPSHOT.jar"
+
+    if ($RunJarOnly) {
+        if (Test-Path $JarFile) {
+            Print-Success "Ejecutando JAR existente (Modo Rápido)..."
+            & java -jar $JarFile
+        }
+        else {
+            Print-Error "No se encontró el archivo JAR. Debes construirlo primero (Opción 2)."
+        }
     }
     else {
-        Print-Warning "Backend detenido"
+        Print-Info "Ejecutando desde CÓDIGO FUENTE (Carga lenta, para desarrollo)..."
+        & mvn spring-boot:run -DskipTests
     }
     
     Pop-Location
     return $true
+}
+
+function Build-Jar {
+    Print-Header "CONSTRUYENDO ARCHIVO JAR (Empaquetado)"
+    Push-Location $BackendDir
+    
+    Print-Info "Compilando y generando JAR con Maven..."
+    & mvn clean package -DskipTests
+    
+    if ($LASTEXITCODE -eq 0) {
+        Print-Success "Archivo JAR generado exitosamente en: backend/target/"
+    }
+    else {
+        Print-Error "Fallo la construcción del JAR."
+    }
+    
+    Pop-Location
 }
 
 function Run-Frontend {
@@ -309,15 +362,18 @@ function Run-Both {
 
 function Show-Menu {
     Write-Host ""
-    Print-Header "WORKABLE PROJECT MANAGER - MENÃš PRINCIPAL"
-    Write-Host "Selecciona una opciÃ³n:" -ForegroundColor Yellow
+    Print-Header "WORKABLE PROJECT MANAGER - MENÚ PRINCIPAL"
+    Write-Host "Selecciona una opción:" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "  1) Iniciar Backend (Terminal actual)"
-    Write-Host "  2) Iniciar Frontend (Terminal actual)"
-    Write-Host "  3) Iniciar Backend + Frontend (Nuevas terminales)"
-    Write-Host "  4) Detener todos los procesos"
-    Write-Host "  5) Verificar dependencias"
-    Write-Host "  6) Salir"
+    Write-Host "  1) Iniciar Backend (Desde CÓDIGO FUENTE - Lento/Desarrollo)"
+    Write-Host "  2) CONSTRUIR el archivo JAR (Embalaje del código)"
+    Write-Host "  3) Iniciar Backend (Desde el archivo JAR - Rápido/Producción)"
+    Write-Host "  4) RESETEAR Base de Datos (DROP y CREATE workable)"
+    Write-Host "  5) Iniciar Frontend (Vite)"
+    Write-Host "  6) Iniciar Todo (Frontend + JAR del Backend)"
+    Write-Host "  7) Detener todos los procesos (Limpiar terminales)"
+    Write-Host "  8) Verificar dependencias de software"
+    Write-Host "  9) Salir"
     Write-Host ""
 }
 
@@ -327,20 +383,23 @@ if ($Action -eq "menu" -or $Action -eq "") {
     while ($true) {
         Clear-Host
         Show-Menu
-        $Choice = Read-Host "Ingresa el nÃºmero de tu opciÃ³n (1-6)"
+        $Choice = Read-Host "Ingresa el número de tu opción (1-9)"
         
         switch ($Choice) {
-            "1" { Run-Backend; Read-Host "Presiona Enter para volver al menÃº" }
-            "2" { Run-Frontend; Read-Host "Presiona Enter para volver al menÃº" }
-            "3" { Run-Both; exit }
-            "4" { Stop-AllProcesses; Read-Host "Presiona Enter para volver al menÃº" }
-            "5" { Check-Dependencies; Read-Host "Presiona Enter para volver al menÃº" }
-            "6" { 
+            "1" { Run-Backend; Read-Host "Presiona Enter para volver al menú" }
+            "2" { Build-Jar; Read-Host "Presiona Enter para volver al menú" }
+            "3" { Run-Backend -RunJarOnly; Read-Host "Presiona Enter para volver al menú" }
+            "4" { Reset-Database; Read-Host "Presiona Enter para volver al menú" }
+            "5" { Run-Frontend; Read-Host "Presiona Enter para volver al menú" }
+            "6" { Run-Both; exit }
+            "7" { Stop-AllProcesses; Read-Host "Presiona Enter para volver al menú" }
+            "8" { Check-Dependencies; Read-Host "Presiona Enter para volver al menú" }
+            "9" { 
                 Print-Success "¡Hasta luego!"
                 exit
             }
             default {
-                Print-Error "OpciÃ³n invÃ¡lida. Por favor ingresa un nÃºmero entre 1 y 6."
+                Print-Error "Opción inválida e ingresa un número entre 1 y 9."
                 Start-Sleep -Seconds 2
             }
         }

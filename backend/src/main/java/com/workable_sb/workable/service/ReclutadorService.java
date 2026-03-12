@@ -101,7 +101,6 @@ public class ReclutadorService {
         if (request.getApellido() != null) existing.setApellido(request.getApellido());
         if (request.getTelefono() != null) existing.setTelefono(request.getTelefono());
         if (request.getFechaNacimiento() != null) existing.setFechaNacimiento(request.getFechaNacimiento());
-        if (request.getIsActive() != null) existing.setIsActive(request.getIsActive());
 
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             existing.setPassword(passwordEncoder.encode(request.getPassword()));

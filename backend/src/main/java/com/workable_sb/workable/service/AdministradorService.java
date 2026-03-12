@@ -60,7 +60,6 @@ public class AdministradorService {
 
         if (request.getNombre() != null) existing.setNombre(request.getNombre());
         if (request.getApellido() != null) existing.setApellido(request.getApellido());
-        if (request.getIsActive() != null) existing.setIsActive(request.getIsActive());
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             existing.setPassword(passwordEncoder.encode(request.getPassword()));
         }

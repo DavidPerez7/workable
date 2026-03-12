@@ -82,7 +82,6 @@ public class AspiranteService {
         if (request.getFechaNacimiento() != null) existing.setFechaNacimiento(request.getFechaNacimiento());
         if (request.getGenero() != null) existing.setGenero(request.getGenero());
         if (request.getUbicacion() != null) existing.setUbicacion(request.getUbicacion());
-        if (request.getIsActive() != null) existing.setIsActive(request.getIsActive());
         
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             existing.setPassword(passwordEncoder.encode(request.getPassword()));
