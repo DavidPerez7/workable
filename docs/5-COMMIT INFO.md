@@ -74,12 +74,18 @@ feat: Refactorización de estados de ofertas y simplificación de embeddables [A
 ## Checklist para Commits
 
 Antes de hacer commit, verifica:
-- ✅ **IMPORTANTE:** Siempre ejecutar `git status` para identificar con precisión los archivos modificados y tener los detalles necesarios para generar el nombre del commit.
+- 🚨 **CRÍTICO: SIEMPRE EJECUTAR `git status` FIRST.** Es obligatorio identificar con precisión absoluta cada archivo modificado, eliminado o nuevo (untracked) para que el mensaje del commit sea técnicamente veraz. No se permiten "suposiciones" de cambios.
 - ✅ Nombre alineado en español (descripción) + inglés (tipo).
 - ✅ Describe qué cambió: modelo, RF, relaciones, validaciones.
 - ✅ Incluye contexto: "para alinear con RF", "para optimizar", "para 7 días límite".
 - ✅ Detalles específicos entre paréntesis o corchetes si cambios múltiples.
 - ✅ Máximo ~130 caracteres (estilo largo) o ~80 (compacto).
+
+## Gestión de Credenciales de Git
+Si se requiere limpiar la configuración global de identidad (por seguridad o cambio de entorno), Copilot debe:
+1. Ejecutar: `git config --global --unset user.name`
+2. Ejecutar: `git config --global --unset user.email`
+3. Verificar con: `git config --global --list` para asegurar que los campos estén vacíos.
 
 ---
 

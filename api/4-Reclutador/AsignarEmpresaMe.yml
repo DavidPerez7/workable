@@ -1,0 +1,8 @@
+info:
+  name: AsignarEmpresaMe
+  http:
+    method: PUT
+    url: "{{baseUrl}}/api/reclutador/me/empresa/1"
+    auth:
+      type: bearer
+      token: "{{reclutadorToken}}"

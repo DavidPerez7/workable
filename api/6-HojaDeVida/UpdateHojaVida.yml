@@ -1,0 +1,43 @@
+info:
+  name: UpdateHojaVida
+  http:
+    method: PUT
+    url: "{{baseUrl}}/api/hoja-vida/1"
+    auth:
+      type: bearer
+      token: "{{aspiranteToken}}"
+    body:
+      json: |
+        {
+          "resumenProfesional": "Senior Full Stack Developer especializado en microservicios.",
+          "redSocial": "https://linkedin.com/in/aspirante-pro",
+          "correoElectronico": "aspirante.pro@example.com",
+          "telefono": "3209876543",
+          "aspirante": {
+            "id": 3
+          },
+          "estudios": [
+            {
+              "titulo": "Ingeniero de Sistemas",
+              "institucion": "Universidad Nacional",
+              "nivelEducativo": "UNIVERSITARIO",
+              "fechaInicio": "2015-02-01",
+              "fechaFin": "2020-11-30"
+            },
+            {
+              "titulo": "Especialización en Nube",
+              "institucion": "SENA",
+              "nivelEducativo": "ESPECIALIZACION",
+              "fechaInicio": "2023-01-10",
+              "fechaFin": null
+            }
+          ],
+          "experiencias": [
+            {
+              "cargo": "Lead Developer",
+              "empresa": "Tech Solutions",
+              "fechaInicio": "2023-02-01",
+              "fechaFin": null
+            }
+          ]
+        }

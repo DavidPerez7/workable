@@ -1,0 +1,11 @@
+info:
+  name: LoginAdmin
+  http:
+    method: POST
+    url: "{{baseUrl}}/api/auth/login"
+    body:
+      json: |
+        {
+          "correo": "admin@example.com",
+          "password": "admin123"
+        }

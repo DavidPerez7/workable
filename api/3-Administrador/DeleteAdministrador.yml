@@ -1,0 +1,8 @@
+info:
+  name: DeleteAdministrador
+  http:
+    method: DELETE
+    url: "{{baseUrl}}/api/administrador/1"
+    auth:
+      type: bearer
+      token: "{{adminToken}}"

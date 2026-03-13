@@ -5,11 +5,24 @@ Este documento centraliza las mejores prácticas y lecciones aprendidas durante 
 ## 1. Regla de Oro: Fidelidad al Código
 
 **IMPORTANTE**: Todas las peticiones deben basarse **estrictamente** en la implementación actual del Backend.
-- **Controllers**: Revisar las anotaciones `@RequestMapping`, `@PostMapping`, `@GetMapping`, etc., para confirmar rutas exactas y `@PathVariable`.
+- **Controllers**: Revisar las anotaciones `@RequestMapping`, `@PostMapping`, `@GetMapping`, etc., para confirmar rutas exactas y `@PathVariable`. **CRÍTICO**: Verificar la existencia de `@PreAuthorize` en los métodos del Controller y revisar el `SecurityConfig.java` para documentar correctamente los requisitos de seguridad (roles y permisos) de cada endpoint.
 - **Modelos y DTOs**: Las estructuras JSON (`body`) deben coincidir exactamente con los campos definidos en las clases Java, respetando las validaciones `@NotNull`, `@NotBlank` y los tipos de datos. 
+- **Planificación de Cambios Grandes (Checklist de Calidad)**: Cuando se realicen cambios estructurales grandes con ayuda de Copilot, se **debe** trabajar con Todo-Lists extensas (mínimo 8-18 pasos). 
+    - **Proceso de Validación y Diálogo**: Antes de ejecutar cualquier acción, Copilot debe presentar el Todo-List en el chat como una propuesta de texto plano (no en la herramienta de todo-list aún). Esta propuesta debe incluir:
+        1. **Pasos Técnicos**: Desglose claro de las acciones (Análisis de código, creación de archivos, validaciones).
+        2. **Análisis para Discusión**: Una sección breve de "Puntos Críticos" o dudas sobre la implementación (ej. ¿PUT o PATCH?, ¿Relaciones 1:1?, ¿Roles de seguridad?).
+        3. **Feedback del Usuario**: Copilot esperará la respuesta del usuario para ajustar detalles, agregar pasos olvidados u optimizar el orden.
+    - **Ejecución**: Solo una vez que el usuario dé su aprobación final ("listo", "procede", etc.), Copilot generará formalmente el Todo-List con la herramienta `manage_todo_list` integrando todos los puntos acordados y comenzará las acciones.
 - **Prohibición**: No se deben "suponer" o inventar campos. Si el código cambia, la documentación en Bruno debe actualizarse inmediatamente.
 
-## 2. Automatización de Autenticación (JWT)
+## 2. Referencias para Nuevos Módulos
+
+Al documentar módulos nuevos o no implementados en Bruno, Copilot debe:
+1. **Priorizar Módulos 100% Funcionales**: Basarse estrictamente en la estructura de los módulos que ya han sido probados y validados por el usuario. Estos sirven como referencia absoluta para el formato de cabeceras (`info:`), bloques de red (`http:`) y el manejo de variables.
+2. **Seguir Estándares Estructurales Validados**: Utilizar la estructura de autenticación manual (`auth: type: bearer`) que el usuario ya corrigió y aprobó en módulos previos. Aunque sirvan de guía estructural, se debe tener precaución y validar siempre contra el código real antes de darlas por definitivas.
+3. **Validación con Código Real**: La fuente de verdad definitiva es siempre el código Java (Entidades, Controllers, `@PreAuthorize` y `SecurityConfig.java`). La documentación debe emanar de la lógica del backend para garantizar que los campos y permisos coincidan con la realidad del sistema.
+
+## 3. Automatización de Autenticación (JWT)
 
 Para capturar automáticamente el token de acceso después del login, se debe configurar un script en la petición de `Login`.
 

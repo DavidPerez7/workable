@@ -1,0 +1,22 @@
+info:
+  name: UpdateReclutador
+  http:
+    method: PUT
+    url: "{{baseUrl}}/api/reclutador/1"
+    auth:
+      type: bearer
+      token: "{{reclutadorToken}}"
+    body:
+      json: |
+        {
+          "nombre": "Carlos Alberto",
+          "apellido": "Gomez Perez",
+          "correo": "carlos.perez@example.com",
+          "password": "rec12345_new",
+          "telefono": "3009998877",
+          "fechaNacimiento": "1990-05-15",
+          "rol": "RECLUTADOR",
+          "empresa": {
+            "id": 1
+          }
+        }

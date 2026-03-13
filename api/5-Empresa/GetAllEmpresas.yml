@@ -1,0 +1,8 @@
+info:
+  name: GetAllEmpresas
+  http:
+    method: GET
+    url: "{{baseUrl}}/api/empresa"
+    auth:
+      type: bearer
+      token: "{{reclutadorToken}}"

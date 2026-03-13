@@ -1,0 +1,5 @@
+info:
+  name: 5-Empresa
+  auth:
+    type: bearer
+    token: "{{adminToken}}"

@@ -1,0 +1,11 @@
+info:
+  name: LoginAspirante
+  http:
+    method: POST
+    url: "{{baseUrl}}/api/auth/login"
+    body:
+      json: |
+        {
+          "correo": "aspirante@example.com",
+          "password": "pass123"
+        }

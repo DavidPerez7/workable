@@ -1,0 +1,5 @@
+info:
+  name: GetEmpresasPublicas
+  http:
+    method: GET
+    url: "{{baseUrl}}/api/empresa/publicas"

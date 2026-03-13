@@ -1,0 +1,5 @@
+info:
+  name: 4-Reclutador
+  auth:
+    type: bearer
+    token: "{{adminToken}}"

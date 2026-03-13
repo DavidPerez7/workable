@@ -1,12 +1,14 @@
 info:
-  name: Listar aspirantes
+  name: GetAllAspirantes
   type: http
   seq: 1
 
 http:
   method: GET
   url: "{{baseUrl}}/api/aspirante"
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
 
 settings:
   encodeUrl: true

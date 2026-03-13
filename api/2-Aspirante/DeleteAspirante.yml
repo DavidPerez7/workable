@@ -1,12 +1,14 @@
 info:
-  name: Eliminar aspirante
+  name: DeleteAspirante
   type: http
-  seq: 4
+  seq: 5
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/aspirante/1"
-  auth: inherit
+  url: "{{baseUrl}}/api/aspirante/3"
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
 
 settings:
   encodeUrl: true

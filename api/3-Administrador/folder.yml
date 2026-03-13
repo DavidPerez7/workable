@@ -1,0 +1,5 @@
+info:
+  name: 3-Administrador
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
