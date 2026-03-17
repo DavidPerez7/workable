@@ -1,6 +1,7 @@
 package com.workable_sb.workable.models;
 
 import java.time.LocalDate;
+import java.util.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.hibernate.annotations.OnDelete;
@@ -78,6 +79,14 @@ public class Aspirante {
     private String ubicacion;
     
     private LocalDate fechaCreacion;
+
+    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"aspirante", "hibernateLazyInitializer", "handler"})
+    private List<HojaVida> hojasVida;
+
+    @OneToMany(mappedBy = "aspirante", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"aspirante", "hibernateLazyInitializer", "handler"})
+    private List<Postulacion> postulaciones;
 
     public enum Rol {
         ASPIRANTE

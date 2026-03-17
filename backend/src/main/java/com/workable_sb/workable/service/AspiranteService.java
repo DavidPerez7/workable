@@ -3,6 +3,7 @@ package com.workable_sb.workable.service;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import com.workable_sb.workable.models.Municipio;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
 import com.workable_sb.workable.repository.MunicipioRepo;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 @Service
 @Transactional
@@ -106,5 +108,23 @@ public class AspiranteService {
         if (existing != null) {
             aspiranteRepo.delete(existing);
         }
+    }
+
+    // DELETE ME - Elimina su propia cuenta validando el token
+    public void deleteMe() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+            throw new RuntimeException("No autenticado");
+        }
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long usuarioId = userDetails.getUsuarioId();
+        
+        if (usuarioId == null) {
+            throw new RuntimeException("ID de usuario no disponible en el token");
+        }
+        
+        Aspirante existing = getById(usuarioId);
+        aspiranteRepo.delete(existing);
     }
 }

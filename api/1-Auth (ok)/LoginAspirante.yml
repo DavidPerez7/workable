@@ -1,5 +1,5 @@
 info:
-  name: Login
+  name: LoginAspirante
   type: http
   seq: 3
 
@@ -10,8 +10,8 @@ http:
     type: json
     data: |-
       {
-        "correo": "juan.perez@ejemplo.com",
-        "password": "miPassword123"
+        "correo": "aspirante@example.com",
+        "password": "pass123"
       }
   auth: inherit
 

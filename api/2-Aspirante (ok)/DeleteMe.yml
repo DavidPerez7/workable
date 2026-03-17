@@ -1,14 +1,14 @@
 info:
-  name: DeleteAspirante
+  name: DeleteMe
   type: http
-  seq: 5
+  seq: 7
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/aspirante/3"
+  url: "{{baseUrl}}/api/aspirante/me/delete"
   auth:
     type: bearer
-    token: "{{adminToken}}"
+    token: "{{aspiranteToken}}"
 
 settings:
   encodeUrl: true

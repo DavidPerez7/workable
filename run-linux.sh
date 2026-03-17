@@ -17,7 +17,8 @@ NC='\033[0m' # No Color
 # Rutas relativas
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$SCRIPT_DIR/backend"
-FRONTEND_DIR="$SCRIPT_DIR/frontend"
+# La UI web ahora está en frontend/web (la carpeta frontend contiene mobile + web)
+FRONTEND_DIR="$SCRIPT_DIR/frontend/web"
 
 # Puertos
 BACKEND_PORT=8080
@@ -33,6 +34,23 @@ HEALTH_CHECK_LOG="$LOG_DIR/health-check.log"
 
 # Crear directorio de logs
 mkdir -p "$LOG_DIR"
+
+# Restaurar estado del terminal para evitar secuencias como ^[[127u (CSI-u)
+sanitize_terminal() {
+    # Recuperar modo canonical/echo por si algun comando dejo el tty en modo raro
+    stty sane 2>/dev/null || true
+    tput cnorm 2>/dev/null || true
+
+    # Desactivar protocolos de teclado extendido comunes (xterm/kitty)
+    printf '\033[>4;0m' 2>/dev/null || true
+    printf '\033[<u' 2>/dev/null || true
+}
+
+# Asegurar limpieza del tty al salir o interrumpir
+trap 'sanitize_terminal' EXIT INT TERM
+
+# Normalizar terminal desde el inicio del script
+sanitize_terminal
 
 # ===== FUNCIONES AUXILIARES =====
 
@@ -614,6 +632,10 @@ show_menu() {
     echo "========================================"
 }
 
+restore_terminal() {
+    sanitize_terminal
+}
+
 show_logs_menu() {
     echo -e "\n${BLUE}MENU DE LOGS${NC}"
     echo "1) Ver log Backend"
@@ -622,12 +644,14 @@ show_logs_menu() {
     echo "4) Seguir log Frontend (tail -f)"
     echo "5) Volver al menú"
     echo ""
-    read -p "Selecciona una opción: " log_choice
+    sanitize_terminal
+    read -r -p "Selecciona una opción: " log_choice
     
     case $log_choice in
         1)
             if [ -f "$BACKEND_LOG" ]; then
                 less "$BACKEND_LOG"
+                restore_terminal
             else
                 print_error "Log del backend no encontrado"
                 sleep 2
@@ -636,6 +660,7 @@ show_logs_menu() {
         2)
             if [ -f "$FRONTEND_LOG" ]; then
                 less "$FRONTEND_LOG"
+                restore_terminal
             else
                 print_error "Log del frontend no encontrado"
                 sleep 2
@@ -645,6 +670,7 @@ show_logs_menu() {
             if [ -f "$BACKEND_LOG" ]; then
                 print_info "Siguiendo log del backend (Ctrl+C para salir)..."
                 tail -f "$BACKEND_LOG"
+                restore_terminal
             else
                 print_error "Log del backend no encontrado"
                 sleep 2
@@ -654,6 +680,7 @@ show_logs_menu() {
             if [ -f "$FRONTEND_LOG" ]; then
                 print_info "Siguiendo log del frontend (Ctrl+C para salir)..."
                 tail -f "$FRONTEND_LOG"
+                restore_terminal
             else
                 print_error "Log del frontend no encontrado"
                 sleep 2
@@ -673,18 +700,21 @@ main_menu() {
     while true; do
         clear  # Limpiar la pantalla
         show_menu
-        read -p "Selecciona una opción (1-8): " choice
+        sanitize_terminal
+        read -r -p "Selecciona una opción (1-8): " choice
         
         case $choice in
             1)
                 clear
                 run_backend
-                read -p "Presiona Enter para continuar..."
+                sanitize_terminal
+                read -r -p "Presiona Enter para continuar..."
                 ;;
             2)
                 clear
                 run_frontend
-                read -p "Presiona Enter para continuar..."
+                sanitize_terminal
+                read -r -p "Presiona Enter para continuar..."
                 ;;
             3)
                 clear
@@ -700,13 +730,15 @@ main_menu() {
                 
                 if ! run_backend_background; then
                     print_error "No se pudo iniciar backend"
-                    read -p "Presiona Enter para continuar..."
+                    sanitize_terminal
+                    read -r -p "Presiona Enter para continuar..."
                     continue
                 fi
                 
                 if ! run_frontend_background; then
                     print_error "No se pudo iniciar frontend"
-                    read -p "Presiona Enter para continuar..."
+                    sanitize_terminal
+                    read -r -p "Presiona Enter para continuar..."
                     continue
                 fi
                 
@@ -724,17 +756,20 @@ main_menu() {
                 echo -e "${RED}🛑 PARA DETENER TODO:${NC}"
                 echo "  Presiona Ctrl+C aquí o selecciona opción 7 en el menú"
                 echo -e "${YELLOW}═══════════════════════════════════════════════════${NC}"
-                read -p "Presiona Enter para volver al menú..."
+                sanitize_terminal
+                read -r -p "Presiona Enter para volver al menú..."
                 ;;
             4)
                 clear
                 check_dependencies
-                read -p "Presiona Enter para continuar..."
+                sanitize_terminal
+                read -r -p "Presiona Enter para continuar..."
                 ;;
             5)
                 clear
                 validate_project_structure
-                read -p "Presiona Enter para continuar..."
+                sanitize_terminal
+                read -r -p "Presiona Enter para continuar..."
                 ;;
             6)
                 clear

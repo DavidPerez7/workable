@@ -72,4 +72,17 @@ public class AspiranteController {
             return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }
     }
+
+    // DELETE ME - Elimina su propia cuenta
+    @DeleteMapping("/me/delete")
+    public ResponseEntity<?> deleteMe() {
+        try {
+            aspiranteService.deleteMe();
+            return ResponseEntity.status(204).build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
+        }
+    }
 }

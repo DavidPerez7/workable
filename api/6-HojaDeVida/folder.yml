@@ -1,5 +1,7 @@
 info:
   name: 6-HojaDeVida
-  auth:
-    type: bearer
-    token: "{{aspiranteToken}}"
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit
