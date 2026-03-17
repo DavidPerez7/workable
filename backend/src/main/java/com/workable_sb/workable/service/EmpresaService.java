@@ -1,6 +1,7 @@
 package com.workable_sb.workable.service;
 
 import java.util.List;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,10 @@ public class EmpresaService {
             }
         }
 
+        // AUTO-GENERAR código de invitación único (ignora cualquier valor enviado)
+        String codigoUnico = generarCodigoInvitacion();
+        request.setCodigoInvitacion(codigoUnico);
+
         Empresa created = empresaRepository.save(request);
 
         // Si es reclutador, auto-asignar la empresa
@@ -52,6 +57,16 @@ public class EmpresaService {
         }
 
         return created;
+    }
+
+    // Método para generar código de invitación único
+    private String generarCodigoInvitacion() {
+        String codigo = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        // Validar que no exista ya (muy baja probabilidad, pero por seguridad)
+        while (empresaRepository.findByCodigoInvitacion(codigo).isPresent()) {
+            codigo = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        }
+        return codigo;
     }
 
     // READ

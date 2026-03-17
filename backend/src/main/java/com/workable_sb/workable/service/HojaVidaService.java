@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.HojaVida;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
+import com.workable_sb.workable.security.CustomUserDetails;
 
 @Service
 @Transactional
@@ -16,11 +19,34 @@ public class HojaVidaService {
     @Autowired
     private HojaVidaRepo hojaVidaRepo;
 
+    @Autowired
+    private AspiranteRepo aspiranteRepo;
+
     // CREATE
-    public HojaVida create(HojaVida request) {
+    public HojaVida create(HojaVida request, CustomUserDetails user) {
         if (request == null) {
             throw new IllegalArgumentException("La solicitud no puede ser nula");
         }
+
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no autenticado");
+        }
+
+        Long aspiranteId = user.getUsuarioId();
+        if (aspiranteId == null) {
+            throw new IllegalArgumentException("El aspirante es obligatorio");
+        }
+
+        Aspirante aspirante = aspiranteRepo.findById(aspiranteId)
+                .orElseThrow(() -> new RuntimeException("Aspirante no encontrado"));
+
+        // Verificar si ya existe HdV para este aspirante
+        List<HojaVida> existentes = hojaVidaRepo.findByAspirante_Id(aspiranteId);
+        if (!existentes.isEmpty()) {
+            throw new IllegalArgumentException("El aspirante ya tiene una hoja de vida creada");
+        }
+
+        request.setAspirante(aspirante);
         return hojaVidaRepo.save(request);
     }
 
@@ -35,7 +61,7 @@ public class HojaVidaService {
         if (aspiranteId == null) {
             throw new IllegalArgumentException("El ID del aspirante no puede ser nulo");
         }
-        List<HojaVida> hojas = hojaVidaRepo.findByAspiranteId(aspiranteId);
+        List<HojaVida> hojas = hojaVidaRepo.findByAspirante_Id(aspiranteId);
         if (hojas.isEmpty()) {
             throw new RuntimeException("Hoja de vida no encontrada");
         }

@@ -30,7 +30,7 @@ public class AspiranteController {
     @GetMapping
     public ResponseEntity<?> getAll() {
         try {
-            return ResponseEntity.ok(aspiranteService.getAll());
+            return ResponseEntity.ok(aspiranteService.getAllDTO());
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }

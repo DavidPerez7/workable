@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.HojaVida;
 import com.workable_sb.workable.models.Municipio;
+import com.workable_sb.workable.dto.AspiranteDTO;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
 import com.workable_sb.workable.repository.MunicipioRepo;
@@ -49,6 +50,27 @@ public class AspiranteService {
     // READ
     public List<Aspirante> getAll() {
         return aspiranteRepo.findAll();
+    }
+
+    public List<AspiranteDTO> getAllDTO() {
+        return aspiranteRepo.findAll().stream()
+                .map(a -> new AspiranteDTO(
+                        a.getId(),
+                        a.getNombre(),
+                        a.getApellido(),
+                        a.getCorreo(),
+                        a.getFechaNacimiento(),
+                        a.getMunicipio(),
+                        a.getGenero().name(),
+                        a.getRol().name(),
+                        a.getTelefono(),
+                        a.getUrlFotoPerfil(),
+                        a.getUbicacion(),
+                        a.getFechaCreacion(),
+                        a.getHojasVida() == null ? List.of() : a.getHojasVida().stream().map(h -> h.getId()).toList(),
+                        a.getPostulaciones() == null ? List.of() : a.getPostulaciones().stream().map(p -> p.getId()).toList()
+                ))
+                .toList();
     }
 
     public Aspirante getById(Long id) {

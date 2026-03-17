@@ -6,9 +6,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.workable_sb.workable.models.HojaVida;
+import com.workable_sb.workable.security.CustomUserDetails;
 import com.workable_sb.workable.service.HojaVidaService;
 
 @RestController
@@ -19,11 +21,11 @@ public class HojaVidaController {
     private HojaVidaService hojaVidaService;
 
     // CREATE
-    @PreAuthorize("hasRole('ASPIRANTE')")
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida) {
+    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida, @AuthenticationPrincipal CustomUserDetails user) {
         try {
-            HojaVida creada = hojaVidaService.create(hojaVida);
+            HojaVida creada = hojaVidaService.create(hojaVida, user);
             return ResponseEntity.ok(creada);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -92,7 +94,7 @@ public class HojaVidaController {
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             hojaVidaService.delete(id);
-            return ResponseEntity.ok(Map.of("message", "Hoja de vida eliminada correctamente"));
+            return ResponseEntity.noContent().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {

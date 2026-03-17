@@ -1,14 +1,14 @@
 info:
-  name: GetHojaVidaById
+  name: DeleteEmpresa
   type: http
-  seq: 3
+  seq: 5
 
 http:
-  method: GET
-  url: "{{baseUrl}}/api/hoja-vida/1"
+  method: DELETE
+  url: "{{baseUrl}}/api/empresa/2"
   auth:
     type: bearer
-    token: "{{aspiranteToken}}"
+    token: "{{adminToken}}"
 
 settings:
   encodeUrl: true

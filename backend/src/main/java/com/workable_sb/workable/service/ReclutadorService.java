@@ -73,9 +73,7 @@ public class ReclutadorService {
         }
         
         Reclutador reclutador = getById(reclutadorId);
-        Empresa empresa = empresaRepo.findAll().stream()
-                .filter(e -> codigoInvitacion.equals(e.getCodigoInvitacion()))
-                .findFirst()
+        Empresa empresa = empresaRepo.findByCodigoInvitacion(codigoInvitacion)
                 .orElseThrow(() -> new RuntimeException("Código de invitación inválido"));
         
         reclutador.setEmpresa(empresa);

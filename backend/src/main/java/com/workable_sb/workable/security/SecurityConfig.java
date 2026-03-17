@@ -122,7 +122,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/usuario-habilidad/**").hasAnyRole("ADMIN", "ASPIRANTE")
 
                 // ===== HOJA DE VIDA - ASPIRANTES =====
-                .requestMatchers(HttpMethod.GET, "/api/hoja-vida/publicas/**").hasAnyRole("ADMIN", "RECLUTADOR")
                 .requestMatchers(HttpMethod.GET, "/api/hoja-vida/**").hasAnyRole("ADMIN", "ASPIRANTE", "RECLUTADOR")
                 .requestMatchers(HttpMethod.POST, "/api/hoja-vida").hasAnyRole("ADMIN", "ASPIRANTE")
                 .requestMatchers(HttpMethod.PUT, "/api/hoja-vida/**").hasAnyRole("ADMIN", "ASPIRANTE")

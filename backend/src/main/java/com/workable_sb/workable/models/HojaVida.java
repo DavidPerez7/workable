@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workable_sb.workable.models.Embeddable.EstudioData;
 import com.workable_sb.workable.models.Embeddable.ExperienciaData;
 
@@ -53,9 +54,15 @@ public class HojaVida {
     private List<ExperienciaData> experiencias = new java.util.ArrayList<>();
 
     // Relación con aspirante
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "aspirante_id", referencedColumnName = "id")
     private Aspirante aspirante;
+
+    @Transient
+    public Long getAspiranteId() {
+        return aspirante != null ? aspirante.getId() : null;
+    }
 
     @PrePersist
     protected void onCreate() {

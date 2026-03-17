@@ -14,9 +14,6 @@ http:
         "redSocial": "https://linkedin.com/in/aspirante",
         "correoElectronico": "aspirante@example.com",
         "telefono": "3101234567",
-        "aspirante": {
-          "id": 3
-        },
         "estudios": [
           {
             "titulo": "Ingeniero de Sistemas",
@@ -44,9 +41,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-              "empresa": "Software Factory",
-              "fechaInicio": "2021-01-15",
-              "fechaFin": "2022-12-31"
-            }
-          ]
-        }
