@@ -19,7 +19,7 @@ request:
     - name: baseUrl
       value: http://localhost:8080
     - name: aspiranteToken
-      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoyLCJyb2wiOiJBU1BJUkFOVEUiLCJzdWIiOiJqdWFuLnBlcmV6QGVqZW1wbG8uY29tIiwiaWF0IjoxNzczNzU4NDkxLCJleHAiOjE3NzM3OTQ0OTF9.UoDw9m1zVcatjT1GoXkJ3l4vCOE9RVPXZSilte0P_uY
+      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoyLCJyb2wiOiJBU1BJUkFOVEUiLCJzdWIiOiJqdWFuLnBlcmV6QGVqZW1wbG8uY29tIiwiaWF0IjoxNzczNzU5MDEyLCJleHAiOjE3NzM3OTUwMTJ9.8EcWHXz3w6SiJmH_7EuEgO8_cyv6V-E3G6-LRzLpT0M
     - name: reclutadorToken
       value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoyLCJyb2wiOiJSRUNMVVRBRE9SIiwic3ViIjoiYW5hLmdhcmNpYUBlbXByZXNhLmNvbSIsImlhdCI6MTc3Mzc1NTIzMywiZXhwIjoxNzczNzkxMjMzfQ.mrjjlCiOZ-FFETbjaVFMifwT0q8anC74t0mJ8JloRfo
     - name: adminToken

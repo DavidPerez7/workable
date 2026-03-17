@@ -73,18 +73,30 @@ public class HojaVidaService {
     }
 
     // UPDATE
-    public HojaVida update(Long id, HojaVida request) {
+    public HojaVida update(Long id, HojaVida request, CustomUserDetails user) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo");
         }
+        
+        if (user == null) {
+            throw new IllegalArgumentException("Usuario no autenticado");
+        }
+        
         HojaVida existing = getById(id);
         
         if (existing == null) {
             throw new RuntimeException("Hoja de vida no encontrada");
         }
 
+        Long aspiranteId = user.getUsuarioId();
+        if (!existing.getAspirante().getId().equals(aspiranteId)) {
+            throw new IllegalStateException("No tienes permiso para actualizar esta hoja de vida");
+        }
+
         if (request.getResumenProfesional() != null) existing.setResumenProfesional(request.getResumenProfesional());
         if (request.getTelefono() != null) existing.setTelefono(request.getTelefono());
+        if (request.getRedSocial() != null) existing.setRedSocial(request.getRedSocial());
+        if (request.getCorreoElectronico() != null) existing.setCorreoElectronico(request.getCorreoElectronico());
         if (request.getEstudios() != null) existing.setEstudios(request.getEstudios());
         if (request.getExperiencias() != null) existing.setExperiencias(request.getExperiencias());
 

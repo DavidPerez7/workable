@@ -5,7 +5,7 @@ info:
 
 http:
   method: DELETE
-  url: "{{baseUrl}}/api/hoja-vida/1"
+  url: "{{baseUrl}}/api/hoja-vida/2"
   auth:
     type: bearer
     token: "{{aspiranteToken}}"

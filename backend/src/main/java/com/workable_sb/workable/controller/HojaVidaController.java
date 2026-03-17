@@ -75,9 +75,9 @@ public class HojaVidaController {
     // UPDATE
     @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody HojaVida hojaVida) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody HojaVida hojaVida, @AuthenticationPrincipal CustomUserDetails user) {
         try {
-            HojaVida actualizada = hojaVidaService.update(id, hojaVida);
+            HojaVida actualizada = hojaVidaService.update(id, hojaVida, user);
             return ResponseEntity.ok(actualizada);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));

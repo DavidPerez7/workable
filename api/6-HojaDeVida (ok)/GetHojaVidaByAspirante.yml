@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/hoja-vida/aspirante/3"
+  url: "{{baseUrl}}/api/hoja-vida/aspirante/2"
   auth:
     type: bearer
     token: "{{aspiranteToken}}"
