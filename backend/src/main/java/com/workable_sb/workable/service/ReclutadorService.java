@@ -67,17 +67,19 @@ public class ReclutadorService {
                 .toList();
     }
 
-    public Reclutador asignarEmpresa(Long reclutadorId, Long empresaId) {
-        if (reclutadorId == null || empresaId == null) {
-            throw new IllegalArgumentException("IDs de Reclutador y Empresa son obligatorios");
+    public Reclutador asignarEmpresaByCodigo(Long reclutadorId, String codigoInvitacion) {
+        if (reclutadorId == null || codigoInvitacion == null || codigoInvitacion.isEmpty()) {
+            throw new IllegalArgumentException("ID de Reclutador y código de invitación son obligatorios");
         }
+        
         Reclutador reclutador = getById(reclutadorId);
-        Empresa empresa = empresaRepo.findById(empresaId).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        if (reclutador != null) {
-            reclutador.setEmpresa(empresa);
-            return reclutadorRepo.save(reclutador);
-        }
-        throw new RuntimeException("Reclutador no encontrado");
+        Empresa empresa = empresaRepo.findAll().stream()
+                .filter(e -> codigoInvitacion.equals(e.getCodigoInvitacion()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Código de invitación inválido"));
+        
+        reclutador.setEmpresa(empresa);
+        return reclutadorRepo.save(reclutador);
     }
 
     // UPDATE

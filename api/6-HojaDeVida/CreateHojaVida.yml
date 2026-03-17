@@ -1,33 +1,49 @@
 info:
   name: CreateHojaVida
-  http:
-    method: POST
-    url: "{{baseUrl}}/api/hoja-vida"
-    auth:
-      type: bearer
-      token: "{{aspiranteToken}}"
-    body:
-      json: |
-        {
-          "resumenProfesional": "Desarrollador Full Stack con 5 años de experiencia en Java y Spring Boot.",
-          "redSocial": "https://linkedin.com/in/aspirante",
-          "correoElectronico": "aspirante@example.com",
-          "telefono": "3101234567",
-          "aspirante": {
-            "id": 3
-          },
-          "estudios": [
-            {
-              "titulo": "Ingeniero de Sistemas",
-              "institucion": "Universidad Nacional",
-              "nivelEducativo": "UNIVERSITARIO",
-              "fechaInicio": "2015-02-01",
-              "fechaFin": "2020-11-30"
-            }
-          ],
-          "experiencias": [
-            {
-              "cargo": "Junior Developer",
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/hoja-vida"
+  body:
+    type: json
+    data: |-
+      {
+        "resumenProfesional": "Desarrollador Full Stack con 5 años de experiencia en Java y Spring Boot.",
+        "redSocial": "https://linkedin.com/in/aspirante",
+        "correoElectronico": "aspirante@example.com",
+        "telefono": "3101234567",
+        "aspirante": {
+          "id": 3
+        },
+        "estudios": [
+          {
+            "titulo": "Ingeniero de Sistemas",
+            "institucion": "Universidad Nacional",
+            "nivelEducativo": "UNIVERSITARIO",
+            "fechaInicio": "2015-02-01",
+            "fechaFin": "2020-11-30"
+          }
+        ],
+        "experiencias": [
+          {
+            "cargo": "Junior Developer",
+            "empresa": "Tech Solutions",
+            "fechaInicio": "2021-01-15",
+            "fechaFin": null
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{aspiranteToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
               "empresa": "Software Factory",
               "fechaInicio": "2021-01-15",
               "fechaFin": "2022-12-31"

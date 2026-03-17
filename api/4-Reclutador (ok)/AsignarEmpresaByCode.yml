@@ -1,14 +1,14 @@
 info:
-  name: DeleteHojaVida
+  name: AsignarEmpresaByCode
   type: http
   seq: 6
 
 http:
-  method: DELETE
-  url: "{{baseUrl}}/api/hoja-vida/1"
+  method: PUT
+  url: "{{baseUrl}}/api/reclutador/empresa/ESNFRHEFBGL3"
   auth:
     type: bearer
-    token: "{{aspiranteToken}}"
+    token: "{{reclutadorToken}}"
 
 settings:
   encodeUrl: true

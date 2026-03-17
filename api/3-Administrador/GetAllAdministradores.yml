@@ -1,8 +1,0 @@
-info:
-  name: GetAllAdministradores
-  http:
-    method: GET
-    url: "{{baseUrl}}/api/administrador"
-    auth:
-      type: bearer
-      token: "{{adminToken}}"

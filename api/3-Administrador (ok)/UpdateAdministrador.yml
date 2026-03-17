@@ -1,0 +1,26 @@
+info:
+  name: UpdateAdministrador
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/administrador/1"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Super Admin Update",
+        "apellido": "Admin Master",
+        "correo": "admin.master@example.com",
+        "password": "admin123_new"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

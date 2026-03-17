@@ -1,0 +1,26 @@
+info:
+  name: CreateAdministrador
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/administrador"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Super",
+        "apellido": "Admin",
+        "correo": "admin@example.com",
+        "password": "admin123"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

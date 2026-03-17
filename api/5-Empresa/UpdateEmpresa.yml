@@ -1,24 +1,34 @@
 info:
   name: UpdateEmpresa
-  http:
-    method: PUT
-    url: "{{baseUrl}}/api/empresa/1"
-    auth:
-      type: bearer
-      token: "{{reclutadorToken}}"
-    body:
-      json: |
-        {
-          "nombre": "Tech Solutions International",
-          "numeroTrabajadores": 100,
-          "email": "hr@techsolutions.com",
-          "telefono": "3007654321",
-          "nit": "900123456-1",
-          "categories": ["TECNOLOGIA", "SERVICIOS", "FINANZAS"],
-          "municipio": {
-            "id": 1
-          },
-          "descripcion": "Expansión internacional de servicios tecnológicos.",
-          "codigoInvitacion": "TECH2024_INT",
-          "logoUrl": "https://example.com/logo_new.png"
-        }
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/empresa/1"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Tech Solutions International",
+        "numeroTrabajadores": 100,
+        "email": "hr@techsolutions.com",
+        "telefono": "3007654321",
+        "nit": "900123456-1",
+        "categories": ["TECNOLOGIA", "SERVICIOS", "FINANZAS"],
+        "municipio": {
+          "id": 1
+        },
+        "descripcion": "Expansión internacional de servicios tecnológicos.",
+        "codigoInvitacion": "TECH2024_INT",
+        "logoUrl": "https://example.com/logo_new.png"
+      }
+  auth:
+    type: bearer
+    token: "{{reclutadorToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

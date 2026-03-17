@@ -1,14 +1,14 @@
 info:
-  name: GetAllHojasVida
+  name: GetAdministradorById
   type: http
-  seq: 2
+  seq: 3
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/hoja-vida"
+  url: "{{baseUrl}}/api/administrador/1"
   auth:
     type: bearer
-    token: "{{aspiranteToken}}"
+    token: "{{adminToken}}"
 
 settings:
   encodeUrl: true

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.service.EmpresaService;
+import com.workable_sb.workable.security.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/empresa")
@@ -21,9 +23,11 @@ public class EmpresaController {
     // CREATE
     @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Empresa empresa) {
+    public ResponseEntity<?> create(@RequestBody Empresa empresa, @AuthenticationPrincipal CustomUserDetails user) {
         try {
-            Empresa created = empresaService.create(empresa);
+            Long usuarioId = (user != null && user.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_RECLUTADOR"))) ? user.getUsuarioId() : null;
+            Empresa created = empresaService.create(empresa, usuarioId);
             return ResponseEntity.status(201).body(created);
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));

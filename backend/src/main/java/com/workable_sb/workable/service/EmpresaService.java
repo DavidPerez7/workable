@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.workable_sb.workable.models.Empresa;
 import com.workable_sb.workable.models.Municipio;
+import com.workable_sb.workable.models.Reclutador;
 import com.workable_sb.workable.repository.EmpresaRepository;
 import com.workable_sb.workable.repository.MunicipioRepo;
+import com.workable_sb.workable.repository.ReclutadorRepo;
 
 @Service
 @Transactional
@@ -20,8 +22,11 @@ public class EmpresaService {
     @Autowired
     private MunicipioRepo municipioRepo;
 
+    @Autowired
+    private ReclutadorRepo reclutadorRepo;
+
     // CREATE
-    public Empresa create(Empresa request) {
+    public Empresa create(Empresa request, Long usuarioId) {
         if (empresaRepository.existsByNit(request.getNit())) {
             throw new RuntimeException("NIT ya está en uso");
         }
@@ -35,7 +40,18 @@ public class EmpresaService {
             }
         }
 
-        return empresaRepository.save(request);
+        Empresa created = empresaRepository.save(request);
+
+        // Si es reclutador, auto-asignar la empresa
+        if (usuarioId != null) {
+            Reclutador reclutador = reclutadorRepo.findById(usuarioId).orElse(null);
+            if (reclutador != null) {
+                reclutador.setEmpresa(created);
+                reclutadorRepo.save(reclutador);
+            }
+        }
+
+        return created;
     }
 
     // READ

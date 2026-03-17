@@ -72,8 +72,15 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/aspirante/**").hasAnyRole("ASPIRANTE", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/aspirante/**").hasAnyRole("ASPIRANTE", "ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/aspirante/**").hasAnyRole("ASPIRANTE", "ADMIN")
-                .requestMatchers("/api/administrador/**").authenticated()
-                .requestMatchers("/api/reclutador/**").authenticated()
+
+                // ===== ADMINISTRADOR - SOLO ADMIN =====
+                .requestMatchers("/api/administrador/**").hasRole("ADMIN")
+
+                // ===== RECLUTADOR - SOLO ADMIN (CRUD general), RECLUTADOR (acciones personales) =====
+                .requestMatchers(HttpMethod.DELETE, "/api/reclutador/**").hasAnyRole("RECLUTADOR", "ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/reclutador/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/reclutador/**").hasAnyRole("RECLUTADOR", "ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/reclutador/**").hasAnyRole("RECLUTADOR", "ADMIN")
 
                 // ===== EMPRESA - SOLO RECLUTADORES Y ADMIN =====
                 .requestMatchers(HttpMethod.POST, "/api/empresa").hasAnyRole("ADMIN", "RECLUTADOR")

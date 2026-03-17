@@ -1,8 +1,17 @@
 info:
   name: DeleteEmpresa
-  http:
-    method: DELETE
-    url: "{{baseUrl}}/api/empresa/1"
-    auth:
-      type: bearer
-      token: "{{adminToken}}"
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/api/empresa/1"
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
