@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { obtenerPostulacionesPorOferta, cambiarEstadoPostulacion } from "../../api/postulacionesAPI";
 import HeaderReclutador from "../HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../SidebarReclutador/SidebarReclutador";
 import "./VerPostulacionesRecibidas.css";
 
 const VerPostulacionesRecibidas = ({ ofertas = [] }) => {
@@ -84,12 +85,19 @@ const VerPostulacionesRecibidas = ({ ofertas = [] }) => {
     }
   };
 
+  const normalizarEstado = (estado) => {
+    if (estado === "PENDIENTE") return "POSTULADO";
+    if (estado === "ACEPTADA") return "ACEPTADO";
+    if (estado === "RECHAZADA") return "RECHAZADO";
+    return estado;
+  };
+
   const obtenerPostulacionesFiltradas = () => {
     let resultado = [...postulaciones];
 
     // Filtro por estado
     if (filtroEstado !== "todos") {
-      resultado = resultado.filter((p) => p.estado === filtroEstado);
+      resultado = resultado.filter((p) => normalizarEstado(p.estado) === filtroEstado);
     }
 
     // Orden por fecha
@@ -110,9 +118,9 @@ const VerPostulacionesRecibidas = ({ ofertas = [] }) => {
     return (
       <>
         <HeaderReclutador />
-        <div className="vp-page">
-          <p>Cargando postulaciones...</p>
-        </div>
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">Cargando postulaciones...</div>
+        </main>
       </>
     );
   }
@@ -121,9 +129,11 @@ const VerPostulacionesRecibidas = ({ ofertas = [] }) => {
     return (
       <>
         <HeaderReclutador />
-        <div className="vp-page">
-          <p className="error-text">Error: {error}</p>
-        </div>
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">
+            <p className="reclutador-alert-RP error">{error}</p>
+          </div>
+        </main>
       </>
     );
   }
@@ -131,105 +141,109 @@ const VerPostulacionesRecibidas = ({ ofertas = [] }) => {
   return (
     <>
       <HeaderReclutador />
-      <main className="vp-page">
-        <h1 className="vp-title">Postulaciones Recibidas</h1>
-
-        {/* ======== CONTROLES DE FILTRO ======== */}
-        <div className="vp-filters">
-          <div className="vp-filter-group">
-            <label>Estado:</label>
-            <select
-              value={filtroEstado}
-              onChange={(e) => setFiltroEstado(e.target.value)}
-            >
-              <option value="todos">Todos</option>
-              <option value="PENDIENTE">Pendiente</option>
-              <option value="ACEPTADA">Aceptada</option>
-              <option value="RECHAZADA">Rechazada</option>
-            </select>
-          </div>
-
-          <div className="vp-filter-group">
-            <label>Orden por fecha:</label>
-            <select
-              value={ordenFecha}
-              onChange={(e) => setOrdenFecha(e.target.value)}
-            >
-              <option value="asc">Antiguas → Recientes</option>
-              <option value="desc">Recientes → Antiguas</option>
-            </select>
-          </div>
-        </div>
-
-        <p className="vp-count">
-          {postulacionesFiltradas.length} resultados encontrados
-        </p>
-
-        {/* ======== LISTA DE POSTULACIONES ======== */}
-        <div className="vp-container">
-          {postulacionesFiltradas.length === 0 ? (
-            <p>No hay postulaciones disponibles</p>
-          ) : (
-            postulacionesFiltradas.map((p) => (
-              <div className="vp-item" key={p.id}>
-                <div className="vp-header">
-                  <div className="vp-avatar">
-                    {p.aspirante?.nombre?.charAt(0) || 'A'}
-                  </div>
-
-                  <div className="vp-info">
-                    <p className="vp-name">
-                      {p.aspirante?.nombre || 'Aspirante'} {p.aspirante?.apellido || ''}
-                    </p>
-                    <p className="vp-status">{p.estado}</p>
-                  </div>
-                </div>
-
-                {/* Información de la oferta */}
-                {p.oferta && (
-                  <div className="vp-oferta-info">
-                    <p className="vp-oferta-titulo">
-                      <strong>Oferta:</strong> {p.oferta.titulo || p.oferta.nom || 'Sin título'}
-                    </p>
-                    <p className="vp-oferta-desc">
-                      {p.oferta.descripcion || p.oferta.desc || 'Sin descripción'}
-                    </p>
-                  </div>
-                )}
-
-                <p className="vp-text">
-                  Fecha: {new Date(p.fechaPostulacion || p.fecha).toLocaleDateString()}
-                </p>
-                <p className="vp-text">
-                  Correo: {p.aspirante?.correo || 'No disponible'}
-                </p>
-                <p className="vp-text">
-                  Teléfono: {p.aspirante?.telefono || 'No disponible'}
-                </p>
-
-                <div className="vp-actions">
-                  {p.estado === 'PENDIENTE' && (
-                    <>
-                      <button
-                        className="btn-aceptar"
-                        onClick={() => handleCambiarEstado(p.id, 'ACEPTADA')}
-                      >
-                        Aceptar
-                      </button>
-                      <button
-                        className="btn-rechazar"
-                        onClick={() => handleCambiarEstado(p.id, 'RECHAZADA')}
-                      >
-                        Rechazar
-                      </button>
-                    </>
-                  )}
-                </div>
+      <div className="reclutador-shell-RP">
+        <SidebarReclutador />
+        <main className="reclutador-main-RP">
+          <section className="reclutador-card-RP">
+            <div className="reclutador-card-header-RP">
+              <div>
+                <p className="reclutador-kicker-RP">Postulaciones</p>
+                <h2>Postulaciones recibidas</h2>
               </div>
-            ))
-          )}
-        </div>
-      </main>
+            </div>
+
+            <div className="vp-filters">
+              <div className="vp-filter-group">
+                <label>Estado:</label>
+                <select
+                  value={filtroEstado}
+                  onChange={(e) => setFiltroEstado(e.target.value)}
+                >
+                  <option value="todos">Todos</option>
+                  <option value="POSTULADO">Postulado</option>
+                  <option value="EN_REVISION">En revision</option>
+                  <option value="ENTREVISTA">Entrevista</option>
+                  <option value="ACEPTADO">Aceptado</option>
+                  <option value="RECHAZADO">Rechazado</option>
+                </select>
+              </div>
+
+              <div className="vp-filter-group">
+                <label>Orden por fecha:</label>
+                <select
+                  value={ordenFecha}
+                  onChange={(e) => setOrdenFecha(e.target.value)}
+                >
+                  <option value="asc">Antiguas → Recientes</option>
+                  <option value="desc">Recientes → Antiguas</option>
+                </select>
+              </div>
+            </div>
+
+            <p className="vp-count">
+              {postulacionesFiltradas.length} resultados encontrados
+            </p>
+
+            <div className="vp-container">
+              {postulacionesFiltradas.length === 0 ? (
+                <p>No hay postulaciones disponibles</p>
+              ) : (
+                postulacionesFiltradas.map((p) => (
+                  <div className="vp-item" key={p.id}>
+                    <div className="vp-header">
+                      <div className="vp-avatar">
+                        {p.aspirante?.nombre?.charAt(0) || "A"}
+                      </div>
+                      <div className="vp-info">
+                        <p className="vp-name">
+                          {p.aspirante?.nombre || "Aspirante"} {p.aspirante?.apellido || ""}
+                        </p>
+                        <p className="vp-status">{normalizarEstado(p.estado)}</p>
+                      </div>
+                    </div>
+
+                    {p.oferta && (
+                      <div className="vp-oferta-info">
+                        <p className="vp-oferta-titulo">
+                          <strong>Oferta:</strong> {p.oferta.titulo || p.oferta.nom || "Sin titulo"}
+                        </p>
+                        <p className="vp-oferta-desc">
+                          {p.oferta.descripcion || p.oferta.desc || "Sin descripcion"}
+                        </p>
+                      </div>
+                    )}
+
+                    <p className="vp-text">
+                      Fecha: {new Date(p.fechaPostulacion || p.fecha).toLocaleDateString()}
+                    </p>
+                    <p className="vp-text">Correo: {p.aspirante?.correo || "No disponible"}</p>
+                    <p className="vp-text">Telefono: {p.aspirante?.telefono || "No disponible"}</p>
+
+                    <div className="vp-actions">
+                      {['POSTULADO', 'PENDIENTE'].includes(p.estado) && (
+                        <>
+                          <button
+                            className="btn-aceptar"
+                            onClick={() => handleCambiarEstado(p.id, 'ACEPTADO')}
+                          >
+                            Aceptar
+                          </button>
+                          <button
+                            className="btn-rechazar"
+                            onClick={() => handleCambiarEstado(p.id, 'RECHAZADO')}
+                          >
+                            Rechazar
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        </main>
+      </div>
     </>
   );
 };

@@ -33,6 +33,16 @@ export const getOfertaById = async (id) => {
   }
 };
 
+export const buscarOfertasAvanzada = async (filtros = {}) => {
+  try {
+    const response = await API.post('/api/oferta/search', filtros);
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar ofertas con filtros avanzados:', error);
+    throw error;
+  }
+};
+
 // ===== BÚSQUEDAS Y FILTROS =====
 
 // RF11 - Buscar por nombre/título
@@ -164,6 +174,7 @@ export default {
   crearOferta,
   getAllOfertas,
   getOfertaById,
+  buscarOfertasAvanzada,
   buscarPorNombre,
   buscarPorSalario,
   buscarPorUbicacion,

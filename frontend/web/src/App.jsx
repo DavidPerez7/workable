@@ -32,6 +32,8 @@ import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEm
 // Pages for aspirants
 import AspirantePage from "./pages/AspirantePage/AspirantePage";
 import MiPerfil from "./pages/AspirantePage/MiPerfil/MiPerfil";
+import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
+import EliminarPerfil from "./pages/AspirantePage/MiPerfil/EliminarPerfil/EliminarPerfil";
 import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
 import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 
@@ -76,6 +78,8 @@ function App() {
         {/* Rutas protegidas de Aspirante */}
         <Route path="/Aspirante" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspirantePage /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><MiPerfil /></ProtectedRoute>} />
+        <Route path="/Aspirante/MiPerfil/ActualizarPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><ActualizarPerfil /></ProtectedRoute>} />
+        <Route path="/Aspirante/MiPerfil/EliminarPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><EliminarPerfil /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
         

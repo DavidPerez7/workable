@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { getOfertaById, eliminarOferta } from "../../../api/ofertasAPI";
 import { obtenerPostulacionesPorOferta } from "../../../api/postulacionesAPI";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import "./OfertaCompletaPage.css";
 
 const OfertaCompletaPage = () => {
@@ -65,11 +66,8 @@ const OfertaCompletaPage = () => {
     return (
       <>
         <HeaderReclutador />
-        <main className="oferta-completa-main">
-          <div className="loading-state">
-            <div className="spinner"></div>
-            <p>Cargando oferta...</p>
-          </div>
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">Cargando oferta...</div>
         </main>
       </>
     );
@@ -79,11 +77,11 @@ const OfertaCompletaPage = () => {
     return (
       <>
         <HeaderReclutador />
-        <main className="oferta-completa-main">
-          <div className="error-state">
-            <p>{error || "Oferta no encontrada"}</p>
-            <Link to="/Reclutador" className="btn-return">
-              Volver al dashboard
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">
+            <p className="reclutador-alert-RP error">{error || "Oferta no encontrada"}</p>
+            <Link to="/Reclutador" className="reclutador-button-RP">
+              Volver
             </Link>
           </div>
         </main>
@@ -112,198 +110,67 @@ const OfertaCompletaPage = () => {
   return (
     <>
       <HeaderReclutador />
-      <main className="oferta-completa-main">
-        {/* Header */}
-        <div className="oferta-header">
-          <Link to="/Reclutador" className="btn-back">
-            ← Volver
-          </Link>
-          <h1 className="oferta-titulo">{oferta.titulo || oferta.nom}</h1>
-          <span className={`estado-badge ${oferta.estado?.toLowerCase()}`}>
-            {oferta.estado}
-          </span>
-        </div>
-
-        <div className="oferta-container">
-          {/* Sección Principal */}
-          <section className="oferta-principal">
-            {/* Info General */}
-            <div className="info-general">
-              <div className="info-card">
-                <h2 className="card-title">Información General</h2>
-
-                <div className="info-grid">
-                  <div className="info-item">
-                    <label>Título de la posición</label>
-                    <p>{oferta.titulo || oferta.nom}</p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Descripción</label>
-                    <p>{oferta.descripcion || oferta.desc || "No disponible"}</p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Empresa</label>
-                    <p>{oferta.empresa?.nombre || "No especificada"}</p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Ubicación</label>
-                    <p className="location">
-                      📍 {oferta.ubicacion || oferta.ubi || "No especificada"}
-                    </p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Salario</label>
-                    <p className="salary">💰 {formatSalary(oferta.salario)}</p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Tipo de contrato</label>
-                    <p>{oferta.tipoContrato?.nombre || "No especificado"}</p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Nivel de experiencia</label>
-                    <p>
-                      {oferta.nivelExperiencia?.nombre ||
-                        oferta.nivelExperiencia ||
-                        "No especificado"}
-                    </p>
-                  </div>
-
-                  <div className="info-item">
-                    <label>Fecha de publicación</label>
-                    <p>{formatDate(oferta.fechaPublicacion)}</p>
-                  </div>
-
-                  {oferta.fechaCierre && (
-                    <div className="info-item">
-                      <label>Fecha de cierre</label>
-                      <p>{formatDate(oferta.fechaCierre)}</p>
-                    </div>
-                  )}
-                </div>
+      <div className="reclutador-shell-RP">
+        <SidebarReclutador />
+        <main className="reclutador-main-RP">
+          <section className="reclutador-card-RP">
+            <div className="reclutador-card-header-RP">
+              <div>
+                <p className="reclutador-kicker-RP">Oferta</p>
+                <h2>{oferta.titulo || oferta.nom}</h2>
               </div>
-
-              {/* Requisitos */}
-              {oferta.requisitos && (
-                <div className="info-card">
-                  <h2 className="card-title">Requisitos</h2>
-                  <p className="card-content">{oferta.requisitos}</p>
-                </div>
-              )}
-
-              {/* Responsabilidades */}
-              {oferta.responsabilidades && (
-                <div className="info-card">
-                  <h2 className="card-title">Responsabilidades</h2>
-                  <p className="card-content">{oferta.responsabilidades}</p>
-                </div>
-              )}
-
-              {/* Beneficios */}
-              {oferta.beneficios && (
-                <div className="info-card">
-                  <h2 className="card-title">Beneficios</h2>
-                  <p className="card-content">{oferta.beneficios}</p>
-                </div>
-              )}
+              <span className="oferta-estado-RP">{oferta.estado || oferta.estadoOferta || "ACTIVA"}</span>
             </div>
 
-            {/* Estadísticas */}
-            <aside className="oferta-sidebar">
-              <div className="stats-card">
-                <div className="stat-item">
-                  <span className="stat-number">{postulaciones.length}</span>
-                  <span className="stat-label">Postulaciones</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
-                    {postulaciones.filter((p) => p.estado === "ACEPTADA")
-                      .length}
-                  </span>
-                  <span className="stat-label">Aceptadas</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
-                    {postulaciones.filter((p) => p.estado === "PENDIENTE")
-                      .length}
-                  </span>
-                  <span className="stat-label">Pendientes</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">
-                    {postulaciones.filter((p) => p.estado === "RECHAZADA")
-                      .length}
-                  </span>
-                  <span className="stat-label">Rechazadas</span>
-                </div>
+            <div className="oferta-grid-RP">
+              <div>
+                <p className="oferta-label-RP">Descripcion</p>
+                <p className="oferta-text-RP">{oferta.descripcion || oferta.desc || "No disponible"}</p>
               </div>
+              <div>
+                <p className="oferta-label-RP">Empresa</p>
+                <p className="oferta-text-RP">{oferta.empresa?.nombre || "No especificada"}</p>
+              </div>
+              <div>
+                <p className="oferta-label-RP">Ubicacion</p>
+                <p className="oferta-text-RP">{oferta.municipio?.nombre || oferta.ubicacion || "-"}</p>
+              </div>
+              <div>
+                <p className="oferta-label-RP">Salario</p>
+                <p className="oferta-text-RP">{formatSalary(oferta.salario)}</p>
+              </div>
+              <div>
+                <p className="oferta-label-RP">Experiencia</p>
+                <p className="oferta-text-RP">{oferta.nivelExperiencia || "-"}</p>
+              </div>
+              <div>
+                <p className="oferta-label-RP">Fecha limite</p>
+                <p className="oferta-text-RP">{formatDate(oferta.fechaLimite || oferta.fechaPublicacion)}</p>
+              </div>
+            </div>
 
-              {/* Acciones */}
-              <div className="actions-card">
-                <h3>Acciones</h3>
-                <Link 
-                  to={`/Reclutador/EditarOfertaLaboral?ofertaId=${ofertaId}`} 
-                  className="btn-action"
-                >
-                  ✏️ Editar oferta
-                </Link>
-                <Link
-                  to="/Reclutador/VerPostulacionesRecibidas"
-                  state={{ ofertaId }}
-                  className="btn-action btn-view-applications"
-                >
-                  👥 Ver postulaciones
-                </Link>
-                <button 
-                  onClick={handleDeleteOferta}
-                  disabled={deleting}
-                  className="btn-action btn-delete"
-                >
-                  {deleting ? "🗑️ Eliminando..." : "🗑️ Eliminar oferta"}
-                </button>
-              </div>
-            </aside>
+            <div className="oferta-actions-RP">
+              <Link to="/Reclutador" className="reclutador-link-RP">
+                Volver
+              </Link>
+              <Link to={`/Reclutador/EditarOfertaLaboral?ofertaId=${ofertaId}`} className="reclutador-link-RP">
+                Editar
+              </Link>
+              <Link to="/Reclutador/VerPostulacionesRecibidas" state={{ ofertaId }} className="reclutador-link-RP">
+                Ver postulaciones ({postulaciones.length})
+              </Link>
+              <button
+                type="button"
+                className="oferta-danger-RP"
+                onClick={handleDeleteOferta}
+                disabled={deleting}
+              >
+                {deleting ? "Eliminando..." : "Eliminar"}
+              </button>
+            </div>
           </section>
-
-          {/* Postulaciones */}
-          {postulaciones.length > 0 && (
-            <section className="postulaciones-section">
-              <h2 className="section-title">Postulaciones Recientes</h2>
-              <div className="postulaciones-grid">
-                {postulaciones.slice(0, 5).map((postulacion) => (
-                  <div className="postulacion-card" key={postulacion.id}>
-                    <div className="postulacion-header">
-                      <div className="postulacion-avatar">
-                        {postulacion.aspirante?.nombre?.charAt(0) || "A"}
-                      </div>
-                      <div className="postulacion-info">
-                        <p className="postulacion-nombre">
-                          {postulacion.aspirante?.nombre}{" "}
-                          {postulacion.aspirante?.apellido}
-                        </p>
-                        <p className="postulacion-email">
-                          {postulacion.aspirante?.correo}
-                        </p>
-                      </div>
-                      <span className={`estado-mini ${postulacion.estado?.toLowerCase()}`}>
-                        {postulacion.estado}
-                      </span>
-                    </div>
-                    <p className="postulacion-fecha">
-                      📅 {formatDate(postulacion.fechaPostulacion)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-      </main>
+        </main>
+      </div>
     </>
   );
 };

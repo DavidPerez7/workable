@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
 import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import Footer from "../../../components/Footer/footer";
-import { User, Building2, BarChart3, LogOut, Edit2, Save, X } from "lucide-react";
+import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
+import { logout } from "../../../api/authApi";
 import "./ReclutadorProfile.css";
 
 function ReclutadorProfile() {
@@ -26,7 +26,7 @@ function ReclutadorProfile() {
   };
 
   const cerrarSesion = () => {
-    localStorage.clear();
+    logout();
     navigate("/login");
   };
 
@@ -34,15 +34,14 @@ function ReclutadorProfile() {
     return (
       <>
         <HeaderReclutador />
-        <main className="profile-main-RPF">
-          <div className="error-container-RPF">
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">
             <h2>Perfil no encontrado</h2>
-            <Link to="/Reclutador" className="btn-back-RPF">
+            <Link to="/Reclutador" className="reclutador-button-RP">
               Volver
             </Link>
           </div>
         </main>
-        <Footer />
       </>
     );
   }
@@ -50,144 +49,46 @@ function ReclutadorProfile() {
   return (
     <>
       <HeaderReclutador />
-      <main className="profile-main-RPF">
-        <div className="profile-container-RPF">
-          {/* Sección Hero */}
-          <section className="profile-hero-RPF">
-            <div
-              className="hero-banner-RPF"
-              style={{
-                backgroundImage: `url(${profileData.urlBanner || "https://via.placeholder.com/1200x300"})`,
-              }}
-            ></div>
-
-            <div className="hero-content-RPF">
+      <div className="reclutador-shell-RP">
+        <SidebarReclutador />
+        <main className="reclutador-main-RP">
+          <section className="reclutador-card-RP profile-hero-RPF">
+            <div className="profile-hero-info-RPF">
               <div className="profile-avatar-RPF">
-                <img
-                  src={profileData.urlFotoPerfil || "https://via.placeholder.com/150"}
-                  alt={profileData.nombre}
-                />
+                {profileData.urlFotoPerfil ? (
+                  <img src={profileData.urlFotoPerfil} alt={profileData.nombre} />
+                ) : (
+                  <span>{profileData.nombre?.charAt(0) || "R"}</span>
+                )}
               </div>
-
-              <div className="hero-info-RPF">
-                <h1 className="profile-name-RPF">{profileData.nombre}</h1>
-                <p className="profile-role-RPF">Reclutador</p>
-                {profileData.empresa && (
-                  <p className="profile-company-RPF">
-                    <Building2 size={16} />
-                    {profileData.empresa.nombre}
-                  </p>
-                )}
-                {profileData.municipio && (
-                  <p className="profile-location-RPF">
-                    {profileData.municipio.nombre}
-                    {profileData.municipio.departamento
-                      ? `, ${profileData.municipio.departamento}`
-                      : ""}
-                  </p>
-                )}
+              <div>
+                <p className="reclutador-kicker-RP">Perfil</p>
+                <h1>{profileData.nombre}</h1>
+                <p className="profile-muted-RPF">{profileData.correo}</p>
+                <p className="profile-muted-RPF">
+                  {profileData.municipio?.nombre || "Sin ubicacion"}
+                </p>
               </div>
             </div>
           </section>
 
-          {/* Información Personal */}
-          <section className="info-section-RPF">
-            <div className="section-header-RPF">
-              <h2>
-                <User size={24} />
-                Información Personal
-              </h2>
+          <section className="reclutador-card-RP">
+            <div className="reclutador-card-header-RP">
+              <div>
+                <p className="reclutador-kicker-RP">Acciones</p>
+                <h2>Atajos del reclutador</h2>
+              </div>
             </div>
-
-            <div className="info-grid-RPF">
-              <div className="info-card-RPF">
-                <label>Nombre Completo</label>
-                <p className="info-value-static-RPF">{profileData.nombre}</p>
-              </div>
-
-              <div className="info-card-RPF">
-                <label>Correo Electrónico</label>
-                <p className="info-value-static-RPF">{profileData.correo}</p>
-              </div>
-
-              <div className="info-card-RPF">
-                <label>Teléfono</label>
-                <p className="info-value-static-RPF">{profileData.telefono || "No especificado"}</p>
-              </div>
+            <div className="profile-actions-RPF">
+              <Link to="/Reclutador/EditarPerfil">Editar perfil</Link>
+              <Link to="/Reclutador/GestigOferts">Gestionar ofertas</Link>
+              <Link to="/Reclutador/Publicacion">Publicar oferta</Link>
+              <Link to="/Reclutador/Configuracion">Configuracion</Link>
+              <button type="button" onClick={cerrarSesion}>Cerrar sesion</button>
             </div>
           </section>
-
-          {/* Empresa */}
-          {profileData.empresa && (
-            <section className="info-section-RPF">
-              <div className="section-header-RPF">
-                <h2>
-                  <Building2 size={24} />
-                  Empresa
-                </h2>
-              </div>
-
-              <div className="company-card-RPF">
-                {profileData.empresa.logo && (
-                  <img
-                    src={profileData.empresa.logo}
-                    alt={profileData.empresa.nombre}
-                    className="company-logo-RPF"
-                  />
-                )}
-                <div className="company-info-RPF">
-                  <h3>{profileData.empresa.nombre}</h3>
-                  <p>{profileData.empresa.descripcion}</p>
-                  <div className="company-stats-RPF">
-                    <span>
-                      <Building2 size={16} />
-                      {profileData.empresa.numeroTrabajadores || 0} empleados
-                    </span>
-                    <span>
-                      <BarChart3 size={16} />
-                      {profileData.empresa.puntuacion || 0}/5.0
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Acciones Rápidas */}
-          <section className="quick-actions-RPF">
-            <h2>Acciones</h2>
-            <div className="actions-grid-RPF">
-              <Link to="/Reclutador/EditarPerfil" className="action-card-RPF">
-                <Edit2 size={32} className="action-icon" />
-                <h3>Editar Perfil</h3>
-                <p>Actualiza tu información personal</p>
-              </Link>
-
-              <Link to="/Reclutador/GestigOferts" className="action-card-RPF">
-                <BarChart3 size={32} className="action-icon" />
-                <h3>Gestionar Ofertas</h3>
-                <p>Administra tus ofertas publicadas</p>
-              </Link>
-
-              <Link to="/Reclutador/Publicacion" className="action-card-RPF">
-                <Building2 size={32} className="action-icon" />
-                <h3>Publicar Oferta</h3>
-                <p>Crea una nueva oferta laboral</p>
-              </Link>
-
-              <button
-                onClick={cerrarSesion}
-                className="action-card-RPF action-warning-RPF"
-              >
-                <LogOut size={32} className="action-icon" />
-                <h3>Cerrar Sesión</h3>
-                <p>Cierra tu sesión en la plataforma</p>
-              </button>
-            </div>
-          </section>
-        </div>
-      </main>
-      <Footer />
+        </main>
+      </div>
     </>
   );
 }

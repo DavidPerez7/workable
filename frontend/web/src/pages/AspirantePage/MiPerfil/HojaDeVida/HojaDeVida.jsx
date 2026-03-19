@@ -1,1212 +1,539 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./HojaDeVida.css";
-import { jsPDF } from "jspdf";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  BriefcaseBusiness,
+  GraduationCap,
+  Plus,
+  Save,
+  Trash2,
+  UserCircle2,
+} from "lucide-react";
 import Header from "../../../../components/Header/Header";
-import Menu from "../../../../components/Menu/Menu";
 import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
+import Footer from "../../../../components/Footer/footer";
 import aspirantesApi from "../../../../api/aspirantesApi";
-import { getHojasDeVidaPorAspirante, actualizarHojaDeVida } from "../../../../api/hojaDeVidaAPI";
+import {
+  getHojasDeVidaPorAspirante,
+  actualizarHojaDeVida,
+} from "../../../../api/hojaDeVidaAPI";
+import "./HojaDeVida.css";
+
+const emptyStudy = {
+  titulo: "",
+  institucion: "",
+  nivelEducativo: "UNIVERSITARIO",
+  fechaInicio: "",
+  fechaFin: "",
+  certificadoUrl: "",
+};
+
+const emptyExperience = {
+  cargo: "",
+  empresa: "",
+  fechaInicio: "",
+  fechaFin: "",
+  descripcion: "",
+  certificadoUrl: "",
+};
+
+const formatearFecha = (fecha) => {
+  if (!fecha) {
+    return "";
+  }
+
+  return new Date(fecha).toISOString().slice(0, 10);
+};
+
+const normalizarLista = (lista, mapper) =>
+  Array.isArray(lista) ? lista.map(mapper) : [];
+
+const normalizarHoja = (data) => {
+  const source = Array.isArray(data) ? data[0] : data;
+
+  if (!source) {
+    return null;
+  }
+
+  return {
+    id: source.id,
+    resumenProfesional: source.resumenProfesional || source.resumen || "",
+    telefono: source.telefono || "",
+    correoElectronico: source.correoElectronico || source.contactoEmail || "",
+    redSocial: source.redSocial || source.redSocial1 || "",
+    estudios: normalizarLista(source.estudios, (estudio) => ({
+      titulo: estudio.titulo || "",
+      institucion: estudio.institucion || "",
+      nivelEducativo: estudio.nivelEducativo || estudio.nivel || "UNIVERSITARIO",
+      fechaInicio: formatearFecha(estudio.fechaInicio),
+      fechaFin: formatearFecha(estudio.fechaFin),
+      certificadoUrl: estudio.certificadoUrl || "",
+    })),
+    experiencias: normalizarLista(source.experiencias, (experiencia) => ({
+      cargo: experiencia.cargo || "",
+      empresa: experiencia.empresa || "",
+      fechaInicio: formatearFecha(experiencia.fechaInicio),
+      fechaFin: formatearFecha(experiencia.fechaFin),
+      descripcion: experiencia.descripcion || "",
+      certificadoUrl: experiencia.certificadoUrl || "",
+    })),
+  };
+};
+
+const serializarHoja = (hoja) => ({
+  resumenProfesional: hoja.resumenProfesional,
+  resumen: hoja.resumenProfesional,
+  telefono: hoja.telefono,
+  correoElectronico: hoja.correoElectronico,
+  contactoEmail: hoja.correoElectronico,
+  redSocial: hoja.redSocial,
+  redSocial1: hoja.redSocial,
+  estudios: hoja.estudios,
+  experiencias: hoja.experiencias,
+});
 
 const HojaDeVida = () => {
-  const [perfil, setPerfil] = useState(null);
-  const [hojaDeVida, setHojaDeVida] = useState(null);
-  const [editandoDescripcion, setEditandoDescripcion] = useState(false);
-  const [descripcionTemporal, setDescripcionTemporal] = useState("");
-  const [experiencias, setExperiencias] = useState([]);
-  const [estudios, setEstudios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  // Estados para edición inline
-  const [editandoExpIndex, setEditandoExpIndex] = useState(null);
-  const [expEditTemp, setExpEditTemp] = useState(null);
-  const [editandoEduIndex, setEditandoEduIndex] = useState(null);
-  const [eduEditTemp, setEduEditTemp] = useState(null);
-  const [guardandoExp, setGuardandoExp] = useState(false);
-  const [guardandoEdu, setGuardandoEdu] = useState(false);
-
-  // Estados para agregar nuevos datos
-  const [nuevaExp, setNuevaExp] = useState({
-    empresa: "",
-    cargo: "",
-    fechaInicio: "",
-    descripcion: "",
-  });
-  const [nuevoEstudio, setNuevoEstudio] = useState({
-    institucion: "",
-    titulo: "",
-    fechaInicio: "",
-    fechaFin: "",
-    nivelEducativo: "UNIVERSITARIO",
-    enCurso: true,
-  });
-
   const navigate = useNavigate();
-
-  // Cargar datos del perfil y sus relacionados
-  useEffect(() => {
-    cargarDatos();
-  }, []);
+  const [perfil, setPerfil] = useState(null);
+  const [hoja, setHoja] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [nuevoEstudio, setNuevoEstudio] = useState(emptyStudy);
+  const [nuevaExperiencia, setNuevaExperiencia] = useState(emptyExperience);
 
   const cargarDatos = async () => {
-    setLoading(true);
-    setError("");
+    const usuarioId = localStorage.getItem("usuarioId");
+
+    if (!usuarioId) {
+      navigate("/login");
+      return;
+    }
+
     try {
-      const usuarioId = localStorage.getItem("usuarioId");
-      if (!usuarioId) {
-        throw new Error("No se encontró ID de usuario en sesión");
-      }
+      setLoading(true);
+      setError("");
 
-      // Cargar perfil usando aspirantesApi
-      const usuarioData = await aspirantesApi.get(usuarioId);
-      setPerfil(usuarioData);
-      setDescripcionTemporal(usuarioData.descripcion || "");
+      const [perfilData, hojaData] = await Promise.all([
+        aspirantesApi.get(usuarioId),
+        getHojasDeVidaPorAspirante(usuarioId),
+      ]);
 
-      // Cargar HojaDeVida con estudios y experiencias embebidas
-      const hojasData = await getHojasDeVidaPorAspirante(usuarioId);
-      console.log("🎓 HojaDeVida completa recibida:", hojasData);
-      console.log("🔍 Tipo de hojasData:", typeof hojasData, "Es array?", Array.isArray(hojasData));
-      
-      // Verificar si es un objeto directo o un array
-      let hoja = null;
-      if (Array.isArray(hojasData) && hojasData.length > 0) {
-        hoja = hojasData[0];
-      } else if (hojasData && typeof hojasData === 'object' && hojasData.id) {
-        // Es un objeto directo, no un array
-        hoja = hojasData;
-      }
-      
-      if (hoja) {
-        console.log("✅ HojaDeVida encontrada - ID:", hoja.id);
-        console.log("📚 Estudios recibidos:", hoja.estudios);
-        console.log("📊 Experiencias recibidas:", hoja.experiencias);
-        console.log("🔢 Cantidad estudios:", hoja.estudios?.length || 0);
-        console.log("🔢 Cantidad experiencias:", hoja.experiencias?.length || 0);
-        
-        setHojaDeVida(hoja);
-        setExperiencias(hoja.experiencias || []);
-        setEstudios(hoja.estudios || []);
-      } else {
-        console.warn("⚠️ No se encontró HojaDeVida para el aspirante");
-        setExperiencias([]);
-        setEstudios([]);
-      }
+      setPerfil(perfilData);
+      setHoja(normalizarHoja(hojaData));
     } catch (err) {
-      console.error("❌ Error al cargar datos:", err);
-      setError(err.message);
+      console.error("Error al cargar la hoja de vida:", err);
+      setError(err.message || "No se pudo cargar la hoja de vida");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    cargarDatos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const persistirHoja = async (nextHoja, mensajeExito) => {
+    if (!nextHoja?.id) {
+      setNotice("No se encontró una hoja de vida existente para actualizar.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError("");
+      await actualizarHojaDeVida(nextHoja.id, serializarHoja(nextHoja));
+      setHoja(nextHoja);
+      setNotice(mensajeExito || "Hoja de vida actualizada.");
+    } catch (err) {
+      console.error("Error al guardar hoja de vida:", err);
+      setError(err.message || "No se pudo guardar la hoja de vida");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleGeneralChange = (event) => {
+    const { name, value } = event.target;
+    setHoja((current) =>
+      current
+        ? {
+            ...current,
+            [name]: value,
+          }
+        : current
+    );
+  };
+
+  const guardarGeneral = async () => {
+    if (!hoja) {
+      setNotice("No hay hoja de vida para actualizar.");
+      return;
+    }
+
+    await persistirHoja(hoja, "Datos generales guardados.");
+  };
+
+  const agregarEstudio = async (event) => {
+    event.preventDefault();
+
+    if (!nuevoEstudio.titulo.trim() || !nuevoEstudio.institucion.trim() || !nuevoEstudio.fechaInicio) {
+      setNotice("Completa título, institución y fecha de inicio para agregar el estudio.");
+      return;
+    }
+
+    const nextHoja = {
+      ...(hoja || {}),
+      estudios: [...(hoja?.estudios || []), nuevoEstudio],
+    };
+
+    await persistirHoja(nextHoja, "Estudio agregado correctamente.");
+    setNuevoEstudio(emptyStudy);
+  };
+
+  const eliminarEstudio = async (index) => {
+    if (!hoja) {
+      return;
+    }
+
+    const nextHoja = {
+      ...hoja,
+      estudios: hoja.estudios.filter((_, currentIndex) => currentIndex !== index),
+    };
+
+    await persistirHoja(nextHoja, "Estudio eliminado.");
+  };
+
+  const agregarExperiencia = async (event) => {
+    event.preventDefault();
+
+    if (!nuevaExperiencia.cargo.trim() || !nuevaExperiencia.empresa.trim() || !nuevaExperiencia.fechaInicio) {
+      setNotice("Completa cargo, empresa y fecha de inicio para agregar la experiencia.");
+      return;
+    }
+
+    const nextHoja = {
+      ...(hoja || {}),
+      experiencias: [...(hoja?.experiencias || []), nuevaExperiencia],
+    };
+
+    await persistirHoja(nextHoja, "Experiencia agregada correctamente.");
+    setNuevaExperiencia(emptyExperience);
+  };
+
+  const eliminarExperiencia = async (index) => {
+    if (!hoja) {
+      return;
+    }
+
+    const nextHoja = {
+      ...hoja,
+      experiencias: hoja.experiencias.filter((_, currentIndex) => currentIndex !== index),
+    };
+
+    await persistirHoja(nextHoja, "Experiencia eliminada.");
+  };
+
   if (loading) {
-    return (
-      <div className="perfil-loading">
-        <p>Cargando perfil...</p>
-      </div>
-    );
+    return <div className="hoja-state-AP">Cargando hoja de vida...</div>;
   }
-
-  if (error) {
-    return (
-      <div className="perfil-error">
-        <p>Error: {error}</p>
-        <button onClick={cargarDatos} className="perfil-retry-btn">
-          Reintentar
-        </button>
-      </div>
-    );
-  }
-
-  /* ============================
-        DESCRIPCIÓN
-  ============================ */
-
-  const guardarDescripcion = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const usuarioId = localStorage.getItem("usuarioId");
-      
-      if (!usuarioId) {
-        throw new Error("No se encontró ID de usuario en sesión");
-      }
-      
-      const response = await fetch(`http://localhost:8080/api/aspirante/${usuarioId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          descripcion: descripcionTemporal,
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error("Error al guardar descripción");
-      }
-      
-      const perfilActualizado = await response.json();
-      setPerfil(perfilActualizado);
-      setEditandoDescripcion(false);
-    } catch (err) {
-      console.error("Error al guardar descripción:", err);
-      alert("Error al guardar: " + err.message);
-    }
-  };
-
-  /* ============================
-        EXPERIENCIA
-  ============================ */
-
-  const agregarExperiencia = async () => {
-    const { empresa, cargo, fechaInicio, descripcion } = nuevaExp;
-
-    if (!empresa || !cargo || !fechaInicio || !descripcion) {
-      alert("Por favor rellena todos los campos");
-      return;
-    }
-
-    try {
-      if (!hojaDeVida) {
-        throw new Error("No se encontró la HojaDeVida");
-      }
-
-      // Crear nueva experiencia
-      const experienciaData = {
-        empresa,
-        cargo,
-        fechaInicio,
-        descripcion,
-      };
-
-      // Agregar a la lista de experiencias
-      const experienciasActualizadas = [...(hojaDeVida.experiencias || []), experienciaData];
-      
-      // Actualizar la HojaDeVida completa
-      const hojaActualizada = {
-        ...hojaDeVida,
-        experiencias: experienciasActualizadas,
-      };
-
-      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
-      setHojaDeVida(hojaActualizada);
-      setExperiencias(experienciasActualizadas);
-      setNuevaExp({ empresa: "", cargo: "", fechaInicio: "", descripcion: "" });
-      
-      // Ocultar formulario
-      const form = document.getElementById("add-exp-form");
-      if (form) form.style.display = "none";
-    } catch (err) {
-      console.error("Error al agregar experiencia:", err);
-      alert("Error al agregar experiencia: " + err.message);
-    }
-  };
-
-  const borrarExperiencia = async (index) => {
-    try {
-      if (!hojaDeVida) {
-        throw new Error("No se encontró la HojaDeVida");
-      }
-
-      // Eliminar por índice
-      const experienciasActualizadas = hojaDeVida.experiencias.filter((_, i) => i !== index);
-      
-      // Actualizar la HojaDeVida completa
-      const hojaActualizada = {
-        ...hojaDeVida,
-        experiencias: experienciasActualizadas,
-      };
-
-      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
-      setHojaDeVida(hojaActualizada);
-      setExperiencias(experienciasActualizadas);
-    } catch (err) {
-      console.error("Error al eliminar experiencia:", err);
-      alert("Error al eliminar experiencia: " + err.message);
-    }
-  };
-
-  /* ============================
-        EDICIÓN INLINE EXPERIENCIAS
-  ============================ */
-
-  const iniciarEditExp = (index) => {
-    setEditandoExpIndex(index);
-    setExpEditTemp({ ...experiencias[index] });
-  };
-
-  const cancelarEditExp = () => {
-    setEditandoExpIndex(null);
-    setExpEditTemp(null);
-  };
-
-  const guardarEditExp = async () => {
-    if (!expEditTemp || editandoExpIndex === null) return;
-    
-    try {
-      setGuardandoExp(true);
-      if (!hojaDeVida) {
-        throw new Error("No se encontró la HojaDeVida");
-      }
-
-      const experienciasActualizadas = [...hojaDeVida.experiencias];
-      experienciasActualizadas[editandoExpIndex] = expEditTemp;
-
-      const hojaActualizada = {
-        ...hojaDeVida,
-        experiencias: experienciasActualizadas,
-      };
-
-      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
-      setHojaDeVida(hojaActualizada);
-      setExperiencias(experienciasActualizadas);
-      setEditandoExpIndex(null);
-      setExpEditTemp(null);
-    } catch (err) {
-      console.error("Error al guardar experiencia:", err);
-      alert("Error al guardar: " + err.message);
-    } finally {
-      setGuardandoExp(false);
-    }
-  };
-
-  /* ============================
-        EDUCACIÓN (ESTUDIOS)
-  ============================ */
-
-  const agregarEstudio = async () => {
-    const { institucion, titulo, fechaInicio, nivelEducativo, enCurso } = nuevoEstudio;
-
-    if (!institucion || !titulo || !fechaInicio || !nivelEducativo) {
-      alert("Por favor rellena todos los campos requeridos");
-      return;
-    }
-    if (!enCurso && !nuevoEstudio.fechaFin) {
-      alert("Si el estudio está finalizado, debes ingresar la fecha de fin.");
-      return;
-    }
-
-    try {
-      if (!hojaDeVida) {
-        throw new Error("No se encontró la HojaDeVida");
-      }
-
-      const estudioData = {
-        institucion,
-        titulo,
-        fechaInicio,
-        nivelEducativo,
-        enCurso,
-      };
-      // Solo enviar fechaFin si enCurso es false y hay valor
-      if (!enCurso && nuevoEstudio.fechaFin) {
-        estudioData.fechaFin = nuevoEstudio.fechaFin;
-      }
-
-      // Agregar a la lista de estudios
-      const estudiosActualizados = [...(hojaDeVida.estudios || []), estudioData];
-      
-      // Actualizar la HojaDeVida completa
-      const hojaActualizada = {
-        ...hojaDeVida,
-        estudios: estudiosActualizados,
-      };
-
-      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
-      setHojaDeVida(hojaActualizada);
-      setEstudios(estudiosActualizados);
-      setNuevoEstudio({ institucion: "", titulo: "", fechaInicio: "", fechaFin: "", nivelEducativo: "UNIVERSITARIO", enCurso: true });
-      const form = document.getElementById("add-edu-form");
-      if (form) form.style.display = "none";
-    } catch (err) {
-      console.error("Error al agregar estudio:", err);
-      alert("Error al agregar estudio: " + err.message);
-    }
-  };
-
-  const borrarEstudio = async (index) => {
-    try {
-      if (!hojaDeVida) {
-        throw new Error("No se encontró la HojaDeVida");
-      }
-
-      // Eliminar por índice
-      const estudiosActualizados = hojaDeVida.estudios.filter((_, i) => i !== index);
-      
-      // Actualizar la HojaDeVida completa
-      const hojaActualizada = {
-        ...hojaDeVida,
-        estudios: estudiosActualizados,
-      };
-
-      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
-      setHojaDeVida(hojaActualizada);
-      setEstudios(estudiosActualizados);
-    } catch (err) {
-      console.error("Error al eliminar estudio:", err);
-      alert("Error al eliminar estudio: " + err.message);
-    }
-  };
-
-  /* ============================
-        EDICIÓN INLINE ESTUDIOS
-  ============================ */
-
-  const iniciarEditEdu = (index) => {
-    setEditandoEduIndex(index);
-    setEduEditTemp({ ...estudios[index] });
-  };
-
-  const cancelarEditEdu = () => {
-    setEditandoEduIndex(null);
-    setEduEditTemp(null);
-  };
-
-  const guardarEditEdu = async () => {
-    if (!eduEditTemp || editandoEduIndex === null) return;
-    
-    try {
-      setGuardandoEdu(true);
-      if (!hojaDeVida) {
-        throw new Error("No se encontró la HojaDeVida");
-      }
-
-      const estudiosActualizados = [...hojaDeVida.estudios];
-      estudiosActualizados[editandoEduIndex] = eduEditTemp;
-
-      const hojaActualizada = {
-        ...hojaDeVida,
-        estudios: estudiosActualizados,
-      };
-
-      await actualizarHojaDeVida(hojaDeVida.id, hojaActualizada);
-      setHojaDeVida(hojaActualizada);
-      setEstudios(estudiosActualizados);
-      setEditandoEduIndex(null);
-      setEduEditTemp(null);
-    } catch (err) {
-      console.error("Error al guardar estudio:", err);
-      alert("Error al guardar: " + err.message);
-    } finally {
-      setGuardandoEdu(false);
-    }
-  };
-
-  // ============================
-  // DESCARGAR PDF
-  // ============================
-  const descargarPDF = () => {
-    try {
-      const doc = new jsPDF();
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
-      let yPosition = 15;
-      const margin = 15;
-      const maxWidth = pageWidth - 2 * margin;
-      const lineHeight = 5;
-
-      // Colores profesionales
-      const colorPrincipal = [15, 23, 42]; // Navy
-      const colorSecundario = [59, 130, 246]; // Blue
-      const colorTexto = [30, 41, 59]; // Slate
-      const colorSubtexto = [100, 116, 139]; // Gris
-
-      // Título principal - Nombre
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
-      doc.setTextColor(...colorPrincipal);
-      doc.text(`${perfil?.nombre || "Nombre"} ${perfil?.apellido || "Apellido"}`, margin, yPosition);
-      yPosition += 10;
-
-      // Profesión / Descripción
-      if (perfil?.descripcion) {
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(12);
-        doc.setTextColor(...colorSecundario);
-        doc.text(perfil.descripcion, margin, yPosition);
-        yPosition += 8;
-      }
-
-      // Ubicación
-      if (perfil?.municipio?.nombre) {
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(...colorSubtexto);
-        doc.text(`📍 ${perfil.municipio.nombre}`, margin, yPosition);
-        yPosition += 6;
-      }
-
-      // Línea separadora
-      doc.setDrawColor(...colorSecundario);
-      doc.setLineWidth(0.5);
-      doc.line(margin, yPosition, pageWidth - margin, yPosition);
-      yPosition += 8;
-
-      // INFORMACIÓN DE CONTACTO
-      if (hojaDeVida?.contactoEmail || hojaDeVida?.telefono || hojaDeVida?.redSocial1) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(...colorPrincipal);
-        doc.text("INFORMACIÓN DE CONTACTO", margin, yPosition);
-        yPosition += 6;
-
-        if (hojaDeVida?.contactoEmail) {
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(...colorTexto);
-          doc.text(`Email: ${hojaDeVida.contactoEmail}`, margin + 3, yPosition);
-          yPosition += 5;
-        }
-
-        if (hojaDeVida?.telefono) {
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(...colorTexto);
-          doc.text(`Teléfono: ${hojaDeVida.telefono}`, margin + 3, yPosition);
-          yPosition += 5;
-        }
-
-        if (hojaDeVida?.redSocial1) {
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-          doc.setTextColor(...colorTexto);
-          doc.text(`Red Social: ${hojaDeVida.redSocial1}`, margin + 3, yPosition);
-          yPosition += 6;
-        }
-
-        // Línea separadora
-        doc.setDrawColor(...colorSecundario);
-        doc.line(margin, yPosition, pageWidth - margin, yPosition);
-        yPosition += 8;
-      }
-
-      // RESUMEN PROFESIONAL
-      if (hojaDeVida?.resumenProfesional) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(...colorPrincipal);
-        doc.text("RESUMEN PROFESIONAL", margin, yPosition);
-        yPosition += 6;
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(...colorTexto);
-        const resumenLines = doc.splitTextToSize(hojaDeVida.resumenProfesional, maxWidth - 6);
-        doc.text(resumenLines, margin + 3, yPosition);
-        yPosition += resumenLines.length * lineHeight + 3;
-
-        // Línea separadora
-        doc.setDrawColor(...colorSecundario);
-        doc.line(margin, yPosition, pageWidth - margin, yPosition);
-        yPosition += 8;
-      }
-
-      // EXPERIENCIA
-      if (experiencias && experiencias.length > 0) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(...colorPrincipal);
-        doc.text("EXPERIENCIA LABORAL", margin, yPosition);
-        yPosition += 6;
-
-        experiencias.forEach((exp, index) => {
-          // Verificar si necesitamos nueva página
-          if (yPosition > pageHeight - 20) {
-            doc.addPage();
-            yPosition = 15;
-          }
-
-          // Cargo y empresa
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
-          doc.setTextColor(...colorSecundario);
-          doc.text(`${exp.cargo || "Cargo"}`, margin + 3, yPosition);
-          yPosition += 5;
-
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(9);
-          doc.setTextColor(...colorTexto);
-          doc.text(`${exp.empresa || "Empresa"} | ${exp.fechaInicio || "Fecha"} ${exp.fechaFin ? `- ${exp.fechaFin}` : "- Presente"}`, margin + 3, yPosition);
-          yPosition += 4;
-
-          if (exp.descripcion) {
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(9);
-            doc.setTextColor(...colorSubtexto);
-            const descLines = doc.splitTextToSize(exp.descripcion, maxWidth - 6);
-            doc.text(descLines, margin + 3, yPosition);
-            yPosition += descLines.length * 4 + 2;
-          }
-
-          yPosition += 2;
-        });
-
-        // Línea separadora
-        if (yPosition <= pageHeight - 20) {
-          doc.setDrawColor(...colorSecundario);
-          doc.line(margin, yPosition, pageWidth - margin, yPosition);
-          yPosition += 8;
-        }
-      }
-
-      // EDUCACIÓN
-      if (estudios && estudios.length > 0) {
-        // Nueva página si es necesario
-        if (yPosition > pageHeight - 25) {
-          doc.addPage();
-          yPosition = 15;
-        }
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(...colorPrincipal);
-        doc.text("EDUCACIÓN", margin, yPosition);
-        yPosition += 6;
-
-        estudios.forEach((edu, index) => {
-          // Verificar si necesitamos nueva página
-          if (yPosition > pageHeight - 20) {
-            doc.addPage();
-            yPosition = 15;
-          }
-
-          // Título y nivel
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
-          doc.setTextColor(...colorSecundario);
-          doc.text(`${edu.titulo || "Título"}`, margin + 3, yPosition);
-          yPosition += 5;
-
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(9);
-          doc.setTextColor(...colorTexto);
-          doc.text(`${edu.institucion || "Institución"} | ${edu.nivelEducativo || "Nivel"}`, margin + 3, yPosition);
-          yPosition += 4;
-
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(9);
-          doc.setTextColor(...colorSubtexto);
-          const periodo = edu.enCurso ? `${edu.fechaInicio || "Inicio"} - En curso` : `${edu.fechaInicio || "Inicio"} - ${edu.fechaFin || "Fin"}`;
-          doc.text(periodo, margin + 3, yPosition);
-          yPosition += 5;
-
-          if (edu.descripcion) {
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(9);
-            doc.setTextColor(...colorSubtexto);
-            const descLines = doc.splitTextToSize(edu.descripcion, maxWidth - 6);
-            doc.text(descLines, margin + 3, yPosition);
-            yPosition += descLines.length * 4 + 2;
-          }
-
-          yPosition += 2;
-        });
-
-        // Línea separadora
-        if (yPosition <= pageHeight - 20) {
-          doc.setDrawColor(...colorSecundario);
-          doc.line(margin, yPosition, pageWidth - margin, yPosition);
-          yPosition += 8;
-        }
-      }
-
-      // IDIOMAS
-      if (hojaDeVida?.idiomas) {
-        // Nueva página si es necesario
-        if (yPosition > pageHeight - 15) {
-          doc.addPage();
-          yPosition = 15;
-        }
-
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(...colorPrincipal);
-        doc.text("IDIOMAS", margin, yPosition);
-        yPosition += 6;
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(10);
-        doc.setTextColor(...colorTexto);
-        const idiomasLines = doc.splitTextToSize(hojaDeVida.idiomas, maxWidth - 6);
-        doc.text(idiomasLines, margin + 3, yPosition);
-        yPosition += idiomasLines.length * lineHeight + 3;
-      }
-
-      // PIE DE PÁGINA - Fecha de generación
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.setTextColor(150, 150, 150);
-      doc.text(`Generado: ${new Date().toLocaleDateString('es-CO')} | Hoja de Vida - Workable`, margin, pageHeight - 5);
-
-      // Descargar PDF
-      const nombreArchivo = `HojaDeVida_${perfil?.nombre}_${perfil?.apellido}_${new Date().toISOString().split('T')[0]}.pdf`;
-      doc.save(nombreArchivo);
-    } catch (err) {
-      console.error("Error al generar PDF:", err);
-      alert("Error al descargar: " + err.message);
-    }
-  };
 
   return (
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
-      <Menu />
-      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)', background: 'linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%)'}}>
+
+      <div className="hoja-shell-AP">
         <SidebarAspirante />
-        <div className="perfil-container-PF" style={{flex: 1, padding: '2rem'}}>
-        {/* HEADER */}
-        <div className="perfil-header-PF">
-          <img
-            src={perfil?.urlFotoPerfil || "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"}
-            alt="Foto de perfil"
-            className="perfil-foto-PF"
-          />
 
-          <div className="perfil-header-info-PF">
-            <h1 className="perfil-nombre-PF">{perfil?.nombre} {perfil?.apellido}</h1>
-            <h2 className="perfil-titulo-PF">{perfil?.descripcion || "Sin descripción"}</h2>
-            <p className="perfil-ubicacion-PF">
-              {perfil?.municipio?.nombre || "Sin ubicación"}
-            </p>
-          </div>
+        <main className="hoja-main-AP">
+          <section className="hoja-hero-AP">
+            <div className="hoja-hero-left-AP">
+              <div className="hoja-avatar-AP">
+                {perfil?.urlFotoPerfil ? (
+                  <img src={perfil.urlFotoPerfil} alt={`${perfil.nombre} ${perfil.apellido}`} />
+                ) : (
+                  <UserCircle2 size={48} />
+                )}
+              </div>
 
-          <button
-            className="editar-perfil-btn-PF"
-            onClick={() => navigate("/Aspirante/MiPerfil")}
-          >
-            Editar perfil
-          </button>
+              <div>
+                <p className="hoja-kicker-AP">Hoja de vida</p>
+                <h1>
+                  {perfil?.nombre} {perfil?.apellido}
+                </h1>
+                <p>{perfil?.municipio?.nombre || "Sin ubicación registrada"}</p>
+              </div>
+            </div>
 
-          <button
-            className="descargar-pdf-btn-PF"
-            onClick={descargarPDF}
-            title="Descargar Hoja de Vida en PDF"
-          >
-            📥 Descargar PDF
-          </button>
-        </div>
+            <Link to="/Aspirante/MiPerfil" className="secondary-button-AP">
+              Volver al perfil
+            </Link>
+          </section>
 
-        {/* DESCRIPCION */}
-        <div className="perfil-bloque-PF">
-          <div className="perfil-bloque-top-PF">
-            <h3 className="perfil-bloque-titulo-PF">Sobre mí</h3>
-          </div>
-          
-          {editandoDescripcion ? (
-            <div className="perfil-desc-edit-PF">
-              <textarea
-                value={descripcionTemporal}
-                onChange={(e) => setDescripcionTemporal(e.target.value)}
-                placeholder="Escribe tu descripción aquí..."
-                className="perfil-desc-textarea-PF"
-              />
-              <div className="perfil-desc-buttons-PF">
-                <button 
-                  className="perfil-desc-save-btn-PF"
-                  onClick={guardarDescripcion}
-                >
+          {error && <div className="alert-AP error">{error}</div>}
+          {notice && <div className="alert-AP success">{notice}</div>}
+          {!hoja && <div className="alert-AP warning">No se encontró una hoja de vida registrada.</div>}
+
+          <section className="hoja-grid-AP">
+            <article className="hoja-card-AP">
+              <div className="section-header-AP">
+                <div>
+                  <p className="hoja-kicker-AP">Información general</p>
+                  <h2>Contacto y resumen</h2>
+                </div>
+                <button type="button" className="primary-button-AP" onClick={guardarGeneral} disabled={saving || !hoja}>
+                  <Save size={16} />
                   Guardar
                 </button>
-                <button 
-                  className="perfil-desc-cancel-btn-PF"
-                  onClick={() => {
-                    setEditandoDescripcion(false);
-                    setDescripcionTemporal(perfil?.descripcion || "");
-                  }}
-                >
-                  Cancelar
+              </div>
+
+              <div className="hoja-form-grid-AP">
+                <label className="field-AP">
+                  <span>Teléfono</span>
+                  <input name="telefono" value={hoja?.telefono || ""} onChange={handleGeneralChange} />
+                </label>
+
+                <label className="field-AP">
+                  <span>Correo electrónico</span>
+                  <input
+                    name="correoElectronico"
+                    value={hoja?.correoElectronico || ""}
+                    onChange={handleGeneralChange}
+                  />
+                </label>
+
+                <label className="field-AP field-wide-AP">
+                  <span>Red social</span>
+                  <input name="redSocial" value={hoja?.redSocial || ""} onChange={handleGeneralChange} />
+                </label>
+
+                <label className="field-AP field-wide-AP">
+                  <span>Resumen profesional</span>
+                  <textarea
+                    name="resumenProfesional"
+                    rows={5}
+                    value={hoja?.resumenProfesional || ""}
+                    onChange={handleGeneralChange}
+                  />
+                </label>
+              </div>
+            </article>
+
+            <article className="hoja-card-AP">
+              <div className="section-header-AP">
+                <div>
+                  <p className="hoja-kicker-AP">Experiencia</p>
+                  <h2>Agregar experiencia</h2>
+                </div>
+              </div>
+
+              <form className="hoja-form-grid-AP" onSubmit={agregarExperiencia}>
+                <label className="field-AP">
+                  <span>Cargo</span>
+                  <input
+                    value={nuevaExperiencia.cargo}
+                    onChange={(event) =>
+                      setNuevaExperiencia((current) => ({ ...current, cargo: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP">
+                  <span>Empresa</span>
+                  <input
+                    value={nuevaExperiencia.empresa}
+                    onChange={(event) =>
+                      setNuevaExperiencia((current) => ({ ...current, empresa: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP">
+                  <span>Inicio</span>
+                  <input
+                    type="date"
+                    value={nuevaExperiencia.fechaInicio}
+                    onChange={(event) =>
+                      setNuevaExperiencia((current) => ({ ...current, fechaInicio: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP">
+                  <span>Fin</span>
+                  <input
+                    type="date"
+                    value={nuevaExperiencia.fechaFin}
+                    onChange={(event) =>
+                      setNuevaExperiencia((current) => ({ ...current, fechaFin: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP field-wide-AP">
+                  <span>Descripción</span>
+                  <textarea
+                    rows={3}
+                    value={nuevaExperiencia.descripcion}
+                    onChange={(event) =>
+                      setNuevaExperiencia((current) => ({ ...current, descripcion: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP field-wide-AP">
+                  <span>Certificado URL</span>
+                  <input
+                    value={nuevaExperiencia.certificadoUrl}
+                    onChange={(event) =>
+                      setNuevaExperiencia((current) => ({ ...current, certificadoUrl: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <button type="submit" className="primary-button-AP full-width-AP" disabled={saving || !hoja}>
+                  <Plus size={16} />
+                  Agregar experiencia
                 </button>
-              </div>
-            </div>
-          ) : (
-            <div className="perfil-desc-view-PF">
-              <p>{perfil?.descripcion || "Sin información"}</p>
-              <button 
-                className="perfil-desc-edit-btn-PF"
-                onClick={() => setEditandoDescripcion(true)}
-              >
-                Editar descripción
-              </button>
-            </div>
-          )}
-        </div>
+              </form>
 
-        {/* EXPERIENCIA */}
-        <div className="perfil-bloque-PF">
-          <div className="perfil-bloque-top-PF">
-            <h3 className="perfil-bloque-titulo-PF">Experiencia</h3>
-
-            <button
-              className="perfil-add-btn-PF"
-              onClick={() => {
-                const section = document.getElementById("add-exp-form");
-                section.style.display =
-                  section.style.display === "none" ? "grid" : "none";
-              }}
-            >
-              + Añadir experiencia
-            </button>
-          </div>
-
-          {/* FORMULARIO NUEVA EXPERIENCIA */}
-          <div
-            id="add-exp-form"
-            className="perfil-form-exp-PF"
-            style={{ display: "none" }}
-          >
-            <input
-              type="text"
-              placeholder="Empresa"
-              value={nuevaExp.empresa}
-              onChange={(e) =>
-                setNuevaExp({ ...nuevaExp, empresa: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Cargo"
-              value={nuevaExp.cargo}
-              onChange={(e) =>
-                setNuevaExp({ ...nuevaExp, cargo: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Fecha inicio (ej: 2024-01-15)"
-              value={nuevaExp.fechaInicio}
-              onChange={(e) =>
-                setNuevaExp({ ...nuevaExp, fechaInicio: e.target.value })
-              }
-            />
-            <textarea
-              placeholder="Descripción"
-              value={nuevaExp.descripcion}
-              onChange={(e) =>
-                setNuevaExp({ ...nuevaExp, descripcion: e.target.value })
-              }
-            />
-            <button onClick={agregarExperiencia}>Añadir experiencia</button>
-          </div>
-
-          {/* LISTA DE EXPERIENCIA */}
-          {experiencias.length === 0 ? (
-            <p>No tienes experiencias registradas</p>
-          ) : (
-            experiencias.map((exp, index) => (
-              editandoExpIndex === index && expEditTemp ? (
-                // MODO EDICIÓN INLINE
-                <div key={index} className="perfil-experiencia-card-PF perfil-card-editing-PF">
-                  <div className="perfil-edit-actions-top-PF">
-                    <button
-                      className="perfil-exp-delete-PF"
-                      onClick={() => borrarExperiencia(index)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Cargo</label>
-                    <input
-                      type="text"
-                      value={expEditTemp.cargo}
-                      onChange={(e) => setExpEditTemp({ ...expEditTemp, cargo: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Empresa</label>
-                    <input
-                      type="text"
-                      value={expEditTemp.empresa}
-                      onChange={(e) => setExpEditTemp({ ...expEditTemp, empresa: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Fecha inicio</label>
-                    <input
-                      type="text"
-                      value={expEditTemp.fechaInicio}
-                      onChange={(e) => setExpEditTemp({ ...expEditTemp, fechaInicio: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Fecha fin</label>
-                    <input
-                      type="text"
-                      value={expEditTemp.fechaFin || ""}
-                      onChange={(e) => setExpEditTemp({ ...expEditTemp, fechaFin: e.target.value })}
-                      className="perfil-inline-input-PF"
-                      placeholder="Dejar vacío si aún trabajas aquí"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Descripción</label>
-                    <textarea
-                      value={expEditTemp.descripcion}
-                      onChange={(e) => setExpEditTemp({ ...expEditTemp, descripcion: e.target.value })}
-                      className="perfil-inline-textarea-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-buttons-PF">
-                    <button 
-                      className="perfil-inline-save-PF"
-                      onClick={guardarEditExp}
-                      disabled={guardandoExp}
-                    >
-                      {guardandoExp ? "Guardando..." : "✓ Guardar"}
-                    </button>
-                    <button 
-                      className="perfil-inline-cancel-PF"
-                      onClick={cancelarEditExp}
-                      disabled={guardandoExp}
-                    >
-                      ✕ Cancelar
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // MODO VISTA
-                <div key={index} className="perfil-experiencia-card-PF">
-                  <div className="perfil-card-actions-PF">
-                    <button
-                      className="perfil-edit-btn-inline-PF"
-                      onClick={() => iniciarEditExp(index)}
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      className="perfil-exp-delete-PF"
-                      onClick={() => borrarExperiencia(index)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-
-                  <h4>{exp.cargo}</h4>
-                  <p className="perfil-exp-empresa-PF">{exp.empresa}</p>
-                  <p className="perfil-exp-fecha-PF">
-                    {exp.fechaInicio} {exp.fechaFin ? ` - ${exp.fechaFin}` : " - Actualidad"}
-                  </p>
-                  {exp.municipio && <p className="perfil-exp-ubicacion-PF">📍 {exp.municipio}</p>}
-                  {exp.descripcion && <p className="perfil-exp-desc-PF">{exp.descripcion}</p>}
-                </div>
-              )
-            ))
-          )}
-        </div>
-
-        {/* EDUCACIÓN */}
-        <div className="perfil-bloque-PF">
-          <div className="perfil-bloque-top-PF">
-            <h3 className="perfil-bloque-titulo-PF">Educación</h3>
-
-            <button
-              className="perfil-add-btn-PF"
-              onClick={() => {
-                const section = document.getElementById("add-edu-form");
-                section.style.display =
-                  section.style.display === "none" ? "grid" : "none";
-              }}
-            >
-              + Añadir educación
-            </button>
-          </div>
-
-          {/* FORMULARIO NUEVA EDUCACIÓN */}
-          <div
-            id="add-edu-form"
-            className="perfil-form-exp-PF"
-            style={{ display: "none" }}
-          >
-            <input
-              type="text"
-              placeholder="Institución"
-              value={nuevoEstudio.institucion}
-              onChange={(e) =>
-                setNuevoEstudio({ ...nuevoEstudio, institucion: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Título"
-              value={nuevoEstudio.titulo}
-              onChange={(e) =>
-                setNuevoEstudio({ ...nuevoEstudio, titulo: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="Fecha inicio (ej: 2023-01-15)"
-              value={nuevoEstudio.fechaInicio}
-              onChange={(e) =>
-                setNuevoEstudio({ ...nuevoEstudio, fechaInicio: e.target.value })
-              }
-            />
-            <select
-              value={nuevoEstudio.nivelEducativo}
-              onChange={(e) =>
-                setNuevoEstudio({ ...nuevoEstudio, nivelEducativo: e.target.value })
-              }
-            >
-              <option value="PRIMARIA">Primaria</option>
-              <option value="BACHILLERATO">Bachillerato</option>
-              <option value="TECNICO">Técnico</option>
-              <option value="TECNOLOGO">Tecnólogo</option>
-              <option value="UNIVERSITARIO">Universitario</option>
-              <option value="MAESTRIA">Maestría</option>
-              <option value="DOCTORADO">Doctorado</option>
-              <option value="ESPECIALIZACION">Especialización</option>
-            </select>
-            {/* Campo fechaFin solo si no está en curso */}
-            {!nuevoEstudio.enCurso && (
-              <input
-                type="text"
-                placeholder="Fecha fin (ej: 2024-12-15)"
-                value={nuevoEstudio.fechaFin}
-                onChange={(e) =>
-                  setNuevoEstudio({ ...nuevoEstudio, fechaFin: e.target.value })
-                }
-              />
-            )}
-            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <input
-                type="checkbox"
-                checked={nuevoEstudio.enCurso}
-                onChange={(e) =>
-                  setNuevoEstudio({ ...nuevoEstudio, enCurso: e.target.checked })
-                }
-              />
-              En curso
-            </label>
-            <button onClick={() => agregarEstudio()}>Añadir educación</button>
-          </div>
-
-          {/* LISTA DE EDUCACIÓN */}
-          {estudios.length === 0 ? (
-            <p>No tienes estudios registrados</p>
-          ) : (
-            estudios.map((edu, index) => (
-              editandoEduIndex === index && eduEditTemp ? (
-                // MODO EDICIÓN INLINE
-                <div key={index} className="perfil-educ-card-PF perfil-card-editing-PF">
-                  <div className="perfil-edit-actions-top-PF">
-                    <button
-                      className="perfil-exp-delete-PF"
-                      onClick={() => borrarEstudio(index)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Título</label>
-                    <input
-                      type="text"
-                      value={eduEditTemp.titulo}
-                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, titulo: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Institución</label>
-                    <input
-                      type="text"
-                      value={eduEditTemp.institucion}
-                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, institucion: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Nivel educativo</label>
-                    <select
-                      value={eduEditTemp.nivelEducativo}
-                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, nivelEducativo: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    >
-                      <option value="PRIMARIA">Primaria</option>
-                      <option value="BACHILLERATO">Bachillerato</option>
-                      <option value="TECNICO">Técnico</option>
-                      <option value="TECNOLOGO">Tecnólogo</option>
-                      <option value="UNIVERSITARIO">Universitario</option>
-                      <option value="MAESTRIA">Maestría</option>
-                      <option value="DOCTORADO">Doctorado</option>
-                      <option value="ESPECIALIZACION">Especialización</option>
-                    </select>
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>Fecha inicio</label>
-                    <input
-                      type="text"
-                      value={eduEditTemp.fechaInicio}
-                      onChange={(e) => setEduEditTemp({ ...eduEditTemp, fechaInicio: e.target.value })}
-                      className="perfil-inline-input-PF"
-                    />
-                  </div>
-
-                  <div className="perfil-inline-edit-field-PF">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={eduEditTemp.enCurso}
-                        onChange={(e) => setEduEditTemp({ ...eduEditTemp, enCurso: e.target.checked })}
-                      />
-                      En curso
-                    </label>
-                  </div>
-
-                  {!eduEditTemp.enCurso && (
-                    <div className="perfil-inline-edit-field-PF">
-                      <label>Fecha fin</label>
-                      <input
-                        type="text"
-                        value={eduEditTemp.fechaFin || ""}
-                        onChange={(e) => setEduEditTemp({ ...eduEditTemp, fechaFin: e.target.value })}
-                        className="perfil-inline-input-PF"
-                      />
-                    </div>
-                  )}
-
-                  <div className="perfil-inline-buttons-PF">
-                    <button 
-                      className="perfil-inline-save-PF"
-                      onClick={guardarEditEdu}
-                      disabled={guardandoEdu}
-                    >
-                      {guardandoEdu ? "Guardando..." : "✓ Guardar"}
-                    </button>
-                    <button 
-                      className="perfil-inline-cancel-PF"
-                      onClick={cancelarEditEdu}
-                      disabled={guardandoEdu}
-                    >
-                      ✕ Cancelar
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // MODO VISTA
-                <div key={index} className="perfil-educ-card-PF">
-                  <div className="perfil-card-actions-PF">
-                    <button
-                      className="perfil-edit-btn-inline-PF"
-                      onClick={() => iniciarEditEdu(index)}
-                      title="Editar"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      className="perfil-exp-delete-PF"
-                      onClick={() => borrarEstudio(index)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                  <h4>{edu.titulo}</h4>
-                  <p className="perfil-edu-inst-PF">{edu.institucion}</p>
-                  <p className="perfil-edu-nivel-PF">Nivel: {edu.nivelEducativo || "No especificado"}</p>
-                  <p className="perfil-edu-fecha-PF">
-                    {edu.fechaInicio} 
-                    {edu.enCurso ? " - Actualidad" : edu.fechaFin ? ` - ${edu.fechaFin}` : ""}
-                  </p>
-                  {edu.descripcion && <p className="perfil-edu-desc-PF">{edu.descripcion}</p>}
-                </div>
-              )
-            ))
-          )}
-        </div>
-
-        {/* CONTACTO */}
-        <div className="perfil-bloque-PF">
-          <h3 className="perfil-bloque-titulo-PF">Contacto</h3>
-          <p>
-            <strong>Email:</strong> {perfil?.correo || "Sin email"}
-          </p>
-          <p>
-            <strong>Teléfono:</strong> {perfil?.telefono || "Sin teléfono"}
-          </p>
-        </div>
-
-        {/* INFORMACIÓN DE LA HOJA DE VIDA */}
-        {hojaDeVida && (
-          <div className="perfil-bloque-PF">
-            <h3 className="perfil-bloque-titulo-PF">Información Profesional</h3>
-            
-            {/* Resumen Profesional */}
-            <div className="perfil-info-section-PF">
-              <h4 className="perfil-info-title-PF">📋 Resumen Profesional</h4>
-              <p className="perfil-info-value-PF">
-                {hojaDeVida.resumenProfesional || "Sin resumen profesional"}
-              </p>
-            </div>
-
-            {/* Idiomas */}
-            {hojaDeVida.idiomas && (
-              <div className="perfil-info-section-PF">
-                <h4 className="perfil-info-title-PF">🗣️ Idiomas</h4>
-                <p className="perfil-info-value-PF">{hojaDeVida.idiomas}</p>
-              </div>
-            )}
-
-            {/* Red Social */}
-            {hojaDeVida.redSocial1 && (
-              <div className="perfil-info-section-PF">
-                <h4 className="perfil-info-title-PF">🔗 Red Social</h4>
-                <a href={hojaDeVida.redSocial1} target="_blank" rel="noopener noreferrer" className="perfil-link-PF">
-                  {hojaDeVida.redSocial1}
-                </a>
-              </div>
-            )}
-
-            {/* Email de Contacto */}
-            {hojaDeVida.contactoEmail && (
-              <div className="perfil-info-section-PF">
-                <h4 className="perfil-info-title-PF">📧 Email de Contacto</h4>
-                <p className="perfil-info-value-PF">{hojaDeVida.contactoEmail}</p>
-              </div>
-            )}
-
-            {/* Teléfono de HojaDeVida */}
-            {hojaDeVida.telefono && (
-              <div className="perfil-info-section-PF">
-                <h4 className="perfil-info-title-PF">📞 Teléfono</h4>
-                <p className="perfil-info-value-PF">{hojaDeVida.telefono}</p>
-              </div>
-            )}
-
-            {/* Fechas */}
-            <div className="perfil-info-section-PF">
-              <h4 className="perfil-info-title-PF">📅 Fechas</h4>
-              <div className="perfil-info-dates-PF">
-                {hojaDeVida.fechaCreacion && (
-                  <p className="perfil-info-date-PF">
-                    <strong>Creada:</strong> {new Date(hojaDeVida.fechaCreacion).toLocaleDateString('es-CO')}
-                  </p>
-                )}
-                {hojaDeVida.fechaActualizacion && (
-                  <p className="perfil-info-date-PF">
-                    <strong>Actualizada:</strong> {new Date(hojaDeVida.fechaActualizacion).toLocaleDateString('es-CO')}
-                  </p>
+              <div className="list-stack-AP">
+                {(hoja?.experiencias || []).length === 0 ? (
+                  <div className="empty-state-AP">No tienes experiencias registradas.</div>
+                ) : (
+                  (hoja?.experiencias || []).map((experiencia, index) => (
+                    <article key={`${experiencia.cargo}-${index}`} className="item-card-AP">
+                      <div className="item-top-AP">
+                        <div>
+                          <h3>{experiencia.cargo || "Sin cargo"}</h3>
+                          <p>{experiencia.empresa || "Empresa"}</p>
+                        </div>
+                        <button type="button" className="icon-button-AP danger" onClick={() => eliminarExperiencia(index)}>
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                      <span>
+                        {experiencia.fechaInicio || "Inicio"} - {experiencia.fechaFin || "Actualidad"}
+                      </span>
+                      {experiencia.descripcion && <p>{experiencia.descripcion}</p>}
+                    </article>
+                  ))
                 )}
               </div>
-            </div>
-          </div>
-        )}
+            </article>
+
+            <article className="hoja-card-AP hoja-card-wide-AP">
+              <div className="section-header-AP">
+                <div>
+                  <p className="hoja-kicker-AP">Estudios</p>
+                  <h2>Agregar formación</h2>
+                </div>
+              </div>
+
+              <form className="hoja-form-grid-AP" onSubmit={agregarEstudio}>
+                <label className="field-AP">
+                  <span>Título</span>
+                  <input
+                    value={nuevoEstudio.titulo}
+                    onChange={(event) =>
+                      setNuevoEstudio((current) => ({ ...current, titulo: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP">
+                  <span>Institución</span>
+                  <input
+                    value={nuevoEstudio.institucion}
+                    onChange={(event) =>
+                      setNuevoEstudio((current) => ({ ...current, institucion: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP">
+                  <span>Nivel educativo</span>
+                  <select
+                    value={nuevoEstudio.nivelEducativo}
+                    onChange={(event) =>
+                      setNuevoEstudio((current) => ({ ...current, nivelEducativo: event.target.value }))
+                    }
+                  >
+                    <option value="TECNICO">Técnico</option>
+                    <option value="TECNOLOGICO">Tecnológico</option>
+                    <option value="UNIVERSITARIO">Universitario</option>
+                    <option value="POSGRADO">Posgrado</option>
+                    <option value="OTRO">Otro</option>
+                  </select>
+                </label>
+
+                <label className="field-AP">
+                  <span>Inicio</span>
+                  <input
+                    type="date"
+                    value={nuevoEstudio.fechaInicio}
+                    onChange={(event) =>
+                      setNuevoEstudio((current) => ({ ...current, fechaInicio: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP">
+                  <span>Fin</span>
+                  <input
+                    type="date"
+                    value={nuevoEstudio.fechaFin}
+                    onChange={(event) =>
+                      setNuevoEstudio((current) => ({ ...current, fechaFin: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <label className="field-AP field-wide-AP">
+                  <span>Certificado URL</span>
+                  <input
+                    value={nuevoEstudio.certificadoUrl}
+                    onChange={(event) =>
+                      setNuevoEstudio((current) => ({ ...current, certificadoUrl: event.target.value }))
+                    }
+                  />
+                </label>
+
+                <button type="submit" className="primary-button-AP full-width-AP" disabled={saving || !hoja}>
+                  <Plus size={16} />
+                  Agregar estudio
+                </button>
+              </form>
+
+              <div className="list-stack-AP">
+                {(hoja?.estudios || []).length === 0 ? (
+                  <div className="empty-state-AP">No tienes estudios registrados.</div>
+                ) : (
+                  (hoja?.estudios || []).map((estudio, index) => (
+                    <article key={`${estudio.titulo}-${index}`} className="item-card-AP">
+                      <div className="item-top-AP">
+                        <div>
+                          <h3>{estudio.titulo || "Sin título"}</h3>
+                          <p>{estudio.institucion || "Institución"}</p>
+                        </div>
+                        <button type="button" className="icon-button-AP danger" onClick={() => eliminarEstudio(index)}>
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                      <span>
+                        {estudio.nivelEducativo || "Nivel"} · {estudio.fechaInicio || "Inicio"} - {estudio.fechaFin || "Actualidad"}
+                      </span>
+                    </article>
+                  ))
+                )}
+              </div>
+            </article>
+          </section>
+        </main>
       </div>
-      </div>
+
+      <Footer />
     </>
   );
 };

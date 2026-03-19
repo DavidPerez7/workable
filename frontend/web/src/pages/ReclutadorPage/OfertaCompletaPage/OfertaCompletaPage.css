@@ -1,417 +1,48 @@
-/* ==========================================
-   OFERTA COMPLETA PAGE - ADMIN STYLE
-   ========================================== */
+@import url("../ReclutadorPage.css");
 
-.oferta-completa-main {
-  min-height: calc(100vh - 80px);
-  background: #f3f6fb;
-  padding: 24px 28px;
-}
-
-/* ===== LOADING STATE ===== */
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 500px;
-  gap: 16px;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #e5e7eb;
-  border-top-color: #2563eb;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-state p {
-  color: #64748b;
-  font-size: 1rem;
-}
-
-/* ===== ERROR STATE ===== */
-
-.error-state {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 10px;
-  padding: 40px 24px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(54, 80, 195, 0.06);
-}
-
-.error-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ef4444;
-  margin-bottom: 12px;
-}
-
-.error-text {
-  color: #64748b;
-  margin-bottom: 24px;
-  font-size: 1rem;
-}
-
-.btn-back-error {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: white;
-  border: none;
-  padding: 0.875rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-back-error:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-}
-
-/* ===== CONTAINER ===== */
-
-.oferta-container {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-/* ===== HEADER ===== */
-
-.oferta-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.oferta-header-left {
-  flex: 1;
-}
-
-.btn-back {
-  background: white;
-  color: #2563eb;
-  border: 1px solid #e5e7eb;
-  padding: 0.625rem 1.25rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  margin-bottom: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-back:hover {
-  background: #f8fafc;
-  border-color: #2563eb;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
-}
-
-.oferta-titulo {
-  font-size: 2rem;
+.oferta-estado-RP {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: var(--rec-blue-dark);
   font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 8px 0;
-  word-break: break-word;
+  font-size: 0.8rem;
 }
 
-.oferta-meta {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-  font-size: 0.95rem;
-  color: #64748b;
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* ===== STATE BADGE ===== */
-
-.estado-badge {
-  padding: 0.5rem 1.2rem;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-}
-
-.badge-abierta {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge-cerrada {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-/* ===== BUTTONS ===== */
-
-.btn-acciones {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.btn-acciones button {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-editar {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
-
-.btn-editar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-}
-
-.btn-estado {
-  background: #eef3f7;
-  color: #2563eb;
-  border: 1px solid #cbd5e1;
-}
-
-.btn-estado:hover {
-  background: rgba(37, 99, 235, 0.1);
-}
-
-.btn-eliminar {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-}
-
-.btn-eliminar:hover {
-  background: #fecaca;
-}
-
-/* ===== CARDS ===== */
-
-.oferta-card {
-  background: white;
-  border-radius: 10px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 20px rgba(54, 80, 195, 0.06);
-}
-
-.card-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-/* ===== DESCRIPTION ===== */
-
-.oferta-descripcion {
-  line-height: 1.8;
-  color: #475569;
-  font-size: 1rem;
-  margin-bottom: 16px;
-  padding: 16px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border-left: 4px solid #2563eb;
-}
-
-/* ===== DETAILS GRID ===== */
-
-.detalles-grid {
+.oferta-grid-RP {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
 }
 
-.detalle-item {
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.detalle-label {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 600;
-  margin-bottom: 6px;
+.oferta-label-RP {
+  margin: 0 0 0.35rem;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--rec-muted);
 }
 
-.detalle-valor {
-  font-size: 1.1rem;
-  color: #1e293b;
-  font-weight: 700;
+.oferta-text-RP {
+  margin: 0;
+  color: var(--rec-text);
+  line-height: 1.5;
 }
 
-/* ===== POSTULACIONES ===== */
-
-.postulaciones-section {
-  margin-top: 20px;
-}
-
-.postulaciones-header {
+.oferta-actions-RP {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.postulaciones-count {
-  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-  color: white;
-  padding: 0.5rem 1.2rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.postulaciones-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.postulacion-item {
-  padding: 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
-}
-
-.postulacion-item:hover {
-  background: white;
-  border-color: #2563eb;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-}
-
-.postulacion-name {
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 4px;
-}
-
-.postulacion-meta {
-  font-size: 0.85rem;
-  color: #64748b;
-  display: flex;
-  gap: 12px;
   flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
-.empty-postulaciones {
-  padding: 24px;
-  text-align: center;
-  background: #f8fafc;
-  border-radius: 8px;
-  color: #94a3b8;
-}
-
-/* ===========================
-   RESPONSIVE DESIGN
-   =========================== */
-
-@media (max-width: 768px) {
-  .oferta-completa-main {
-    padding: 16px 20px;
-  }
-
-  .oferta-titulo {
-    font-size: 1.5rem;
-  }
-
-  .oferta-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn-acciones {
-    width: 100%;
-  }
-
-  .btn-acciones button {
-    flex: 1;
-    min-width: 120px;
-  }
-
-  .oferta-card {
-    padding: 16px;
-  }
-
-  .detalles-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .oferta-titulo {
-    font-size: 1.3rem;
-  }
-
-  .oferta-meta {
-    font-size: 0.85rem;
-  }
-
-  .btn-acciones button {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.85rem;
-  }
-
-  .oferta-descripcion {
-    font-size: 0.95rem;
-  }
-
-  .detalle-valor {
-    font-size: 1rem;
-  }
-}
-
-/* ===========================
-   ACCESSIBILITY
-   =========================== */
-
-.btn-back:focus-visible,
-.btn-editar:focus-visible,
-.btn-estado:focus-visible,
-.btn-eliminar:focus-visible,
-.btn-back-error:focus-visible {
-  outline: 3px solid #2563eb;
-  outline-offset: 2px;
+.oferta-danger-RP {
+  border: none;
+  border-radius: 12px;
+  padding: 0.6rem 0.9rem;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 700;
+  cursor: pointer;
 }

@@ -1,821 +1,298 @@
-/* ============================================================
-   HOJA DE VIDA - ESTILOS BASADOS EN MI PERFIL
-   Colores principales: Navy (#0F172A), Blue (#3B82F6), Amber (#F59E0B)
-   ============================================================ */
-
-/* Variables de color según la guía */
 :root {
-  --navy: #0F172A;
-  --navy-dark: #1E293B;
-  --blue: #3B82F6;
-  --blue-dark: #1D4ED8;
-  --amber: #F59E0B;
-  --amber-dark: #D97706;
-  --green: #10B981;
-  --sky-gray: #E5E7EB;
-  --light-gray: #CBD5E1;
-  --slate: #475569;
-  --slate-light: #64748B;
+  --hv-surface: #ffffff;
+  --hv-border: #dbe4f0;
+  --hv-text: #0f172a;
+  --hv-muted: #64748b;
+  --hv-blue: #2563eb;
+  --hv-blue-dark: #1d4ed8;
+  --hv-green: #059669;
+  --hv-red: #dc2626;
 }
 
-/* ============================================================
-   CONTENEDOR PRINCIPAL
-   ============================================================ */
-.perfil-container-PF {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* ============================================================
-   ESTADO DE ERROR
-   ============================================================ */
-.perfil-error {
-  background: linear-gradient(135deg, #fee2e2, #fecaca);
-  color: #7f1d1d;
-  padding: 2rem;
-  border-radius: 12px;
-  border-left: 5px solid #dc2626;
-  text-align: center;
-  max-width: 600px;
-  margin: 2rem auto;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
-}
-
-.perfil-retry-btn {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1rem;
-  transition: all 0.2s ease;
-}
-
-.perfil-retry-btn:hover {
-  background: #991b1b;
-  transform: scale(1.05);
-}
-
-/* ============================================================
-   ESTADO DE CARGA
-   ============================================================ */
-.perfil-header-PF {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 16px;
-  border: 2px solid var(--light-gray);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+.hoja-shell-AP {
   display: flex;
-  gap: 2rem;
-  align-items: center;
-  transition: all 0.3s ease;
-  margin-bottom: 2rem;
+  min-height: calc(100vh - 80px);
+  background:
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 28%),
+    linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
 }
 
-.perfil-header-PF:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.15);
-  border-color: var(--blue);
-}
-
-.perfil-foto-PF {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 4px solid var(--blue);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-  flex-shrink: 0;
-  object-fit: cover;
-}
-
-.perfil-header-info-PF {
+.hoja-main-AP {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
 }
 
-.perfil-nombre-PF {
-  font-size: clamp(2rem, 4vw, 2.5rem);
-  font-weight: 800;
-  color: var(--navy-dark);
-  margin: 0 0 0.5rem 0;
-  letter-spacing: -0.5px;
+.hoja-hero-AP,
+.hoja-card-AP,
+.alert-AP {
+  background: var(--hv-surface);
+  border: 1px solid var(--hv-border);
+  border-radius: 22px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
 }
 
-.perfil-titulo-PF {
-  font-size: 1.1rem;
-  color: var(--slate);
-  margin: 0 0 1rem 0;
-  font-weight: 500;
-}
-
-.perfil-ubicacion-PF {
-  font-size: 0.95rem;
-  color: var(--slate-light);
-  margin: 0;
-  font-weight: 500;
-}
-
-.editar-perfil-btn-PF {
-  flex-shrink: 0;
-  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-.editar-perfil-btn-PF:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-}
-
-/* ============================================================
-   BOTÓN DESCARGAR PDF
-   ============================================================ */
-.descargar-pdf-btn-PF {
-  flex-shrink: 0;
-  background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-family: inherit;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-}
-
-.descargar-pdf-btn-PF:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-}
-
-.descargar-pdf-btn-PF:active {
-  transform: translateY(-1px);
-}
-
-/* ============================================================
-   BLOQUES DE CONTENIDO
-   ============================================================ */
-.perfil-bloque-PF {
-  background: white;
-  padding: 2rem;
-  border-radius: 16px;
-  border: 2px solid var(--light-gray);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  margin-bottom: 2rem;
-  transition: all 0.3s ease;
-}
-
-.perfil-bloque-PF:hover {
-  border-color: var(--blue);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
-}
-
-.perfil-bloque-top-PF {
+.hoja-hero-AP {
+  padding: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.5rem;
 }
 
-.perfil-bloque-titulo-PF {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--navy-dark);
-  margin: 0;
-  padding: 0 0 0.75rem 0;
-  border-bottom: 2px solid var(--amber);
-  flex: 1;
-}
-
-/* ============================================================
-   DESCRIPCIÓN
-   ============================================================ */
-.perfil-desc-view-PF {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.perfil-desc-view-PF p {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--slate);
-  margin: 0;
-  padding: 1.5rem;
-  background: var(--sky-gray);
-  border-left: 4px solid var(--amber);
-  border-radius: 8px;
-}
-
-.perfil-desc-edit-btn-PF {
-  width: fit-content;
-  background: transparent;
-  color: var(--blue);
-  border: 1px solid var(--blue);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 600;
-  font-family: inherit;
-  opacity: 0.6;
-}
-
-.perfil-desc-edit-btn-PF:hover {
-  opacity: 1;
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.perfil-desc-edit-PF {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.perfil-desc-textarea-PF {
-  width: 100%;
-  min-height: 120px;
-  padding: 1rem;
-  border: 2px solid var(--blue);
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  color: var(--navy-dark);
-  resize: vertical;
-  transition: all 0.2s ease;
-}
-
-.perfil-desc-textarea-PF:focus {
-  outline: none;
-  border-color: var(--blue-dark);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.perfil-desc-buttons-PF {
-  display: flex;
-  gap: 1rem;
-}
-
-.perfil-desc-save-btn-PF,
-.perfil-desc-cancel-btn-PF {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.perfil-desc-save-btn-PF {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
-}
-
-.perfil-desc-save-btn-PF:hover:not(:disabled) {
-  background: #a7f3d0;
-  transform: scale(1.05);
-}
-
-.perfil-desc-cancel-btn-PF {
-  background: #fee2e2;
-  color: #7f1d1d;
-  border: 1px solid #fca5a5;
-}
-
-.perfil-desc-cancel-btn-PF:hover {
-  background: #fecaca;
-  transform: scale(1.05);
-}
-
-/* ============================================================
-   BOTONES DE AÑADIR
-   ============================================================ */
-.perfil-add-btn-PF {
-  background: linear-gradient(135deg, var(--amber) 0%, var(--amber-dark) 100%);
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-  white-space: nowrap;
-}
-
-.perfil-add-btn-PF:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
-}
-
-/* ============================================================
-   FORMULARIOS
-   ============================================================ */
-.perfil-form-exp-PF {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  padding: 1.5rem;
-  background: var(--sky-gray);
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-}
-
-.perfil-form-exp-PF input,
-.perfil-form-exp-PF textarea,
-.perfil-form-exp-PF select {
-  padding: 0.75rem;
-  border: 2px solid var(--light-gray);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-family: inherit;
-  color: var(--navy-dark);
-  transition: all 0.2s ease;
-}
-
-.perfil-form-exp-PF input:focus,
-.perfil-form-exp-PF textarea:focus,
-.perfil-form-exp-PF select:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.perfil-form-exp-PF textarea {
-  grid-column: 1 / -1;
-  min-height: 80px;
-  resize: vertical;
-}
-
-.perfil-form-exp-PF label {
-  grid-column: 1 / -1;
+.hoja-hero-left-AP {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--navy-dark);
-  font-weight: 500;
-  cursor: pointer;
+  gap: 1rem;
 }
 
-.perfil-form-exp-PF label input[type="checkbox"] {
-  width: auto;
-  border: none;
-  padding: 0;
-}
-
-.perfil-form-exp-PF button {
-  grid-column: 1 / -1;
-  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+.hoja-avatar-AP {
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--hv-blue), var(--hv-blue-dark));
+  display: grid;
+  place-items: center;
   color: white;
-  padding: 0.75rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.hoja-avatar-AP img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hoja-kicker-AP {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--hv-blue);
+}
+
+.hoja-hero-AP h1,
+.section-header-AP h2 {
+  margin: 0;
+  color: var(--hv-text);
+}
+
+.hoja-hero-AP p,
+.item-card-AP p,
+.item-card-AP span,
+.empty-state-AP {
+  margin: 0.35rem 0 0;
+  color: var(--hv-muted);
+  line-height: 1.5;
+}
+
+.secondary-button-AP,
+.primary-button-AP,
+.icon-button-AP {
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  font-family: inherit;
+  font: inherit;
+  font-weight: 800;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
-.perfil-form-exp-PF button:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-}
-
-/* ============================================================
-   TARJETAS DE EXPERIENCIA
-   ============================================================ */
-.perfil-experiencia-card-PF {
-  padding: 1.5rem;
-  background: var(--sky-gray);
-  border-left: 4px solid var(--blue);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.perfil-experiencia-card-PF:hover {
-  background: var(--light-gray);
-  border-left-color: var(--amber);
-  transform: translateX(4px);
-}
-
-.perfil-experiencia-card-PF h4 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--navy-dark);
-  margin: 0 0 0.75rem 0;
-}
-
-.perfil-experiencia-card-PF p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-  color: var(--slate);
-}
-
-.perfil-exp-empresa-PF {
-  font-weight: 600;
-  color: var(--blue);
-}
-
-.perfil-exp-fecha-PF {
-  font-size: 0.85rem;
-  color: var(--slate-light);
-  font-weight: 500;
-}
-
-.perfil-exp-ubicacion-PF {
-  color: var(--blue);
-  font-weight: 500;
-}
-
-.perfil-exp-desc-PF {
-  line-height: 1.5;
-  color: var(--slate);
-}
-
-.perfil-exp-delete-PF {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: #fee2e2;
-  color: #7f1d1d;
-  border: 1px solid #fca5a5;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.perfil-exp-delete-PF:hover {
-  background: #fecaca;
-  transform: scale(1.05);
-}
-
-/* ============================================================
-   TARJETAS DE EDUCACIÓN
-   ============================================================ */
-.perfil-educ-card-PF {
-  padding: 1.5rem;
-  background: var(--sky-gray);
-  border-left: 4px solid var(--green);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.perfil-educ-card-PF:hover {
-  background: var(--light-gray);
-  border-left-color: var(--amber);
-  transform: translateX(4px);
-}
-
-.perfil-educ-card-PF h4 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--navy-dark);
-  margin: 0 0 0.75rem 0;
-}
-
-.perfil-educ-card-PF p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-  color: var(--slate);
-}
-
-.perfil-edu-inst-PF {
-  font-weight: 600;
-  color: var(--blue);
-}
-
-.perfil-edu-nivel-PF {
-  color: var(--slate-light);
-  font-weight: 500;
-}
-
-.perfil-edu-fecha-PF {
-  font-size: 0.85rem;
-  color: var(--slate-light);
-  font-weight: 500;
-}
-
-.perfil-edu-desc-PF {
-  line-height: 1.5;
-  color: var(--slate);
-}
-
-/* ============================================================
-   ESTADOS DE CARGA
-   ============================================================ */
-.perfil-loading {
-  min-height: 100vh;
-  display: flex;
+.secondary-button-AP {
+  background: #eef4ff;
+  color: var(--hv-blue-dark);
+  padding: 0.85rem 1rem;
+  text-decoration: none;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.perfil-loading p {
-  font-size: 1.1rem;
-  color: var(--slate);
+.primary-button-AP {
+  background: linear-gradient(135deg, var(--hv-blue), var(--hv-blue-dark));
+  color: white;
+  padding: 0.85rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 14px 22px rgba(37, 99, 235, 0.22);
+}
+
+.icon-button-AP {
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  background: #eef4ff;
+  color: var(--hv-blue-dark);
+  flex-shrink: 0;
+}
+
+.icon-button-AP.danger {
+  background: #fff1f2;
+  color: var(--hv-red);
+}
+
+.secondary-button-AP:hover,
+.primary-button-AP:hover:not(:disabled),
+.icon-button-AP:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button-AP:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.alert-AP {
+  padding: 0.85rem 1rem;
+}
+
+.alert-AP.success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #bbf7d0;
+}
+
+.alert-AP.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.alert-AP.warning {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.hoja-grid-AP {
+  display: grid;
+  gap: 1rem;
+}
+
+.hoja-card-AP {
+  padding: 1.15rem;
+}
+
+.hoja-card-wide-AP {
+  grid-column: 1 / -1;
+}
+
+.section-header-AP {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.hoja-form-grid-AP {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.field-AP {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field-AP span {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--hv-text);
+}
+
+.field-AP input,
+.field-AP textarea,
+.field-AP select {
+  width: 100%;
+  border: 1px solid var(--hv-border);
+  border-radius: 14px;
+  background: #f8fbff;
+  color: var(--hv-text);
+  font: inherit;
+  padding: 0.85rem 0.95rem;
+  outline: none;
+}
+
+.field-AP textarea {
+  resize: vertical;
+}
+
+.field-AP input:focus,
+.field-AP textarea:focus,
+.field-AP select:focus {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.field-wide-AP {
+  grid-column: 1 / -1;
+}
+
+.full-width-AP {
+  width: 100%;
+}
+
+.list-stack-AP {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.item-card-AP {
+  border: 1px solid var(--hv-border);
+  border-radius: 18px;
+  background: #f8fbff;
+  padding: 1rem;
+}
+
+.item-top-AP {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.item-top-AP h3 {
+  margin: 0;
+  color: var(--hv-text);
+  font-size: 1rem;
+}
+
+.item-top-AP p {
+  margin: 0.35rem 0 0;
+}
+
+.empty-state-AP {
+  padding: 1rem;
   text-align: center;
+  border: 1px dashed var(--hv-border);
+  border-radius: 16px;
 }
 
-/* ============================================================
-   RESPONSIVE DESIGN
-   ============================================================ */
 @media (max-width: 768px) {
-  .perfil-container-PF {
-    padding: 1rem 0.5rem;
-  }
-
-  .perfil-header-PF {
+  .hoja-shell-AP {
     flex-direction: column;
-    text-align: center;
-    padding: 2rem 1.5rem;
   }
 
-  .perfil-foto-PF {
-    width: 100px;
-    height: 100px;
+  .hoja-main-AP {
+    padding: 1rem;
   }
 
-  .perfil-nombre-PF {
-    font-size: 1.8rem;
-  }
-
-  .perfil-bloque-top-PF {
+  .hoja-hero-AP,
+  .hoja-hero-left-AP,
+  .section-header-AP {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .perfil-bloque-titulo-PF {
-    font-size: 1.1rem;
-  }
-
-  .perfil-form-exp-PF {
+  .hoja-form-grid-AP {
     grid-template-columns: 1fr;
   }
-
-  .perfil-add-btn-PF {
-    width: 100%;
-  }
-
-  .editar-perfil-btn-PF {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .perfil-bloque-PF {
-    padding: 1.5rem;
-  }
-
-  .perfil-nombre-PF {
-    font-size: 1.5rem;
-  }
-
-  .perfil-exp-delete-PF,
-  .perfil-exp-delete-PF {
-    position: static;
-    width: 100%;
-    margin-top: 0.75rem;
-  }
-
-  .perfil-experiencia-card-PF,
-  .perfil-educ-card-PF {
-    padding: 1rem;
-  }
-}
-
-/* ============================================================
-   EDICIÓN INLINE - NUEVOS ESTILOS
-   ============================================================ */
-
-/* Botones de edición en la tarjeta */
-.perfil-card-actions-PF {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.perfil-edit-btn-inline-PF {
-  background: transparent;
-  border: 1px solid var(--blue);
-  color: var(--blue);
-  padding: 0.5rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-}
-
-.perfil-edit-btn-inline-PF:hover {
-  background: rgba(59, 130, 246, 0.1);
-  transform: scale(1.1);
-}
-
-/* Modo edición - Tarjeta en edición */
-.perfil-card-editing-PF {
-  border: 3px solid var(--blue);
-  background: rgba(59, 130, 246, 0.05) !important;
-}
-
-.perfil-edit-actions-top-PF {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1.5rem;
-}
-
-/* Campos de edición inline */
-.perfil-inline-edit-field-PF {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.perfil-inline-edit-field-PF label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--navy-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.perfil-inline-edit-field-PF label input[type="checkbox"] {
-  width: auto;
-  margin-right: 0.5rem;
-  text-transform: none;
-  letter-spacing: normal;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.perfil-inline-input-PF,
-.perfil-inline-textarea-PF {
-  padding: 0.75rem;
-  border: 2px solid var(--light-gray);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-family: inherit;
-  color: var(--navy-dark);
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-.perfil-inline-input-PF:focus,
-.perfil-inline-textarea-PF:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.perfil-inline-textarea-PF {
-  min-height: 100px;
-  resize: vertical;
-}
-
-/* Botones de guardar/cancelar */
-.perfil-inline-buttons-PF {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.perfil-inline-save-PF,
-.perfil-inline-cancel-PF {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  flex: 1;
-  min-width: 120px;
-}
-
-.perfil-inline-save-PF {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
-}
-
-.perfil-inline-save-PF:hover:not(:disabled) {
-  background: #a7f3d0;
-  transform: scale(1.05);
-}
-
-.perfil-inline-save-PF:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.perfil-inline-cancel-PF {
-  background: #fee2e2;
-  color: #7f1d1d;
-  border: 1px solid #fca5a5;
-}
-
-.perfil-inline-cancel-PF:hover:not(:disabled) {
-  background: #fecaca;
-  transform: scale(1.05);
-}
-
-.perfil-inline-cancel-PF:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ============================================================
-   SECCIONES DE INFORMACIÓN
-   ============================================================ */
-.perfil-info-section-PF {
-  padding: 1.25rem;
-  background: var(--sky-gray);
-  border-radius: 10px;
-  margin-bottom: 1rem;
-  border-left: 4px solid var(--blue);
-}
-
-.perfil-info-title-PF {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--navy-dark);
-  margin: 0 0 0.75rem 0;
-}
-
-.perfil-info-value-PF {
-  font-size: 0.95rem;
-  color: var(--slate);
-  margin: 0;
-  line-height: 1.6;
-  word-break: break-word;
-}
-
-.perfil-link-PF {
-  color: var(--blue);
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  display: inline-block;
-}
-
-.perfil-link-PF:hover {
-  color: var(--blue-dark);
-  text-decoration: underline;
-}
-
-.perfil-info-dates-PF {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.perfil-info-date-PF {
-  font-size: 0.95rem;
-  color: var(--slate);
-  margin: 0;
-}
-
-.perfil-info-date-PF strong {
-  color: var(--navy-dark);
-  font-weight: 600;
 }

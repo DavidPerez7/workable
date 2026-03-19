@@ -13,16 +13,16 @@ const PublicacionPage = () => {
   const [municipios, setMunicipios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    tituloAviso: "",
-    descripcionTrabajo: "",
+    titulo: "",
+    descripcion: "",
     requisitos: "",
     salario: "",
-    direccion: "",
+    numeroVacantes: 1,
     fechaLimite: "",
-    modalidadTrabajo: "",
+    modalidad: "",
     tipoContrato: "",
     nivelExperiencia: "",
-    municipio: "",
+    municipioId: "",
     empresaId: "",
   });
 
@@ -33,21 +33,9 @@ const PublicacionPage = () => {
         const municipiosData = await getMunicipios();
         setMunicipios(municipiosData);
 
-        // Obtener empresaId desde localStorage (actualizado por RegistrarEmpresa)
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user?.empresa?.id || user?.empresaId) {
-          const empresaId = user.empresa?.id || user.empresaId;
-          setFormData(prev => ({ ...prev, empresaId }));
-        } else {
-          // Fallback: intentar obtener desde getMyProfile
-          try {
-            const reclutador = await reclutadoresApi.getMyProfile();
-            if (reclutador?.empresa?.id) {
-              setFormData(prev => ({ ...prev, empresaId: reclutador.empresa.id }));
-            }
-          } catch (err) {
-            console.warn("No se pudo obtener empresa desde getMyProfile:", err);
-          }
+        const reclutador = await reclutadoresApi.getMyProfile();
+        if (reclutador?.empresa?.id) {
+          setFormData((prev) => ({ ...prev, empresaId: reclutador.empresa.id }));
         }
       } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -80,13 +68,13 @@ const PublicacionPage = () => {
     setLoading(true);
 
     // Validar campos obligatorios en frontend ANTES de enviar
-    if (!formData.tituloAviso?.trim()) {
+    if (!formData.titulo?.trim()) {
       alert("El título es obligatorio");
       setLoading(false);
       return;
     }
     
-    if (!formData.descripcionTrabajo?.trim()) {
+    if (!formData.descripcion?.trim()) {
       alert("La descripción es obligatoria");
       setLoading(false);
       return;
@@ -110,7 +98,7 @@ const PublicacionPage = () => {
       return;
     }
     
-    if (!formData.modalidadTrabajo) {
+    if (!formData.modalidad) {
       alert("La modalidad es obligatoria");
       setLoading(false);
       return;
@@ -136,43 +124,36 @@ const PublicacionPage = () => {
 
     try {
       const ofertaData = {
-        titulo: formData.tituloAviso,
-        descripcion: formData.descripcionTrabajo,
+        titulo: formData.titulo,
+        descripcion: formData.descripcion,
         requisitos: formData.requisitos,
         salario: parseInt(formData.salario, 10),
-        numeroVacantes: 1,
+        numeroVacantes: Number(formData.numeroVacantes || 1),
         fechaLimite: formData.fechaLimite,
         nivelExperiencia: formData.nivelExperiencia,
-        modalidad: formData.modalidadTrabajo,
+        modalidad: formData.modalidad,
         tipoContrato: formData.tipoContrato,
-        estado: "ABIERTA",
+        estado: "ACTIVA",
         empresa: { id: formData.empresaId },
-        municipio: formData.municipio ? { id: parseInt(formData.municipio, 10) } : null,
-        beneficios: []
+        municipio: formData.municipioId ? { id: parseInt(formData.municipioId, 10) } : null,
       };
 
-      console.log("=== OFERTA A ENVIAR ===");
-      console.log(JSON.stringify(ofertaData, null, 2));
-      
-      const response = await crearOferta(ofertaData);
-      console.log("Oferta creada:", response);
-
+      await crearOferta(ofertaData);
       alert("Oferta publicada exitosamente");
-      
-      // Resetear formulario
-      setFormData({
-        tituloAviso: "",
-        descripcionTrabajo: "",
+
+      setFormData((prev) => ({
+        ...prev,
+        titulo: "",
+        descripcion: "",
         requisitos: "",
         salario: "",
-        direccion: "",
+        numeroVacantes: 1,
         fechaLimite: "",
-        modalidadTrabajo: "",
+        modalidad: "",
         tipoContrato: "",
         nivelExperiencia: "",
-        municipio: "",
-        empresaId: formData.empresaId // Mantener empresaId
-      });
+        municipioId: "",
+      }));
 
       navigate("/Reclutador/GestigOferts");
 
@@ -187,180 +168,182 @@ const PublicacionPage = () => {
   return (
     <>
       <HeaderReclutador />
-      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)'}}>
+      <div className="reclutador-shell-RP">
         <SidebarReclutador />
-        <main className="pb-container" style={{flex: 1}}>
-        <h1 className="pb-title">Publicar oferta</h1>
-
-        <form className="pb-form" onSubmit={handleSubmit}>
-          <section className="pb-card">
-            <h2 className="pb-section-title">Datos de la oferta</h2>
-
-            <div className="pb-field">
-              <label htmlFor="tituloAviso">Título del aviso *</label>
-              <input
-                type="text"
-                id="tituloAviso"
-                name="tituloAviso"
-                value={formData.tituloAviso}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
+        <main className="reclutador-main-RP">
+          <section className="reclutador-card-RP">
+            <div className="reclutador-card-header-RP">
+              <div>
+                <p className="reclutador-kicker-RP">Nueva oferta</p>
+                <h2>Publicar oferta</h2>
+              </div>
             </div>
 
-            <div className="pb-field">
-              <label htmlFor="descripcionTrabajo">Descripción *</label>
-              <textarea
-                id="descripcionTrabajo"
-                name="descripcionTrabajo"
-                value={formData.descripcionTrabajo}
-                onChange={handleChange}
-                rows="4"
-                required
-                className="pb-textarea"
-              />
-            </div>
+            <form className="pb-form" onSubmit={handleSubmit}>
+              <div className="pb-field">
+                <label htmlFor="titulo">Titulo *</label>
+                <input
+                  type="text"
+                  id="titulo"
+                  name="titulo"
+                  value={formData.titulo}
+                  onChange={handleChange}
+                  required
+                  className="pb-input"
+                />
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="requisitos">Requisitos * (máximo 500 caracteres)</label>
-              <textarea
-                id="requisitos"
-                name="requisitos"
-                value={formData.requisitos}
-                onChange={handleChange}
-                rows="3"
-                maxLength="500"
-                required
-                className="pb-textarea"
-                placeholder="Ej: 2 años de experiencia en programación, conocimiento en React, etc."
-              />
-              <small style={{ color: '#999', marginTop: '5px', display: 'block' }}>
-                {formData.requisitos.length}/500 caracteres
-              </small>
-            </div>
+              <div className="pb-field">
+                <label htmlFor="descripcion">Descripcion *</label>
+                <textarea
+                  id="descripcion"
+                  name="descripcion"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                  rows="4"
+                  required
+                  className="pb-textarea"
+                />
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="salario">Salario *</label>
-              <input
-                type="number"
-                id="salario"
-                name="salario"
-                value={formData.salario}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
+              <div className="pb-field">
+                <label htmlFor="requisitos">Requisitos *</label>
+                <textarea
+                  id="requisitos"
+                  name="requisitos"
+                  value={formData.requisitos}
+                  onChange={handleChange}
+                  rows="3"
+                  maxLength="500"
+                  required
+                  className="pb-textarea"
+                />
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="direccion">Dirección *</label>
-              <input
-                type="text"
-                id="direccion"
-                name="direccion"
-                value={formData.direccion}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
+              <div className="pb-row">
+                <div className="pb-field">
+                  <label htmlFor="salario">Salario *</label>
+                  <input
+                    type="number"
+                    id="salario"
+                    name="salario"
+                    value={formData.salario}
+                    onChange={handleChange}
+                    required
+                    className="pb-input"
+                  />
+                </div>
+                <div className="pb-field">
+                  <label htmlFor="numeroVacantes">Vacantes *</label>
+                  <input
+                    type="number"
+                    id="numeroVacantes"
+                    name="numeroVacantes"
+                    value={formData.numeroVacantes}
+                    onChange={handleChange}
+                    min="1"
+                    required
+                    className="pb-input"
+                  />
+                </div>
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="fechaLimite">Fecha límite *</label>
-              <input
-                type="date"
-                id="fechaLimite"
-                name="fechaLimite"
-                value={formData.fechaLimite}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
+              <div className="pb-row">
+                <div className="pb-field">
+                  <label htmlFor="fechaLimite">Fecha limite *</label>
+                  <input
+                    type="date"
+                    id="fechaLimite"
+                    name="fechaLimite"
+                    value={formData.fechaLimite}
+                    onChange={handleChange}
+                    required
+                    className="pb-input"
+                  />
+                </div>
+                <div className="pb-field">
+                  <label htmlFor="municipioId">Municipio *</label>
+                  <select
+                    id="municipioId"
+                    name="municipioId"
+                    value={formData.municipioId}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona un municipio</option>
+                    {municipios.map((mun) => (
+                      <option key={mun.id} value={mun.id}>
+                        {mun.nombre} - {mun.departamento?.nombre || ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="modalidadTrabajo">Modalidad *</label>
-              <select
-                id="modalidadTrabajo"
-                name="modalidadTrabajo"
-                value={formData.modalidadTrabajo}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona una modalidad</option>
-                {modalidades.map((mod) => (
-                  <option key={mod.value} value={mod.value}>
-                    {mod.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div className="pb-row">
+                <div className="pb-field">
+                  <label htmlFor="modalidad">Modalidad *</label>
+                  <select
+                    id="modalidad"
+                    name="modalidad"
+                    value={formData.modalidad}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona una modalidad</option>
+                    {modalidades.map((mod) => (
+                      <option key={mod.value} value={mod.value}>
+                        {mod.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="pb-field">
+                  <label htmlFor="tipoContrato">Tipo de contrato *</label>
+                  <select
+                    id="tipoContrato"
+                    name="tipoContrato"
+                    value={formData.tipoContrato}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona un tipo</option>
+                    {tiposContrato.map((tipo) => (
+                      <option key={tipo.value} value={tipo.value}>
+                        {tipo.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="tipoContrato">Tipo de contrato *</label>
-              <select
-                id="tipoContrato"
-                name="tipoContrato"
-                value={formData.tipoContrato}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona un tipo de contrato</option>
-                {tiposContrato.map((tipo) => (
-                  <option key={tipo.value} value={tipo.value}>
-                    {tipo.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div className="pb-field">
+                <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
+                <select
+                  id="nivelExperiencia"
+                  name="nivelExperiencia"
+                  value={formData.nivelExperiencia}
+                  onChange={handleChange}
+                  required
+                  className="pb-select"
+                >
+                  <option value="">Selecciona un nivel</option>
+                  <option value="SIN_EXPERIENCIA">Sin experiencia</option>
+                  <option value="BASICO">Basico</option>
+                  <option value="INTERMEDIO">Intermedio</option>
+                  <option value="AVANZADO">Avanzado</option>
+                  <option value="EXPERTO">Experto</option>
+                </select>
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="municipio">Municipio *</label>
-              <select
-                id="municipio"
-                name="municipio"
-                value={formData.municipio}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona un municipio</option>
-                {municipios.map((mun) => (
-                  <option key={mun.id} value={mun.id}>
-                    {mun.nombre} - {mun.departamento?.nombre || ''}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="pb-field">
-              <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
-              <select
-                id="nivelExperiencia"
-                name="nivelExperiencia"
-                value={formData.nivelExperiencia}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona un nivel</option>
-                <option value="SIN_EXPERIENCIA">Sin experiencia</option>
-                <option value="BASICO">Básico</option>
-                <option value="INTERMEDIO">Intermedio</option>
-                <option value="AVANZADO">Avanzado</option>
-                <option value="EXPERTO">Experto</option>
-              </select>
-            </div>
-
-            {/* 🔵 BOTÓN ACTUALIZADO */}
-            <button className="pb-btn-primary" type="submit" disabled={loading}>
-              {loading ? "Publicando..." : "Publicar"}
-            </button>
+              <button className="pb-btn-primary" type="submit" disabled={loading}>
+                {loading ? "Publicando..." : "Publicar"}
+              </button>
+            </form>
           </section>
-        </form>
         </main>
       </div>
     </>

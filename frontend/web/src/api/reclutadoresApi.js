@@ -100,7 +100,7 @@ const reclutadoresApi = {
   // Actualizar reclutador como ADMIN
   updateAdmin: async (id, data) => {
     try {
-      const response = await API.put(`/api/reclutador/admin/${id}`, data);
+      const response = await API.put(`/api/reclutador/${id}`, data);
       return response.data;
     } catch (error) {
       console.error(`Error updating reclutador ${id} as admin:`, error);
@@ -111,10 +111,21 @@ const reclutadoresApi = {
   // Eliminar un reclutador
   delete: async (id, reclutadorIdActual) => {
     try {
-      const response = await API.delete(`/api/reclutador/${id}?reclutadorIdActual=${reclutadorIdActual}`);
+      const response = await API.delete(`/api/reclutador/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error deleting reclutador ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Asignar empresa a un reclutador mediante codigo
+  updateByCode: async (codigoEmpresa) => {
+    try {
+      const response = await API.put(`/api/reclutador/empresa/${codigoEmpresa}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating reclutador by code ${codigoEmpresa}:`, error);
       throw error;
     }
   },

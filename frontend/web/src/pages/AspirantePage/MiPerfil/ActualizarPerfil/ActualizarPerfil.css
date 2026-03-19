@@ -1,0 +1,227 @@
+:root {
+  --ap-surface: #ffffff;
+  --ap-border: #dbe4f0;
+  --ap-text: #0f172a;
+  --ap-muted: #64748b;
+  --ap-blue: #2563eb;
+  --ap-blue-dark: #1d4ed8;
+  --ap-red: #dc2626;
+  --ap-green: #059669;
+}
+
+.actualizar-shell-AP {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.actualizar-main-AP {
+  flex: 1;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.actualizar-hero-AP,
+.form-card-AP,
+.alert-AP {
+  background: var(--ap-surface);
+  border: 1px solid var(--ap-border);
+  border-radius: 22px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+}
+
+.actualizar-hero-AP {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.actualizar-kicker-AP {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--ap-blue);
+}
+
+.actualizar-hero-AP h1 {
+  margin: 0;
+  color: var(--ap-text);
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+
+.actualizar-hero-AP p {
+  margin: 0.45rem 0 0;
+  color: var(--ap-muted);
+}
+
+.form-card-AP {
+  padding: 1.25rem;
+}
+
+.form-grid-AP {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.field-AP {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field-AP span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--ap-text);
+}
+
+.field-AP input,
+.field-AP textarea,
+.field-AP select {
+  width: 100%;
+  border: 1px solid var(--ap-border);
+  border-radius: 14px;
+  background: #f8fbff;
+  color: var(--ap-text);
+  font: inherit;
+  padding: 0.85rem 0.95rem;
+  outline: none;
+}
+
+.field-AP textarea {
+  resize: vertical;
+}
+
+.field-AP input:focus,
+.field-AP textarea:focus,
+.field-AP select:focus,
+.input-icon-AP:focus-within {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.field-wide-AP {
+  grid-column: 1 / -1;
+}
+
+.input-icon-AP {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--ap-border);
+  border-radius: 14px;
+  background: #f8fbff;
+  padding: 0 0.95rem;
+}
+
+.input-icon-AP svg {
+  color: var(--ap-muted);
+  flex-shrink: 0;
+}
+
+.input-icon-AP input {
+  border: none;
+  background: transparent;
+  padding-left: 0;
+}
+
+.actions-AP {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.primary-button-AP,
+.secondary-button-AP {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.primary-button-AP {
+  background: linear-gradient(135deg, var(--ap-blue), var(--ap-blue-dark));
+  color: white;
+  box-shadow: 0 14px 22px rgba(37, 99, 235, 0.22);
+}
+
+.secondary-button-AP {
+  background: #eef4ff;
+  color: var(--ap-blue-dark);
+}
+
+.primary-button-AP:hover:not(:disabled),
+.secondary-button-AP:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button-AP:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.alert-AP {
+  padding: 0.85rem 1rem;
+  font-size: 0.92rem;
+}
+
+.alert-AP.success {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #bbf7d0;
+}
+
+.alert-AP.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.actualizar-state-AP {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  color: var(--ap-muted);
+}
+
+@media (max-width: 768px) {
+  .actualizar-shell-AP {
+    flex-direction: column;
+  }
+
+  .actualizar-main-AP {
+    padding: 1rem;
+  }
+
+  .actualizar-hero-AP,
+  .actions-AP,
+  .form-grid-AP {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .actions-AP {
+    justify-content: stretch;
+  }
+
+  .primary-button-AP,
+  .secondary-button-AP {
+    width: 100%;
+  }
+}

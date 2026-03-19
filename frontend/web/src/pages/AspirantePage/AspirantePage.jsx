@@ -1,521 +1,534 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import {
+  Briefcase,
+  BookOpenText,
+  Building2,
+  FileText,
+  MapPin,
+  Search,
+  Send,
+  UserRoundPen,
+  UserRoundX,
+  SlidersHorizontal,
+} from "lucide-react";
 import "./AspirantePage.css";
 import Header from "../../components/Header/Header";
-import SidebarAspirante from "../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../components/Footer/footer";
-import { getAllOfertas } from "../../api/ofertasAPI";
+import { buscarOfertasAvanzada } from "../../api/ofertasAPI";
+import { getMunicipios } from "../../api/municipioAPI";
 import { crearPostulacion } from "../../api/postulacionesAPI";
+
+const filtrosIniciales = {
+  texto: "",
+  municipioId: "",
+  modalidad: "",
+  experiencia: "",
+  salarioMin: "",
+  salarioMax: "",
+};
+
+const experienciaOptions = [
+  { value: "", label: "Todas" },
+  { value: "SIN_EXPERIENCIA", label: "Sin experiencia" },
+  { value: "BASICO", label: "Básico" },
+  { value: "INTERMEDIO", label: "Intermedio" },
+  { value: "AVANZADO", label: "Avanzado" },
+  { value: "EXPERTO", label: "Experto" },
+];
+
+const modalidadOptions = [
+  { value: "", label: "Todas" },
+  { value: "PRESENCIAL", label: "Presencial" },
+  { value: "REMOTO", label: "Remoto" },
+  { value: "HIBRIDO", label: "Híbrido" },
+];
+
+const formatearSalario = (valor) =>
+  new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(Number(valor || 0));
+
+const normalizarTexto = (texto) =>
+  texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
 
 const AspirantePage = () => {
   const location = useLocation();
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const searchParams = useMemo(
+    () => new URLSearchParams(location.search),
+    [location.search]
+  );
+
+  const textoUrl = searchParams.get("query") || searchParams.get("cargo") || "";
+  const ciudadUrl = searchParams.get("ciudad") || "";
+
   const [ofertas, setOfertas] = useState([]);
+  const [municipios, setMunicipios] = useState([]);
+  const [selectedOferta, setSelectedOferta] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [error, setError] = useState("");
-  const [postulando, setPostulando] = useState(false);
-
-  // ============================
-  // RF14 — ESTADOS DE VALORACIÓN
-  // ============================
-  const [offerRating, setOfferRating] = useState(0);
-  const [companyRating, setCompanyRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [ratingSuccess, setRatingSuccess] = useState(false);
-  const [hasRated, setHasRated] = useState(false);
-
+  const [notice, setNotice] = useState("");
+  const [postulandoId, setPostulandoId] = useState(null);
   const [filters, setFilters] = useState({
-    nombre: "",
-    ordenar: "",
-    experiencia: "",
-    salario: "",
-    contrato: "",
-    modalidad: "",
-    empresa: "",
-    ubicacion: "",
+    ...filtrosIniciales,
+    texto: textoUrl,
   });
 
-  // ============================================
-  // CARGAR OFERTAS DESDE API
-  // ============================================
-  useEffect(() => {
-    cargarOfertas();
-  }, []);
+  const municipioIdPorNombre = (nombre, lista) => {
+    const target = normalizarTexto(nombre);
+    const match = (lista || []).find((municipio) =>
+      normalizarTexto(municipio.nombre || "").includes(target)
+    );
+    return match?.id || "";
+  };
 
-  const cargarOfertas = async () => {
-    setLoading(true);
-    setError("");
+  const construirPayload = (nextFilters, municipioIdOverride = "") => {
+    const payload = { estado: "ACTIVA" };
+    const texto = (nextFilters.texto || "").trim();
+    const municipioId = municipioIdOverride || nextFilters.municipioId;
+
+    if (texto) {
+      payload.nombre = texto;
+    }
+
+    if (municipioId) {
+      payload.municipioId = Number(municipioId);
+    }
+
+    if (nextFilters.modalidad) {
+      payload.modalidad = nextFilters.modalidad;
+    }
+
+    if (nextFilters.experiencia) {
+      payload.experiencia = nextFilters.experiencia;
+    }
+
+    if (nextFilters.salarioMin) {
+      payload.salarioMin = Number(nextFilters.salarioMin);
+    }
+
+    if (nextFilters.salarioMax) {
+      payload.salarioMax = Number(nextFilters.salarioMax);
+    }
+
+    return payload;
+  };
+
+  const cargarOfertas = async (nextFilters = filters, municipiosCargados = municipios) => {
+    const municipioId =
+      nextFilters.municipioId || municipioIdPorNombre(ciudadUrl, municipiosCargados);
+    const payload = construirPayload(nextFilters, municipioId);
+
     try {
-      const data = await getAllOfertas();
-      setOfertas(data || []);
-      if (data && data.length > 0) {
-        setSelectedJob(data[0]);
-      }
+      setError("");
+      setSearching(true);
+      const data = await buscarOfertasAvanzada(payload);
+      const ofertasData = Array.isArray(data) ? data : [];
+      setOfertas(ofertasData);
+      setSelectedOferta((current) => {
+        if (current && ofertasData.some((oferta) => oferta.id === current.id)) {
+          return ofertasData.find((oferta) => oferta.id === current.id) || ofertasData[0] || null;
+        }
+        return ofertasData[0] || null;
+      });
+      setNotice(
+        ofertasData.length
+          ? `Se encontraron ${ofertasData.length} ofertas.`
+          : "No hay ofertas para esos filtros."
+      );
     } catch (err) {
-      console.error("Error al cargar ofertas:", err);
-      setError(err.message || "Error al cargar ofertas");
+      console.error("Error al buscar ofertas:", err);
+      setError(err.message || "No se pudieron cargar las ofertas");
+      setOfertas([]);
+      setSelectedOferta(null);
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const cargarDatosIniciales = async () => {
+    setLoading(true);
+    try {
+      const [municipiosData] = await Promise.all([getMunicipios()]);
+      const listaMunicipios = Array.isArray(municipiosData) ? municipiosData : [];
+      setMunicipios(listaMunicipios);
+      await cargarOfertas(
+        {
+          ...filtrosIniciales,
+          texto: textoUrl,
+        },
+        listaMunicipios
+      );
+    } catch (err) {
+      console.error("Error al cargar datos iniciales:", err);
+      setError(err.message || "No se pudo inicializar la página");
     } finally {
       setLoading(false);
     }
   };
 
-  // ============================================
-  // LECTURA DE PARÁMETROS DE LA URL
-  // ============================================
-  const params = new URLSearchParams(location.search);
+  useEffect(() => {
+    setFilters((current) => ({
+      ...current,
+      texto: textoUrl,
+    }));
+    cargarDatosIniciales();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
 
-  const filterCargo = params.get("cargo")?.toLowerCase() || "";
-  const filterCiudad = params.get("ciudad")?.toLowerCase() || "";
-  const generalQuery = params.get("query")?.toLowerCase() || "";
-
-  // ============================================
-  // FILTRADO COMPLETO
-  // ============================================
-  let filteredJobListings = ofertas.filter((job) => {
-    // Filtro por URL (búsqueda general)
-    const matchCargo = filterCargo
-      ? (job.titulo || "").toLowerCase().includes(filterCargo)
-      : true;
-
-    const matchCiudad = filterCiudad
-      ? (job.ubicacion || "").toLowerCase().includes(filterCiudad)
-      : true;
-
-    const matchesGeneral =
-      (job.titulo || "").toLowerCase().includes(generalQuery) ||
-      (job.descripcion || "").toLowerCase().includes(generalQuery) ||
-      (job.ubicacion || "").toLowerCase().includes(generalQuery) ||
-      (job.empresa?.nombre || "").toLowerCase().includes(generalQuery);
-
-    // Filtro por nombre/título (nuevo)
-    const matchNombre = filters.nombre
-      ? (job.titulo || "").toLowerCase().includes(filters.nombre.toLowerCase()) ||
-        (job.descripcion || "").toLowerCase().includes(filters.nombre.toLowerCase())
-      : true;
-
-    // Filtro por nivel de experiencia
-    const matchExperiencia = filters.experiencia
-      ? (job.nivelExperiencia || "") === filters.experiencia
-      : true;
-
-    // Filtro por salario (rango mínimo)
-    const matchSalario = filters.salario
-      ? Number(job.salario || 0) >= Number(filters.salario)
-      : true;
-
-    // Filtro por tipo de contrato
-    const matchContrato = filters.contrato
-      ? (job.tipoContrato || "") === filters.contrato
-      : true;
-
-    // Filtro por modalidad
-    const matchModalidad = filters.modalidad
-      ? (job.modalidad || "") === filters.modalidad
-      : true;
-
-    // Filtro por empresa (nuevo)
-    const matchEmpresa = filters.empresa
-      ? (job.empresa?.nombre || "").toLowerCase().includes(filters.empresa.toLowerCase())
-      : true;
-
-    // Filtro por ubicación/municipio (nuevo)
-    const matchUbicacion = filters.ubicacion
-      ? (job.municipio?.nombre || "").toLowerCase().includes(filters.ubicacion.toLowerCase())
-      : true;
-
-    // Filtro por ciudad
-    const matchCityFilter = filters.ciudad
-      ? (job.municipio?.nombre || "").toLowerCase().includes(filters.ciudad.toLowerCase())
-      : true;
-
-    // Filtro por fecha de creación (últimos X días)
-    const matchFecha = filters.fecha ? (() => {
-      const jobDate = new Date(job.fechaPublicacion);
-      const today = new Date();
-      const daysAgo = parseInt(filters.fecha);
-      const dateLimit = new Date(today.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-      return jobDate >= dateLimit;
-    })() : true;
-
-    return (
-      matchCargo &&
-      matchCiudad &&
-      matchesGeneral &&
-      matchNombre &&
-      matchExperiencia &&
-      matchSalario &&
-      matchContrato &&
-      matchModalidad &&
-      matchEmpresa &&
-      matchUbicacion &&
-      matchCityFilter &&
-      matchFecha
-    );
-  });
-
-  // ============================================
-  // ORDENAR RESULTADOS
-  // ============================================
-  if (filters.ordenar === "recientes") {
-    filteredJobListings = filteredJobListings.sort((a, b) => {
-      return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion);
-    });
-  }
-
-  if (filters.ordenar === "salario") {
-    filteredJobListings = filteredJobListings.sort(
-      (a, b) => Number(b.salario || 0) - Number(a.salario || 0)
-    );
-  }
-
-  // ============================================
-  // FORMATEAR SALARIO
-  // ============================================
-  const formatSalary = (value) =>
-    new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      minimumFractionDigits: 0,
-    }).format(value);
-
-  // ============================================
-  // POSTULARSE
-  // ============================================
-  const handlePostularse = async (ofertaId) => {
-    setPostulando(true);
-    try {
-      const usuarioId = localStorage.getItem("usuarioId");
-      if (!usuarioId) {
-        alert("Debes iniciar sesión para postularte");
-        return;
-      }
-
-      const postulacionData = {
-        aspirante: { id: parseInt(usuarioId) },
-        oferta: { id: ofertaId }
-      };
-
-      await crearPostulacion(postulacionData);
-      alert("¡Postulación exitosa!");
-    } catch (err) {
-      console.error("Error al postularse:", err);
-      alert("Error al postularse: " + err.message);
-    } finally {
-      setPostulando(false);
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await cargarOfertas(filters);
   };
 
-  // ============================================
-  // ENVIAR VALORACIÓN
-  // ============================================
-  const submitRating = async () => {
-    if (hasRated) return;
+  const limpiarFiltros = async () => {
+    const base = { ...filtrosIniciales };
+    setFilters(base);
+    await cargarOfertas(base);
+  };
 
-    if (offerRating === 0 || companyRating === 0) {
-      alert("Debes calificar la oferta y la empresa.");
+  const handlePostularse = async (ofertaId) => {
+    const usuarioId = localStorage.getItem("usuarioId");
+    if (!usuarioId) {
+      setNotice("Debes iniciar sesión para postularte.");
       return;
     }
 
-    setHasRated(true);
-
-    setTimeout(() => {
-      setRatingSuccess(true);
-    }, 800);
+    try {
+      setPostulandoId(ofertaId);
+      setNotice("");
+      await crearPostulacion({
+        aspirante: { id: Number(usuarioId) },
+        oferta: { id: ofertaId },
+      });
+      setNotice("Postulación enviada correctamente.");
+    } catch (err) {
+      console.error("Error al postularse:", err);
+      setNotice(err.message || "No se pudo enviar la postulación.");
+    } finally {
+      setPostulandoId(null);
+    }
   };
 
-  // ============================================
-  // RENDER
-  // ============================================
   return (
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
-      
-      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)', background: 'linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%)'}}>
-        <SidebarAspirante />
-        
-        <main className="main-aspirant-page-AP" style={{flex: 1, padding: '1.5rem'}}>
-          {/* SIDEBAR */}
-          <aside className="sidebar-filters-AP">
-            <div className="filters-header-AP">
-              <h2 className="filters-title-AP">Filtros de búsqueda</h2>
-              <button
-                className="btn-clear-filters-AP"
-                onClick={() =>
-                  setFilters({
-                    nombre: "",
-                    ordenar: "",
-                    experiencia: "",
-                    salario: "",
-                    contrato: "",
-                    modalidad: "",
-                    empresa: "",
-                    ubicacion: "",
-                  })
-                }
-            >
-              Limpiar
-            </button>
-          </div>
 
-          {/* Ordenar */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Ordenar por</label>
-            <select
-              className="filter-select-AP"
-              value={filters.ordenar}
-              onChange={(e) =>
-                setFilters({ ...filters, ordenar: e.target.value })
-              }
-            >
-              <option value="">Seleccionar</option>
-              <option value="recientes">Más recientes</option>
-              <option value="salario">Mayor salario</option>
-            </select>
-          </div>
+      <div className="aspirante-shell-AP">
+        <main className="aspirante-main-AP">
+          <section className="aspirante-hero-AP">
+            <div>
+              <h1>Encuentra ofertas y postúlate</h1>
+            </div>
 
-          {/* Experiencia */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Nivel de Experiencia</label>
-            <select
-              className="filter-select-AP"
-              value={filters.experiencia}
-              onChange={(e) =>
-                setFilters({ ...filters, experiencia: e.target.value })
-              }
-            >
-              <option value="">Todas</option>
-              <option value="SIN_EXPERIENCIA">Sin Experiencia</option>
-              <option value="BASICO">Básico</option>
-              <option value="INTERMEDIO">Intermedio</option>
-              <option value="AVANZADO">Avanzado</option>
-              <option value="EXPERTO">Experto</option>
-            </select>
-          </div>
+            <div className="aspirante-hero-stats-AP">
+              <strong>{ofertas.length}</strong>
+              <span>ofertas visibles</span>
+            </div>
+          </section>
 
-          {/* Modalidad */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Modalidad</label>
-            <select
-              className="filter-select-AP"
-              value={filters.modalidad}
-              onChange={(e) =>
-                setFilters({ ...filters, modalidad: e.target.value })
-              }
-            >
-              <option value="">Todas</option>
-              <option value="PRESENCIAL">Presencial</option>
-              <option value="REMOTO">Remoto</option>
-              <option value="HIBRIDO">Híbrido</option>
-            </select>
-          </div>
+          <section className="aspirante-actions-AP">
+            <Link to="/Aspirante/MiPerfil" className="aspirante-action-card-AP">
+              <FileText size={22} />
+              <strong>Mi perfil</strong>
+              <span>Ver tus datos y accesos principales.</span>
+            </Link>
 
-          {/* Tipo de contrato */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Tipo de Contrato</label>
-            <select
-              className="filter-select-AP"
-              value={filters.contrato}
-              onChange={(e) =>
-                setFilters({ ...filters, contrato: e.target.value })
-              }
-            >
-              <option value="">Todos</option>
-              <option value="TIEMPO_COMPLETO">Tiempo Completo</option>
-              <option value="MEDIO_TIEMPO">Medio Tiempo</option>
-              <option value="TEMPORAL">Temporal</option>
-              <option value="PRESTACION_SERVICIOS">Prestación de Servicios</option>
-              <option value="PRACTICAS">Prácticas</option>
-            </select>
-          </div>
+            <Link to="/Aspirante/MiPerfil/ActualizarPerfil" className="aspirante-action-card-AP">
+              <UserRoundPen size={22} />
+              <strong>Actualizar perfil</strong>
+              <span>Editar información personal y contacto.</span>
+            </Link>
 
-          {/* Salario mínimo */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Salario mínimo</label>
-            <input
-              className="filter-input-AP"
-              type="number"
-              placeholder="Ej: 1000000"
-              value={filters.salario}
-              onChange={(e) =>
-                setFilters({ ...filters, salario: e.target.value })
-              }
-            />
-          </div>
+            <Link to="/Aspirante/MiPerfil/HojaDeVida" className="aspirante-action-card-AP">
+              <BookOpenText size={22} />
+              <strong>Hoja de vida</strong>
+              <span>Revisar estudios, experiencia y resumen.</span>
+            </Link>
 
-          {/* Búsqueda por nombre/título */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Buscar por nombre</label>
-            <input
-              className="filter-input-AP"
-              type="text"
-              placeholder="Ej: Desarrollador, Diseñador..."
-              value={filters.nombre}
-              onChange={(e) =>
-                setFilters({ ...filters, nombre: e.target.value })
-              }
-            />
-          </div>
+            <Link to="/Aspirante/MiPerfil/MisPostulaciones" className="aspirante-action-card-AP">
+              <Briefcase size={22} />
+              <strong>Mis postulaciones</strong>
+              <span>Seguir el estado de tus aplicaciones.</span>
+            </Link>
 
-          {/* Filtro por empresa */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Empresa</label>
-            <input
-              className="filter-input-AP"
-              type="text"
-              placeholder="Ej: Google, Microsoft..."
-              value={filters.empresa}
-              onChange={(e) =>
-                setFilters({ ...filters, empresa: e.target.value })
-              }
-            />
-          </div>
+            <Link to="/Aspirante/MiPerfil/EliminarPerfil" className="aspirante-action-card-AP danger">
+              <UserRoundX size={22} />
+              <strong>Eliminar cuenta</strong>
+              <span>Acción permanente para borrar tu perfil.</span>
+            </Link>
+          </section>
 
-          {/* Filtro por ubicación */}
-          <div className="filter-group-AP">
-            <label className="filter-label-AP">Ubicación</label>
-            <input
-              className="filter-input-AP"
-              type="text"
-              placeholder="Ej: Bogotá, Medellín..."
-              value={filters.ubicacion}
-              onChange={(e) =>
-                setFilters({ ...filters, ubicacion: e.target.value })
-              }
-            />
-          </div>
-        </aside>
+          <section className="aspirante-content-AP">
+            <aside className="aspirante-filters-AP">
+              <div className="section-header-AP">
+                <div>
+                  <p className="section-kicker-AP">Filtros</p>
+                  <h2>Filtrar ofertas</h2>
+                </div>
+                <button type="button" className="ghost-button-AP" onClick={limpiarFiltros}>
+                  Limpiar
+                </button>
+              </div>
 
-        {/* CONTENIDO */}
-        <div className="content-wrapper-AP">
-          <div className="results-header-AP">
-            <h1 className="results-title-AP">
-              {filterCargo || filterCiudad || generalQuery
-                ? "Resultados de búsqueda"
-                : "Todas las ofertas"}
-            </h1>
-            <p className="results-count-AP">
-              {filteredJobListings.length} ofertas encontradas
-            </p>
-          </div>
+              <form className="filters-form-AP" onSubmit={handleSubmit}>
+                <label className="field-AP">
+                  <span>Cargo o nombre</span>
+                  <div className="input-icon-AP">
+                    <Search size={16} />
+                    <input
+                      type="text"
+                      value={filters.texto}
+                      onChange={(event) =>
+                        setFilters((current) => ({ ...current, texto: event.target.value }))
+                      }
+                      placeholder="Ej. desarrollador, auxiliar, analista"
+                    />
+                  </div>
+                </label>
 
-          <section className="section-job-panels-AP">
-            {/* LISTADO */}
-            <section className="section-listings-panel-AP">
-              {loading ? (
-                <p className="no-results-msg">Cargando ofertas...</p>
-              ) : error ? (
-                <p className="no-results-msg">Error: {error}</p>
-              ) : filteredJobListings.length === 0 ? (
-                <p className="no-results-msg">
-                  No encontramos ofertas que coincidan con tu búsqueda.
-                </p>
-              ) : (
-                filteredJobListings.map((job) => (
-                  <article
-                    key={job.id}
-                    className={`job-card-AP ${
-                      selectedJob?.id === job.id ? "selected" : ""
-                    }`}
-                    onClick={() => {
-                      setSelectedJob(job);
-                      setOfferRating(0);
-                      setCompanyRating(0);
-                      setComment("");
-                      setRatingSuccess(false);
-                      setHasRated(false);
-                    }}
+                <label className="field-AP">
+                  <span>Municipio</span>
+                  <div className="input-icon-AP">
+                    <MapPin size={16} />
+                    <select
+                      value={filters.municipioId}
+                      onChange={(event) =>
+                        setFilters((current) => ({ ...current, municipioId: event.target.value }))
+                      }
+                    >
+                      <option value="">Todos</option>
+                      {municipios.map((municipio) => (
+                        <option key={municipio.id} value={municipio.id}>
+                          {municipio.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </label>
+
+                <label className="field-AP">
+                  <span>Modalidad</span>
+                  <select
+                    value={filters.modalidad}
+                    onChange={(event) =>
+                      setFilters((current) => ({ ...current, modalidad: event.target.value }))
+                    }
                   >
-                    <div className="job-card-header-AP">
-                      <h3 className="job-card-title-AP">{job.titulo || "Sin título"}</h3>
-                      <span className="job-time-badge-AP">
-                        {job.fechaPublicacion ? new Date(job.fechaPublicacion).toLocaleDateString("es-CO") : "Reciente"}
-                      </span>
-                    </div>
+                    {modalidadOptions.map((option) => (
+                      <option key={option.value || "todas"} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-                    <p className="job-company-AP">{job.empresa?.nombre || "Empresa"}</p>
-                    <p className="job-location-AP">{job.municipio?.nombre || "Sin ubicación"}</p>
+                <label className="field-AP">
+                  <span>Experiencia</span>
+                  <select
+                    value={filters.experiencia}
+                    onChange={(event) =>
+                      setFilters((current) => ({ ...current, experiencia: event.target.value }))
+                    }
+                  >
+                    {experienciaOptions.map((option) => (
+                      <option key={option.value || "todas"} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-                    <div className="job-tags-AP">
-                      <span className="job-tag-AP tag-modalidad-AP">
-                        {job.modalidad || "Híbrida"}
-                      </span>
-                      <span className="job-tag-AP tag-contrato-AP">
-                        {job.tipoContrato || "Indefinido"}
-                      </span>
-                    </div>
+                <label className="field-AP">
+                  <span>Salario mínimo</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={filters.salarioMin}
+                    onChange={(event) =>
+                      setFilters((current) => ({ ...current, salarioMin: event.target.value }))
+                    }
+                    placeholder="Ej. 1500000"
+                  />
+                </label>
 
-                    <div className="job-card-footer-AP">
-                      <p className="job-salary-AP">
-                        {job.salario ? formatSalary(job.salario) : "No especificado"}
-                      </p>
-                      <p className="job-deadline-AP">
-                        {job.fechaLimite ? new Date(job.fechaLimite).toLocaleDateString("es-CO") : "Sin fecha"}
-                      </p>
-                    </div>
-                  </article>
-                ))
+                <label className="field-AP">
+                  <span>Salario máximo</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={filters.salarioMax}
+                    onChange={(event) =>
+                      setFilters((current) => ({ ...current, salarioMax: event.target.value }))
+                    }
+                    placeholder="Ej. 3000000"
+                  />
+                </label>
+
+                <button type="submit" className="primary-button-AP" disabled={searching}>
+                  <SlidersHorizontal size={16} />
+                  {searching ? "Buscando..." : "Buscar"}
+                </button>
+              </form>
+
+              {notice && <p className="status-message-AP success">{notice}</p>}
+              {error && <p className="status-message-AP error">{error}</p>}
+            </aside>
+
+            <section className="aspirante-listing-AP">
+              <div className="section-header-AP">
+                <div>
+                  <p className="section-kicker-AP">Resultados</p>
+                  <h2>Ofertas disponibles</h2>
+                </div>
+                <span className="results-badge-AP">{ofertas.length} resultados</span>
+              </div>
+
+              {loading ? (
+                <div className="empty-state-AP">Cargando ofertas...</div>
+              ) : ofertas.length === 0 ? (
+                <div className="empty-state-AP">
+                  No hay ofertas para mostrar con los filtros actuales.
+                </div>
+              ) : (
+                <div className="cards-list-AP">
+                  {ofertas.map((oferta) => (
+                    <article
+                      key={oferta.id}
+                      className={`offer-card-AP ${selectedOferta?.id === oferta.id ? "active" : ""}`}
+                      onClick={() => setSelectedOferta(oferta)}
+                    >
+                      <div className="offer-card-top-AP">
+                        <div>
+                          <h3>{oferta.titulo || "Sin título"}</h3>
+                          <p className="offer-company-AP">
+                            <Building2 size={14} />
+                            {oferta.empresa?.nombre || "Empresa"}
+                          </p>
+                        </div>
+                        <span className="offer-chip-AP">
+                          {oferta.modalidad || "Modalidad"}
+                        </span>
+                      </div>
+
+                      <div className="offer-meta-AP">
+                        <span>
+                          <MapPin size={14} />
+                          {oferta.municipio?.nombre || "Sin ubicación"}
+                        </span>
+                        <span>
+                          <Briefcase size={14} />
+                          {oferta.nivelExperiencia || "Sin experiencia"}
+                        </span>
+                      </div>
+
+                      <div className="offer-footer-AP">
+                        <strong>
+                          {oferta.salario ? formatearSalario(oferta.salario) : "Salario no publicado"}
+                        </strong>
+                        <small>
+                          {oferta.fechaPublicacion
+                            ? new Date(oferta.fechaPublicacion).toLocaleDateString("es-CO")
+                            : "Reciente"}
+                        </small>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               )}
             </section>
 
-            {/* DETALLES */}
-            <section className="section-details-panel-AP">
-              {loading ? (
-                <p className="detail-loading-AP">Cargando detalles...</p>
-              ) : selectedJob ? (
-                <div className="job-detail-content-AP">
-                  <div className="job-detail-header-AP">
+            <section className="aspirante-detail-AP">
+              <div className="section-header-AP">
+                <div>
+                  <p className="section-kicker-AP">Detalle</p>
+                  <h2>Oferta seleccionada</h2>
+                </div>
+              </div>
+
+              {selectedOferta ? (
+                <article className="detail-card-AP">
+                  <div className="detail-title-row-AP">
                     <div>
-                      <h2 className="job-detail-title-AP">
-                        {selectedJob.titulo || "Sin título"}
-                      </h2>
-                      <p className="job-detail-company-AP">
-                        {selectedJob.empresa?.nombre || "Empresa"}
+                      <h3>{selectedOferta.titulo || "Sin título"}</h3>
+                      <p>
+                        {selectedOferta.empresa?.nombre || "Empresa"} ·{" "}
+                        {selectedOferta.municipio?.nombre || "Sin ubicación"}
                       </p>
                     </div>
-                  </div>
-
-                  <div className="job-detail-info-AP">
-                    <div className="info-item-AP">{selectedJob.municipio?.nombre || "Sin ubicación"}</div>
-                    <div className="info-item-AP">{selectedJob.modalidad || "Híbrida"}</div>
-                    <div className="info-item-AP">{selectedJob.tipoContrato || "Indefinido"}</div>
-                    <div className="info-item-AP">{selectedJob.nivelExperiencia || "Intermedio"}</div>
-                  </div>
-
-                  <div className="job-detail-salary-AP">
-                    <span className="salary-label-AP">Salario: </span>
-                    <span className="salary-value-AP">
-                      {selectedJob.salario ? formatSalary(selectedJob.salario) : "No especificado"}
+                    <span className="detail-badge-AP">
+                      {selectedOferta.tipoContrato || "Contrato"}
                     </span>
-                    <span className="salary-period-AP">/ mensual</span>
                   </div>
 
-                  <button
-                    className="btn-apply-AP"
-                    onClick={() => handlePostularse(selectedJob.id)}
-                    disabled={postulando}
-                  >
-                    {postulando ? "Postulando..." : "Postularme"}
-                  </button>
-
-                  <div className="job-detail-description-AP">
-                    <h3>Descripción</h3>
-                    <p>{selectedJob.descripcion || "Sin descripción disponible"}</p>
+                  <div className="detail-grid-AP">
+                    <div>
+                      <strong>Modalidad</strong>
+                      <span>{selectedOferta.modalidad || "No definida"}</span>
+                    </div>
+                    <div>
+                      <strong>Experiencia</strong>
+                      <span>{selectedOferta.nivelExperiencia || "No definida"}</span>
+                    </div>
+                    <div>
+                      <strong>Salario</strong>
+                      <span>
+                        {selectedOferta.salario
+                          ? formatearSalario(selectedOferta.salario)
+                          : "No especificado"}
+                      </span>
+                    </div>
+                    <div>
+                      <strong>Fecha límite</strong>
+                      <span>
+                        {selectedOferta.fechaLimite
+                          ? new Date(selectedOferta.fechaLimite).toLocaleDateString("es-CO")
+                          : "Sin fecha"}
+                      </span>
+                    </div>
                   </div>
 
-                  {selectedJob.requisitos && (
-                    <div className="job-detail-requirements-AP">
-                      <h3>Requisitos</h3>
-                      <p>{selectedJob.requisitos}</p>
+                  <div className="detail-section-AP">
+                    <h4>Descripción</h4>
+                    <p>{selectedOferta.descripcion || "Sin descripción disponible"}</p>
+                  </div>
+
+                  {selectedOferta.requisitos && (
+                    <div className="detail-section-AP">
+                      <h4>Requisitos</h4>
+                      <p>{selectedOferta.requisitos}</p>
                     </div>
                   )}
-                </div>
+
+                  <button
+                    type="button"
+                    className="primary-button-AP full-width-AP"
+                    onClick={() => handlePostularse(selectedOferta.id)}
+                    disabled={postulandoId === selectedOferta.id}
+                  >
+                    <Send size={16} />
+                    {postulandoId === selectedOferta.id ? "Postulando..." : "Postularme"}
+                  </button>
+
+                  <p className="detail-note-AP">
+                    La postulación usa el endpoint real del módulo aspirante.
+                  </p>
+                </article>
               ) : (
-                <p className="detail-empty-AP">Selecciona una oferta para ver los detalles</p>
+                <div className="empty-state-AP">
+                  Selecciona una oferta para ver su detalle.
+                </div>
               )}
             </section>
           </section>
-        </div>
-      </main>
+        </main>
       </div>
 
       <Footer />

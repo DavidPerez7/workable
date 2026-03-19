@@ -3,12 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getOfertaById, actualizarOferta } from "../../../../api/ofertasAPI";
 import { getMunicipios } from "../../../../api/municipioAPI";
 import HeaderReclutador from "../../../../components/HeaderReclutador/HeaderReclutador";
+import SidebarReclutador from "../../../../components/SidebarReclutador/SidebarReclutador";
 import "./EditarOfertaLaboral.css";
 
 const EditarOfertaLaboral = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const ofertaId = location.state?.ofertaId;
+  const params = new URLSearchParams(location.search);
+  const ofertaId = location.state?.ofertaId || params.get("ofertaId");
 
   const [formData, setFormData] = useState({
     titulo: "",
@@ -61,15 +63,20 @@ const EditarOfertaLaboral = () => {
         ]);
 
         setMunicipios(municipiosData);
+        const modalidad = ofertaData.modalidad?.nombre || ofertaData.modalidad || "PRESENCIAL";
+        const tipoContrato = ofertaData.tipoContrato?.nombre || ofertaData.tipoContrato || "TIEMPO_COMPLETO";
+        const nivelExperiencia =
+          ofertaData.nivelExperiencia?.nombre || ofertaData.nivelExperiencia || "SIN_EXPERIENCIA";
+
         setFormData({
           titulo: ofertaData.titulo || "",
           descripcion: ofertaData.descripcion || "",
           requisitos: ofertaData.requisitos || "",
           salario: ofertaData.salario || "",
-          fechaLimite: ofertaData.fechaLimite?.split('T')[0] || "",
-          modalidad: ofertaData.modalidad || "PRESENCIAL",
-          tipoContrato: ofertaData.tipoContrato || "TIEMPO_COMPLETO",
-          nivelExperiencia: ofertaData.nivelExperiencia || "SIN_EXPERIENCIA",
+          fechaLimite: ofertaData.fechaLimite?.split("T")[0] || "",
+          modalidad,
+          tipoContrato,
+          nivelExperiencia,
           municipioId: ofertaData.municipio?.id || "",
         });
       } catch (err) {
@@ -125,8 +132,8 @@ const EditarOfertaLaboral = () => {
     return (
       <>
         <HeaderReclutador />
-        <main className="pb-container">
-          <p className="pb-loading">Cargando datos...</p>
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">Cargando datos...</div>
         </main>
       </>
     );
@@ -136,9 +143,13 @@ const EditarOfertaLaboral = () => {
     return (
       <>
         <HeaderReclutador />
-        <main className="pb-container">
-          <p className="pb-error">{error}</p>
-          <button onClick={() => navigate("/Reclutador/GestigOferts")}>Volver</button>
+        <main className="reclutador-main-RP">
+          <div className="reclutador-card-RP">
+            <p className="reclutador-alert-RP error">{error}</p>
+            <button onClick={() => navigate("/Reclutador/GestigOferts")} className="reclutador-button-RP">
+              Volver
+            </button>
+          </div>
         </main>
       </>
     );
@@ -147,160 +158,164 @@ const EditarOfertaLaboral = () => {
   return (
     <>
       <HeaderReclutador />
-
-      <main className="pb-container">
-        <h1 className="pb-title">Editar oferta laboral</h1>
-
-        <form className="pb-form" onSubmit={handleSubmit}>
-          <section className="pb-card">
-
-            <h2 className="pb-section-title">Información de la oferta</h2>
-
-            <div className="pb-field">
-              <label htmlFor="titulo">Título *</label>
-              <input
-                id="titulo"
-                name="titulo"
-                type="text"
-                value={formData.titulo}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
+      <div className="reclutador-shell-RP">
+        <SidebarReclutador />
+        <main className="reclutador-main-RP">
+          <section className="reclutador-card-RP">
+            <div className="reclutador-card-header-RP">
+              <div>
+                <p className="reclutador-kicker-RP">Editar oferta</p>
+                <h2>Actualiza la oferta</h2>
+              </div>
             </div>
 
-            <div className="pb-field">
-              <label htmlFor="descripcion">Descripción *</label>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                rows="4"
-                value={formData.descripcion}
-                onChange={handleChange}
-                required
-                className="pb-textarea"
-              />
-            </div>
+            <form className="pb-form" onSubmit={handleSubmit}>
+              <div className="pb-field">
+                <label htmlFor="titulo">Titulo *</label>
+                <input
+                  id="titulo"
+                  name="titulo"
+                  type="text"
+                  value={formData.titulo}
+                  onChange={handleChange}
+                  required
+                  className="pb-input"
+                />
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="requisitos">Requisitos * (máximo 500 caracteres)</label>
-              <textarea
-                id="requisitos"
-                name="requisitos"
-                rows="3"
-                maxLength="500"
-                value={formData.requisitos}
-                onChange={handleChange}
-                required
-                className="pb-textarea"
-                placeholder="Ej: 2 años de experiencia en programación, conocimiento en React, etc."
-              />
-              <small style={{ color: '#999', marginTop: '5px', display: 'block' }}>
-                {formData.requisitos.length}/500 caracteres
-              </small>
-            </div>
+              <div className="pb-field">
+                <label htmlFor="descripcion">Descripcion *</label>
+                <textarea
+                  id="descripcion"
+                  name="descripcion"
+                  rows="4"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                  required
+                  className="pb-textarea"
+                />
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="salario">Salario *</label>
-              <input
-                id="salario"
-                name="salario"
-                type="number"
-                value={formData.salario}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
+              <div className="pb-field">
+                <label htmlFor="requisitos">Requisitos *</label>
+                <textarea
+                  id="requisitos"
+                  name="requisitos"
+                  rows="3"
+                  maxLength="500"
+                  value={formData.requisitos}
+                  onChange={handleChange}
+                  required
+                  className="pb-textarea"
+                />
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="fechaLimite">Fecha límite *</label>
-              <input
-                id="fechaLimite"
-                name="fechaLimite"
-                type="date"
-                value={formData.fechaLimite}
-                onChange={handleChange}
-                required
-                className="pb-input"
-              />
-            </div>
+              <div className="pb-row">
+                <div className="pb-field">
+                  <label htmlFor="salario">Salario *</label>
+                  <input
+                    id="salario"
+                    name="salario"
+                    type="number"
+                    value={formData.salario}
+                    onChange={handleChange}
+                    required
+                    className="pb-input"
+                  />
+                </div>
+                <div className="pb-field">
+                  <label htmlFor="fechaLimite">Fecha limite *</label>
+                  <input
+                    id="fechaLimite"
+                    name="fechaLimite"
+                    type="date"
+                    value={formData.fechaLimite}
+                    onChange={handleChange}
+                    required
+                    className="pb-input"
+                  />
+                </div>
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="modalidad">Modalidad *</label>
-              <select
-                id="modalidad"
-                name="modalidad"
-                value={formData.modalidad}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona una modalidad</option>
-                {modalidades.map((mod) => (
-                  <option key={mod.value} value={mod.value}>{mod.nombre}</option>
-                ))}
-              </select>
-            </div>
+              <div className="pb-row">
+                <div className="pb-field">
+                  <label htmlFor="modalidad">Modalidad *</label>
+                  <select
+                    id="modalidad"
+                    name="modalidad"
+                    value={formData.modalidad}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona una modalidad</option>
+                    {modalidades.map((mod) => (
+                      <option key={mod.value} value={mod.value}>{mod.nombre}</option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="pb-field">
-              <label htmlFor="tipoContrato">Tipo de contrato *</label>
-              <select
-                id="tipoContrato"
-                name="tipoContrato"
-                value={formData.tipoContrato}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona un tipo de contrato</option>
-                {tiposContrato.map((tc) => (
-                  <option key={tc.value} value={tc.value}>{tc.nombre}</option>
-                ))}
-              </select>
-            </div>
+                <div className="pb-field">
+                  <label htmlFor="tipoContrato">Tipo de contrato *</label>
+                  <select
+                    id="tipoContrato"
+                    name="tipoContrato"
+                    value={formData.tipoContrato}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona un tipo</option>
+                    {tiposContrato.map((tc) => (
+                      <option key={tc.value} value={tc.value}>{tc.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-            <div className="pb-field">
-              <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
-              <select
-                id="nivelExperiencia"
-                name="nivelExperiencia"
-                value={formData.nivelExperiencia}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona un nivel</option>
-                {nivelesExperiencia.map((nivel) => (
-                  <option key={nivel.value} value={nivel.value}>{nivel.nombre}</option>
-                ))}
-              </select>
-            </div>
+              <div className="pb-row">
+                <div className="pb-field">
+                  <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
+                  <select
+                    id="nivelExperiencia"
+                    name="nivelExperiencia"
+                    value={formData.nivelExperiencia}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona un nivel</option>
+                    {nivelesExperiencia.map((nivel) => (
+                      <option key={nivel.value} value={nivel.value}>{nivel.nombre}</option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="pb-field">
-              <label htmlFor="municipioId">Municipio *</label>
-              <select
-                id="municipioId"
-                name="municipioId"
-                value={formData.municipioId}
-                onChange={handleChange}
-                required
-                className="pb-select"
-              >
-                <option value="">Selecciona un municipio</option>
-                {municipios.map((mun) => (
-                  <option key={mun.id} value={mun.id}>{mun.nombre} - {mun.departamento?.nombre || ''}</option>
-                ))}
-              </select>
-            </div>
+                <div className="pb-field">
+                  <label htmlFor="municipioId">Municipio *</label>
+                  <select
+                    id="municipioId"
+                    name="municipioId"
+                    value={formData.municipioId}
+                    onChange={handleChange}
+                    required
+                    className="pb-select"
+                  >
+                    <option value="">Selecciona un municipio</option>
+                    {municipios.map((mun) => (
+                      <option key={mun.id} value={mun.id}>{mun.nombre} - {mun.departamento?.nombre || ""}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-            <button type="submit" className="pb-btn-primary" disabled={guardando}>
-              {guardando ? "Guardando..." : "Guardar cambios"}
-            </button>
-
+              <button type="submit" className="pb-btn-primary" disabled={guardando}>
+                {guardando ? "Guardando..." : "Guardar cambios"}
+              </button>
+            </form>
           </section>
-        </form>
-      </main>
+        </main>
+      </div>
     </>
   );
 };

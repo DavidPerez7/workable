@@ -23,6 +23,16 @@ export const getHojaDeVida = async (id) => {
   }
 };
 
+export const getAllHojasDeVida = async () => {
+  try {
+    const response = await API.get('/api/hoja-vida');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching hojas de vida:', error);
+    throw error;
+  }
+};
+
 export const crearHojaDeVida = async (hoja) => {
   try {
     const response = await API.post('/api/hoja-vida', hoja);
@@ -54,6 +64,7 @@ export const eliminarHojaDeVida = async (id) => {
 };
 
 const hojaDeVidaApi = {
+  getAllHojasDeVida,
   getHojasDeVidaPorAspirante,
   getHojaDeVida,
   crearHojaDeVida,

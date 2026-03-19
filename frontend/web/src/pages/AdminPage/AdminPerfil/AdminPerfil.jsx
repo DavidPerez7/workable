@@ -79,38 +79,40 @@ export default function AdminPerfil() {
 
   if (loading) {
     return (
-      <div className="admin-perfil-wrapper">
-        <div className="loading-state">Cargando perfil...</div>
+      <div className="admin-profile-shell">
+        <div className="profile-card">Cargando perfil...</div>
       </div>
     );
   }
 
   if (!adminData) {
     return (
-      <div className="admin-perfil-wrapper">
-        <div className="error-state">Error: No se pudo cargar el perfil</div>
+      <div className="admin-profile-shell">
+        <div className="profile-card">No se pudo cargar el perfil.</div>
       </div>
     );
   }
 
   return (
-    <div className="admin-perfil-wrapper">
-      <div className="perfil-container">
-        <div className="perfil-header">
-          <h1>Mi Perfil</h1>
-          <p className="subtitle">Administrador del Sistema</p>
+    <div className="admin-profile-shell">
+      <div className="profile-card">
+        <div className="profile-header">
+          <div>
+            <h1>Mi perfil</h1>
+            <p>Administrador del sistema</p>
+          </div>
         </div>
 
         {error && <div className="alert alert-error">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
 
-        <div className="perfil-content">
+        <div className="profile-content">
           <div className="profile-section">
             <div className="section-header">
-              <h2>Información Personal</h2>
+              <h2>Información personal</h2>
               {!editing && (
                 <button className="btn-edit" onClick={() => setEditing(true)}>
-                  ✏️ Editar
+                  Editar
                 </button>
               )}
             </div>
@@ -192,14 +194,14 @@ export default function AdminPerfil() {
                   onClick={handleSave}
                   disabled={saving}
                 >
-                  {saving ? 'Guardando...' : '💾 Guardar Cambios'}
+                  {saving ? 'Guardando...' : 'Guardar cambios'}
                 </button>
                 <button
                   className="btn-cancel"
                   onClick={handleCancel}
                   disabled={saving}
                 >
-                  ❌ Cancelar
+                  Cancelar
                 </button>
               </div>
             )}
@@ -216,7 +218,7 @@ export default function AdminPerfil() {
                 className="btn-logout"
                 onClick={handleLogout}
               >
-                🚪 Cerrar Sesión
+                Cerrar sesión
               </button>
             </div>
           </div>

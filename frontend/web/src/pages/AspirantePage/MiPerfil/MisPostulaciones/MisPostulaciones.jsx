@@ -1,157 +1,177 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { AlertCircle, RefreshCcw, Trash2 } from "lucide-react";
 import Header from "../../../../components/Header/Header";
-import Menu from "../../../../components/Menu/Menu"
 import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
-import { obtenerPostulacionesAspirante, eliminarPostulacion } from "../../../../api/postulacionesAPI";
+import Footer from "../../../../components/Footer/footer";
+import aspirantesApi from "../../../../api/aspirantesApi";
+import {
+  eliminarPostulacion,
+} from "../../../../api/postulacionesAPI";
 import "./MisPostulaciones.css";
+
+const getEstadoClass = (estado) => {
+  const normalizado = (estado || "").toLowerCase();
+
+  if (normalizado.includes("acept")) {
+    return "state-accepted";
+  }
+
+  if (normalizado.includes("rechaz")) {
+    return "state-rejected";
+  }
+
+  if (normalizado.includes("revision") || normalizado.includes("revisión")) {
+    return "state-review";
+  }
+
+  return "state-pending";
+};
+
+const formatearSalario = (valor) =>
+  new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(Number(valor || 0));
 
 const MisPostulaciones = () => {
   const [postulaciones, setPostulaciones] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [eliminando, setEliminando] = useState(null);
+  const [eliminandoId, setEliminandoId] = useState(null);
 
-  // ============================================
-  //   📌 OBTENER POSTULACIONES – API REAL
-  // ============================================
-  useEffect(() => {
-    obtenerPostulaciones();
-  }, []);
-
-  const obtenerPostulaciones = async () => {
-    setLoading(true);
-    setError("");
+  const cargarPostulaciones = async () => {
     try {
-      const data = await obtenerPostulacionesAspirante();
-      setPostulaciones(data || []);
-    } catch (error) {
-      console.error("Error al obtener postulaciones:", error);
-      setError(error.message || "Error al obtener postulaciones");
+      setLoading(true);
+      setError("");
+      const usuarioId = localStorage.getItem("usuarioId");
+
+      if (!usuarioId) {
+        throw new Error("No se encontró el usuario autenticado.");
+      }
+
+      const aspirante = await aspirantesApi.get(usuarioId);
+      setPostulaciones(Array.isArray(aspirante?.postulaciones) ? aspirante.postulaciones : []);
+    } catch (err) {
+      console.error("Error al obtener postulaciones:", err);
+      setError(err.message || "No se pudieron cargar las postulaciones");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEliminarPostulacion = async (id) => {
-    if (window.confirm("¿Estás seguro de que quieres eliminar esta postulación?")) {
-      setEliminando(id);
-      try {
-        await eliminarPostulacion(id);
-        setPostulaciones(postulaciones.filter(post => post.id !== id));
-        alert("Postulación eliminada exitosamente");
-      } catch (error) {
-        console.error("Error al eliminar postulación:", error);
-        alert("Error al eliminar la postulación: " + error.message);
-      } finally {
-        setEliminando(null);
-      }
+  useEffect(() => {
+    cargarPostulaciones();
+  }, []);
+
+  const handleEliminar = async (id) => {
+    if (!window.confirm("¿Deseas eliminar esta postulación?")) {
+      return;
     }
-  };
 
-  const formatSalary = (value) =>
-    new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      minimumFractionDigits: 0,
-    }).format(value);
-
-  const getEstadoClass = (estado) => {
-    if (!estado) return "mp-status-pending";
-    const estadoLower = estado.toLowerCase();
-    if (estadoLower.includes("revisión") || estadoLower.includes("revision")) return "mp-status-review";
-    if (estadoLower.includes("rechazad")) return "mp-status-rejected";
-    if (estadoLower.includes("aceptad")) return "mp-status-accepted";
-    return "mp-status-pending";
+    try {
+      setEliminandoId(id);
+      await eliminarPostulacion(id);
+      setPostulaciones((current) => current.filter((postulacion) => postulacion.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar postulación:", err);
+      setError(err.message || "No se pudo eliminar la postulación");
+    } finally {
+      setEliminandoId(null);
+    }
   };
 
   return (
     <>
       <Header isLoggedIn={true} userRole="ASPIRANTE" />
-      <Menu />
-      <div style={{display: 'flex', minHeight: 'calc(100vh - 80px)', background: 'linear-gradient(135deg, #f5f7fa 0%, #E5E7EB 100%)'}}>
+
+      <div className="postulaciones-shell-AP">
         <SidebarAspirante />
-        <div className="mispostulaciones-container-MP" style={{flex: 1, padding: '2rem'}}>
-        <h2 className="mp-title">Mis postulaciones</h2>
-        <p className="mp-subtitle">
-          Aquí puedes ver todas las ofertas a las que te has postulado.
-        </p>
 
-        {error && (
-          <div className="mp-error">
-            <p>{error}</p>
-            <button onClick={obtenerPostulaciones} className="mp-retry-btn">
-              Reintentar
+        <main className="postulaciones-main-AP">
+          <section className="postulaciones-hero-AP">
+            <div>
+              <p className="postulaciones-kicker-AP">Mis postulaciones</p>
+              <h1>Controla tus aplicaciones en un solo lugar</h1>
+              <p>Vista simple con actualización real desde el endpoint del módulo aspirante.</p>
+            </div>
+            <button type="button" className="secondary-button-AP" onClick={cargarPostulaciones}>
+              <RefreshCcw size={16} />
+              Actualizar
             </button>
-          </div>
-        )}
+          </section>
 
-        {loading ? (
-          <p className="mp-loading">Cargando postulaciones...</p>
-        ) : postulaciones.length === 0 ? (
-          <div className="mp-empty">
-            <p>No tienes postulaciones registradas.</p>
-          </div>
-        ) : (
-          <div className="mp-list">
-            {postulaciones.map((post) => (
-              <div key={post.id} className="mp-card">
-                <div className="mp-card-header">
-                  <h3 className="mp-job-title">{post.oferta?.titulo || "Oferta sin título"}</h3>
-                  <span className={`mp-status ${getEstadoClass(post.estado)}`}>
-                    {post.estado || "Pendiente"}
-                  </span>
-                </div>
+          {error && (
+            <div className="postulaciones-alert-AP error">
+              <AlertCircle size={18} />
+              <span>{error}</span>
+            </div>
+          )}
 
-                <p className="mp-company">{post.oferta?.empresa?.nombre || "Empresa desconocida"}</p>
-                <p className="mp-location">{post.oferta?.modalidad || "Modalidad no especificada"}</p>
+          {loading ? (
+            <div className="postulaciones-empty-AP">Cargando postulaciones...</div>
+          ) : postulaciones.length === 0 ? (
+            <div className="postulaciones-empty-AP">
+              No tienes postulaciones registradas. <Link to="/Aspirante">Ver ofertas</Link>
+            </div>
+          ) : (
+            <div className="postulaciones-list-AP">
+              {postulaciones.map((postulacion) => (
+                <article key={postulacion.id} className="postulacion-card-AP">
+                  <div className="postulacion-top-AP">
+                    <div>
+                      <h2>{postulacion.oferta?.titulo || "Oferta sin título"}</h2>
+                      <p>{postulacion.oferta?.empresa?.nombre || "Empresa"}</p>
+                    </div>
+                    <span className={`status-pill-AP ${getEstadoClass(postulacion.estado)}`}>
+                      {postulacion.estado || "Pendiente"}
+                    </span>
+                  </div>
 
-                <div className="mp-tags">
-                  {post.oferta?.modalidad && <span className="mp-tag modalidad">{post.oferta.modalidad}</span>}
-                  {post.oferta?.tipoContrato && <span className="mp-tag contrato">{post.oferta.tipoContrato}</span>}
-                </div>
+                  <div className="postulacion-meta-AP">
+                    <span>{postulacion.oferta?.municipio?.nombre || "Sin ubicación"}</span>
+                    <span>{postulacion.oferta?.modalidad || "Sin modalidad"}</span>
+                    {postulacion.oferta?.salario && <span>{formatearSalario(postulacion.oferta.salario)}</span>}
+                  </div>
 
-                {/* CITACIÓN EMBEDDED */}
-                {post.citacion && post.citacion.fecha && (
-                  <div className="mp-citacion">
-                    <h4 className="mp-citacion-title">📅 Citación programada</h4>
-                    <div className="mp-citacion-info">
-                      <p><strong>Fecha:</strong> {new Date(post.citacion.fecha).toLocaleDateString("es-CO")}</p>
-                      {post.citacion.hora && <p><strong>Hora:</strong> {post.citacion.hora}</p>}
-                      {post.citacion.linkMeet && (
-                        <p>
-                          <strong>Enlace:</strong>{" "}
-                          <a href={post.citacion.linkMeet} target="_blank" rel="noopener noreferrer" className="mp-citacion-link">
-                            Unirse a la reunión
-                          </a>
-                        </p>
-                      )}
-                      {post.citacion.detalles && <p><strong>Detalles:</strong> {post.citacion.detalles}</p>}
-                      {post.citacion.estado && (
-                        <span className={`mp-citacion-estado ${post.citacion.estado.toLowerCase()}`}>
-                          {post.citacion.estado}
-                        </span>
+                  {postulacion.citacion?.fecha && (
+                    <div className="citacion-box-AP">
+                      <strong>Citación programada</strong>
+                      <p>
+                        {new Date(postulacion.citacion.fecha).toLocaleDateString("es-CO")}
+                        {postulacion.citacion.hora ? ` · ${postulacion.citacion.hora}` : ""}
+                      </p>
+                      {postulacion.citacion.linkMeet && (
+                        <a href={postulacion.citacion.linkMeet} target="_blank" rel="noreferrer">
+                          Unirse a la reunión
+                        </a>
                       )}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <div className="mp-footer">
-                  {post.oferta?.salario && <p className="mp-salary">{formatSalary(post.oferta.salario)}</p>}
-                  <p className="mp-date">Postulado el: {new Date(post.fechaCreacion).toLocaleDateString("es-CO")}</p>
-                  <button 
-                    className="mp-delete-btn"
-                    onClick={() => handleEliminarPostulacion(post.id)}
-                    disabled={eliminando === post.id}
-                  >
-                    {eliminando === post.id ? "Eliminando..." : "Eliminar"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                  <div className="postulacion-footer-AP">
+                    <small>
+                      Postulada el {new Date(postulacion.fechaCreacion).toLocaleDateString("es-CO")}
+                    </small>
+                    <button
+                      type="button"
+                      className="danger-button-AP"
+                      onClick={() => handleEliminar(postulacion.id)}
+                      disabled={eliminandoId === postulacion.id}
+                    >
+                      <Trash2 size={16} />
+                      {eliminandoId === postulacion.id ? "Eliminando..." : "Eliminar"}
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </main>
       </div>
-      </div>
+
+      <Footer />
     </>
   );
 };
