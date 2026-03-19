@@ -1,0 +1,28 @@
+info:
+  name: Create
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/postulacion"
+  body:
+    type: json
+    data: |-
+      {
+        "oferta": {
+          "id": 1
+        },
+        "aspirante": {
+          "id": 1
+        }
+      }
+  auth:
+    type: bearer
+    token: "{{aspiranteToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

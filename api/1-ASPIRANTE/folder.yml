@@ -1,0 +1,9 @@
+info:
+  name: 1-ASPIRANTE
+  type: folder
+  seq: 1
+
+request:
+  variables:
+    - name: aspiranteToken
+      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoyLCJyb2wiOiJBU1BJUkFOVEUiLCJzdWIiOiJqdWFuLnBlcmV6QGVqZW1wbG8uY29tIiwiaWF0IjoxNzczODgwNjgyLCJleHAiOjE3NzM5MTY2ODJ9.6bjVjRe2EFIJF7Sm_Xn_jYIphInUyJxL7NCfIFeSClY

@@ -1,8 +1,0 @@
-info:
-  name: GetAllReclutadores
-  http:
-    method: GET
-    url: "{{baseUrl}}/api/reclutador"
-    auth:
-      type: bearer
-      token: "{{adminToken}}"

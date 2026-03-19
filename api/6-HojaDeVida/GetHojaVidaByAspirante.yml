@@ -1,8 +1,0 @@
-info:
-  name: GetHojaVidaByAspirante
-  http:
-    method: GET
-    url: "{{baseUrl}}/api/hoja-vida/aspirante/3"
-    auth:
-      type: bearer
-      token: "{{aspiranteToken}}"

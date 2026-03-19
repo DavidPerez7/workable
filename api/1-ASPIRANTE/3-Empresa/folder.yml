@@ -1,0 +1,7 @@
+info:
+  name: 3-Empresa
+  type: folder
+  seq: 3
+
+request:
+  auth: inherit

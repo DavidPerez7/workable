@@ -1,0 +1,23 @@
+info:
+  name: Search
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/oferta/search"
+  body:
+    type: json
+    data: |-
+      {
+        "nivelExperiencia": "SENIOR"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

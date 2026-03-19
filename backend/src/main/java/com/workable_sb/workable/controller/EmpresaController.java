@@ -23,7 +23,7 @@ public class EmpresaController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Empresa empresa) {
         try {
-            Empresa created = empresaService.create(empresa);
+            Empresa created = empresaService.create(empresa, null);
             return ResponseEntity.status(201).body(created);
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
@@ -32,8 +32,8 @@ public class EmpresaController {
         }
     }
 
-    // READ
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    // READ ALL
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         try {
@@ -44,7 +44,7 @@ public class EmpresaController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    // READ BY ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
@@ -65,14 +65,14 @@ public class EmpresaController {
             Empresa updated = empresaService.update(id, empresa);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }
     }
 
     // DELETE
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {

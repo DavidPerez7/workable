@@ -1,0 +1,28 @@
+opencollection: 1.0.0
+
+info:
+  name: 2-RECLUTADOR
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  variables:
+    - name: baseUrl
+      value: http://localhost:8080
+    - name: reclutadorToken
+      value: RECLUTADOR_TOKEN_PLACEHOLDER
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

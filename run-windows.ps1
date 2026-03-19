@@ -25,7 +25,47 @@ $Colors = @{
 # ===== FUNCIONES DE SERVICIOS (XAMPP) =====
 
 function Start-XAMPPServices {
-    # ... código existente (Start-XAMPPServices)
+    Print-Info "Iniciando servicios XAMPP..."
+    
+    $XamppPath = "C:\xampp"
+    $XamppCtrlExe = Join-Path $XamppPath "xampp-control.exe"
+    $MysqldExe = Join-Path $XamppPath "mysql\bin\mysqld.exe"
+    
+    # Opción 1: Intentar con xampp-control.exe
+    if (Test-Path $XamppCtrlExe) {
+        try {
+            Start-Process $XamppCtrlExe -PassThru
+            Print-Info "XAMPP Control Panel iniciado"
+            Start-Sleep -Seconds 3
+        }
+        catch {
+            Print-Warning "No se pudo abrir XAMPP Control Panel: $_"
+        }
+    }
+    
+    # Opción 2: Iniciar mysqld directamente
+    if (Test-Path $MysqldExe) {
+        $MysqlProc = Get-Process -Name mysqld -ErrorAction SilentlyContinue
+        if (-not $MysqlProc) {
+            try {
+                Start-Process $MysqldExe -WindowStyle Hidden -PassThru
+                Start-Sleep -Seconds 3
+                Print-Success "MySQL iniciado correctamente"
+                return $true
+            }
+            catch {
+                Print-Error "Error iniciando MySQL: $_"
+                return $false
+            }
+        }
+        else {
+            Print-Info "MySQL ya está en ejecución"
+            return $true
+        }
+    }
+    
+    Print-Error "No se encontró XAMPP o MySQL en $XamppPath"
+    return $false
 }
 
 # ===== FUNCIONES DE BASE DE DATOS =====
@@ -45,23 +85,51 @@ function Reset-Database {
     $MysqlProc = Get-Process -Name mysqld -ErrorAction SilentlyContinue
     if (-not $MysqlProc) {
         Print-Warning "MySQL no está corriendo. Intentando iniciar..."
-        Start-XAMPPServices
+        if (-not (Start-XAMPPServices)) {
+            Print-Error "No se pudo iniciar MySQL. Verifica que XAMPP esté instalado en $XamppPath"
+            return $false
+        }
         Start-Sleep -Seconds 5
     }
 
     Print-Info "Borrando y recreando base de datos 'workable'..."
-    try {
-        & $MysqlExe -u root -e "DROP DATABASE IF EXISTS workable; CREATE DATABASE workable;"
-        if ($LASTEXITCODE -eq 0) {
-            Print-Success "Base de datos reseteada correctamente."
+    
+    # Intentar conexión con reintentos
+    $MaxRetries = 3
+    $Retry = 0
+    $Success = $false
+    
+    while ($Retry -lt $MaxRetries -and -not $Success) {
+        try {
+            & $MysqlExe -u root -e "DROP DATABASE IF EXISTS workable; CREATE DATABASE workable;" 2>$null
+            if ($LASTEXITCODE -eq 0) {
+                Print-Success "Base de datos reseteada correctamente."
+                $Success = $true
+            }
+            else {
+                $Retry++
+                if ($Retry -lt $MaxRetries) {
+                    Print-Warning "Reintentando conexión a MySQL ($Retry/$MaxRetries)..."
+                    Start-Sleep -Seconds 2
+                }
+                else {
+                    Print-Error "Error ejecutando el comando SQL. Verifica que: 1) MySQL esté corriendo, 2) Usuario 'root' sin contraseña, o ajusta las credenciales en el script."
+                }
+            }
         }
-        else {
-            Print-Error "Error ejecutando el comando SQL. Verifica que el usuario 'root' no tenga contraseña o ajústalo en el script."
+        catch {
+            $Retry++
+            if ($Retry -lt $MaxRetries) {
+                Print-Warning "Reintentando conexión a MySQL ($Retry/$MaxRetries)..."
+                Start-Sleep -Seconds 2
+            }
+            else {
+                Print-Error "No se pudo realizar el reseteo: $_"
+            }
         }
     }
-    catch {
-        Print-Error "No se pudo realizar el reseteo: $_"
-    }
+    
+    return $Success
 }
 
 # ===== FUNCIONES AUXILIARES =====

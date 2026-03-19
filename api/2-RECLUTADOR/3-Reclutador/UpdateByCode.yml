@@ -1,0 +1,17 @@
+info:
+  name: UpdateByCode
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/reclutador/empresa/65NMWQZWNWFQ"
+  auth:
+    type: bearer
+    token: "{{reclutadorToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

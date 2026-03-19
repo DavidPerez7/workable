@@ -4,6 +4,7 @@ import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.service.AspiranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ public class AspiranteController {
     private AspiranteService aspiranteService;
 
     // CREATE
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Aspirante aspirante) {
         try {
@@ -26,7 +28,8 @@ public class AspiranteController {
         }
     }
 
-    // READ
+    // READ ALL
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         try {
@@ -36,6 +39,7 @@ public class AspiranteController {
         }
     }
 
+    // READ BY ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
@@ -49,6 +53,7 @@ public class AspiranteController {
     }
 
     // UPDATE
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Aspirante aspirante) {
         try {
@@ -61,6 +66,7 @@ public class AspiranteController {
     }
 
     // DELETE
+    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
@@ -68,19 +74,6 @@ public class AspiranteController {
             return ResponseEntity.status(204).build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
-        }
-    }
-
-    // DELETE ME - Elimina su propia cuenta
-    @DeleteMapping("/me/delete")
-    public ResponseEntity<?> deleteMe() {
-        try {
-            aspiranteService.deleteMe();
-            return ResponseEntity.status(204).build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error: " + e.getMessage()));
         }

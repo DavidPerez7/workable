@@ -1,0 +1,35 @@
+info:
+  name: Create
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/administrador"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Carlos",
+        "apellido": "Pérez",
+        "correo": "carlos.perez@workable.com",
+        "fechaNacimiento": "1988-03-20",
+        "password": "carlosPass123",
+        "municipio": {
+          "id": 1
+        },
+        "genero": "MASCULINO",
+        "rol": "ADMIN",
+        "telefono": "3101234567",
+        "urlFotoPerfil": "https://example.com/carlos.jpg",
+        "ubicacion": "Oficina principal"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

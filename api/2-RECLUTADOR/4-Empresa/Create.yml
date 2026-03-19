@@ -1,0 +1,33 @@
+info:
+  name: CreateEmpresa
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/empresa"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Tech Solutions S.A.S",
+        "numeroTrabajadores": 50,
+        "email": "contacto@techsolutions.com",
+        "telefono": "6012345678",
+        "nit": "900123456-1",
+        "categories": ["TECNOLOGIA", "SERVICIOS"],
+        "municipio": {
+          "id": 1
+        },
+        "descripcion": "Empresa líder en desarrollo de software y consultoría tecnológica.",
+        "logoUrl": "https://example.com/logo.png"
+      }
+  auth:
+    type: bearer
+    token: "{{reclutadorToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

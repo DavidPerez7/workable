@@ -1,0 +1,17 @@
+info:
+  name: Delete
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/api/postulacion/{{postulacionId}}"
+  auth:
+    type: bearer
+    token: "{{aspiranteToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

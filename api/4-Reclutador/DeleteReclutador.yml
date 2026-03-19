@@ -1,8 +1,0 @@
-info:
-  name: DeleteReclutador
-  http:
-    method: DELETE
-    url: "{{baseUrl}}/api/reclutador/1"
-    auth:
-      type: bearer
-      token: "{{adminToken}}"

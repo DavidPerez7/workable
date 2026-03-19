@@ -42,10 +42,6 @@ public class AdministradorService {
         return administradorRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Administrador no encontrado"));
     }
 
-    public Administrador getByCorreo(String correo) {
-        return administradorRepo.findByCorreo(correo).orElseThrow(() -> new IllegalArgumentException("Administrador no encontrado"));
-    }
-
 
     // UPDATE
     public Administrador update(Long id, Administrador request) {

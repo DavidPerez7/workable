@@ -1,0 +1,23 @@
+info:
+  name: UpdatePostulacion
+  type: http
+  seq: 6
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/postulacion/1"
+  body:
+    type: json
+    data: |-
+      {
+        "estado": "ACEPTADO"
+      }
+  auth:
+    type: bearer
+    token: "{{reclutadorToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

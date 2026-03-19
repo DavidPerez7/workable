@@ -1,0 +1,12 @@
+info:
+  name: 2-RECLUTADOR
+  type: folder
+  seq: 1
+
+request:
+  headers:
+    - name: reclutadorToken
+      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoyLCJyb2wiOiJSRUNMVVRBRE9SIiwic3ViIjoiYW5hLmdhcmNpYUBlbXByZXNhLmNvbSIsImlhdCI6MTc3Mzg4MjA5OSwiZXhwIjoxNzczOTE4MDk5fQ.PCduMOopa34IZIBGZEZGcZ0l42gh6Wg0hm6Ba98rhUQ
+  variables:
+    - name: reclutadorToken
+      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoyLCJyb2wiOiJSRUNMVVRBRE9SIiwic3ViIjoiYW5hLmdhcmNpYUBlbXByZXNhLmNvbSIsImlhdCI6MTc3Mzg1NDc5MSwiZXhwIjoxNzczODkwNzkxfQ.6YjwDJj8bgS3VSDDgFvXowLpbFglJdY0irehCr8V7TA

@@ -1,0 +1,31 @@
+info:
+  name: Search
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/oferta/search"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Desarrollador Java",
+        "municipioId": 1,
+        "salarioMin": 3500000,
+        "salarioMax": 3500000,
+        "experiencia": "INTERMEDIO",
+        "modalidad": "REMOTO",
+        "categoria": "TECNOLOGIA",
+        "empresaId": 1,
+        "estado": "ACTIVA"
+      }
+  auth:
+    type: bearer
+    token: "{{aspiranteToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

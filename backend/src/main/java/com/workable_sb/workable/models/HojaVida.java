@@ -57,6 +57,11 @@ public class HojaVida {
     @JoinColumn(name = "aspirante_id", referencedColumnName = "id")
     private Aspirante aspirante;
 
+    @Transient
+    public Long getAspiranteId() {
+        return aspirante != null ? aspirante.getId() : null;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (this.fechaCreacion == null) {

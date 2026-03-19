@@ -1,0 +1,17 @@
+info:
+  name: GetEmpresaById
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/empresa/1"
+  auth:
+    type: bearer
+    token: "{{reclutadorToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,32 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/administrador/2"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Carlos",
+        "apellido": "Pérez",
+        "fechaNacimiento": "1988-03-20",
+        "municipio": {
+          "id": 1
+        },
+        "genero": "MASCULINO",
+        "telefono": "3101234567",
+        "urlFotoPerfil": "https://example.com/carlos-updated.jpg",
+        "ubicacion": "Oficina principal - Torre A"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

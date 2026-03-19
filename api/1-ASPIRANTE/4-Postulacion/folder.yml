@@ -1,0 +1,7 @@
+info:
+  name: 4-Postulacion
+  type: folder
+  seq: 4
+
+request:
+  auth: inherit

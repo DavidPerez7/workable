@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.EstadoOferta;
 import com.workable_sb.workable.models.Postulacion;
-import com.workable_sb.workable.models.Aspirante;
+import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.OfertaRepo;
 import com.workable_sb.workable.repository.PostulacionRepo;
-import com.workable_sb.workable.repository.AspiranteRepo;
 
 @Service
 @Transactional
@@ -46,6 +46,11 @@ public class PostulacionService {
 			throw new IllegalStateException("Solo puedes postularte a ofertas activas");
 		}
 
+		// Verificar si ya existe postulación del aspirante a la oferta
+		if (postulacionRepo.findByAspirante_IdAndOferta_Id(aspiranteId, ofertaId).isPresent()) {
+			throw new IllegalStateException("Ya existe una postulación del aspirante a esta oferta");
+		}
+
 		postulacion.setAspirante(aspirante);
 		postulacion.setOferta(oferta);
 
@@ -65,13 +70,10 @@ public class PostulacionService {
 	}
 
 	public List<Postulacion> getByOfertaId(Long ofertaId) {
-		if (ofertaId == null) return List.of();
-		return postulacionRepo.findByOfertaId(ofertaId);
-	}
-
-	public List<Postulacion> getByAspiranteId(Long aspiranteId) {
-		if (aspiranteId == null) return List.of();
-		return postulacionRepo.findByAspiranteId(aspiranteId);
+		if (ofertaId == null) {
+			throw new IllegalArgumentException("El ID de la oferta no puede ser nulo");
+		}
+		return postulacionRepo.findByOferta_Id(ofertaId);
 	}
 
 	// UPDATE

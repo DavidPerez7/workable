@@ -1,0 +1,7 @@
+info:
+  name: 6-Municipio
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit

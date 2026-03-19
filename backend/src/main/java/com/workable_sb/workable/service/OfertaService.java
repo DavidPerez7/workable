@@ -51,7 +51,7 @@ public class OfertaService {
         return ofertaRepository.save(request);
     }
 
-    // READ
+    // READ - LISTADO COMPLETO
     public List<Oferta> getAll() {
         return ofertaRepository.findAll();
     }
@@ -64,57 +64,6 @@ public class OfertaService {
                 .orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
     }
 
-
-    // BÚSQUEDA UNIFICADA CON FILTROS COMBINABLES
-    public List<Oferta> buscarConFiltros(OfertaSearchDTO filtros) {
-        Oferta.Modalidad modalidadEnum = null;
-        Empresa.Category categoriaEnum = null;
-
-        if (filtros.getMunicipioId() != null) {
-            Long mId = filtros.getMunicipioId();
-            if (mId != null) {
-                municipioRepo.findById(mId)
-                        .orElseThrow(() -> new IllegalArgumentException("Municipio no encontrado"));
-            }
-        }
-
-        if (filtros.getModalidad() != null) {
-            try {
-                modalidadEnum = Oferta.Modalidad.valueOf(filtros.getModalidad().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Modalidad no válida: " + filtros.getModalidad());
-            }
-        }
-
-        if (filtros.getCategoria() != null) {
-            try {
-                categoriaEnum = Empresa.Category.valueOf(filtros.getCategoria().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Categoría no válida: " + filtros.getCategoria());
-            }
-        }
-        
-        return ofertaRepository.buscarConFiltros(
-                filtros.getNombre(),
-                filtros.getMunicipioId(),
-                filtros.getSalarioMin(),
-                filtros.getSalarioMax(),
-                filtros.getExperiencia(),
-                modalidadEnum,
-                categoriaEnum,
-                filtros.getEmpresaId()
-        );
-    }
-
-    public Oferta updateEstado(Long id, Oferta.EstadoOferta estado) {
-        Oferta existing = getById(id);
-        if (existing == null) {
-            throw new RuntimeException("Oferta no encontrada");
-        }
-        existing.setEstado(estado);
-        return ofertaRepository.save(existing);
-    }
-
     // UPDATE
     public Oferta update(Long id, Oferta request) {
         if (id == null) {
@@ -123,10 +72,6 @@ public class OfertaService {
         Oferta existing = getById(id);
         if (existing == null) {
             throw new RuntimeException("Oferta no encontrada");
-        }
-
-        if (existing.getEstado() != Oferta.EstadoOferta.INACTIVA) {
-            throw new RuntimeException("Solo se puede editar ofertas inactivas");
         }
 
         if (request.getTitulo() != null) existing.setTitulo(request.getTitulo());
@@ -164,6 +109,25 @@ public class OfertaService {
     public void delete(Long id) {
         if (id == null) return;
         ofertaRepository.deleteById(id);
+    }
+
+    // SEARCH CON FILTROS
+    public List<Oferta> search(OfertaSearchDTO criteria) {
+        if (criteria == null) {
+            throw new IllegalArgumentException("Criterios de búsqueda no pueden ser nulos");
+        }
+        
+        return ofertaRepository.buscarConFiltros(
+            criteria.getNombre(),
+            criteria.getMunicipioId(),
+            criteria.getSalarioMin(),
+            criteria.getSalarioMax(),
+            criteria.getExperiencia() != null ? Oferta.NivelExperiencia.valueOf(criteria.getExperiencia()) : null,
+            criteria.getModalidad() != null ? Oferta.Modalidad.valueOf(criteria.getModalidad()) : null,
+            criteria.getCategoria() != null ? Empresa.Category.valueOf(criteria.getCategoria()) : null,
+            criteria.getEmpresaId(),
+            criteria.getEstado()
+        );
     }
 }
 

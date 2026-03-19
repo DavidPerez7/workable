@@ -1,0 +1,33 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/empresa/1"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Innova Cloud Internacional",
+        "numeroTrabajadores": 120,
+        "email": "hr@innovacloud.com",
+        "telefono": "3007654321",
+        "nit": "901234569",
+        "categories": ["TECNOLOGIA", "SERVICIOS", "FINANZAS"],
+        "municipio": {
+          "id": 3
+        },
+        "descripcion": "Expansión internacional de servicios tecnológicos y nube híbrida.",
+        "logoUrl": "https://example.com/logos/innovacloud-updated.png"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

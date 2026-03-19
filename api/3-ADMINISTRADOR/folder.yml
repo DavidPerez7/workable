@@ -1,0 +1,9 @@
+info:
+  name: 3-ADMINISTRADOR
+  type: folder
+  seq: 1
+
+request:
+  variables:
+    - name: adminToken
+      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoxLCJyb2wiOiJBRE1JTiIsInN1YiI6ImFkbWluQGV4YW1wbGUuY29tIiwiaWF0IjoxNzczODg0MzAwLCJleHAiOjE3NzM5MjAzMDB9.uxyBM3ZxT-kLtGHkoP8O6Yk2HAkT98c554MAd3RewEk

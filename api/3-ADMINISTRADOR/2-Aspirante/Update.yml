@@ -1,0 +1,35 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/aspirante/2"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Carlos Editado",
+        "apellido": "Gómez Morales",
+        "correo": "carlos.editado@example.com",
+        "fechaNacimiento": "1990-08-22",
+        "password": "newpassCarlos123",
+        "municipio": {
+          "id": 2
+        },
+        "genero": "MASCULINO",
+        "rol": "ASPIRANTE",
+        "telefono": "3109876543",
+        "urlFotoPerfil": "https://example.com/carlos-editado.jpg",
+        "ubicacion": "Nueva Ubicación Carlos"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

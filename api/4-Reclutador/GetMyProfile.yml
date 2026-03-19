@@ -1,8 +1,0 @@
-info:
-  name: GetMyProfile
-  http:
-    method: GET
-    url: "{{baseUrl}}/api/reclutador/me"
-    auth:
-      type: bearer
-      token: "{{reclutadorToken}}"

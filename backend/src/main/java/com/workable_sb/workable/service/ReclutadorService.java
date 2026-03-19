@@ -47,6 +47,7 @@ public class ReclutadorService {
         return reclutadorRepo.findAll();
     }
 
+    // READ BY ID
     public Reclutador getById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("El ID no puede ser nulo");
@@ -55,31 +56,19 @@ public class ReclutadorService {
                 .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
     }
 
-    public Reclutador getByCorreo(String correo) {
-        return reclutadorRepo.findByCorreo(correo)
-                .orElseThrow(() -> new RuntimeException("Reclutador no encontrado"));
-    }
-
-    public List<Reclutador> getByEmpresaId(Long empresaId) {
-        if (empresaId == null) return List.of();
-        return reclutadorRepo.findAll().stream()
-                .filter(r -> r.getEmpresa() != null && empresaId.equals(r.getEmpresa().getId()))
-                .toList();
-    }
-
-    public Reclutador asignarEmpresa(Long reclutadorId, Long empresaId) {
-        if (reclutadorId == null || empresaId == null) {
-            throw new IllegalArgumentException("IDs de Reclutador y Empresa son obligatorios");
+    // ASIGNAR EMPRESA POR CÓDIGO DE INVITACIÓN
+    public Reclutador asignarEmpresaByCodigo(Long reclutadorId, String codigoInvitacion) {
+        if (reclutadorId == null || codigoInvitacion == null || codigoInvitacion.isEmpty()) {
+            throw new IllegalArgumentException("ID de Reclutador y código de invitación son obligatorios");
         }
+        
         Reclutador reclutador = getById(reclutadorId);
-        Empresa empresa = empresaRepo.findById(empresaId).orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
-        if (reclutador != null) {
-            reclutador.setEmpresa(empresa);
-            return reclutadorRepo.save(reclutador);
-        }
-        throw new RuntimeException("Reclutador no encontrado");
+        Empresa empresa = empresaRepo.findByCodigoInvitacion(codigoInvitacion)
+                .orElseThrow(() -> new RuntimeException("Código de invitación inválido"));
+        
+        reclutador.setEmpresa(empresa);
+        return reclutadorRepo.save(reclutador);
     }
-
     // UPDATE
     public Reclutador update(Long id, Reclutador request) {
         if (id == null) {

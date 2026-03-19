@@ -1,0 +1,45 @@
+info:
+  name: Update
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/hoja-vida/1"
+  body:
+    type: json
+    data: |-
+      {
+        "resumenProfesional": "Resumen actualizado",
+        "telefono": "3007654321",
+        "correoElectronico": "aspirante.actualizado@example.com",
+        "redSocial": "https://linkedin.com/in/aspirante-updated",
+        "estudios": [
+          {
+            "titulo": "Ingeniería de Sistemas",
+            "institucion": "Universidad Nacional de Colombia",
+            "nivelEducativo": "UNIVERSITARIO",
+            "fechaInicio": "2018-01-15",
+            "fechaFin": "2022-12-10",
+            "certificadoUrl": "https://example.com/certificados/ingenieria-sistemas-actualizado.pdf"
+          }
+        ],
+        "experiencias": [
+          {
+            "cargo": "Desarrollador Java Junior",
+            "empresa": "Tech Solutions Colombia",
+            "fechaInicio": "2021-06-01",
+            "fechaFin": "2022-12-31",
+            "certificadoUrl": "https://example.com/certificados/tech-solutions-actualizado.pdf"
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{aspiranteToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

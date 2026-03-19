@@ -8,13 +8,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.workable_sb.workable.models.Oferta;
 import com.workable_sb.workable.models.Oferta.Modalidad;
+import com.workable_sb.workable.models.Oferta.EstadoOferta;
+import com.workable_sb.workable.models.Oferta.NivelExperiencia;
+import com.workable_sb.workable.dto.OfertaSummaryDTO;
 import com.workable_sb.workable.models.Empresa;
 
 @Repository
 public interface OfertaRepo extends JpaRepository<Oferta, Long> {
 
     // BÚSQUEDA UNIFICADA CON FILTROS COMBINABLES
-    @Query("SELECT DISTINCT o FROM Oferta o LEFT JOIN o.empresa e WHERE o.estado = 'ACTIVA'" +
+    @Query("SELECT DISTINCT o FROM Oferta o LEFT JOIN o.empresa e WHERE o.estado = :estado" +
             " AND (:nombre IS NULL OR LOWER(o.titulo) LIKE LOWER(CONCAT('%', :nombre, '%')))" +
             " AND (:municipioId IS NULL OR o.municipio.id = :municipioId)" +
             " AND (:salarioMin IS NULL OR o.salario >= :salarioMin)" +
@@ -28,8 +31,16 @@ public interface OfertaRepo extends JpaRepository<Oferta, Long> {
             @Param("municipioId") Long municipioId,
             @Param("salarioMin") BigDecimal salarioMin,
             @Param("salarioMax") BigDecimal salarioMax,
-            @Param("experiencia") String experiencia,
+            @Param("experiencia") NivelExperiencia experiencia,
             @Param("modalidad") Modalidad modalidad,
             @Param("categoria") Empresa.Category categoria,
-            @Param("empresaId") Long empresaId);
+            @Param("empresaId") Long empresaId,
+            @Param("estado") EstadoOferta estado);
+
+    // CONSULTA OPTIMIZADA PARA CARDS (solo campos necesarios)
+    @Query("SELECT NEW com.workable_sb.workable.dto.OfertaSummaryDTO(" +
+            "o.id, o.titulo, e.nombre, m.nombre, o.salario, o.modalidad, o.tipoContrato, CAST(o.estado AS string), o.puntuacion) " +
+            "FROM Oferta o JOIN o.empresa e JOIN o.municipio m " +
+            "WHERE o.estado = :estado")
+    List<OfertaSummaryDTO> findAllSummaryByEstado(@Param("estado") EstadoOferta estado);
 }

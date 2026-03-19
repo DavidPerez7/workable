@@ -1,0 +1,24 @@
+info:
+  name: Update
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/municipio/1"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Bogotá D.C. Actualizada",
+        "departamento": "BOGOTA_DC"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,7 +1,0 @@
-info:
-  name: 1-Auth (ok)
-  type: folder
-  seq: 1
-
-request:
-  auth: inherit

@@ -2,12 +2,10 @@ package com.workable_sb.workable.controller;
 
 import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.service.PostulacionService;
-import com.workable_sb.workable.security.CustomUserDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,59 +18,8 @@ public class PostulacionController {
     @Autowired
     private PostulacionService postulacionService;
 
-    // READ
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllPostulaciones() {
-        try {
-            List<Postulacion> postulaciones = postulacionService.getAll();
-            return ResponseEntity.ok(postulaciones);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
-        }
-    }
-
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Long id) {
-        try {
-            Postulacion postulacion = postulacionService.getById(id);
-            return ResponseEntity.ok(postulacion);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulación: " + e.getMessage()));
-        }
-    }
-
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/oferta/{ofertaId}")
-    public ResponseEntity<?> getByOferta(@PathVariable Long ofertaId) {
-        try {
-            List<Postulacion> postulaciones = postulacionService.getByOfertaId(ofertaId);
-            return ResponseEntity.ok(postulaciones);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
-        }
-    }
-
-    @PreAuthorize("hasRole('ASPIRANTE')")
-    @GetMapping("/aspirante")
-    public ResponseEntity<?> getByAspirante(@AuthenticationPrincipal CustomUserDetails user) {
-        try {
-            List<Postulacion> postulaciones = postulacionService.getByAspiranteId(user.getUsuarioId());
-            return ResponseEntity.ok(postulaciones);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
-        }
-    }
-
     // CREATE
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Postulacion postulacion) {
         try {
@@ -87,10 +34,48 @@ public class PostulacionController {
         }
     }
 
+    // READ
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        try {
+            List<Postulacion> postulaciones = postulacionService.getAll();
+            return ResponseEntity.ok(postulaciones);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones: " + e.getMessage()));
+        }
+    }
+
+    // READ BY ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        try {
+            Postulacion postulacion = postulacionService.getById(id);
+            return ResponseEntity.ok(postulacion);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulación: " + e.getMessage()));
+        }
+    }
+
+    // GET BY OFERTA
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
+    @GetMapping("/oferta/{ofertaId}")
+    public ResponseEntity<?> getByOfertaId(@PathVariable Long ofertaId) {
+        try {
+            return ResponseEntity.ok(postulacionService.getByOfertaId(ofertaId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones por oferta: " + e.getMessage()));
+        }
+    }
+
     // UPDATE
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> cambiarEstado(@PathVariable Long id, @RequestBody Postulacion postulacion) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Postulacion postulacion) {
         try {
             postulacion.setId(id);
             Postulacion actualizada = postulacionService.update(id, postulacion);
@@ -100,12 +85,12 @@ public class PostulacionController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al cambiar estado: " + e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Error al actualizar postulación: " + e.getMessage()));
         }
     }
 
     // DELETE
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {

@@ -19,23 +19,35 @@ public class HojaVidaController {
     private HojaVidaService hojaVidaService;
 
     // CREATE
-    @PreAuthorize("hasRole('ASPIRANTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody HojaVida hojaVida) {
+    public ResponseEntity<?> create(@RequestBody HojaVida hojaVida) {
         try {
-            HojaVida creada = hojaVidaService.create(hojaVida);
-            return ResponseEntity.ok(creada);
+            HojaVida created = hojaVidaService.create(hojaVida);
+            return ResponseEntity.status(201).body(created);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Error al crear hoja de vida: " + e.getMessage()));
         }
     }
 
     // READ
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> getAll() {
+        try {
+            List<HojaVida> hojasVida = hojaVidaService.getAll();
+            return ResponseEntity.ok(hojasVida);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hojas de vida: " + e.getMessage()));
+        }
+    }
+
+    // READ BY ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
             HojaVida hojaVida = hojaVidaService.getById(id);
             return ResponseEntity.ok(hojaVida);
@@ -46,9 +58,10 @@ public class HojaVidaController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
+    // READ BY ASPIRANTE
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
     @GetMapping("/aspirante/{aspiranteId}")
-    public ResponseEntity<?> obtenerPorAspirante(@PathVariable Long aspiranteId) {
+    public ResponseEntity<?> getByAspirante(@PathVariable Long aspiranteId) {
         try {
             HojaVida hojaVida = hojaVidaService.getByAspiranteId(aspiranteId);
             return ResponseEntity.ok(hojaVida);
@@ -59,26 +72,13 @@ public class HojaVidaController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'RECLUTADOR', 'ADMIN')")
-    @GetMapping
-    public ResponseEntity<?> obtenerTodas() {
-        try {
-            List<HojaVida> hojasVida = hojaVidaService.getAll();
-            return ResponseEntity.ok(hojasVida);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener hojas de vida: " + e.getMessage()));
-        }
-    }
-
     // UPDATE
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody HojaVida hojaVida) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody HojaVida hojaVida) {
         try {
-            HojaVida actualizada = hojaVidaService.update(id, hojaVida);
-            return ResponseEntity.ok(actualizada);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+            HojaVida updated = hojaVidaService.update(id, hojaVida);
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
@@ -87,14 +87,12 @@ public class HojaVidaController {
     }
 
     // DELETE
-    @PreAuthorize("hasAnyRole('ASPIRANTE', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             hojaVidaService.delete(id);
-            return ResponseEntity.ok(Map.of("message", "Hoja de vida eliminada correctamente"));
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(403).body(Map.of("error", e.getMessage()));
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         } catch (Exception e) {

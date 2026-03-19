@@ -1,0 +1,46 @@
+info:
+  name: Create
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/hoja-vida"
+  body:
+    type: json
+    data: |-
+      {
+        "aspirante": {
+          "id": 2
+        },
+        "resumenProfesional": "Desarrollador Full Stack con 5 años de experiencia en Java y Spring Boot.",
+        "redSocial": "https://linkedin.com/in/aspirante",
+        "correoElectronico": "aspirante@example.com",
+        "telefono": "3101234567",
+        "estudios": [
+          {
+            "titulo": "Ingeniero de Sistemas",
+            "institucion": "Universidad Nacional",
+            "nivelEducativo": "UNIVERSITARIO",
+            "fechaInicio": "2015-02-01",
+            "fechaFin": "2020-11-30"
+          }
+        ],
+        "experiencias": [
+          {
+            "cargo": "Junior Developer",
+            "empresa": "Tech Solutions",
+            "fechaInicio": "2021-01-15",
+            "fechaFin": null
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

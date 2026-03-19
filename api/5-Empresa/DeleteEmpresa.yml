@@ -1,8 +1,0 @@
-info:
-  name: DeleteEmpresa
-  http:
-    method: DELETE
-    url: "{{baseUrl}}/api/empresa/1"
-    auth:
-      type: bearer
-      token: "{{adminToken}}"

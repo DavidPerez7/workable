@@ -1,0 +1,33 @@
+info:
+  name: CreateReclutador
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/reclutador"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Laura",
+        "apellido": "Ramírez",
+        "correo": "laura.ramirez.admin@example.com",
+        "fechaNacimiento": "1988-04-12",
+        "password": "LauraPass123!",
+        "municipio": {
+          "id": 1
+        },
+        "genero": "FEMENINO",
+        "rol": "RECLUTADOR",
+        "telefono": "3125557799"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

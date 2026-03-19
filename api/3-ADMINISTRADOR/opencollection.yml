@@ -1,0 +1,28 @@
+opencollection: 1.0.0
+
+info:
+  name: 2-ADMINISTRADOR
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  variables:
+    - name: baseUrl
+      value: http://localhost:8080
+    - name: adminToken
+      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoxLCJyb2wiOiJBRE1JTiIsInN1YiI6ImFkbWluQGV4YW1wbGUuY29tIiwiaWF0IjoxNzczNzUxMDA4LCJleHAiOjE3NzM3ODcwMDh9.Z1YXZ5bnH8HWIg0nxq3rz4kC5GUiPa6KToTA_zlAjwk
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

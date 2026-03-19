@@ -1,8 +1,0 @@
-info:
-  name: GetEmpresaById
-  http:
-    method: GET
-    url: "{{baseUrl}}/api/empresa/1"
-    auth:
-      type: bearer
-      token: "{{reclutadorToken}}"

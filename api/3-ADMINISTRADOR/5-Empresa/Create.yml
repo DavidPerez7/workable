@@ -1,0 +1,33 @@
+info:
+  name: Create
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/empresa"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Innova Cloud S.A.S",
+        "numeroTrabajadores": 75,
+        "email": "contacto@innovacloud.com",
+        "telefono": "6015558899",
+        "nit": "901234567",
+        "categories": ["TECNOLOGIA", "SERVICIOS"],
+        "municipio": {
+          "id": 2
+        },
+        "descripcion": "Empresa especializada en software en la nube, integración y consultoría tecnológica.",
+        "logoUrl": "https://example.com/logos/innovacloud.png"
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

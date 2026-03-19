@@ -3,11 +3,8 @@ package com.workable_sb.workable.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import com.workable_sb.workable.models.Reclutador;
-import com.workable_sb.workable.security.CustomUserDetails;
 import com.workable_sb.workable.service.ReclutadorService;
 
 import java.util.List;
@@ -46,7 +43,8 @@ public class ReclutadorController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    // READ BY ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
@@ -59,26 +57,13 @@ public class ReclutadorController {
         }
     }
 
+    // ASIGNAR EMPRESA POR CÓDIGO
     @PreAuthorize("hasRole('RECLUTADOR')")
-    @GetMapping("/me")
-    public ResponseEntity<?> getMyProfile(@AuthenticationPrincipal CustomUserDetails user) {
+    @PutMapping("/empresa/{codigoInvitacion}")
+    public ResponseEntity<?> asignarEmpresaByCodigo(@PathVariable String codigoInvitacion, @org.springframework.security.core.annotation.AuthenticationPrincipal com.workable_sb.workable.security.CustomUserDetails user) {
         try {
             Long usuarioId = user.getUsuarioId();
-            Reclutador reclutador = reclutadorService.getById(usuarioId);
-            return ResponseEntity.ok(reclutador);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener perfil: " + e.getMessage()));
-        }
-    }
-
-    @PreAuthorize("hasRole('RECLUTADOR')")
-    @PutMapping("/me/empresa/{empresaId}")
-    public ResponseEntity<?> asignarEmpresa(@PathVariable Long empresaId, @AuthenticationPrincipal CustomUserDetails user) {
-        try {
-            Long usuarioId = user.getUsuarioId();
-            Reclutador reclutador = reclutadorService.asignarEmpresa(usuarioId, empresaId);
+            Reclutador reclutador = reclutadorService.asignarEmpresaByCodigo(usuarioId, codigoInvitacion);
             return ResponseEntity.ok(reclutador);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
@@ -87,21 +72,8 @@ public class ReclutadorController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
-    @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<?> getByEmpresa(@PathVariable Long empresaId) {
-        try {
-            List<Reclutador> reclutadores = reclutadorService.getByEmpresaId(empresaId);
-            return ResponseEntity.ok(reclutadores);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutadores: " + e.getMessage()));
-        }
-    }
-
     // UPDATE
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Reclutador reclutador) {
         try {
@@ -117,7 +89,7 @@ public class ReclutadorController {
     }
 
     // DELETE
-    @PreAuthorize("hasAnyRole('RECLUTADOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -131,4 +103,5 @@ public class ReclutadorController {
             return ResponseEntity.status(500).body(Map.of("error", "Error al eliminar reclutador: " + e.getMessage()));
         }
     }
+
 }

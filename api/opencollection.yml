@@ -1,7 +1,7 @@
 opencollection: 1.0.0
 
 info:
-  name: api
+  name: API Collection
 config:
   proxy:
     inherit: true
@@ -17,16 +17,6 @@ config:
 request:
   variables:
     - name: baseUrl
-      value: http://localhost:8080
-    - name: aspiranteToken
-      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoxLCJyb2wiOiJBU1BJUkFOVEUiLCJzdWIiOiJhc3BpcmFudGVAZXhhbXBsZS5jb20iLCJpYXQiOjE3NzM3NTEwMDQsImV4cCI6MTc3Mzc4NzAwNH0.D19IY7CycuBtZTS3V1SlLeFksiMEHVAE1PccIYKaWH0
-    - name: reclutadorToken
-      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoxLCJyb2wiOiJSRUNMVVRBRE9SIiwic3ViIjoicmVjbHV0YWRvckBleGFtcGxlLmNvbSIsImlhdCI6MTc3Mzc1MTAxMCwiZXhwIjoxNzczNzg3MDEwfQ.1UrzwIIpGsTZ0ifAd2BU5Er4WntdZmipdhVojncotfI
-    - name: adminToken
-      value: eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwidXN1YXJpb0lkIjoxLCJyb2wiOiJBRE1JTiIsInN1YiI6ImFkbWluQGV4YW1wbGUuY29tIiwiaWF0IjoxNzczNzUxMDA4LCJleHAiOjE3NzM3ODcwMDh9.Z1YXZ5bnH8HWIg0nxq3rz4kC5GUiPa6KToTA_zlAjwk
+      value: "http://localhost:8080"
 bundled: false
-extensions:
-  bruno:
-    ignore:
-      - node_modules
-      - .git
+extensions: {}

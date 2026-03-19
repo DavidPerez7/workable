@@ -11,5 +11,5 @@ import com.workable_sb.workable.models.HojaVida;
 public interface HojaVidaRepo extends JpaRepository<HojaVida, Long> {
     
     // Buscar hoja de vida por aspirante (getbyaspirante)
-    List<HojaVida> findByAspiranteId(Long aspiranteId);
+    List<HojaVida> findByAspirante_Id(Long aspiranteId);
 }

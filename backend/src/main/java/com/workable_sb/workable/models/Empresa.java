@@ -119,4 +119,9 @@ public class Empresa {
         }
         this.codigoInvitacion = codigo.toString();
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reclutador_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Reclutador reclutador;
 }

@@ -26,6 +26,7 @@ lerna-debug.log*
 HELP.md
 target/
 build/
+bin/
 *.class
 
 # Maven y Gradle

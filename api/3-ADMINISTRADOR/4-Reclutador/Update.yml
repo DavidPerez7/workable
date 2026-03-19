@@ -1,0 +1,35 @@
+info:
+  name: UpdateReclutador
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/reclutador/2"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Laura",
+        "apellido": "Ramírez Actualizada",
+        "correo": "laura.ramirez.admin.actualizada@example.com",
+        "password": "LauraPass123!",
+        "fechaNacimiento": "1988-04-12",
+        "municipio": {
+          "id": 1
+        },
+        "genero": "FEMENINO",
+        "telefono": "3125557799",
+        "empresa": {
+          "id": 1
+        }
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

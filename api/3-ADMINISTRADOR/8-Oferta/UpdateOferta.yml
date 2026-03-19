@@ -1,0 +1,37 @@
+info:
+  name: Update
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/api/oferta/1"
+  body:
+    type: json
+    data: |-
+      {
+        "titulo": "Desarrollador Full Stack Senior (Actualizado)",
+        "descripcion": "Se busca desarrollador full stack con experiencia en Java, Spring Boot y React.",
+        "fechaLimite": "2026-05-15",
+        "salario": 5000000,
+        "numeroVacantes": 3,
+        "nivelExperiencia": "EXPERTO",
+        "requisitos": "Java, Spring Boot, React, SQL, REST APIs",
+        "municipio": {
+          "id": 3
+        },
+        "modalidad": "REMOTO",
+        "tipoContrato": "TIEMPO_COMPLETO",
+        "empresa": {
+          "id": 1
+        }
+      }
+  auth:
+    type: bearer
+    token: "{{adminToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,8 +1,0 @@
-info:
-  name: DeleteHojaVida
-  http:
-    method: DELETE
-    url: "{{baseUrl}}/api/hoja-vida/1"
-    auth:
-      type: bearer
-      token: "{{aspiranteToken}}"
