@@ -1,6 +1,6 @@
 import React from 'react';
-import CrudEntityPage from '../CrudEntityPage/CrudEntityPage';
-import aspirantesApi from '../../../api/aspirantesApi';
+import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
+import aspirantesApi from '../../api/aspirantesApi';
 
 export default function AdminUsuarios() {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
-import CrudEntityPage from '../CrudEntityPage/CrudEntityPage';
-import municipioApi from '../../../api/municipioAPI';
+import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
+import municipioApi from '../../api/municipioAPI';
 
 export default function AdminMunicipios() {
   return (

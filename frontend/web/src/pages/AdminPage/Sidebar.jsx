@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { logout } from '../../../api/authApi';
+import { logout } from '../../api/authApi';
 import './Sidebar.css';
 
 const Sidebar = () => {
@@ -15,7 +15,7 @@ const Sidebar = () => {
 
   return (
     <aside className="admin-sidebar">
-      <div className="sidebar-brand">Workable</div>
+      <div className="sidebar-brand">WORKABLE</div>
       <nav className="admin-sidebar-nav">
         <NavLink to="/Administrador/Aspirantes" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Aspirantes</NavLink>
         <NavLink to="/Administrador/Administradores" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Administradores</NavLink>
@@ -25,7 +25,6 @@ const Sidebar = () => {
         <NavLink to="/Administrador/Postulaciones" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Postulaciones</NavLink>
         <NavLink to="/Administrador/HojasDeVida" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Hojas de vida</NavLink>
         <NavLink to="/Administrador/Municipios" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Municipios</NavLink>
-        <NavLink to="/Administrador/Perfil" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Perfil</NavLink>
       </nav>
       <button className="btn-logout-sidebar" onClick={handleLogout}>Cerrar sesión</button>
     </aside>

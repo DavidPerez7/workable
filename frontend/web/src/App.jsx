@@ -39,9 +39,9 @@ import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 
 // Pages for administrators
 import AdminPage from "./pages/AdminPage/AdminPage";
-import AdminEmpresas from "./pages/AdminPage/AdminEmpresas/AdminEmpresas";
-import OffersPage from "./pages/AdminPage/AdminOfertas/AdminOfertas";
-import UsersManagePage from "./pages/AdminPage/AdminUsuarios/AdminUsuarios";
+import AdminEmpresas from "./pages/AdminPage/AdminEmpresas";
+import OffersPage from "./pages/AdminPage/AdminOfertas";
+import UsersManagePage from "./pages/AdminPage/AdminUsuarios";
 
 // Shared components
 import ReclutadorForm from "./components/Registro/reclutadorForm/reclutadorForm";

@@ -1,7 +1,7 @@
 import React from 'react';
-import CrudEntityPage from '../CrudEntityPage/CrudEntityPage';
-import { postulacionAPI as adminPostulacionAPI } from '../../../api/adminApi';
-import { obtenerPostulacionPorId, crearPostulacion, actualizarPostulacion, eliminarPostulacion } from '../../../api/postulacionesAPI';
+import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
+import { postulacionAPI as adminPostulacionAPI } from '../../api/adminApi';
+import { obtenerPostulacionPorId, crearPostulacion, actualizarPostulacion, eliminarPostulacion } from '../../api/postulacionesAPI';
 
 export default function AdminPostulaciones() {
   return (

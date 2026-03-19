@@ -1,6 +1,6 @@
 import React from 'react';
-import CrudEntityPage from '../CrudEntityPage/CrudEntityPage';
-import reclutadoresApi from '../../../api/reclutadoresApi';
+import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
+import reclutadoresApi from '../../api/reclutadoresApi';
 
 export default function AdminReclutadores() {
   return (

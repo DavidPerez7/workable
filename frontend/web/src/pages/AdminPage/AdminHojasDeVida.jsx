@@ -1,6 +1,6 @@
 import React from 'react';
-import CrudEntityPage from '../CrudEntityPage/CrudEntityPage';
-import hojaDeVidaApi from '../../../api/hojaDeVidaAPI';
+import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
+import hojaDeVidaApi from '../../api/hojaDeVidaAPI';
 
 export default function AdminHojasDeVida() {
   return (

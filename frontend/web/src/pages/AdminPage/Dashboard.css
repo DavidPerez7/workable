@@ -62,6 +62,10 @@
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
 }
 
+.panel-highlight {
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
 .summary-card {
   padding: 16px;
   display: flex;
@@ -119,6 +123,38 @@
 
 .list-row small {
   color: #64748b;
+}
+
+.dashboard-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.dashboard-link-card {
+  text-align: left;
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  padding: 14px;
+  background: #f8fbff;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  color: #0f172a;
+}
+
+.dashboard-link-card strong {
+  font-size: 1rem;
+}
+
+.dashboard-link-card span {
+  color: #64748b;
+  font-size: 0.92rem;
+}
+
+.dashboard-link-card:hover {
+  border-color: #bfdbfe;
+  background: #eff6ff;
 }
 
 .error-message {
