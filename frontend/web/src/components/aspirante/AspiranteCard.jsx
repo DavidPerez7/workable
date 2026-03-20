@@ -1,9 +1,5 @@
-import React from "react";
-import "./AspirantePrimitives.css";
+import AppCard from "../shared/AppCard";
 
-const AspiranteCard = ({ children, className = "", as: Component = "section" }) => {
-  const classes = className ? `asp-card ${className}` : "asp-card";
-  return <Component className={classes}>{children}</Component>;
-};
+const AspiranteCard = (props) => <AppCard {...props} />;
 
 export default AspiranteCard;

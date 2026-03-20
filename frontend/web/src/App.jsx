@@ -2,16 +2,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Pages for general users
 import HomePage from "./pages/MainPage/HomePage";
-import SalaryPage from "./pages/SalaryPage/SalaryPage";
-import ProfessionalPage from "./pages/ProfessionalPage/ProfessionalPage";
 import LoginPage from "./components/IniciarSesion/IniciarSesion";
 import SignUpPage from "./components/Registro/registro";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
-import Articulo1 from "./pages/ProfessionalPage/Articulos/Articulo1/Articulo1";
-import Articulo2 from "./pages/ProfessionalPage/Articulos/Articulo2/Articulo2";
-import Articulo3 from "./pages/ProfessionalPage/Articulos/Articulo3/Articulo3";
 
 // Pages for recruiters
 import ReclutadorPage from "./pages/ReclutadorPage/ReclutadorPage";
@@ -53,8 +48,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/salary" element={<SalaryPage />} />
-        <Route path="/professional" element={<ProfessionalPage />} />
         <Route path="/Login" element={<LoginPage />} />
         <Route path="/Signup" element={<SignUpPage />} />
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
@@ -88,9 +81,6 @@ function App() {
         <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><AdminEmpresas/></ProtectedRoute>} />
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />
-        <Route path="/articulo1" element={<Articulo1 />} />
-        <Route path="/articulo2" element={<Articulo2 />} />
-        <Route path="/articulo3" element={<Articulo3 />} />
         <Route path="/Empresas" element={<Empresas />} />
         <Route path="/KFCPage" element={<KFCPage />} />
         <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />

@@ -1,8 +1,5 @@
-import React from "react";
+import AppCard from "../shared/AppCard";
 
-const ReclutadorCard = ({ children, className = "", as: Component = "section" }) => {
-  const classes = className ? `reclutador-card-RP ${className}` : "reclutador-card-RP";
-  return <Component className={classes}>{children}</Component>;
-};
+const ReclutadorCard = (props) => <AppCard {...props} />;
 
 export default ReclutadorCard;

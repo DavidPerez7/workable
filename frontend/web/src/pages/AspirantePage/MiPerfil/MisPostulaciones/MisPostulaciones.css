@@ -27,7 +27,6 @@
 
 .postulaciones-hero-AP,
 .postulacion-card-AP,
-.postulaciones-alert-AP,
 .postulaciones-empty-AP {
   background: var(--po-surface);
   border: 1px solid var(--po-border);
@@ -65,54 +64,6 @@
 .postulaciones-alert-AP {
   color: var(--po-muted);
   line-height: 1.5;
-}
-
-.secondary-button-AP,
-.danger-button-AP {
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 800;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-.secondary-button-AP {
-  background: #eef4ff;
-  color: var(--po-blue-dark);
-  padding: 0.85rem 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.danger-button-AP {
-  background: linear-gradient(135deg, var(--po-red), #b91c1c);
-  color: white;
-  padding: 0.85rem 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  box-shadow: 0 14px 22px rgba(220, 38, 38, 0.2);
-}
-
-.secondary-button-AP:hover,
-.danger-button-AP:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.danger-button-AP:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.postulaciones-alert-AP {
-  padding: 0.85rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
 }
 
 .postulaciones-alert-AP.error {

@@ -10,13 +10,11 @@ import {
   User,
   X,
 } from "lucide-react";
-import Header from "../../../../components/Header/Header";
-import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
-import Footer from "../../../../components/Footer/footer";
 import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
 import AspiranteFormField from "../../../../components/aspirante/AspiranteFormField";
 import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
 import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
+import AspiranteLayout from "../../AspiranteLayout";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import { getMunicipios } from "../../../../api/municipioAPI";
 import "./ActualizarPerfil.css";
@@ -137,103 +135,97 @@ const ActualizarPerfil = () => {
   };
 
   if (loading) {
-    return <div className="actualizar-state-AP asp-loading">Cargando formulario...</div>;
+    return (
+      <AspiranteLayout shellClassName="actualizar-shell-AP" mainClassName="actualizar-main-AP">
+        <div className="actualizar-state-AP asp-loading">Cargando formulario...</div>
+      </AspiranteLayout>
+    );
   }
 
   return (
-    <>
-      <Header isLoggedIn={true} userRole="ASPIRANTE" />
+    <AspiranteLayout shellClassName="actualizar-shell-AP" mainClassName="actualizar-main-AP">
+      <section className="actualizar-hero-AP">
+        <div>
+          <p className="actualizar-kicker-AP">Editar perfil</p>
+          <h1>Actualiza tus datos principales</h1>
+          <p>Formulario corto con los campos que la API del aspirante permite modificar.</p>
+        </div>
+        <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil") }>
+          <X size={16} />
+          Volver
+        </AspiranteButton>
+      </section>
 
-      <div className="actualizar-shell-AP">
-        <SidebarAspirante />
+      {success && <AspiranteAlert type="success">{success}</AspiranteAlert>}
+      {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
 
-        <main className="actualizar-main-AP">
-          <section className="actualizar-hero-AP">
-            <div>
-              <p className="actualizar-kicker-AP">Editar perfil</p>
-              <h1>Actualiza tus datos principales</h1>
-              <p>Formulario corto con los campos que la API del aspirante permite modificar.</p>
+      <AspiranteCard as="form" className="form-card-AP" onSubmit={handleSubmit}>
+        <div className="form-grid-AP">
+          <AspiranteFormField label={<><User size={14} /> Nombre</>}>
+            <input name="nombre" value={formData.nombre} onChange={handleChange} required />
+          </AspiranteFormField>
+
+          <AspiranteFormField label={<><User size={14} /> Apellido</>}>
+            <input name="apellido" value={formData.apellido} onChange={handleChange} required />
+          </AspiranteFormField>
+
+          <AspiranteFormField label={<><Mail size={14} /> Correo</>}>
+            <input type="email" name="correo" value={formData.correo} onChange={handleChange} />
+          </AspiranteFormField>
+
+          <AspiranteFormField label={<><Phone size={14} /> Teléfono</>}>
+            <input name="telefono" value={formData.telefono} onChange={handleChange} />
+          </AspiranteFormField>
+
+          <AspiranteFormField label={<><Calendar size={14} /> Fecha de nacimiento</>}>
+            <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} />
+          </AspiranteFormField>
+
+          <AspiranteFormField label="Género">
+            <select name="genero" value={formData.genero} onChange={handleChange}>
+              <option value="">Seleccionar</option>
+              <option value="MASCULINO">Masculino</option>
+              <option value="FEMENINO">Femenino</option>
+              <option value="OTRO">Otro</option>
+            </select>
+          </AspiranteFormField>
+
+          <AspiranteFormField label={<><MapPin size={14} /> Municipio</>} fullWidth>
+            <select name="municipioId" value={formData.municipioId} onChange={handleChange}>
+              <option value="">Seleccionar municipio</option>
+              {municipios.map((municipio) => (
+                <option key={municipio.id} value={municipio.id}>
+                  {municipio.nombre}
+                </option>
+              ))}
+            </select>
+          </AspiranteFormField>
+
+          <AspiranteFormField label="Foto de perfil URL" fullWidth>
+            <div className="input-icon-AP">
+              <Image size={14} />
+              <input name="urlFotoPerfil" value={formData.urlFotoPerfil} onChange={handleChange} placeholder="https://..." />
             </div>
-            <button type="button" className="secondary-button-AP" onClick={() => navigate("/Aspirante/MiPerfil")}>
-              <X size={16} />
-              Volver
-            </button>
-          </section>
+          </AspiranteFormField>
 
-          {success && <AspiranteAlert type="success">{success}</AspiranteAlert>}
-          {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
+          <AspiranteFormField label="Descripción" fullWidth>
+            <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows={4} />
+          </AspiranteFormField>
 
-          <AspiranteCard as="form" className="form-card-AP" onSubmit={handleSubmit}>
-            <div className="form-grid-AP">
-              <AspiranteFormField label={<><User size={14} /> Nombre</>}>
-                <input name="nombre" value={formData.nombre} onChange={handleChange} required />
-              </AspiranteFormField>
+          <AspiranteFormField label="Resumen profesional" fullWidth>
+            <textarea name="resumen" value={formData.resumen} onChange={handleChange} rows={4} />
+          </AspiranteFormField>
+        </div>
 
-              <AspiranteFormField label={<><User size={14} /> Apellido</>}>
-                <input name="apellido" value={formData.apellido} onChange={handleChange} required />
-              </AspiranteFormField>
-
-              <AspiranteFormField label={<><Mail size={14} /> Correo</>}>
-                <input type="email" name="correo" value={formData.correo} onChange={handleChange} />
-              </AspiranteFormField>
-
-              <AspiranteFormField label={<><Phone size={14} /> Teléfono</>}>
-                <input name="telefono" value={formData.telefono} onChange={handleChange} />
-              </AspiranteFormField>
-
-              <AspiranteFormField label={<><Calendar size={14} /> Fecha de nacimiento</>}>
-                <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} />
-              </AspiranteFormField>
-
-              <AspiranteFormField label="Género">
-                <select name="genero" value={formData.genero} onChange={handleChange}>
-                  <option value="">Seleccionar</option>
-                  <option value="MASCULINO">Masculino</option>
-                  <option value="FEMENINO">Femenino</option>
-                  <option value="OTRO">Otro</option>
-                </select>
-              </AspiranteFormField>
-
-              <AspiranteFormField label={<><MapPin size={14} /> Municipio</>} fullWidth>
-                <select name="municipioId" value={formData.municipioId} onChange={handleChange}>
-                  <option value="">Seleccionar municipio</option>
-                  {municipios.map((municipio) => (
-                    <option key={municipio.id} value={municipio.id}>
-                      {municipio.nombre}
-                    </option>
-                  ))}
-                </select>
-              </AspiranteFormField>
-
-              <AspiranteFormField label="Foto de perfil URL" fullWidth>
-                <div className="input-icon-AP">
-                  <Image size={14} />
-                  <input name="urlFotoPerfil" value={formData.urlFotoPerfil} onChange={handleChange} placeholder="https://..." />
-                </div>
-              </AspiranteFormField>
-
-              <AspiranteFormField label="Descripción" fullWidth>
-                <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows={4} />
-              </AspiranteFormField>
-
-              <AspiranteFormField label="Resumen profesional" fullWidth>
-                <textarea name="resumen" value={formData.resumen} onChange={handleChange} rows={4} />
-              </AspiranteFormField>
-            </div>
-
-            <div className="actions-AP">
-              <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil")}>Cancelar</AspiranteButton>
-              <AspiranteButton type="submit" disabled={saving}>
-                <Save size={16} />
-                {saving ? "Guardando..." : "Guardar cambios"}
-              </AspiranteButton>
-            </div>
-          </AspiranteCard>
-        </main>
-      </div>
-
-      <Footer />
-    </>
+        <div className="actions-AP">
+          <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil")}>Cancelar</AspiranteButton>
+          <AspiranteButton type="submit" disabled={saving}>
+            <Save size={16} />
+            {saving ? "Guardando..." : "Guardar cambios"}
+          </AspiranteButton>
+        </div>
+      </AspiranteCard>
+    </AspiranteLayout>
   );
 };
 

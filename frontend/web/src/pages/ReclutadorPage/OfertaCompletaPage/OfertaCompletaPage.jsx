@@ -141,9 +141,9 @@ const OfertaCompletaPage = () => {
         </div>
 
         <div className="oferta-actions-RP">
-          <Link to="/Reclutador" className="reclutador-link-RP">Volver</Link>
-          <Link to={`/Reclutador/EditarOfertaLaboral?ofertaId=${ofertaId}`} className="reclutador-link-RP">Editar</Link>
-          <Link to="/Reclutador/VerPostulacionesRecibidas" state={{ ofertaId }} className="reclutador-link-RP">Ver postulaciones ({postulaciones.length})</Link>
+          <ReclutadorButton as={Link} to="/Reclutador" variant="link">Volver</ReclutadorButton>
+          <ReclutadorButton as={Link} to={`/Reclutador/EditarOfertaLaboral?ofertaId=${ofertaId}`} variant="link">Editar</ReclutadorButton>
+          <ReclutadorButton as={Link} to="/Reclutador/VerPostulacionesRecibidas" state={{ ofertaId }} variant="link">Ver postulaciones ({postulaciones.length})</ReclutadorButton>
           <ReclutadorButton type="button" onClick={handleDeleteOferta} disabled={deleting}>
             {deleting ? "Eliminando..." : "Eliminar"}
           </ReclutadorButton>

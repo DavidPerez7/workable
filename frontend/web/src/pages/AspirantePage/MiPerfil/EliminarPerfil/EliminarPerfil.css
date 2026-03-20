@@ -27,6 +27,13 @@
   border: 1px solid var(--ep-border);
   border-radius: 22px;
   box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+}
+
+.eliminar-hero-AP {
+  padding: 1.25rem;
+}
+
+.eliminar-card-AP {
   padding: 1.25rem;
 }
 
@@ -77,33 +84,6 @@
   gap: 0.9rem;
 }
 
-.field-AP {
-  display: grid;
-  gap: 0.4rem;
-}
-
-.field-AP span {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--ep-text);
-}
-
-.field-AP input {
-  width: 100%;
-  border: 1px solid var(--ep-border);
-  border-radius: 14px;
-  background: #f8fbff;
-  color: var(--ep-text);
-  font: inherit;
-  padding: 0.85rem 0.95rem;
-  outline: none;
-}
-
-.field-AP input:focus {
-  border-color: rgba(37, 99, 235, 0.55);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
-}
-
 .eliminar-error-AP {
   color: var(--ep-red);
   font-size: 0.92rem;
@@ -113,42 +93,6 @@
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-}
-
-.secondary-button-AP,
-.danger-button-AP {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border: none;
-  border-radius: 12px;
-  padding: 0.9rem 1rem;
-  font: inherit;
-  font-weight: 800;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-.secondary-button-AP {
-  background: #eef4ff;
-  color: var(--ep-blue-dark);
-}
-
-.danger-button-AP {
-  background: linear-gradient(135deg, var(--ep-red), #b91c1c);
-  color: white;
-  box-shadow: 0 14px 22px rgba(220, 38, 38, 0.2);
-}
-
-.secondary-button-AP:hover,
-.danger-button-AP:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.danger-button-AP:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
 }
 
 .spin-AP {
@@ -172,10 +116,5 @@
 
   .eliminar-actions-AP {
     flex-direction: column;
-  }
-
-  .secondary-button-AP,
-  .danger-button-AP {
-    width: 100%;
   }
 }

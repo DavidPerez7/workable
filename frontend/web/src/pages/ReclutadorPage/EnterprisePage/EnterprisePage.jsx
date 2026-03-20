@@ -71,9 +71,9 @@ function EnterprisePage() {
           <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/EnterprisePage/Edit")}>
             Editar empresa
           </ReclutadorButton>
-          <Link to="/Reclutador/Publicacion" className="reclutador-link-RP">
+          <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="link">
             Crear oferta
-          </Link>
+          </ReclutadorButton>
         </div>
       </ReclutadorCard>
 
@@ -84,9 +84,9 @@ function EnterprisePage() {
       ) : !empresa ? (
         <ReclutadorCard>
           <p className="empresa-empty-EP">Aun no tienes empresa registrada.</p>
-          <Link to="/Reclutador/RegistrarEmpresa" className="reclutador-button-RP">
+          <ReclutadorButton as={Link} to="/Reclutador/RegistrarEmpresa">
             Registrar empresa
-          </Link>
+          </ReclutadorButton>
         </ReclutadorCard>
       ) : (
         <div className="empresa-grid-EP">
@@ -113,7 +113,7 @@ function EnterprisePage() {
             <ReclutadorSectionHeader
               kicker="Ofertas"
               title="Ofertas publicadas"
-              action={<Link to="/Reclutador/GestigOferts" className="reclutador-link-RP">Ver gestion</Link>}
+              action={<ReclutadorButton as={Link} to="/Reclutador/GestigOferts" variant="link">Ver gestion</ReclutadorButton>}
             />
             {ofertas.length === 0 ? (
               <p className="empresa-text-EP">No hay ofertas publicadas.</p>

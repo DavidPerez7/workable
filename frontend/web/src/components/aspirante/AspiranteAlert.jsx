@@ -1,9 +1,5 @@
-import React from "react";
-import "./AspirantePrimitives.css";
+import AppAlert from "../shared/AppAlert";
 
-const AspiranteAlert = ({ children, type = "error", className = "" }) => {
-  const classes = className ? `asp-alert ${type} ${className}` : `asp-alert ${type}`;
-  return <div className={classes}>{children}</div>;
-};
+const AspiranteAlert = (props) => <AppAlert {...props} />;
 
 export default AspiranteAlert;

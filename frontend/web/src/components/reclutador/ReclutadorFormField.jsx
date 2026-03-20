@@ -1,13 +1,5 @@
-import React from "react";
+import AppFormField from "../shared/AppFormField";
 
-const ReclutadorFormField = ({ label, htmlFor, children, hint, className = "" }) => {
-  return (
-    <div className={className ? `reclutador-form-field-RP ${className}` : "reclutador-form-field-RP"}>
-      {label ? <label htmlFor={htmlFor}>{label}</label> : null}
-      {children}
-      {hint ? <small className="reclutador-form-hint-RP">{hint}</small> : null}
-    </div>
-  );
-};
+const ReclutadorFormField = (props) => <AppFormField {...props} />;
 
 export default ReclutadorFormField;

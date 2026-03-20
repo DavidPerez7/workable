@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AlertCircle, RefreshCcw, Trash2 } from "lucide-react";
-import Header from "../../../../components/Header/Header";
-import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
-import Footer from "../../../../components/Footer/footer";
 import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
 import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
 import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
+import AspiranteLayout from "../../AspiranteLayout";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import {
   eliminarPostulacion,
@@ -104,96 +102,86 @@ const MisPostulaciones = () => {
   };
 
   return (
-    <>
-      <Header isLoggedIn={true} userRole="ASPIRANTE" />
+    <AspiranteLayout shellClassName="postulaciones-shell-AP" mainClassName="postulaciones-main-AP">
+      <section className="postulaciones-hero-AP">
+        <div>
+          <p className="postulaciones-kicker-AP">Mis postulaciones</p>
+          <h1>Controla tus aplicaciones en un solo lugar</h1>
+          <p>Vista simple con actualización real desde el endpoint del módulo aspirante.</p>
+        </div>
+        <AspiranteButton type="button" variant="secondary" onClick={cargarPostulaciones}>
+          <RefreshCcw size={16} />
+          Actualizar
+        </AspiranteButton>
+      </section>
 
-      <div className="postulaciones-shell-AP">
-        <SidebarAspirante />
+      {error && (
+        <AspiranteAlert type="error" className="postulaciones-alert-AP">
+          <AlertCircle size={18} />
+          <span>{error}</span>
+        </AspiranteAlert>
+      )}
 
-        <main className="postulaciones-main-AP">
-          <section className="postulaciones-hero-AP">
-            <div>
-              <p className="postulaciones-kicker-AP">Mis postulaciones</p>
-              <h1>Controla tus aplicaciones en un solo lugar</h1>
-              <p>Vista simple con actualización real desde el endpoint del módulo aspirante.</p>
-            </div>
-            <button type="button" className="secondary-button-AP" onClick={cargarPostulaciones}>
-              <RefreshCcw size={16} />
-              Actualizar
-            </button>
-          </section>
+      {loading ? (
+        <div className="postulaciones-empty-AP asp-loading">Cargando postulaciones...</div>
+      ) : postulaciones.length === 0 ? (
+        <div className="postulaciones-empty-AP asp-empty">
+          No tienes postulaciones registradas. <Link to="/Aspirante">Ver ofertas</Link>
+        </div>
+      ) : (
+        <div className="postulaciones-list-AP">
+          {postulaciones.map((postulacion) => (
+            <AspiranteCard key={postulacion.id} className="postulacion-card-AP">
+              <div className="postulacion-top-AP">
+                <div>
+                  <h2>{postulacion.oferta?.titulo || "Oferta sin título"}</h2>
+                  <p>{postulacion.oferta?.empresa?.nombre || "Empresa"}</p>
+                </div>
+                <span className={`asp-badge ${getEstadoTone(postulacion.estado)}`}>
+                  {postulacion.estado || "Pendiente"}
+                </span>
+              </div>
 
-          {error && (
-            <AspiranteAlert type="error" className="postulaciones-alert-AP">
-              <AlertCircle size={18} />
-              <span>{error}</span>
-            </AspiranteAlert>
-          )}
+              <div className="postulacion-meta-AP">
+                <span>{postulacion.oferta?.municipio?.nombre || "Sin ubicación"}</span>
+                <span>{postulacion.oferta?.modalidad || "Sin modalidad"}</span>
+                {postulacion.oferta?.salario && <span>{formatearSalario(postulacion.oferta.salario)}</span>}
+              </div>
 
-          {loading ? (
-            <div className="postulaciones-empty-AP asp-loading">Cargando postulaciones...</div>
-          ) : postulaciones.length === 0 ? (
-            <div className="postulaciones-empty-AP asp-empty">
-              No tienes postulaciones registradas. <Link to="/Aspirante">Ver ofertas</Link>
-            </div>
-          ) : (
-            <div className="postulaciones-list-AP">
-              {postulaciones.map((postulacion) => (
-                <AspiranteCard key={postulacion.id} className="postulacion-card-AP">
-                  <div className="postulacion-top-AP">
-                    <div>
-                      <h2>{postulacion.oferta?.titulo || "Oferta sin título"}</h2>
-                      <p>{postulacion.oferta?.empresa?.nombre || "Empresa"}</p>
-                    </div>
-                    <span className={`asp-badge ${getEstadoTone(postulacion.estado)}`}>
-                      {postulacion.estado || "Pendiente"}
-                    </span>
-                  </div>
-
-                  <div className="postulacion-meta-AP">
-                    <span>{postulacion.oferta?.municipio?.nombre || "Sin ubicación"}</span>
-                    <span>{postulacion.oferta?.modalidad || "Sin modalidad"}</span>
-                    {postulacion.oferta?.salario && <span>{formatearSalario(postulacion.oferta.salario)}</span>}
-                  </div>
-
-                  {postulacion.citacion?.fecha && (
-                    <div className="citacion-box-AP">
-                      <strong>Citación programada</strong>
-                      <p>
-                        {new Date(postulacion.citacion.fecha).toLocaleDateString("es-CO")}
-                        {postulacion.citacion.hora ? ` · ${postulacion.citacion.hora}` : ""}
-                      </p>
-                      {postulacion.citacion.linkMeet && (
-                        <a href={postulacion.citacion.linkMeet} target="_blank" rel="noreferrer">
-                          Unirse a la reunión
-                        </a>
-                      )}
-                    </div>
+              {postulacion.citacion?.fecha && (
+                <div className="citacion-box-AP">
+                  <strong>Citación programada</strong>
+                  <p>
+                    {new Date(postulacion.citacion.fecha).toLocaleDateString("es-CO")}
+                    {postulacion.citacion.hora ? ` · ${postulacion.citacion.hora}` : ""}
+                  </p>
+                  {postulacion.citacion.linkMeet && (
+                    <a href={postulacion.citacion.linkMeet} target="_blank" rel="noreferrer">
+                      Unirse a la reunión
+                    </a>
                   )}
+                </div>
+              )}
 
-                  <div className="postulacion-footer-AP">
-                    <small>
-                      Postulada el {new Date(postulacion.fechaCreacion).toLocaleDateString("es-CO")}
-                    </small>
-                    <AspiranteButton
-                      type="button"
-                      variant="danger"
-                      onClick={() => handleEliminar(postulacion.id)}
-                      disabled={eliminandoId === postulacion.id}
-                    >
-                      <Trash2 size={16} />
-                      {eliminandoId === postulacion.id ? "Eliminando..." : "Eliminar"}
-                    </AspiranteButton>
-                  </div>
-                </AspiranteCard>
-              ))}
-            </div>
-          )}
-        </main>
-      </div>
-
-      <Footer />
-    </>
+              <div className="postulacion-footer-AP">
+                <small>
+                  Postulada el {new Date(postulacion.fechaCreacion).toLocaleDateString("es-CO")}
+                </small>
+                <AspiranteButton
+                  type="button"
+                  variant="danger"
+                  onClick={() => handleEliminar(postulacion.id)}
+                  disabled={eliminandoId === postulacion.id}
+                >
+                  <Trash2 size={16} />
+                  {eliminandoId === postulacion.id ? "Eliminando..." : "Eliminar"}
+                </AspiranteButton>
+              </div>
+            </AspiranteCard>
+          ))}
+        </div>
+      )}
+    </AspiranteLayout>
   );
 };
 

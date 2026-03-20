@@ -79,9 +79,9 @@ const ConfigPage = () => {
           kicker="Cuenta"
           title="Configuracion"
           action={(
-            <Link to="/Reclutador/EditarPerfil" className="reclutador-link-RP">
+            <ReclutadorButton as={Link} to="/Reclutador/EditarPerfil" variant="link">
               Editar perfil
-            </Link>
+            </ReclutadorButton>
           )}
         />
         <div className="config-info-RP">
@@ -110,17 +110,17 @@ const ConfigPage = () => {
       <ReclutadorCard className="config-danger-RP">
         <ReclutadorSectionHeader kicker="Seguridad" title="Acciones rapidas" />
         <div className="config-actions-RP">
-          <button type="button" className="config-secondary-RP" onClick={handleCerrarSesion}>
+          <ReclutadorButton type="button" variant="secondary" onClick={handleCerrarSesion}>
             Cerrar sesion
-          </button>
-          <button
+          </ReclutadorButton>
+          <ReclutadorButton
             type="button"
-            className="config-danger-button-RP"
+            variant="danger"
             onClick={handleEliminarCuenta}
             disabled={loading}
           >
             Eliminar cuenta
-          </button>
+          </ReclutadorButton>
         </div>
       </ReclutadorCard>
     </ReclutadorLayout>

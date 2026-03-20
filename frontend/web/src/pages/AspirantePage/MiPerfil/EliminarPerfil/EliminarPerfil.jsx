@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle, Loader2, Trash2 } from "lucide-react";
-import Header from "../../../../components/Header/Header";
-import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
-import Footer from "../../../../components/Footer/footer";
 import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
+import AspiranteFormField from "../../../../components/aspirante/AspiranteFormField";
 import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
+import AspiranteLayout from "../../AspiranteLayout";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import "./EliminarPerfil.css";
 
@@ -57,72 +56,60 @@ const EliminarPerfil = () => {
   };
 
   return (
-    <>
-      <Header isLoggedIn={true} userRole="ASPIRANTE" />
+    <AspiranteLayout shellClassName="eliminar-shell-AP" mainClassName="eliminar-main-AP">
+      <section className="eliminar-hero-AP">
+        <div>
+          <p className="eliminar-kicker-AP">Eliminar cuenta</p>
+          <h1>Acción irreversible</h1>
+          <p>
+            Esta pantalla solo confirma la eliminación del perfil del aspirante
+            con el endpoint disponible.
+          </p>
+        </div>
+      </section>
 
-      <div className="eliminar-shell-AP">
-        <SidebarAspirante />
+      <AspiranteCard className="eliminar-card-AP">
+        <div className="eliminar-warning-AP">
+          <AlertCircle size={22} />
+          <div>
+            <strong>Antes de continuar</strong>
+            <p>Se borrará tu perfil y perderás el acceso a tus postulaciones y hoja de vida.</p>
+          </div>
+        </div>
 
-        <main className="eliminar-main-AP">
-          <section className="eliminar-hero-AP">
-            <div>
-              <p className="eliminar-kicker-AP">Eliminar cuenta</p>
-              <h1>Acción irreversible</h1>
-              <p>
-                Esta pantalla solo confirma la eliminación del perfil del aspirante
-                con el endpoint disponible.
-              </p>
-            </div>
-          </section>
+        <form className="eliminar-form-AP" onSubmit={handleDeleteAccount}>
+          <AspiranteFormField label="Contraseña">
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Ingresa tu contraseña"
+            />
+          </AspiranteFormField>
 
-          <AspiranteCard className="eliminar-card-AP">
-            <div className="eliminar-warning-AP">
-              <AlertCircle size={22} />
-              <div>
-                <strong>Antes de continuar</strong>
-                <p>Se borrará tu perfil y perderás el acceso a tus postulaciones y hoja de vida.</p>
-              </div>
-            </div>
+          <AspiranteFormField label="Escribe ELIMINAR para confirmar">
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(event) => setConfirmText(event.target.value)}
+              placeholder="ELIMINAR"
+            />
+          </AspiranteFormField>
 
-            <form className="eliminar-form-AP" onSubmit={handleDeleteAccount}>
-              <label className="field-AP">
-                <span>Contraseña</span>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Ingresa tu contraseña"
-                />
-              </label>
+          {error && <p className="eliminar-error-AP asp-alert error">{error}</p>}
 
-              <label className="field-AP">
-                <span>Escribe ELIMINAR para confirmar</span>
-                <input
-                  type="text"
-                  value={confirmText}
-                  onChange={(event) => setConfirmText(event.target.value)}
-                  placeholder="ELIMINAR"
-                />
-              </label>
-
-              {error && <p className="eliminar-error-AP asp-alert error">{error}</p>}
-
-              <div className="eliminar-actions-AP">
-                <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil")}>
-                  Cancelar
-                </AspiranteButton>
-                <AspiranteButton type="submit" variant="danger" disabled={loading}>
-                  {loading ? <Loader2 size={16} className="spin-AP" /> : <Trash2 size={16} />}
-                  {loading ? "Eliminando..." : "Eliminar cuenta"}
-                </AspiranteButton>
-              </div>
-            </form>
-          </AspiranteCard>
-        </main>
-      </div>
-
-      <Footer />
-    </>
+          <div className="eliminar-actions-AP">
+            <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil")}>
+              Cancelar
+            </AspiranteButton>
+            <AspiranteButton type="submit" variant="danger" disabled={loading}>
+              {loading ? <Loader2 size={16} className="spin-AP" /> : <Trash2 size={16} />}
+              {loading ? "Eliminando..." : "Eliminar cuenta"}
+            </AspiranteButton>
+          </div>
+        </form>
+      </AspiranteCard>
+    </AspiranteLayout>
   );
 };
 

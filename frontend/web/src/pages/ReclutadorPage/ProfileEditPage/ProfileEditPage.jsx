@@ -301,7 +301,7 @@ function ProfileEditPage() {
         <ReclutadorSectionHeader
           kicker="Perfil"
           title="Editar perfil de Reclutador"
-          action={<Link to="/Reclutador/ReclutadorProfile" className="reclutador-link-RP">Volver al perfil</Link>}
+          action={<ReclutadorButton as={Link} to="/Reclutador/ReclutadorProfile" variant="link">Volver al perfil</ReclutadorButton>}
         />
 
         {error ? <ReclutadorAlert variant="error">{error}</ReclutadorAlert> : null}

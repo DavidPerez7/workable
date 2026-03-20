@@ -81,31 +81,31 @@ const ReclutadorPage = () => {
           {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
 
           <div className="reclutador-actions-RP">
-            <Link to="/Reclutador/ProfileEditPage" className="reclutador-action-card-RP">
+            <ReclutadorButton as={Link} to="/Reclutador/ProfileEditPage" variant="action">
               <Settings size={20} />
               <strong>Mi Perfil</strong>
               <span>Editar información personal</span>
-            </Link>
-            <Link to="/Reclutador/EnterprisePage" className="reclutador-action-card-RP">
+            </ReclutadorButton>
+            <ReclutadorButton as={Link} to="/Reclutador/EnterprisePage" variant="action">
               <Building2 size={20} />
               <strong>Mi Empresa</strong>
               <span>Gestionar empresa</span>
-            </Link>
-            <Link to="/Reclutador/GestigOferts" className="reclutador-action-card-RP">
+            </ReclutadorButton>
+            <ReclutadorButton as={Link} to="/Reclutador/GestigOferts" variant="action">
               <FileText size={20} />
               <strong>Ofertas</strong>
               <span>Ver todas mis ofertas</span>
-            </Link>
-            <Link to="/Reclutador/Publicacion" className="reclutador-action-card-RP">
+            </ReclutadorButton>
+            <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="action">
               <Plus size={20} />
               <strong>Nueva oferta</strong>
               <span>Crear oferta laboral</span>
-            </Link>
-            <button onClick={handleLogout} className="reclutador-action-card-RP danger">
+            </ReclutadorButton>
+            <ReclutadorButton type="button" variant="action" className="danger" onClick={handleLogout}>
               <LogOut size={20} />
               <strong>Salir</strong>
               <span>Cerrar sesión</span>
-            </button>
+            </ReclutadorButton>
           </div>
 
           <section className="reclutador-grid-RP">

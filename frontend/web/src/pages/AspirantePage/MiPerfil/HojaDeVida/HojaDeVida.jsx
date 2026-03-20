@@ -6,14 +6,12 @@ import {
   Trash2,
   UserCircle2,
 } from "lucide-react";
-import Header from "../../../../components/Header/Header";
-import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
-import Footer from "../../../../components/Footer/footer";
 import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
 import AspiranteSectionHeader from "../../../../components/aspirante/AspiranteSectionHeader";
 import AspiranteFormField from "../../../../components/aspirante/AspiranteFormField";
 import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
 import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
+import AspiranteLayout from "../../AspiranteLayout";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import {
   getHojasDeVidaPorAspirante,
@@ -239,275 +237,269 @@ const HojaDeVida = () => {
   };
 
   if (loading) {
-    return <div className="hoja-state-AP asp-loading">Cargando hoja de vida...</div>;
+    return (
+      <AspiranteLayout shellClassName="hoja-shell-AP" mainClassName="hoja-main-AP">
+        <div className="hoja-state-AP asp-loading">Cargando hoja de vida...</div>
+      </AspiranteLayout>
+    );
   }
 
   return (
-    <>
-      <Header isLoggedIn={true} userRole="ASPIRANTE" />
+    <AspiranteLayout shellClassName="hoja-shell-AP" mainClassName="hoja-main-AP">
+      <section className="hoja-hero-AP">
+        <div className="hoja-hero-left-AP">
+          <div className="hoja-avatar-AP">
+            {perfil?.urlFotoPerfil ? (
+              <img src={perfil.urlFotoPerfil} alt={`${perfil.nombre} ${perfil.apellido}`} />
+            ) : (
+              <UserCircle2 size={48} />
+            )}
+          </div>
 
-      <div className="hoja-shell-AP">
-        <SidebarAspirante />
+          <div>
+            <p className="hoja-kicker-AP">Hoja de vida</p>
+            <h1>
+              {perfil?.nombre} {perfil?.apellido}
+            </h1>
+            <p>{perfil?.municipio?.nombre || "Sin ubicación registrada"}</p>
+          </div>
+        </div>
 
-        <main className="hoja-main-AP">
-          <section className="hoja-hero-AP">
-            <div className="hoja-hero-left-AP">
-              <div className="hoja-avatar-AP">
-                {perfil?.urlFotoPerfil ? (
-                  <img src={perfil.urlFotoPerfil} alt={`${perfil.nombre} ${perfil.apellido}`} />
-                ) : (
-                  <UserCircle2 size={48} />
-                )}
-              </div>
+        <Link to="/Aspirante/MiPerfil" className="app-link-button">
+          Volver al perfil
+        </Link>
+      </section>
 
-              <div>
-                <p className="hoja-kicker-AP">Hoja de vida</p>
-                <h1>
-                  {perfil?.nombre} {perfil?.apellido}
-                </h1>
-                <p>{perfil?.municipio?.nombre || "Sin ubicación registrada"}</p>
-              </div>
-            </div>
+      {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
+      {notice && <AspiranteAlert type="success">{notice}</AspiranteAlert>}
+      {!hoja && <AspiranteAlert type="warning">No se encontró una hoja de vida registrada.</AspiranteAlert>}
 
-            <Link to="/Aspirante/MiPerfil" className="secondary-button-AP">
-              Volver al perfil
-            </Link>
-          </section>
+      <section className="hoja-grid-AP">
+        <AspiranteCard className="hoja-card-AP">
+          <AspiranteSectionHeader
+            kicker="Información general"
+            title="Contacto y resumen"
+            action={
+              <AspiranteButton type="button" onClick={guardarGeneral} disabled={saving || !hoja}>
+                <Save size={16} />
+                Guardar
+              </AspiranteButton>
+            }
+          />
 
-          {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
-          {notice && <AspiranteAlert type="success">{notice}</AspiranteAlert>}
-          {!hoja && <AspiranteAlert type="warning">No se encontró una hoja de vida registrada.</AspiranteAlert>}
+          <div className="hoja-form-grid-AP">
+            <AspiranteFormField label="Teléfono">
+              <input name="telefono" value={hoja?.telefono || ""} onChange={handleGeneralChange} />
+            </AspiranteFormField>
 
-          <section className="hoja-grid-AP">
-            <AspiranteCard className="hoja-card-AP">
-              <AspiranteSectionHeader
-                kicker="Información general"
-                title="Contacto y resumen"
-                action={
-                  <AspiranteButton type="button" onClick={guardarGeneral} disabled={saving || !hoja}>
-                    <Save size={16} />
-                    Guardar
-                  </AspiranteButton>
+            <AspiranteFormField label="Correo electrónico">
+              <input name="correoElectronico" value={hoja?.correoElectronico || ""} onChange={handleGeneralChange} />
+            </AspiranteFormField>
+
+            <AspiranteFormField label="Red social" fullWidth>
+              <input name="redSocial" value={hoja?.redSocial || ""} onChange={handleGeneralChange} />
+            </AspiranteFormField>
+
+            <AspiranteFormField label="Resumen profesional" fullWidth>
+              <textarea
+                name="resumenProfesional"
+                rows={5}
+                value={hoja?.resumenProfesional || ""}
+                onChange={handleGeneralChange}
+              />
+            </AspiranteFormField>
+          </div>
+        </AspiranteCard>
+
+        <AspiranteCard className="hoja-card-AP">
+          <AspiranteSectionHeader kicker="Experiencia" title="Agregar experiencia" />
+
+          <form className="hoja-form-grid-AP" onSubmit={agregarExperiencia}>
+            <AspiranteFormField label="Cargo">
+              <input
+                value={nuevaExperiencia.cargo}
+                onChange={(event) =>
+                  setNuevaExperiencia((current) => ({ ...current, cargo: event.target.value }))
                 }
               />
+            </AspiranteFormField>
 
-              <div className="hoja-form-grid-AP">
-                <AspiranteFormField label="Teléfono">
-                  <input name="telefono" value={hoja?.telefono || ""} onChange={handleGeneralChange} />
-                </AspiranteFormField>
+            <AspiranteFormField label="Empresa">
+              <input
+                value={nuevaExperiencia.empresa}
+                onChange={(event) =>
+                  setNuevaExperiencia((current) => ({ ...current, empresa: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-                <AspiranteFormField label="Correo electrónico">
-                  <input name="correoElectronico" value={hoja?.correoElectronico || ""} onChange={handleGeneralChange} />
-                </AspiranteFormField>
+            <AspiranteFormField label="Inicio">
+              <input
+                type="date"
+                value={nuevaExperiencia.fechaInicio}
+                onChange={(event) =>
+                  setNuevaExperiencia((current) => ({ ...current, fechaInicio: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-                <AspiranteFormField label="Red social" fullWidth>
-                  <input name="redSocial" value={hoja?.redSocial || ""} onChange={handleGeneralChange} />
-                </AspiranteFormField>
+            <AspiranteFormField label="Fin">
+              <input
+                type="date"
+                value={nuevaExperiencia.fechaFin}
+                onChange={(event) =>
+                  setNuevaExperiencia((current) => ({ ...current, fechaFin: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-                <AspiranteFormField label="Resumen profesional" fullWidth>
-                  <textarea
-                    name="resumenProfesional"
-                    rows={5}
-                    value={hoja?.resumenProfesional || ""}
-                    onChange={handleGeneralChange}
-                  />
-                </AspiranteFormField>
-              </div>
-            </AspiranteCard>
+            <AspiranteFormField label="Descripción" fullWidth>
+              <textarea
+                rows={3}
+                value={nuevaExperiencia.descripcion}
+                onChange={(event) =>
+                  setNuevaExperiencia((current) => ({ ...current, descripcion: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-            <AspiranteCard className="hoja-card-AP">
-              <AspiranteSectionHeader kicker="Experiencia" title="Agregar experiencia" />
+            <AspiranteFormField label="Certificado URL" fullWidth>
+              <input
+                value={nuevaExperiencia.certificadoUrl}
+                onChange={(event) =>
+                  setNuevaExperiencia((current) => ({ ...current, certificadoUrl: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-              <form className="hoja-form-grid-AP" onSubmit={agregarExperiencia}>
-                <AspiranteFormField label="Cargo">
-                  <input
-                    value={nuevaExperiencia.cargo}
-                    onChange={(event) =>
-                      setNuevaExperiencia((current) => ({ ...current, cargo: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+            <AspiranteButton type="submit" className="full-width-AP" disabled={saving || !hoja}>
+              <Plus size={16} />
+              Agregar experiencia
+            </AspiranteButton>
+          </form>
 
-                <AspiranteFormField label="Empresa">
-                  <input
-                    value={nuevaExperiencia.empresa}
-                    onChange={(event) =>
-                      setNuevaExperiencia((current) => ({ ...current, empresa: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+          <div className="list-stack-AP">
+            {(hoja?.experiencias || []).length === 0 ? (
+              <div className="asp-empty">No tienes experiencias registradas.</div>
+            ) : (
+              (hoja?.experiencias || []).map((experiencia, index) => (
+                <article key={`${experiencia.cargo}-${index}`} className="item-card-AP">
+                  <div className="item-top-AP">
+                    <div>
+                      <h3>{experiencia.cargo || "Sin cargo"}</h3>
+                      <p>{experiencia.empresa || "Empresa"}</p>
+                    </div>
+                    <AspiranteButton type="button" variant="icon" className="danger" onClick={() => eliminarExperiencia(index)}>
+                      <Trash2 size={16} />
+                    </AspiranteButton>
+                  </div>
+                  <span>
+                    {experiencia.fechaInicio || "Inicio"} - {experiencia.fechaFin || "Actualidad"}
+                  </span>
+                  {experiencia.descripcion && <p>{experiencia.descripcion}</p>}
+                </article>
+              ))
+            )}
+          </div>
+        </AspiranteCard>
 
-                <AspiranteFormField label="Inicio">
-                  <input
-                    type="date"
-                    value={nuevaExperiencia.fechaInicio}
-                    onChange={(event) =>
-                      setNuevaExperiencia((current) => ({ ...current, fechaInicio: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+        <AspiranteCard className="hoja-card-AP hoja-card-wide-AP">
+          <AspiranteSectionHeader kicker="Estudios" title="Agregar formación" />
 
-                <AspiranteFormField label="Fin">
-                  <input
-                    type="date"
-                    value={nuevaExperiencia.fechaFin}
-                    onChange={(event) =>
-                      setNuevaExperiencia((current) => ({ ...current, fechaFin: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+          <form className="hoja-form-grid-AP" onSubmit={agregarEstudio}>
+            <AspiranteFormField label="Título">
+              <input
+                value={nuevoEstudio.titulo}
+                onChange={(event) =>
+                  setNuevoEstudio((current) => ({ ...current, titulo: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-                <AspiranteFormField label="Descripción" fullWidth>
-                  <textarea
-                    rows={3}
-                    value={nuevaExperiencia.descripcion}
-                    onChange={(event) =>
-                      setNuevaExperiencia((current) => ({ ...current, descripcion: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+            <AspiranteFormField label="Institución">
+              <input
+                value={nuevoEstudio.institucion}
+                onChange={(event) =>
+                  setNuevoEstudio((current) => ({ ...current, institucion: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-                <AspiranteFormField label="Certificado URL" fullWidth>
-                  <input
-                    value={nuevaExperiencia.certificadoUrl}
-                    onChange={(event) =>
-                      setNuevaExperiencia((current) => ({ ...current, certificadoUrl: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+            <AspiranteFormField label="Nivel educativo">
+              <select
+                value={nuevoEstudio.nivelEducativo}
+                onChange={(event) =>
+                  setNuevoEstudio((current) => ({ ...current, nivelEducativo: event.target.value }))
+                }
+              >
+                <option value="TECNICO">Técnico</option>
+                <option value="TECNOLOGICO">Tecnológico</option>
+                <option value="UNIVERSITARIO">Universitario</option>
+                <option value="POSGRADO">Posgrado</option>
+                <option value="OTRO">Otro</option>
+              </select>
+            </AspiranteFormField>
 
-                <AspiranteButton type="submit" className="full-width-AP" disabled={saving || !hoja}>
-                  <Plus size={16} />
-                  Agregar experiencia
-                </AspiranteButton>
-              </form>
+            <AspiranteFormField label="Inicio">
+              <input
+                type="date"
+                value={nuevoEstudio.fechaInicio}
+                onChange={(event) =>
+                  setNuevoEstudio((current) => ({ ...current, fechaInicio: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-              <div className="list-stack-AP">
-                {(hoja?.experiencias || []).length === 0 ? (
-                  <div className="asp-empty">No tienes experiencias registradas.</div>
-                ) : (
-                  (hoja?.experiencias || []).map((experiencia, index) => (
-                    <article key={`${experiencia.cargo}-${index}`} className="item-card-AP">
-                      <div className="item-top-AP">
-                        <div>
-                          <h3>{experiencia.cargo || "Sin cargo"}</h3>
-                          <p>{experiencia.empresa || "Empresa"}</p>
-                        </div>
-                        <AspiranteButton type="button" variant="icon" className="danger" onClick={() => eliminarExperiencia(index)}>
-                          <Trash2 size={16} />
-                        </AspiranteButton>
-                      </div>
-                      <span>
-                        {experiencia.fechaInicio || "Inicio"} - {experiencia.fechaFin || "Actualidad"}
-                      </span>
-                      {experiencia.descripcion && <p>{experiencia.descripcion}</p>}
-                    </article>
-                  ))
-                )}
-              </div>
-            </AspiranteCard>
+            <AspiranteFormField label="Fin">
+              <input
+                type="date"
+                value={nuevoEstudio.fechaFin}
+                onChange={(event) =>
+                  setNuevoEstudio((current) => ({ ...current, fechaFin: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-            <AspiranteCard className="hoja-card-AP hoja-card-wide-AP">
-              <AspiranteSectionHeader kicker="Estudios" title="Agregar formación" />
+            <AspiranteFormField label="Certificado URL" fullWidth>
+              <input
+                value={nuevoEstudio.certificadoUrl}
+                onChange={(event) =>
+                  setNuevoEstudio((current) => ({ ...current, certificadoUrl: event.target.value }))
+                }
+              />
+            </AspiranteFormField>
 
-              <form className="hoja-form-grid-AP" onSubmit={agregarEstudio}>
-                <AspiranteFormField label="Título">
-                  <input
-                    value={nuevoEstudio.titulo}
-                    onChange={(event) =>
-                      setNuevoEstudio((current) => ({ ...current, titulo: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
+            <AspiranteButton type="submit" className="full-width-AP" disabled={saving || !hoja}>
+              <Plus size={16} />
+              Agregar estudio
+            </AspiranteButton>
+          </form>
 
-                <AspiranteFormField label="Institución">
-                  <input
-                    value={nuevoEstudio.institucion}
-                    onChange={(event) =>
-                      setNuevoEstudio((current) => ({ ...current, institucion: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
-
-                <AspiranteFormField label="Nivel educativo">
-                  <select
-                    value={nuevoEstudio.nivelEducativo}
-                    onChange={(event) =>
-                      setNuevoEstudio((current) => ({ ...current, nivelEducativo: event.target.value }))
-                    }
-                  >
-                    <option value="TECNICO">Técnico</option>
-                    <option value="TECNOLOGICO">Tecnológico</option>
-                    <option value="UNIVERSITARIO">Universitario</option>
-                    <option value="POSGRADO">Posgrado</option>
-                    <option value="OTRO">Otro</option>
-                  </select>
-                </AspiranteFormField>
-
-                <AspiranteFormField label="Inicio">
-                  <input
-                    type="date"
-                    value={nuevoEstudio.fechaInicio}
-                    onChange={(event) =>
-                      setNuevoEstudio((current) => ({ ...current, fechaInicio: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
-
-                <AspiranteFormField label="Fin">
-                  <input
-                    type="date"
-                    value={nuevoEstudio.fechaFin}
-                    onChange={(event) =>
-                      setNuevoEstudio((current) => ({ ...current, fechaFin: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
-
-                <AspiranteFormField label="Certificado URL" fullWidth>
-                  <input
-                    value={nuevoEstudio.certificadoUrl}
-                    onChange={(event) =>
-                      setNuevoEstudio((current) => ({ ...current, certificadoUrl: event.target.value }))
-                    }
-                  />
-                </AspiranteFormField>
-
-                <AspiranteButton type="submit" className="full-width-AP" disabled={saving || !hoja}>
-                  <Plus size={16} />
-                  Agregar estudio
-                </AspiranteButton>
-              </form>
-
-              <div className="list-stack-AP">
-                {(hoja?.estudios || []).length === 0 ? (
-                  <div className="asp-empty">No tienes estudios registrados.</div>
-                ) : (
-                  (hoja?.estudios || []).map((estudio, index) => (
-                    <article key={`${estudio.titulo}-${index}`} className="item-card-AP">
-                      <div className="item-top-AP">
-                        <div>
-                          <h3>{estudio.titulo || "Sin título"}</h3>
-                          <p>{estudio.institucion || "Institución"}</p>
-                        </div>
-                        <AspiranteButton type="button" variant="icon" className="danger" onClick={() => eliminarEstudio(index)}>
-                          <Trash2 size={16} />
-                        </AspiranteButton>
-                      </div>
-                      <span>
-                        {estudio.nivelEducativo || "Nivel"} · {estudio.fechaInicio || "Inicio"} - {estudio.fechaFin || "Actualidad"}
-                      </span>
-                    </article>
-                  ))
-                )}
-              </div>
-            </AspiranteCard>
-          </section>
-        </main>
-      </div>
-
-      <Footer />
-    </>
+          <div className="list-stack-AP">
+            {(hoja?.estudios || []).length === 0 ? (
+              <div className="asp-empty">No tienes estudios registrados.</div>
+            ) : (
+              (hoja?.estudios || []).map((estudio, index) => (
+                <article key={`${estudio.titulo}-${index}`} className="item-card-AP">
+                  <div className="item-top-AP">
+                    <div>
+                      <h3>{estudio.titulo || "Sin título"}</h3>
+                      <p>{estudio.institucion || "Institución"}</p>
+                    </div>
+                    <AspiranteButton type="button" variant="icon" className="danger" onClick={() => eliminarEstudio(index)}>
+                      <Trash2 size={16} />
+                    </AspiranteButton>
+                  </div>
+                  <span>
+                    {estudio.nivelEducativo || "Nivel"} · {estudio.fechaInicio || "Inicio"} - {estudio.fechaFin || "Actualidad"}
+                  </span>
+                </article>
+              ))
+            )}
+          </div>
+        </AspiranteCard>
+      </section>
+    </AspiranteLayout>
   );
 };
 

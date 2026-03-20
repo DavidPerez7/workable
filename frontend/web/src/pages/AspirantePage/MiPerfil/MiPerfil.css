@@ -72,8 +72,7 @@
 }
 
 .mi-perfil-hero-text-AP p,
-.mi-perfil-card-AP p,
-.mi-perfil-action-card-AP span {
+.mi-perfil-card-AP p {
   margin: 0.35rem 0 0;
   color: var(--mp-muted);
   line-height: 1.5;
@@ -161,50 +160,19 @@
   gap: 0.9rem;
 }
 
-.mi-perfil-action-card-AP,
-.mi-perfil-button-AP {
-  border: 1px solid var(--mp-border);
-  border-radius: 18px;
-  background: #f8fbff;
+.mi-perfil-actions-grid-AP .app-action-card {
   padding: 1rem;
-  text-align: left;
-  text-decoration: none;
-  cursor: pointer;
-  color: inherit;
-  display: grid;
   gap: 0.45rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  font: inherit;
 }
 
-.mi-perfil-action-card-AP:hover,
-.mi-perfil-button-AP:hover {
-  transform: translateY(-2px);
-  border-color: rgba(37, 99, 235, 0.4);
-  box-shadow: 0 16px 26px rgba(37, 99, 235, 0.08);
+.mi-perfil-actions-grid-AP .app-action-card span {
+  color: var(--mp-muted);
+  line-height: 1.5;
 }
 
-.mi-perfil-action-card-AP strong {
-  color: var(--mp-text);
+.mi-perfil-actions-grid-AP .app-action-card strong {
+  color: inherit;
   font-size: 0.98rem;
-}
-
-.mi-perfil-action-card-AP.danger {
-  background: #fff5f5;
-}
-
-.mi-perfil-action-card-AP.danger strong,
-.mi-perfil-action-card-AP.danger svg {
-  color: var(--mp-red);
-}
-
-.mi-perfil-action-card-AP.warning {
-  background: #fffaf1;
-}
-
-.mi-perfil-action-card-AP.warning strong,
-.mi-perfil-action-card-AP.warning svg {
-  color: var(--mp-amber);
 }
 
 .mi-perfil-state-AP {

@@ -176,24 +176,6 @@ function Header({ isLoggedIn = false, userRole = null }) {
         <>
           {/* Navegación estándar */}
           <nav className={menuOpen ? "nav-list show" : "nav-list"}>
-            <NavLink
-              to="/Professional"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-              onClick={() => setMenuOpen(false)}
-            >
-              Perfil Profesional
-            </NavLink>
-            <NavLink
-              to="/Salary"
-              className={({ isActive }) =>
-                isActive ? "nav-link active" : "nav-link"
-              }
-              onClick={() => setMenuOpen(false)}
-            >
-              Salarios
-            </NavLink>
           </nav>
 
           {/* Menú de usuario estándar */}

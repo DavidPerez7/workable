@@ -1,0 +1,472 @@
+:root {
+  --app-surface: #ffffff;
+  --app-surface-2: #f8fbff;
+  --app-border: #dbe4f0;
+  --app-text: #0f172a;
+  --app-muted: #64748b;
+  --app-primary: #2563eb;
+  --app-primary-dark: #1d4ed8;
+  --app-success: #059669;
+  --app-danger: #dc2626;
+  --app-warning: #d97706;
+  --app-bg: #eef2ff;
+}
+
+.app-shell {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+    linear-gradient(135deg, #f8fafc 0%, var(--app-bg) 100%);
+  color: var(--app-text);
+}
+
+.app-shell--stacked {
+  display: block;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.app-shell--stacked .app-main {
+  width: 100%;
+}
+
+.app-card,
+.asp-card,
+.reclutador-card-RP {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 22px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+}
+
+.app-card,
+.asp-card,
+.reclutador-card-RP {
+  padding: 1rem;
+}
+
+.app-section-header,
+.asp-section-header,
+.reclutador-card-header-RP {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-kicker,
+.asp-kicker,
+.reclutador-kicker-RP {
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--app-primary);
+}
+
+.app-section-header h1,
+.app-section-header h2,
+.app-section-header h3,
+.asp-section-header h1,
+.asp-section-header h2,
+.asp-section-header h3,
+.reclutador-card-header-RP h1,
+.reclutador-card-header-RP h2,
+.reclutador-card-header-RP h3 {
+  margin: 0;
+  color: var(--app-text);
+}
+
+.app-section-subtitle,
+.asp-section-subtitle,
+.reclutador-card-header-RP p {
+  margin: 0.35rem 0 0;
+  color: var(--app-muted);
+  line-height: 1.5;
+}
+
+.app-button,
+.asp-button,
+.reclutador-button-RP,
+.app-button-secondary,
+.asp-button-secondary,
+.app-button-danger,
+.asp-button-danger,
+.app-icon-button,
+.asp-icon-button,
+.app-link-button,
+.app-action-card,
+.reclutador-action-card-RP {
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.app-button,
+.asp-button,
+.reclutador-button-RP,
+.app-button-secondary,
+.asp-button-secondary,
+.app-button-danger,
+.asp-button-danger,
+.app-link-button,
+.app-action-card,
+.reclutador-action-card-RP {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+}
+
+.app-button,
+.asp-button,
+.reclutador-button-RP {
+  background: linear-gradient(135deg, var(--app-primary), var(--app-primary-dark));
+  color: white;
+  box-shadow: 0 14px 22px rgba(37, 99, 235, 0.22);
+}
+
+.app-button-secondary,
+.asp-button-secondary,
+.app-link-button,
+.app-action-card,
+.reclutador-action-card-RP {
+  background: #eef4ff;
+  color: var(--app-primary-dark);
+}
+
+.app-button-danger,
+.asp-button-danger {
+  background: linear-gradient(135deg, var(--app-danger), #b91c1c);
+  color: white;
+  box-shadow: 0 14px 22px rgba(220, 38, 38, 0.2);
+}
+
+.app-icon-button,
+.asp-icon-button {
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  background: #eef4ff;
+  color: var(--app-primary-dark);
+  flex-shrink: 0;
+}
+
+.app-icon-button.danger,
+.asp-icon-button.danger {
+  background: #fff1f2;
+  color: var(--app-danger);
+}
+
+.app-button:hover:not(:disabled),
+.asp-button:hover:not(:disabled),
+.reclutador-button-RP:hover:not(:disabled),
+.app-button-secondary:hover:not(:disabled),
+.asp-button-secondary:hover:not(:disabled),
+.app-button-danger:hover:not(:disabled),
+.asp-button-danger:hover:not(:disabled),
+.app-icon-button:hover:not(:disabled),
+.asp-icon-button:hover:not(:disabled),
+.app-link-button:hover:not(:disabled),
+.app-action-card:hover:not(:disabled),
+.reclutador-action-card-RP:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.app-button:disabled,
+.asp-button:disabled,
+.reclutador-button-RP:disabled,
+.app-button-secondary:disabled,
+.asp-button-secondary:disabled,
+.app-button-danger:disabled,
+.asp-button-danger:disabled,
+.app-icon-button:disabled,
+.asp-icon-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.app-form-field,
+.asp-form-field,
+.reclutador-form-field-RP {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.app-form-field label,
+.app-form-field > span,
+.asp-form-field label,
+.asp-form-field > span,
+.reclutador-form-field-RP label,
+.reclutador-form-label-RP {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--app-text);
+}
+
+.app-form-field input,
+.app-form-field textarea,
+.app-form-field select,
+.asp-form-field input,
+.asp-form-field textarea,
+.asp-form-field select,
+.reclutador-input-RP,
+.reclutador-select-RP,
+.reclutador-textarea-RP {
+  width: 100%;
+  border: 1px solid var(--app-border);
+  border-radius: 14px;
+  background: #f8fbff;
+  color: var(--app-text);
+  font: inherit;
+  padding: 0.85rem 0.95rem;
+  outline: none;
+}
+
+.app-form-field textarea,
+.asp-form-field textarea,
+.reclutador-textarea-RP {
+  resize: vertical;
+}
+
+.app-form-field input:focus,
+.app-form-field textarea:focus,
+.app-form-field select:focus,
+.asp-form-field input:focus,
+.asp-form-field textarea:focus,
+.asp-form-field select:focus,
+.reclutador-input-RP:focus,
+.reclutador-select-RP:focus,
+.reclutador-textarea-RP:focus,
+.app-input-icon:focus-within,
+.asp-input-icon:focus-within,
+.reclutador-form-field-RP:focus-within {
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.app-form-field.full-width,
+.asp-form-field.full-width,
+.reclutador-form-field-RP.full-width {
+  grid-column: 1 / -1;
+}
+
+.app-input-icon,
+.asp-input-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--app-border);
+  border-radius: 14px;
+  background: #f8fbff;
+  padding: 0 0.95rem;
+}
+
+.app-input-icon svg,
+.asp-input-icon svg {
+  color: var(--app-muted);
+  flex-shrink: 0;
+}
+
+.app-input-icon input,
+.app-input-icon select,
+.asp-input-icon input,
+.asp-input-icon select {
+  border: none;
+  background: transparent;
+  padding-left: 0;
+}
+
+.app-alert,
+.asp-alert,
+.reclutador-alert-RP,
+.app-empty,
+.asp-empty,
+.reclutador-empty-RP,
+.app-loading,
+.asp-loading,
+.reclutador-loading-RP {
+  border-radius: 22px;
+  border: 1px solid var(--app-border);
+  background: var(--app-surface);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+}
+
+.app-alert,
+.asp-alert,
+.reclutador-alert-RP {
+  padding: 0.85rem 1rem;
+  line-height: 1.45;
+}
+
+.app-alert.success,
+.asp-alert.success,
+.reclutador-alert-RP.success,
+.reclutador-alert-success-RP {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #bbf7d0;
+}
+
+.app-alert.error,
+.asp-alert.error,
+.reclutador-alert-RP.error,
+.reclutador-alert-error-RP {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.app-alert.warning,
+.asp-alert.warning {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.app-alert.info,
+.asp-alert.info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.app-empty,
+.asp-empty,
+.reclutador-empty-RP,
+.app-loading,
+.asp-loading,
+.reclutador-loading-RP {
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--app-muted);
+}
+
+.app-badge,
+.asp-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+  padding: 0.45rem 0.7rem;
+}
+
+.app-badge.neutral,
+.asp-badge.neutral {
+  background: #eef2ff;
+  color: var(--app-primary-dark);
+}
+
+.app-badge.success,
+.asp-badge.success {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.app-badge.error,
+.asp-badge.error {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.app-badge.warning,
+.asp-badge.warning {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.app-badge.info,
+.asp-badge.info {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.app-action-row,
+.asp-action-row,
+.reclutador-action-row-RP {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.app-action-card,
+.reclutador-action-card-RP {
+  border: 1px solid var(--app-border);
+  text-decoration: none;
+  color: var(--app-text);
+  text-align: left;
+  display: grid;
+  gap: 0.35rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.app-action-card:hover,
+.reclutador-action-card-RP:hover {
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.app-action-card.danger {
+  background: #fff5f5;
+  border-color: #fecaca;
+  color: var(--app-danger);
+}
+
+.app-action-card.warning {
+  background: #fffaf1;
+  border-color: #fde68a;
+  color: var(--app-warning);
+}
+
+.app-action-card.danger svg,
+.app-action-card.warning svg {
+  color: currentColor;
+}
+
+.app-link-button {
+  text-decoration: none;
+  color: var(--app-primary-dark);
+}
+
+@media (max-width: 768px) {
+  .app-action-row,
+  .asp-action-row,
+  .reclutador-action-row-RP {
+    justify-content: stretch;
+  }
+
+  .app-button,
+  .asp-button,
+  .reclutador-button-RP,
+  .app-button-secondary,
+  .asp-button-secondary,
+  .app-button-danger,
+  .asp-button-danger,
+  .app-link-button,
+  .app-action-card,
+  .reclutador-action-card-RP {
+    width: 100%;
+  }
+}

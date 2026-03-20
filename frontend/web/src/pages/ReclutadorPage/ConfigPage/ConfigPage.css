@@ -3,9 +3,6 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.9rem 1rem;
-  border: 1px solid #dbe4f0;
-  border-radius: 14px;
-  background: #f8fafc;
 }
 
 .config-info-RP span {
@@ -31,21 +28,3 @@
   border-color: #fecaca;
 }
 
-.config-secondary-RP,
-.config-danger-button-RP {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  border: 1px solid #dbe4f0;
-  background: #fff;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.config-danger-button-RP {
-  border-color: #fecaca;
-  color: #991b1b;
-}

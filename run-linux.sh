@@ -46,8 +46,8 @@ sanitize_terminal() {
     printf '\033[<u' 2>/dev/null || true
 }
 
-# Asegurar limpieza del tty al salir o interrumpir
-trap 'sanitize_terminal' EXIT INT TERM
+# Asegurar limpieza del tty al salir
+trap 'sanitize_terminal' EXIT
 
 # Normalizar terminal desde el inicio del script
 sanitize_terminal
@@ -445,6 +445,16 @@ stop_all_processes() {
         print_warning "⚠ No hay procesos en ejecución"
     fi
 }
+
+shutdown_on_signal() {
+    print_warning "Ctrl+C detectado. Deteniendo todos los procesos iniciados por el script..."
+    stop_all_processes
+    sanitize_terminal
+    exit 130
+}
+
+# Capturar interrupciones para cerrar todo correctamente
+trap 'shutdown_on_signal' INT TERM
 
 # ===== FUNCIONES PRINCIPALES =====
 

@@ -21,12 +21,6 @@
   gap: 0.9rem;
 }
 
-.reclutador-action-card-RP {
-  display: grid;
-  gap: 0.35rem;
-  text-align: center;
-}
-
 .reclutador-ofertas-list-RP {
   display: grid;
   gap: 0.75rem;
@@ -37,7 +31,6 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.9rem 1rem;
-  border: 1px solid #dbe4f0;
   border-radius: 14px;
   background: #f8fafc;
 }
