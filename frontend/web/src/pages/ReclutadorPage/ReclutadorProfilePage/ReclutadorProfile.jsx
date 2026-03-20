@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { logout } from "../../../api/authApi";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorEmptyState from "../../../components/reclutador/ReclutadorEmptyState";
 import "./ReclutadorProfile.css";
 
 function ReclutadorProfile() {
@@ -32,64 +35,48 @@ function ReclutadorProfile() {
 
   if (!profileData) {
     return (
-      <>
-        <HeaderReclutador />
-        <main className="reclutador-main-RP">
-          <div className="reclutador-card-RP">
-            <h2>Perfil no encontrado</h2>
-            <Link to="/Reclutador" className="reclutador-button-RP">
-              Volver
-            </Link>
-          </div>
-        </main>
-      </>
+      <ReclutadorLayout>
+        <ReclutadorCard>
+          <h2>Perfil no encontrado</h2>
+          <Link to="/Reclutador" className="reclutador-button-RP">
+            Volver
+          </Link>
+        </ReclutadorCard>
+      </ReclutadorLayout>
     );
   }
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP profile-hero-RPF">
-            <div className="profile-hero-info-RPF">
-              <div className="profile-avatar-RPF">
-                {profileData.urlFotoPerfil ? (
-                  <img src={profileData.urlFotoPerfil} alt={profileData.nombre} />
-                ) : (
-                  <span>{profileData.nombre?.charAt(0) || "R"}</span>
-                )}
-              </div>
-              <div>
-                <p className="reclutador-kicker-RP">Perfil</p>
-                <h1>{profileData.nombre}</h1>
-                <p className="profile-muted-RPF">{profileData.correo}</p>
-                <p className="profile-muted-RPF">
-                  {profileData.municipio?.nombre || "Sin ubicacion"}
-                </p>
-              </div>
-            </div>
-          </section>
+    <ReclutadorLayout>
+      <ReclutadorCard as="section" className="profile-hero-RPF">
+        <div className="profile-hero-info-RPF">
+          <div className="profile-avatar-RPF">
+            {profileData.urlFotoPerfil ? (
+              <img src={profileData.urlFotoPerfil} alt={profileData.nombre} />
+            ) : (
+              <span>{profileData.nombre?.charAt(0) || "R"}</span>
+            )}
+          </div>
+          <div>
+            <p className="reclutador-kicker-RP">Perfil</p>
+            <h1>{profileData.nombre}</h1>
+            <p className="profile-muted-RPF">{profileData.correo}</p>
+            <p className="profile-muted-RPF">{profileData.municipio?.nombre || "Sin ubicacion"}</p>
+          </div>
+        </div>
+      </ReclutadorCard>
 
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Acciones</p>
-                <h2>Atajos del reclutador</h2>
-              </div>
-            </div>
-            <div className="profile-actions-RPF">
-              <Link to="/Reclutador/EditarPerfil">Editar perfil</Link>
-              <Link to="/Reclutador/GestigOferts">Gestionar ofertas</Link>
-              <Link to="/Reclutador/Publicacion">Publicar oferta</Link>
-              <Link to="/Reclutador/Configuracion">Configuracion</Link>
-              <button type="button" onClick={cerrarSesion}>Cerrar sesion</button>
-            </div>
-          </section>
-        </main>
-      </div>
-    </>
+      <ReclutadorCard as="section">
+        <ReclutadorSectionHeader kicker="Acciones" title="Atajos del reclutador" />
+        <div className="profile-actions-RPF">
+          <Link to="/Reclutador/EditarPerfil" className="reclutador-button-RP">Editar perfil</Link>
+          <Link to="/Reclutador/GestigOferts" className="reclutador-button-RP">Gestionar ofertas</Link>
+          <Link to="/Reclutador/Publicacion" className="reclutador-button-RP">Publicar oferta</Link>
+          <Link to="/Reclutador/Configuracion" className="reclutador-button-RP">Configuracion</Link>
+          <ReclutadorButton type="button" onClick={cerrarSesion}>Cerrar sesion</ReclutadorButton>
+        </div>
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 }
 

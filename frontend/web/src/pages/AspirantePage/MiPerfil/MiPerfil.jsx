@@ -14,6 +14,9 @@ import {
 import Header from "../../../components/Header/Header";
 import SidebarAspirante from "../../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../../components/Footer/footer";
+import AspiranteCard from "../../../components/aspirante/AspiranteCard";
+import AspiranteSectionHeader from "../../../components/aspirante/AspiranteSectionHeader";
+import AspiranteButton from "../../../components/aspirante/AspiranteButton";
 import aspirantesApi from "../../../api/aspirantesApi";
 import "./MiPerfil.css";
 
@@ -59,11 +62,7 @@ const MiPerfil = () => {
   };
 
   if (loading) {
-    return (
-      <div className="mi-perfil-state-AP">
-        Cargando perfil...
-      </div>
-    );
+    return <div className="mi-perfil-state-AP asp-loading">Cargando perfil...</div>;
   }
 
   if (error && !usuario) {
@@ -110,7 +109,7 @@ const MiPerfil = () => {
           </section>
 
           <section className="mi-perfil-grid-AP">
-            <article className="mi-perfil-card-AP">
+            <AspiranteCard className="mi-perfil-card-AP">
               <div className="mi-perfil-card-header-AP">
                 <Mail size={18} />
                 <h2>Contacto</h2>
@@ -123,9 +122,9 @@ const MiPerfil = () => {
                 <span>Teléfono</span>
                 <strong>{usuario?.telefono || "No registrado"}</strong>
               </div>
-            </article>
+            </AspiranteCard>
 
-            <article className="mi-perfil-card-AP">
+            <AspiranteCard className="mi-perfil-card-AP">
               <div className="mi-perfil-card-header-AP">
                 <MapPin size={18} />
                 <h2>Ubicación</h2>
@@ -146,22 +145,19 @@ const MiPerfil = () => {
                     : "No registrada"}
                 </strong>
               </div>
-            </article>
+            </AspiranteCard>
 
-            <article className="mi-perfil-card-AP mi-perfil-card-wide-AP">
+            <AspiranteCard className="mi-perfil-card-AP mi-perfil-card-wide-AP">
               <div className="mi-perfil-card-header-AP">
                 <FileText size={18} />
                 <h2>Resumen</h2>
               </div>
               <p>{usuario?.resumen || "Aún no has agregado un resumen profesional."}</p>
-            </article>
+            </AspiranteCard>
           </section>
 
-          <section className="mi-perfil-actions-AP">
-            <div className="mi-perfil-section-header-AP">
-              <p className="mi-perfil-kicker-AP">Acciones</p>
-              <h2>Atajos del aspirante</h2>
-            </div>
+          <AspiranteCard as="section" className="mi-perfil-actions-AP">
+            <AspiranteSectionHeader kicker="Acciones" title="Atajos del aspirante" />
 
             <div className="mi-perfil-actions-grid-AP">
               <Link to="/Aspirante/MiPerfil/ActualizarPerfil" className="mi-perfil-action-card-AP">
@@ -188,13 +184,13 @@ const MiPerfil = () => {
                 <span>Acción permanente para borrar tu perfil.</span>
               </Link>
 
-              <button type="button" onClick={cerrarSesion} className="mi-perfil-action-card-AP warning">
+              <AspiranteButton type="button" variant="secondary" onClick={cerrarSesion} className="mi-perfil-action-card-AP warning">
                 <LogOut size={28} />
                 <strong>Cerrar sesión</strong>
                 <span>Salir de la plataforma de aspirante.</span>
-              </button>
+              </AspiranteButton>
             </div>
-          </section>
+          </AspiranteCard>
         </main>
       </div>
 

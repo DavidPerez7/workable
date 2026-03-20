@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
 import { getMunicipios } from "../../../api/municipioAPI";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import Footer from "../../../components/Footer/footer";
-import "./ProfileEditPage.css";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorFormField from "../../../components/reclutador/ReclutadorFormField";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
+import ReclutadorActionRow from "../../../components/reclutador/ReclutadorActionRow";
 
 function ProfileEditPage() {
   // ============================================
@@ -275,146 +279,46 @@ function ProfileEditPage() {
     }));
   };
 
+  const scrollToSection = (sectionId) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   if (loading) {
     return (
-      <>
-        <HeaderReclutador />
-        <main className="main-profile-edit-PEP">
-          <div className="loading-state">
+      <ReclutadorLayout>
+        <main className="reclutador-main-RP">
+          <ReclutadorCard>
             <p>Cargando datos del perfil...</p>
-          </div>
+          </ReclutadorCard>
         </main>
-        <Footer />
-      </>
+      </ReclutadorLayout>
     );
   }
 
   return (
-    <>
-      <HeaderReclutador />
+    <ReclutadorLayout>
+      <main className="reclutador-main-RP">
+        <ReclutadorSectionHeader
+          kicker="Perfil"
+          title="Editar perfil de Reclutador"
+          action={<Link to="/Reclutador/ReclutadorProfile" className="reclutador-link-RP">Volver al perfil</Link>}
+        />
 
-      <main className="main-profile-edit-PEP">
-        {/* HEADER CON NAVEGACIÓN */}
-        <div className="header-page-PEP">
-          <h1 className="title-page-PEP">Editar perfil de Reclutador</h1>
-          <Link to="/Reclutador/ReclutadorProfile" className="link-return-PEP">
-            ← Volver al perfil
-          </Link>
-        </div>
+        {error ? <ReclutadorAlert variant="error">{error}</ReclutadorAlert> : null}
 
-        {/* MENSAJE DE ERROR GLOBAL */}
-        {error && (
-          <div className="alert-error-PEP">
-            <span className="alert-close-PEP" onClick={() => setError("")}>
-              ×
-            </span>
-            {error}
-          </div>
-        )}
+        <ReclutadorActionRow>
+          <ReclutadorButton variant="action" type="button" onClick={() => scrollToSection("profile-section")}>Datos Personales</ReclutadorButton>
+          <ReclutadorButton variant="action" type="button" onClick={() => scrollToSection("email-section")}>Email</ReclutadorButton>
+          <ReclutadorButton variant="action" type="button" onClick={() => scrollToSection("password-section")}>Contraseña</ReclutadorButton>
+        </ReclutadorActionRow>
 
-        {/* NAVEGACIÓN DE SECCIONES */}
-        <nav className="nav-sections-PEP">
-          <button
-            className="nav-item-PEP active"
-            onClick={() =>
-              document
-                .getElementById("profile-section")
-                .scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="nav-icon-PEP"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Datos Personales
-          </button>
-          <button
-            className="nav-item-PEP"
-            onClick={() =>
-              document
-                .getElementById("email-section")
-                .scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="nav-icon-PEP"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-            Email
-          </button>
-          <button
-            className="nav-item-PEP"
-            onClick={() =>
-              document
-                .getElementById("password-section")
-                .scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="nav-icon-PEP"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-            Contraseña
-          </button>
-        </nav>
+        <div className="reclutador-grid-RP">
+          <ReclutadorCard id="profile-section">
+            <ReclutadorSectionHeader kicker="Datos" title="Datos Personales" />
 
-        {/* CONTENEDOR DE FORMULARIOS */}
-        <div className="container-forms-edit-PEP">
-          {/* FORMULARIO DE DATOS PERSONALES */}
-          <section className="form-section-edit-PEP" id="profile-section">
-            <div className="section-header-PEP">
-              <div className="icon-container-PEP profile-icon-PEP">
-                <svg
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="icon-svg-PEP"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h2 className="section-title-PEP">Datos Personales</h2>
-            </div>
-
-            <form onSubmit={handleProfileSubmit} className="form-content-PEP">
-              {/* Nombre y Teléfono */}
-              <div className="form-row-PEP">
-                <div className="input-group-edit-PEP">
-                  <label htmlFor="nombre" className="input-label-edit-PEP">
-                    Nombre Completo *
-                  </label>
+            <form onSubmit={handleProfileSubmit} className="reclutador-form-RP">
+              <div className="reclutador-form-grid-RP">
+                <ReclutadorFormField label="Nombre Completo *" htmlFor="nombre">
                   <input
                     type="text"
                     id="nombre"
@@ -422,16 +326,13 @@ function ProfileEditPage() {
                     value={formData.nombre}
                     onChange={handleProfileChange}
                     placeholder="Ej: Juan García"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     required
                     disabled={savingProfile}
                   />
-                </div>
+                </ReclutadorFormField>
 
-                <div className="input-group-edit-PEP">
-                  <label htmlFor="telefono" className="input-label-edit-PEP">
-                    Teléfono
-                  </label>
+                <ReclutadorFormField label="Teléfono" htmlFor="telefono">
                   <input
                     type="tel"
                     id="telefono"
@@ -439,42 +340,32 @@ function ProfileEditPage() {
                     value={formData.telefono}
                     onChange={handleProfileChange}
                     placeholder="Ej: 3001234567"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     disabled={savingProfile}
                   />
-                </div>
+                </ReclutadorFormField>
               </div>
 
-              {/* Municipio */}
-              <div className="form-row-PEP full-width-PEP">
-                <div className="input-group-edit-PEP">
-                  <label htmlFor="municipioId" className="input-label-edit-PEP">
-                    Ubicación (Municipio)
-                  </label>
-                  <select
-                    id="municipioId"
-                    name="municipioId"
-                    value={formData.municipioId || ""}
-                    onChange={handleProfileChange}
-                    className="input-field-PEP"
-                    disabled={savingProfile}
-                  >
-                    <option value="">Selecciona un municipio</option>
-                    {municipios.map((mun) => (
-                      <option key={mun.id} value={mun.id}>
-                        {mun.nombre} - {mun.departamento}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              <ReclutadorFormField label="Ubicación (Municipio)" htmlFor="municipioId">
+                <select
+                  id="municipioId"
+                  name="municipioId"
+                  value={formData.municipioId || ""}
+                  onChange={handleProfileChange}
+                  className="reclutador-select-RP"
+                  disabled={savingProfile}
+                >
+                  <option value="">Selecciona un municipio</option>
+                  {municipios.map((mun) => (
+                    <option key={mun.id} value={mun.id}>
+                      {mun.nombre} - {mun.departamento}
+                    </option>
+                  ))}
+                </select>
+              </ReclutadorFormField>
 
-              {/* URLs de Foto y Banner */}
-              <div className="form-row-PEP">
-                <div className="input-group-edit-PEP">
-                  <label htmlFor="urlFotoPerfil" className="input-label-edit-PEP">
-                    URL Foto de Perfil
-                  </label>
+              <div className="reclutador-form-grid-RP">
+                <ReclutadorFormField label="URL Foto de Perfil" htmlFor="urlFotoPerfil">
                   <input
                     type="url"
                     id="urlFotoPerfil"
@@ -482,15 +373,12 @@ function ProfileEditPage() {
                     value={formData.urlFotoPerfil}
                     onChange={handleProfileChange}
                     placeholder="Ej: https://ejemplo.com/foto.jpg"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     disabled={savingProfile}
                   />
-                </div>
+                </ReclutadorFormField>
 
-                <div className="input-group-edit-PEP">
-                  <label htmlFor="urlBanner" className="input-label-edit-PEP">
-                    URL Banner
-                  </label>
+                <ReclutadorFormField label="URL Banner" htmlFor="urlBanner">
                   <input
                     type="url"
                     id="urlBanner"
@@ -498,88 +386,42 @@ function ProfileEditPage() {
                     value={formData.urlBanner}
                     onChange={handleProfileChange}
                     placeholder="Ej: https://ejemplo.com/banner.jpg"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     disabled={savingProfile}
                   />
+                </ReclutadorFormField>
+              </div>
+
+              <div className="reclutador-form-grid-RP">
+                <div className="reclutador-card-RP">
+                  <p className="reclutador-kicker-RP">Vista previa</p>
+                  <h3>Foto de perfil</h3>
+                  {formData.urlFotoPerfil ? <img src={formData.urlFotoPerfil} alt="Preview foto" style={{ maxWidth: "100%", borderRadius: "12px" }} onError={(e) => (e.target.style.display = "none")} /> : <p>No hay imagen</p>}
+                </div>
+
+                <div className="reclutador-card-RP">
+                  <p className="reclutador-kicker-RP">Vista previa</p>
+                  <h3>Banner</h3>
+                  {formData.urlBanner ? <img src={formData.urlBanner} alt="Preview banner" style={{ maxWidth: "100%", borderRadius: "12px" }} onError={(e) => (e.target.style.display = "none")} /> : <p>No hay imagen</p>}
                 </div>
               </div>
 
-              {/* Preview de Imágenes */}
-              <div className="form-row-PEP full-width-PEP">
-                <div className="preview-container-PEP">
-                  <div className="preview-item-PEP">
-                    <label>Vista Previa Foto de Perfil</label>
-                    <div className="preview-image-PEP">
-                      {formData.urlFotoPerfil ? (
-                        <img
-                          src={formData.urlFotoPerfil}
-                          alt="Preview foto"
-                          onError={(e) => (e.target.style.display = "none")}
-                        />
-                      ) : (
-                        <span>No hay imagen</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="preview-item-PEP">
-                    <label>Vista Previa Banner</label>
-                    <div className="preview-image-banner-PEP">
-                      {formData.urlBanner ? (
-                        <img
-                          src={formData.urlBanner}
-                          alt="Preview banner"
-                          onError={(e) => (e.target.style.display = "none")}
-                        />
-                      ) : (
-                        <span>No hay imagen</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="button-action-edit-PEP button-primary-PEP"
-                disabled={savingProfile}
-              >
+              <ReclutadorButton type="submit" disabled={savingProfile}>
                 {savingProfile ? "Guardando..." : "Guardar Cambios"}
-              </button>
+              </ReclutadorButton>
             </form>
-          </section>
+          </ReclutadorCard>
 
-          {/* FORMULARIO DE EMAIL */}
-          <section className="form-section-edit-PEP" id="email-section">
-            <div className="section-header-PEP">
-              <div className="icon-container-PEP email-icon-PEP">
-                <svg
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="icon-svg-PEP"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <h2 className="section-title-PEP">Cambiar Email</h2>
-            </div>
+          <ReclutadorCard id="email-section">
+            <ReclutadorSectionHeader kicker="Cuenta" title="Cambiar Email" />
 
-            <form onSubmit={handleEmailSubmit} className="form-content-PEP">
-              <div className="current-info-display-PEP">
-                <label className="label-current-PEP">Email actual</label>
-                <p className="value-current-PEP">{usuario.correo}</p>
+            <form onSubmit={handleEmailSubmit} className="reclutador-form-RP">
+              <div className="reclutador-card-RP">
+                <p className="reclutador-kicker-RP">Email actual</p>
+                <h3>{usuario.correo}</h3>
               </div>
 
-              <div className="input-group-edit-PEP">
-                <label htmlFor="newEmail" className="input-label-edit-PEP">
-                  Nuevo email *
-                </label>
+              <ReclutadorFormField label="Nuevo email *" htmlFor="newEmail">
                 <input
                   type="email"
                   id="newEmail"
@@ -587,19 +429,13 @@ function ProfileEditPage() {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="correo@ejemplo.com"
-                  className="input-field-PEP"
+                  className="reclutador-input-RP"
                   required
                   disabled={loadingEmail}
                 />
-              </div>
+              </ReclutadorFormField>
 
-              <div className="input-group-edit-PEP">
-                <label
-                  htmlFor="repeatNewEmail"
-                  className="input-label-edit-PEP"
-                >
-                  Confirmar nuevo email *
-                </label>
+              <ReclutadorFormField label="Confirmar nuevo email *" htmlFor="repeatNewEmail">
                 <input
                   type="email"
                   id="repeatNewEmail"
@@ -607,52 +443,24 @@ function ProfileEditPage() {
                   value={repeatEmail}
                   onChange={(e) => setRepeatEmail(e.target.value)}
                   placeholder="correo@ejemplo.com"
-                  className="input-field-PEP"
+                  className="reclutador-input-RP"
                   required
                   disabled={loadingEmail}
                 />
-              </div>
+              </ReclutadorFormField>
 
-              <button
-                type="submit"
-                className="button-action-edit-PEP button-primary-PEP"
-                disabled={loadingEmail}
-              >
+              <ReclutadorButton type="submit" disabled={loadingEmail}>
                 {loadingEmail ? "Actualizando..." : "Actualizar Email"}
-              </button>
+              </ReclutadorButton>
             </form>
-          </section>
+          </ReclutadorCard>
 
-          {/* FORMULARIO DE CONTRASEÑA */}
-          <section className="form-section-edit-PEP" id="password-section">
-            <div className="section-header-PEP">
-              <div className="icon-container-PEP password-icon-PEP">
-                <svg
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="icon-svg-PEP"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                  />
-                </svg>
-              </div>
-              <h2 className="section-title-PEP">Cambiar Contraseña</h2>
-            </div>
+          <ReclutadorCard id="password-section">
+            <ReclutadorSectionHeader kicker="Seguridad" title="Cambiar Contraseña" />
 
-            <form onSubmit={handlePasswordSubmit} className="form-content-PEP">
-              <div className="input-group-edit-PEP">
-                <label
-                  htmlFor="currentPassword"
-                  className="input-label-edit-PEP"
-                >
-                  Contraseña actual *
-                </label>
-                <div className="input-password-wrapper-PEP">
+            <form onSubmit={handlePasswordSubmit} className="reclutador-form-RP">
+              <ReclutadorFormField label="Contraseña actual *" htmlFor="currentPassword">
+                <div className="reclutador-password-field-RP">
                   <input
                     type={showPasswords.current ? "text" : "password"}
                     id="currentPassword"
@@ -660,13 +468,13 @@ function ProfileEditPage() {
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     required
                     disabled={loadingPassword}
                   />
                   <button
                     type="button"
-                    className="toggle-password-PEP"
+                    className="reclutador-password-toggle-RP"
                     onClick={() => togglePasswordVisibility("current")}
                     aria-label="Mostrar/Ocultar contraseña"
                     disabled={loadingPassword}
@@ -674,13 +482,10 @@ function ProfileEditPage() {
                     {showPasswords.current ? "👁️" : "👁️‍🗨️"}
                   </button>
                 </div>
-              </div>
+              </ReclutadorFormField>
 
-              <div className="input-group-edit-PEP">
-                <label htmlFor="newPassword" className="input-label-edit-PEP">
-                  Nueva contraseña *
-                </label>
-                <div className="input-password-wrapper-PEP">
+              <ReclutadorFormField label="Nueva contraseña *" htmlFor="newPassword" hint="Mínimo 8 caracteres">
+                <div className="reclutador-password-field-RP">
                   <input
                     type={showPasswords.new ? "text" : "password"}
                     id="newPassword"
@@ -688,14 +493,14 @@ function ProfileEditPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     required
                     minLength={8}
                     disabled={loadingPassword}
                   />
                   <button
                     type="button"
-                    className="toggle-password-PEP"
+                    className="reclutador-password-toggle-RP"
                     onClick={() => togglePasswordVisibility("new")}
                     aria-label="Mostrar/Ocultar contraseña"
                     disabled={loadingPassword}
@@ -703,17 +508,10 @@ function ProfileEditPage() {
                     {showPasswords.new ? "👁️" : "👁️‍🗨️"}
                   </button>
                 </div>
-                <p className="input-hint-PEP">Mínimo 8 caracteres</p>
-              </div>
+              </ReclutadorFormField>
 
-              <div className="input-group-edit-PEP">
-                <label
-                  htmlFor="repeatNewPassword"
-                  className="input-label-edit-PEP"
-                >
-                  Confirmar nueva contraseña *
-                </label>
-                <div className="input-password-wrapper-PEP">
+              <ReclutadorFormField label="Confirmar nueva contraseña *" htmlFor="repeatNewPassword">
+                <div className="reclutador-password-field-RP">
                   <input
                     type={showPasswords.repeat ? "text" : "password"}
                     id="repeatNewPassword"
@@ -721,14 +519,14 @@ function ProfileEditPage() {
                     value={repeatPassword}
                     onChange={(e) => setRepeatPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="input-field-PEP"
+                    className="reclutador-input-RP"
                     required
                     minLength={8}
                     disabled={loadingPassword}
                   />
                   <button
                     type="button"
-                    className="toggle-password-PEP"
+                    className="reclutador-password-toggle-RP"
                     onClick={() => togglePasswordVisibility("repeat")}
                     aria-label="Mostrar/Ocultar contraseña"
                     disabled={loadingPassword}
@@ -736,22 +534,16 @@ function ProfileEditPage() {
                     {showPasswords.repeat ? "👁️" : "👁️‍🗨️"}
                   </button>
                 </div>
-              </div>
+              </ReclutadorFormField>
 
-              <button
-                type="submit"
-                className="button-action-edit-PEP button-primary-PEP"
-                disabled={loadingPassword}
-              >
+              <ReclutadorButton type="submit" disabled={loadingPassword}>
                 {loadingPassword ? "Actualizando..." : "Actualizar contraseña"}
-              </button>
+              </ReclutadorButton>
             </form>
-          </section>
+          </ReclutadorCard>
         </div>
       </main>
-
-      <Footer />
-    </>
+    </ReclutadorLayout>
   );
 }
 

@@ -1,13 +1,16 @@
-.admin-shell {
-  display: flex;
+.admin-page-shell {
   min-height: 100vh;
   background: #f4f7fb;
 }
 
+.admin-shell {
+  display: flex;
+  min-height: calc(100vh - 80px);
+}
+
 .admin-content {
   flex: 1;
-  margin-left: 260px;
-  min-height: 100vh;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
@@ -17,15 +20,9 @@
   padding: 24px;
 }
 
-@media (max-width: 1024px) {
-  .admin-content {
-    margin-left: 240px;
-  }
-}
-
 @media (max-width: 768px) {
-  .admin-content {
-    margin-left: 200px;
+  .admin-shell {
+    min-height: calc(100vh - 72px);
   }
 
   .admin-main {
@@ -34,11 +31,6 @@
 }
 
 @media (max-width: 600px) {
-  .admin-content {
-    margin-left: 0;
-    padding-top: 64px;
-  }
-
   .admin-main {
     padding: 12px;
   }

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import reclutadoresApi from "../../../api/reclutadoresApi";
 import { logout } from "../../../api/authApi";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
 import "./ConfigPage.css";
 
 const ConfigPage = () => {
@@ -70,77 +73,57 @@ const ConfigPage = () => {
   };
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Cuenta</p>
-                <h2>Configuracion</h2>
-              </div>
-              <Link to="/Reclutador/EditarPerfil" className="reclutador-link-RP">
-                Editar perfil
-              </Link>
-            </div>
-            <div className="config-info-RP">
-              <span>Correo</span>
-              <strong>{perfil?.correo || "Sin correo"}</strong>
-            </div>
-            {error && <p className="reclutador-alert-RP error">{error}</p>}
-          </section>
+    <ReclutadorLayout>
+      <ReclutadorCard>
+        <ReclutadorSectionHeader
+          kicker="Cuenta"
+          title="Configuracion"
+          action={(
+            <Link to="/Reclutador/EditarPerfil" className="reclutador-link-RP">
+              Editar perfil
+            </Link>
+          )}
+        />
+        <div className="config-info-RP">
+          <span>Correo</span>
+          <strong>{perfil?.correo || "Sin correo"}</strong>
+        </div>
+        {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
+      </ReclutadorCard>
 
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Empresa</p>
-                <h2>Asociar empresa por codigo</h2>
-              </div>
-            </div>
-            <form className="config-form-RP" onSubmit={handleAsignarEmpresa}>
-              <input
-                type="text"
-                placeholder="Codigo de empresa"
-                value={codigoEmpresa}
-                onChange={(event) => setCodigoEmpresa(event.target.value)}
-                disabled={loading}
-              />
-              <button type="submit" className="reclutador-button-RP" disabled={loading}>
-                {loading ? "Asignando..." : "Asignar"}
-              </button>
-            </form>
-          </section>
+      <ReclutadorCard>
+        <ReclutadorSectionHeader kicker="Empresa" title="Asociar empresa por codigo" />
+        <form className="config-form-RP" onSubmit={handleAsignarEmpresa}>
+          <input
+            type="text"
+            placeholder="Codigo de empresa"
+            value={codigoEmpresa}
+            onChange={(event) => setCodigoEmpresa(event.target.value)}
+            disabled={loading}
+          />
+          <ReclutadorButton type="submit" disabled={loading}>
+            {loading ? "Asignando..." : "Asignar"}
+          </ReclutadorButton>
+        </form>
+      </ReclutadorCard>
 
-          <section className="reclutador-card-RP config-danger-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Seguridad</p>
-                <h2>Acciones rapidas</h2>
-              </div>
-            </div>
-            <div className="config-actions-RP">
-              <button
-                type="button"
-                className="config-secondary-RP"
-                onClick={handleCerrarSesion}
-              >
-                Cerrar sesion
-              </button>
-              <button
-                type="button"
-                className="config-danger-button-RP"
-                onClick={handleEliminarCuenta}
-                disabled={loading}
-              >
-                Eliminar cuenta
-              </button>
-            </div>
-          </section>
-        </main>
-      </div>
-    </>
+      <ReclutadorCard className="config-danger-RP">
+        <ReclutadorSectionHeader kicker="Seguridad" title="Acciones rapidas" />
+        <div className="config-actions-RP">
+          <button type="button" className="config-secondary-RP" onClick={handleCerrarSesion}>
+            Cerrar sesion
+          </button>
+          <button
+            type="button"
+            className="config-danger-button-RP"
+            onClick={handleEliminarCuenta}
+            disabled={loading}
+          >
+            Eliminar cuenta
+          </button>
+        </div>
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 };
 

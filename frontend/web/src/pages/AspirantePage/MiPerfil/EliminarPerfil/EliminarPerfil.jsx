@@ -4,6 +4,8 @@ import { AlertCircle, Loader2, Trash2 } from "lucide-react";
 import Header from "../../../../components/Header/Header";
 import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../../../components/Footer/footer";
+import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
+import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import "./EliminarPerfil.css";
 
@@ -73,7 +75,7 @@ const EliminarPerfil = () => {
             </div>
           </section>
 
-          <section className="eliminar-card-AP">
+          <AspiranteCard className="eliminar-card-AP">
             <div className="eliminar-warning-AP">
               <AlertCircle size={22} />
               <div>
@@ -103,19 +105,19 @@ const EliminarPerfil = () => {
                 />
               </label>
 
-              {error && <p className="eliminar-error-AP">{error}</p>}
+              {error && <p className="eliminar-error-AP asp-alert error">{error}</p>}
 
               <div className="eliminar-actions-AP">
-                <button type="button" className="secondary-button-AP" onClick={() => navigate("/Aspirante/MiPerfil")}>
+                <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil")}>
                   Cancelar
-                </button>
-                <button type="submit" className="danger-button-AP" disabled={loading}>
+                </AspiranteButton>
+                <AspiranteButton type="submit" variant="danger" disabled={loading}>
                   {loading ? <Loader2 size={16} className="spin-AP" /> : <Trash2 size={16} />}
                   {loading ? "Eliminando..." : "Eliminar cuenta"}
-                </button>
+                </AspiranteButton>
               </div>
             </form>
-          </section>
+          </AspiranteCard>
         </main>
       </div>
 

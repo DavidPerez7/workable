@@ -8,6 +8,7 @@ export default function AdminMunicipios() {
       title="Municipios"
       subtitle="CRUD directo sobre el módulo /api/municipio."
       entityName="municipio"
+      showHeaderActions={false}
       loadAll={municipioApi.getMunicipios}
       loadById={municipioApi.getMunicipioById}
       createItem={municipioApi.createMunicipio}

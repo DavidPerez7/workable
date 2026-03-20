@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { crearEmpresa } from "../../../api/empresaAPI";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorFormField from "../../../components/reclutador/ReclutadorFormField";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
 import "./EnterprisePage.css";
 
 function EmpresaCreatePage() {
@@ -49,66 +53,47 @@ function EmpresaCreatePage() {
   };
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Empresa</p>
-                <h2>Crear empresa</h2>
-              </div>
-            </div>
-            <form className="empresa-form-RP" onSubmit={handleSubmit}>
-              <div className="empresa-row-RP">
-                <label>
-                  Nombre *
-                  <input name="nombre" value={form.nombre} onChange={handleChange} required />
-                </label>
-                <label>
-                  NIT *
-                  <input name="nit" value={form.nit} onChange={handleChange} required />
-                </label>
-              </div>
-              <div className="empresa-row-RP">
-                <label>
-                  Numero trabajadores *
-                  <input name="numeroTrabajadores" value={form.numeroTrabajadores} onChange={handleChange} required />
-                </label>
-                <label>
-                  Email *
-                  <input name="email" type="email" value={form.email} onChange={handleChange} required />
-                </label>
-              </div>
-              <div className="empresa-row-RP">
-                <label>
-                  Telefono *
-                  <input name="telefono" value={form.telefono} onChange={handleChange} required />
-                </label>
-                <label>
-                  Logo (URL)
-                  <input name="logoUrl" value={form.logoUrl} onChange={handleChange} />
-                </label>
-              </div>
-              <label className="empresa-full-RP">
-                Municipio ID *
-                <input name="municipioId" value={form.municipioId} onChange={handleChange} required />
-              </label>
-              <label className="empresa-full-RP">
-                Descripcion *
-                <textarea name="descripcion" value={form.descripcion} onChange={handleChange} rows="4" required />
-              </label>
-              <button type="submit" className="reclutador-button-RP" disabled={loading}>
-                {loading ? "Creando..." : "Crear empresa"}
-              </button>
-              {error && <p className="reclutador-alert-RP error">{error}</p>}
-            </form>
-          </section>
-        </main>
-      </div>
-    </>
+    <ReclutadorLayout>
+      <ReclutadorCard>
+        <ReclutadorSectionHeader kicker="Empresa" title="Crear empresa" />
+        <form className="empresa-form-RP" onSubmit={handleSubmit}>
+          <div className="empresa-row-RP">
+            <ReclutadorFormField label="Nombre *" htmlFor="nombre">
+              <input id="nombre" name="nombre" value={form.nombre} onChange={handleChange} required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="NIT *" htmlFor="nit">
+              <input id="nit" name="nit" value={form.nit} onChange={handleChange} required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+          </div>
+          <div className="empresa-row-RP">
+            <ReclutadorFormField label="Numero trabajadores *" htmlFor="numeroTrabajadores">
+              <input id="numeroTrabajadores" name="numeroTrabajadores" value={form.numeroTrabajadores} onChange={handleChange} required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Email *" htmlFor="email">
+              <input id="email" name="email" type="email" value={form.email} onChange={handleChange} required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+          </div>
+          <div className="empresa-row-RP">
+            <ReclutadorFormField label="Telefono *" htmlFor="telefono">
+              <input id="telefono" name="telefono" value={form.telefono} onChange={handleChange} required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Logo (URL)" htmlFor="logoUrl">
+              <input id="logoUrl" name="logoUrl" value={form.logoUrl} onChange={handleChange} className="reclutador-input-RP" />
+            </ReclutadorFormField>
+          </div>
+          <ReclutadorFormField label="Municipio ID *" htmlFor="municipioId">
+            <input id="municipioId" name="municipioId" value={form.municipioId} onChange={handleChange} required className="reclutador-input-RP" />
+          </ReclutadorFormField>
+          <ReclutadorFormField label="Descripcion *" htmlFor="descripcion">
+            <textarea id="descripcion" name="descripcion" value={form.descripcion} onChange={handleChange} rows="4" required className="reclutador-textarea-RP" />
+          </ReclutadorFormField>
+          <ReclutadorButton type="submit" disabled={loading}>
+            {loading ? "Creando..." : "Crear empresa"}
+          </ReclutadorButton>
+          {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
+        </form>
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 }
 

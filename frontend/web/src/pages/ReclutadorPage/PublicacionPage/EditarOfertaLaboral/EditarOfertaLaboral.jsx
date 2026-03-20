@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getOfertaById, actualizarOferta } from "../../../../api/ofertasAPI";
 import { getMunicipios } from "../../../../api/municipioAPI";
-import HeaderReclutador from "../../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../../components/SidebarReclutador/SidebarReclutador";
+import ReclutadorLayout from "../../ReclutadorLayout";
 import "./EditarOfertaLaboral.css";
 
 const EditarOfertaLaboral = () => {
@@ -130,44 +129,34 @@ const EditarOfertaLaboral = () => {
 
   if (cargando) {
     return (
-      <>
-        <HeaderReclutador />
-        <main className="reclutador-main-RP">
-          <div className="reclutador-card-RP">Cargando datos...</div>
-        </main>
-      </>
+      <ReclutadorLayout>
+        <div className="reclutador-card-RP">Cargando datos...</div>
+      </ReclutadorLayout>
     );
   }
 
   if (error) {
     return (
-      <>
-        <HeaderReclutador />
-        <main className="reclutador-main-RP">
-          <div className="reclutador-card-RP">
-            <p className="reclutador-alert-RP error">{error}</p>
-            <button onClick={() => navigate("/Reclutador/GestigOferts")} className="reclutador-button-RP">
-              Volver
-            </button>
-          </div>
-        </main>
-      </>
+      <ReclutadorLayout>
+        <div className="reclutador-card-RP">
+          <p className="reclutador-alert-RP error">{error}</p>
+          <button onClick={() => navigate("/Reclutador/GestigOferts")} className="reclutador-button-RP">
+            Volver
+          </button>
+        </div>
+      </ReclutadorLayout>
     );
   }
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Editar oferta</p>
-                <h2>Actualiza la oferta</h2>
-              </div>
-            </div>
+    <ReclutadorLayout>
+      <section className="reclutador-card-RP">
+        <div className="reclutador-card-header-RP">
+          <div>
+            <p className="reclutador-kicker-RP">Editar oferta</p>
+            <h2>Actualiza la oferta</h2>
+          </div>
+        </div>
 
             <form className="pb-form" onSubmit={handleSubmit}>
               <div className="pb-field">
@@ -309,14 +298,12 @@ const EditarOfertaLaboral = () => {
                 </div>
               </div>
 
-              <button type="submit" className="pb-btn-primary" disabled={guardando}>
-                {guardando ? "Guardando..." : "Guardar cambios"}
-              </button>
+            <button type="submit" className="pb-btn-primary" disabled={guardando}>
+              {guardando ? "Guardando..." : "Guardar cambios"}
+            </button>
             </form>
-          </section>
-        </main>
-      </div>
-    </>
+      </section>
+    </ReclutadorLayout>
   );
 };
 

@@ -8,6 +8,7 @@ export default function AdminHojasDeVida() {
       title="Hojas de vida"
       subtitle="CRUD directo sobre el módulo /api/hoja-vida. Usa JSON para la relación aspirante y las listas de estudios/experiencias."
       entityName="hoja de vida"
+      showHeaderActions={false}
       loadAll={hojaDeVidaApi.getAllHojasDeVida}
       loadById={hojaDeVidaApi.getHojaDeVida}
       createItem={hojaDeVidaApi.crearHojaDeVida}
@@ -19,8 +20,25 @@ export default function AdminHojasDeVida() {
         correoElectronico: '',
         telefono: '',
         aspirante: { id: 1 },
-        estudios: [],
-        experiencias: [],
+        estudios: [
+          {
+            titulo: '',
+            institucion: '',
+            nivelEducativo: 'TECNICO',
+            fechaInicio: '2026-03-19',
+            fechaFin: '',
+            certificadoUrl: '',
+          },
+        ],
+        experiencias: [
+          {
+            cargo: '',
+            empresa: '',
+            fechaInicio: '2026-03-19',
+            fechaFin: '',
+            certificadoUrl: '',
+          },
+        ],
       }}
     />
   );

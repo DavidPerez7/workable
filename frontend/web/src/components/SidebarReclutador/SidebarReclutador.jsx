@@ -60,6 +60,9 @@ const SidebarReclutador = () => {
             <span>{item.label}</span>
           </Link>
         ))}
+        <Link to="/Reclutador/ReclutadorProfile" className="profile-button-sidebar">
+          Ver perfil
+        </Link>
       </nav>
     </aside>
   );

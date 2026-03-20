@@ -30,6 +30,17 @@
   box-shadow: none;
 }
 
+.crud-header-centered {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.crud-header-centered > div:first-child {
+  max-width: 760px;
+}
+
 .crud-header h1 {
   margin: 0 0 6px;
   color: #1e3a8a;
@@ -63,6 +74,9 @@
   gap: 8px;
   position: relative;
   overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .crud-stat-card::before {
@@ -115,6 +129,16 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.crud-export {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.crud-export:hover:not(:disabled) {
+  background: #dbeafe;
 }
 
 .crud-toolbar {
@@ -244,6 +268,194 @@
   padding: 20px;
 }
 
+.crud-modal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.9fr);
+  gap: 16px;
+}
+
+.crud-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.crud-field,
+.crud-fieldset {
+  display: grid;
+  gap: 8px;
+}
+
+.crud-fieldset {
+  grid-column: 1 / -1;
+  border: 1px solid #dbe4f0;
+  border-radius: 18px;
+  padding: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.crud-fieldset > legend {
+  padding: 0 8px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.crud-fieldset-list {
+  align-items: start;
+}
+
+.crud-array-list {
+  display: grid;
+  gap: 12px;
+}
+
+.crud-array-item {
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+  display: grid;
+  gap: 12px;
+}
+
+.crud-array-item-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.crud-array-item-header strong {
+  color: #0f172a;
+}
+
+.crud-mini-button {
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+.crud-input,
+.crud-select {
+  width: 100%;
+  border: 2px solid var(--crud-border);
+  border-radius: 14px;
+  background: var(--crud-surface);
+  color: var(--crud-text);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  transition: all 0.25s ease;
+  padding: 13px 15px;
+}
+
+.crud-input:focus,
+.crud-select:focus {
+  outline: none;
+  border-color: var(--crud-primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.crud-select {
+  appearance: none;
+}
+
+.crud-textarea-inline {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.crud-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.crud-chip-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #dbe4f0;
+  border-radius: 12px;
+  background: #fff;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.crud-chip-option input {
+  margin: 0;
+}
+
+.crud-chip-option:focus-within {
+  border-color: var(--crud-primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.crud-modal-form {
+  min-width: 0;
+}
+
+.crud-modal-side {
+  background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+  border: 1px solid #dbe4f0;
+  border-radius: 18px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.crud-modal-eyebrow {
+  margin: 0;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.crud-modal-side h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.05rem;
+}
+
+.crud-modal-note {
+  margin: 0;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.crud-modal-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crud-modal-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.crud-modal-sample-box {
+  display: grid;
+  gap: 8px;
+}
+
+.crud-modal-sample-box > span {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .crud-modal-header {
   display: flex;
   justify-content: space-between;
@@ -322,5 +534,13 @@
   .crud-row-actions,
   .crud-form-actions {
     width: 100%;
+  }
+
+  .crud-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .crud-modal-layout {
+    grid-template-columns: 1fr;
   }
 }

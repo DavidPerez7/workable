@@ -4,6 +4,9 @@ import { AlertCircle, RefreshCcw, Trash2 } from "lucide-react";
 import Header from "../../../../components/Header/Header";
 import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../../../components/Footer/footer";
+import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
+import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
+import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import {
   eliminarPostulacion,
@@ -34,6 +37,24 @@ const formatearSalario = (valor) =>
     currency: "COP",
     maximumFractionDigits: 0,
   }).format(Number(valor || 0));
+
+const getEstadoTone = (estado) => {
+  const clase = getEstadoClass(estado);
+
+  if (clase === "state-accepted") {
+    return "success";
+  }
+
+  if (clase === "state-rejected") {
+    return "error";
+  }
+
+  if (clase === "state-review") {
+    return "info";
+  }
+
+  return "warning";
+};
 
 const MisPostulaciones = () => {
   const [postulaciones, setPostulaciones] = useState([]);
@@ -103,28 +124,28 @@ const MisPostulaciones = () => {
           </section>
 
           {error && (
-            <div className="postulaciones-alert-AP error">
+            <AspiranteAlert type="error" className="postulaciones-alert-AP">
               <AlertCircle size={18} />
               <span>{error}</span>
-            </div>
+            </AspiranteAlert>
           )}
 
           {loading ? (
-            <div className="postulaciones-empty-AP">Cargando postulaciones...</div>
+            <div className="postulaciones-empty-AP asp-loading">Cargando postulaciones...</div>
           ) : postulaciones.length === 0 ? (
-            <div className="postulaciones-empty-AP">
+            <div className="postulaciones-empty-AP asp-empty">
               No tienes postulaciones registradas. <Link to="/Aspirante">Ver ofertas</Link>
             </div>
           ) : (
             <div className="postulaciones-list-AP">
               {postulaciones.map((postulacion) => (
-                <article key={postulacion.id} className="postulacion-card-AP">
+                <AspiranteCard key={postulacion.id} className="postulacion-card-AP">
                   <div className="postulacion-top-AP">
                     <div>
                       <h2>{postulacion.oferta?.titulo || "Oferta sin título"}</h2>
                       <p>{postulacion.oferta?.empresa?.nombre || "Empresa"}</p>
                     </div>
-                    <span className={`status-pill-AP ${getEstadoClass(postulacion.estado)}`}>
+                    <span className={`asp-badge ${getEstadoTone(postulacion.estado)}`}>
                       {postulacion.estado || "Pendiente"}
                     </span>
                   </div>
@@ -154,17 +175,17 @@ const MisPostulaciones = () => {
                     <small>
                       Postulada el {new Date(postulacion.fechaCreacion).toLocaleDateString("es-CO")}
                     </small>
-                    <button
+                    <AspiranteButton
                       type="button"
-                      className="danger-button-AP"
+                      variant="danger"
                       onClick={() => handleEliminar(postulacion.id)}
                       disabled={eliminandoId === postulacion.id}
                     >
                       <Trash2 size={16} />
                       {eliminandoId === postulacion.id ? "Eliminando..." : "Eliminar"}
-                    </button>
+                    </AspiranteButton>
                   </div>
-                </article>
+                </AspiranteCard>
               ))}
             </div>
           )}

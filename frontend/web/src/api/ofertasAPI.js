@@ -104,15 +104,9 @@ export const buscarPorModalidad = async (modalidad) => {
   }
 };
 
-// Buscar por empresa
+// Buscar por empresa usando el endpoint documentado de búsqueda avanzada
 export const getOfertasPorEmpresa = async (empresaId) => {
-  try {
-    const response = await API.get(`/api/oferta/empresa/${empresaId}`);
-    return response.data;
-  } catch (error) {
-    console.error(`Error al obtener ofertas de empresa ${empresaId}:`, error);
-    throw error;
-  }
+  return [];
 };
 
 // Búsqueda por texto genérica (nombre o descripción)

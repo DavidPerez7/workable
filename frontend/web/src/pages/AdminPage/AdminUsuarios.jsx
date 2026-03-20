@@ -13,6 +13,7 @@ export default function AdminUsuarios() {
       createItem={aspirantesApi.create}
       updateItem={aspirantesApi.update}
       deleteItem={aspirantesApi.delete}
+      showHeaderActions={false}
       samplePayload={{
         nombre: '',
         apellido: '',

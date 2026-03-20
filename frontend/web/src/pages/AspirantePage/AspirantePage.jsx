@@ -15,6 +15,11 @@ import {
 import "./AspirantePage.css";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/footer";
+import AspiranteCard from "../../components/aspirante/AspiranteCard";
+import AspiranteSectionHeader from "../../components/aspirante/AspiranteSectionHeader";
+import AspiranteFormField from "../../components/aspirante/AspiranteFormField";
+import AspiranteButton from "../../components/aspirante/AspiranteButton";
+import AspiranteAlert from "../../components/aspirante/AspiranteAlert";
 import { buscarOfertasAvanzada } from "../../api/ofertasAPI";
 import { getMunicipios } from "../../api/municipioAPI";
 import { crearPostulacion } from "../../api/postulacionesAPI";
@@ -235,53 +240,52 @@ const AspirantePage = () => {
           </section>
 
           <section className="aspirante-actions-AP">
-            <Link to="/Aspirante/MiPerfil" className="aspirante-action-card-AP">
+            <AspiranteCard as={Link} to="/Aspirante/MiPerfil" className="aspirante-action-card-AP">
               <FileText size={22} />
               <strong>Mi perfil</strong>
               <span>Ver tus datos y accesos principales.</span>
-            </Link>
+            </AspiranteCard>
 
-            <Link to="/Aspirante/MiPerfil/ActualizarPerfil" className="aspirante-action-card-AP">
+            <AspiranteCard as={Link} to="/Aspirante/MiPerfil/ActualizarPerfil" className="aspirante-action-card-AP">
               <UserRoundPen size={22} />
               <strong>Actualizar perfil</strong>
               <span>Editar información personal y contacto.</span>
-            </Link>
+            </AspiranteCard>
 
-            <Link to="/Aspirante/MiPerfil/HojaDeVida" className="aspirante-action-card-AP">
+            <AspiranteCard as={Link} to="/Aspirante/MiPerfil/HojaDeVida" className="aspirante-action-card-AP">
               <BookOpenText size={22} />
               <strong>Hoja de vida</strong>
               <span>Revisar estudios, experiencia y resumen.</span>
-            </Link>
+            </AspiranteCard>
 
-            <Link to="/Aspirante/MiPerfil/MisPostulaciones" className="aspirante-action-card-AP">
+            <AspiranteCard as={Link} to="/Aspirante/MiPerfil/MisPostulaciones" className="aspirante-action-card-AP">
               <Briefcase size={22} />
               <strong>Mis postulaciones</strong>
               <span>Seguir el estado de tus aplicaciones.</span>
-            </Link>
+            </AspiranteCard>
 
-            <Link to="/Aspirante/MiPerfil/EliminarPerfil" className="aspirante-action-card-AP danger">
+            <AspiranteCard as={Link} to="/Aspirante/MiPerfil/EliminarPerfil" className="aspirante-action-card-AP danger">
               <UserRoundX size={22} />
               <strong>Eliminar cuenta</strong>
               <span>Acción permanente para borrar tu perfil.</span>
-            </Link>
+            </AspiranteCard>
           </section>
 
           <section className="aspirante-content-AP">
-            <aside className="aspirante-filters-AP">
-              <div className="section-header-AP">
-                <div>
-                  <p className="section-kicker-AP">Filtros</p>
-                  <h2>Filtrar ofertas</h2>
-                </div>
-                <button type="button" className="ghost-button-AP" onClick={limpiarFiltros}>
-                  Limpiar
-                </button>
-              </div>
+            <AspiranteCard as="aside" className="aspirante-filters-AP">
+              <AspiranteSectionHeader
+                kicker="Filtros"
+                title="Filtrar ofertas"
+                action={
+                  <AspiranteButton type="button" variant="secondary" onClick={limpiarFiltros}>
+                    Limpiar
+                  </AspiranteButton>
+                }
+              />
 
               <form className="filters-form-AP" onSubmit={handleSubmit}>
-                <label className="field-AP">
-                  <span>Cargo o nombre</span>
-                  <div className="input-icon-AP">
+                <AspiranteFormField label="Cargo o nombre">
+                  <div className="asp-input-icon">
                     <Search size={16} />
                     <input
                       type="text"
@@ -292,11 +296,10 @@ const AspirantePage = () => {
                       placeholder="Ej. desarrollador, auxiliar, analista"
                     />
                   </div>
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Municipio</span>
-                  <div className="input-icon-AP">
+                <AspiranteFormField label="Municipio">
+                  <div className="asp-input-icon">
                     <MapPin size={16} />
                     <select
                       value={filters.municipioId}
@@ -312,10 +315,9 @@ const AspirantePage = () => {
                       ))}
                     </select>
                   </div>
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Modalidad</span>
+                <AspiranteFormField label="Modalidad">
                   <select
                     value={filters.modalidad}
                     onChange={(event) =>
@@ -328,10 +330,9 @@ const AspirantePage = () => {
                       </option>
                     ))}
                   </select>
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Experiencia</span>
+                <AspiranteFormField label="Experiencia">
                   <select
                     value={filters.experiencia}
                     onChange={(event) =>
@@ -344,10 +345,9 @@ const AspirantePage = () => {
                       </option>
                     ))}
                   </select>
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Salario mínimo</span>
+                <AspiranteFormField label="Salario mínimo">
                   <input
                     type="number"
                     min="0"
@@ -357,10 +357,9 @@ const AspirantePage = () => {
                     }
                     placeholder="Ej. 1500000"
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Salario máximo</span>
+                <AspiranteFormField label="Salario máximo">
                   <input
                     type="number"
                     min="0"
@@ -370,31 +369,29 @@ const AspirantePage = () => {
                     }
                     placeholder="Ej. 3000000"
                   />
-                </label>
+                </AspiranteFormField>
 
-                <button type="submit" className="primary-button-AP" disabled={searching}>
+                <AspiranteButton type="submit" disabled={searching}>
                   <SlidersHorizontal size={16} />
                   {searching ? "Buscando..." : "Buscar"}
-                </button>
+                </AspiranteButton>
               </form>
 
-              {notice && <p className="status-message-AP success">{notice}</p>}
-              {error && <p className="status-message-AP error">{error}</p>}
-            </aside>
+              {notice && <AspiranteAlert type="success">{notice}</AspiranteAlert>}
+              {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
+            </AspiranteCard>
 
-            <section className="aspirante-listing-AP">
-              <div className="section-header-AP">
-                <div>
-                  <p className="section-kicker-AP">Resultados</p>
-                  <h2>Ofertas disponibles</h2>
-                </div>
-                <span className="results-badge-AP">{ofertas.length} resultados</span>
-              </div>
+            <AspiranteCard as="section" className="aspirante-listing-AP">
+              <AspiranteSectionHeader
+                kicker="Resultados"
+                title="Ofertas disponibles"
+                action={<span className="asp-badge neutral">{ofertas.length} resultados</span>}
+              />
 
               {loading ? (
-                <div className="empty-state-AP">Cargando ofertas...</div>
+                <div className="asp-loading">Cargando ofertas...</div>
               ) : ofertas.length === 0 ? (
-                <div className="empty-state-AP">
+                <div className="asp-empty">
                   No hay ofertas para mostrar con los filtros actuales.
                 </div>
               ) : (
@@ -443,15 +440,10 @@ const AspirantePage = () => {
                   ))}
                 </div>
               )}
-            </section>
+            </AspiranteCard>
 
-            <section className="aspirante-detail-AP">
-              <div className="section-header-AP">
-                <div>
-                  <p className="section-kicker-AP">Detalle</p>
-                  <h2>Oferta seleccionada</h2>
-                </div>
-              </div>
+            <section className="asp-card aspirante-detail-AP">
+              <AspiranteSectionHeader kicker="Detalle" title="Oferta seleccionada" />
 
               {selectedOferta ? (
                 <article className="detail-card-AP">
@@ -459,8 +451,7 @@ const AspirantePage = () => {
                     <div>
                       <h3>{selectedOferta.titulo || "Sin título"}</h3>
                       <p>
-                        {selectedOferta.empresa?.nombre || "Empresa"} ·{" "}
-                        {selectedOferta.municipio?.nombre || "Sin ubicación"}
+                        {selectedOferta.empresa?.nombre || "Empresa"} · {selectedOferta.municipio?.nombre || "Sin ubicación"}
                       </p>
                     </div>
                     <span className="detail-badge-AP">
@@ -480,9 +471,7 @@ const AspirantePage = () => {
                     <div>
                       <strong>Salario</strong>
                       <span>
-                        {selectedOferta.salario
-                          ? formatearSalario(selectedOferta.salario)
-                          : "No especificado"}
+                        {selectedOferta.salario ? formatearSalario(selectedOferta.salario) : "No especificado"}
                       </span>
                     </div>
                     <div>
@@ -507,22 +496,22 @@ const AspirantePage = () => {
                     </div>
                   )}
 
-                  <button
+                  <AspiranteButton
                     type="button"
-                    className="primary-button-AP full-width-AP"
+                    className="asp-full-width"
                     onClick={() => handlePostularse(selectedOferta.id)}
                     disabled={postulandoId === selectedOferta.id}
                   >
                     <Send size={16} />
                     {postulandoId === selectedOferta.id ? "Postulando..." : "Postularme"}
-                  </button>
+                  </AspiranteButton>
 
                   <p className="detail-note-AP">
                     La postulación usa el endpoint real del módulo aspirante.
                   </p>
                 </article>
               ) : (
-                <div className="empty-state-AP">
+                <div className="asp-empty">
                   Selecciona una oferta para ver su detalle.
                 </div>
               )}

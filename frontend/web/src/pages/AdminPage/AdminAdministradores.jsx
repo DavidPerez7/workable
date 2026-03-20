@@ -8,6 +8,7 @@ export default function AdminAdministradores() {
       title="Administradores"
       subtitle="CRUD directo sobre el módulo /api/administrador de la API."
       entityName="administrador"
+      showHeaderActions={false}
       loadAll={adminAPI.getAll}
       loadById={adminAPI.getById}
       createItem={adminAPI.create}

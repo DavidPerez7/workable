@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
-import { getOfertasPorEmpresa, eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
+import reclutadoresApi from "../../../api/reclutadoresApi";
+import { getEmpresaById } from "../../../api/empresaAPI";
+import { eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorEmptyState from "../../../components/reclutador/ReclutadorEmptyState";
+import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
 import "./GestigOferts.css";
 
 const GestigOfertsPage = () => {
@@ -21,23 +27,24 @@ const GestigOfertsPage = () => {
     setError(null);
     
     try {
-      const userStr = localStorage.getItem('user');
-      if (!userStr) {
-        throw new Error('No hay sesión activa');
-      }
-
-      const user = JSON.parse(userStr);
-      const empresaId = user.empresa?.id;
+      const reclutador = await reclutadoresApi.getMyProfile();
+      const empresaId = reclutador?.empresa?.id;
 
       if (!empresaId) {
-        throw new Error('No se encontró ID de empresa');
+        throw new Error('No se encontró ID de empresa. Registra una empresa primero.');
       }
 
-      const data = await getOfertasPorEmpresa(empresaId);
-      setOfertas(data);
+      const empresa = await getEmpresaById(empresaId);
+      const ofertasEmpresa =
+        empresa?.ofertas ||
+        empresa?.listaOfertas ||
+        empresa?.ofertasActivas ||
+        [];
+      setOfertas(Array.isArray(ofertasEmpresa) ? ofertasEmpresa : []);
     } catch (err) {
       console.error('Error al cargar ofertas:', err);
-      setError(err.message);
+      setOfertas([]);
+      setError('No se pudieron cargar las ofertas de la empresa.');
     } finally {
       setLoading(false);
     }
@@ -60,7 +67,7 @@ const GestigOfertsPage = () => {
 
     try {
       await eliminarOferta(id);
-      setOfertas(ofertas.filter((oferta) => oferta.id !== id));
+      setOfertas((current) => current.filter((oferta) => oferta.id !== id));
       alert('Oferta eliminada exitosamente');
     } catch (err) {
       console.error('Error al eliminar:', err);
@@ -73,7 +80,7 @@ const GestigOfertsPage = () => {
       await cambiarEstadoOferta(id, nuevoEstado);
       
       // Actualizar estado local
-      setOfertas(ofertas.map(oferta => 
+      setOfertas((current) => current.map(oferta => 
         oferta.id === id 
           ? { ...oferta, estadoOferta: nuevoEstado }
           : oferta
@@ -88,130 +95,83 @@ const GestigOfertsPage = () => {
 
   if (loading) {
     return (
-      <>
-        <HeaderReclutador />
-        <main className="reclutador-main-RP">
-          <div className="reclutador-card-RP">Cargando ofertas...</div>
-        </main>
-      </>
+      <ReclutadorLayout>
+        <ReclutadorCard>Cargando ofertas...</ReclutadorCard>
+      </ReclutadorLayout>
     );
   }
 
   if (error) {
     return (
-      <>
-        <HeaderReclutador />
-        <main className="reclutador-main-RP">
-          <div className="reclutador-card-RP">
-            <p className="reclutador-alert-RP error">{error}</p>
-            <button onClick={fetchOfertas} className="reclutador-button-RP">
-              Reintentar
-            </button>
-          </div>
-        </main>
-      </>
+      <ReclutadorLayout>
+        <ReclutadorCard>
+          <ReclutadorAlert>{error}</ReclutadorAlert>
+          <ReclutadorButton type="button" onClick={fetchOfertas}>
+            Reintentar
+          </ReclutadorButton>
+        </ReclutadorCard>
+      </ReclutadorLayout>
     );
   }
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Ofertas</p>
-                <h2>Gestion de ofertas</h2>
-              </div>
-              <button
-                className="reclutador-button-RP"
-                onClick={() => navigate("/Reclutador/Publicacion")}
-              >
-                Nueva oferta
-              </button>
-            </div>
+    <ReclutadorLayout>
+      <ReclutadorCard as="section">
+        <ReclutadorSectionHeader
+          kicker="Ofertas"
+          title="Gestion de ofertas"
+          action={(
+            <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/Publicacion")}>
+              Nueva oferta
+            </ReclutadorButton>
+          )}
+        />
 
-            {ofertas.length === 0 ? (
-              <div className="reclutador-empty-RP">
-                No tienes ofertas publicadas.
-                <button
-                  className="reclutador-button-RP"
-                  onClick={() => navigate("/Reclutador/Publicacion")}
-                >
-                  Publicar oferta
-                </button>
-              </div>
-            ) : (
-              <div className="table-wrapper-GO">
-                <table className="tabla-gestion-GO">
-                  <thead>
-                    <tr>
-                      <th>Titulo</th>
-                      <th>Ubicacion</th>
-                      <th>Salario</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
+        {ofertas.length === 0 ? (
+          <ReclutadorEmptyState action={(
+            <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/Publicacion")}>
+              Publicar oferta
+            </ReclutadorButton>
+          )}>
+            No tienes ofertas publicadas.
+          </ReclutadorEmptyState>
+        ) : (
+          <div className="table-wrapper-GO">
+            <table className="tabla-gestion-GO">
+              <thead>
+                <tr>
+                  <th>Titulo</th>
+                  <th>Ubicacion</th>
+                  <th>Salario</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ofertas.map((oferta) => {
+                  const estadoRaw = oferta.estadoOferta || oferta.estado || "ABIERTA";
+                  const estado = estadoRaw === "ACTIVA" ? "ABIERTA" : estadoRaw;
+                  return (
+                    <tr key={oferta.id}>
+                      <td className="td-titulo-GO">{oferta.titulo}</td>
+                      <td>{oferta.municipio?.nombre || oferta.ubicacion}</td>
+                      <td>${new Intl.NumberFormat("es-CO").format(oferta.salario || 0)}</td>
+                      <td><span className={`badge-estado-GO ${estado === "ABIERTA" ? "badge-activa-GO" : "badge-cerrada-GO"}`}>{estado}</span></td>
+                      <td className="td-acciones-GO">
+                        <button className="btn-editar-GO" onClick={() => handleVerPostulaciones(oferta.id)} title="Ver postulaciones">Postulaciones</button>
+                        <button className="btn-editar-GO" onClick={() => handleEditar(oferta.id)} title="Editar oferta">Editar</button>
+                        <button className="btn-estado-GO" onClick={() => handleCambiarEstado(oferta.id, estado === "ABIERTA" ? "CERRADA" : "ABIERTA")} title="Cambiar estado">{estado === "ABIERTA" ? "Cerrar" : "Abrir"}</button>
+                        <button className="btn-eliminar-GO" onClick={() => handleEliminar(oferta.id)} title="Eliminar oferta">Eliminar</button>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {ofertas.map((oferta) => {
-                      const estadoRaw = oferta.estadoOferta || oferta.estado || "ABIERTA";
-                      const estado = estadoRaw === "ACTIVA" ? "ABIERTA" : estadoRaw;
-                      return (
-                        <tr key={oferta.id}>
-                          <td className="td-titulo-GO">{oferta.titulo}</td>
-                          <td>{oferta.municipio?.nombre || oferta.ubicacion}</td>
-                          <td>${new Intl.NumberFormat("es-CO").format(oferta.salario || 0)}</td>
-                          <td>
-                            <span className={`badge-estado-GO ${estado === "ABIERTA" ? "badge-activa-GO" : "badge-cerrada-GO"}`}>
-                              {estado}
-                            </span>
-                          </td>
-                          <td className="td-acciones-GO">
-                            <button
-                              className="btn-editar-GO"
-                              onClick={() => handleVerPostulaciones(oferta.id)}
-                              title="Ver postulaciones"
-                            >
-                              Postulaciones
-                            </button>
-                            <button
-                              className="btn-editar-GO"
-                              onClick={() => handleEditar(oferta.id)}
-                              title="Editar oferta"
-                            >
-                              Editar
-                            </button>
-                            <button
-                              className="btn-estado-GO"
-                              onClick={() =>
-                                handleCambiarEstado(oferta.id, estado === "ABIERTA" ? "CERRADA" : "ABIERTA")
-                              }
-                              title="Cambiar estado"
-                            >
-                              {estado === "ABIERTA" ? "Cerrar" : "Abrir"}
-                            </button>
-                            <button
-                              className="btn-eliminar-GO"
-                              onClick={() => handleEliminar(oferta.id)}
-                              title="Eliminar oferta"
-                            >
-                              Eliminar
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-        </main>
-      </div>
-    </>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 };
 

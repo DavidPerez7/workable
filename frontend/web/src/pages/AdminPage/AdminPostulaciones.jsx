@@ -9,6 +9,7 @@ export default function AdminPostulaciones() {
       title="Postulaciones"
       subtitle="CRUD simplificado para postulaciones con el estilo compartido del admin."
       entityName="postulación"
+      showHeaderActions={false}
       loadAll={adminPostulacionAPI.getAll}
       loadById={obtenerPostulacionPorId}
       createItem={crearPostulacion}

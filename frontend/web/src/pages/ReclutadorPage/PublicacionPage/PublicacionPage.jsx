@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { crearOferta } from "../../../api/ofertasAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
 import reclutadoresApi from "../../../api/reclutadoresApi";
-import "./PublicacionPage.css";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorFormField from "../../../components/reclutador/ReclutadorFormField";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
 
 const PublicacionPage = () => {
   const navigate = useNavigate();
@@ -56,6 +58,14 @@ const PublicacionPage = () => {
     { value: "TEMPORAL", nombre: "Temporal" },
     { value: "PRESTACION_SERVICIOS", nombre: "Prestación de servicios" },
     { value: "PRACTICAS", nombre: "Prácticas" },
+  ];
+
+  const nivelesExperiencia = [
+    { value: "SIN_EXPERIENCIA", nombre: "Sin experiencia" },
+    { value: "BASICO", nombre: "Basico" },
+    { value: "INTERMEDIO", nombre: "Intermedio" },
+    { value: "AVANZADO", nombre: "Avanzado" },
+    { value: "EXPERTO", nombre: "Experto" },
   ];
 
   const handleChange = (e) => {
@@ -166,187 +176,166 @@ const PublicacionPage = () => {
   };
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Nueva oferta</p>
-                <h2>Publicar oferta</h2>
-              </div>
-            </div>
+    <ReclutadorLayout>
+      <ReclutadorCard>
+        <ReclutadorSectionHeader kicker="Nueva oferta" title="Publicar oferta" />
 
-            <form className="pb-form" onSubmit={handleSubmit}>
-              <div className="pb-field">
-                <label htmlFor="titulo">Titulo *</label>
-                <input
-                  type="text"
-                  id="titulo"
-                  name="titulo"
-                  value={formData.titulo}
-                  onChange={handleChange}
-                  required
-                  className="pb-input"
-                />
-              </div>
+        <form className="reclutador-form-RP" onSubmit={handleSubmit}>
+          <ReclutadorFormField label="Titulo *" htmlFor="titulo">
+            <input
+              type="text"
+              id="titulo"
+              name="titulo"
+              value={formData.titulo}
+              onChange={handleChange}
+              required
+              className="reclutador-input-RP"
+            />
+          </ReclutadorFormField>
 
-              <div className="pb-field">
-                <label htmlFor="descripcion">Descripcion *</label>
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={handleChange}
-                  rows="4"
-                  required
-                  className="pb-textarea"
-                />
-              </div>
+          <ReclutadorFormField label="Descripcion *" htmlFor="descripcion">
+            <textarea
+              id="descripcion"
+              name="descripcion"
+              value={formData.descripcion}
+              onChange={handleChange}
+              rows="4"
+              required
+              className="reclutador-textarea-RP"
+            />
+          </ReclutadorFormField>
 
-              <div className="pb-field">
-                <label htmlFor="requisitos">Requisitos *</label>
-                <textarea
-                  id="requisitos"
-                  name="requisitos"
-                  value={formData.requisitos}
-                  onChange={handleChange}
-                  rows="3"
-                  maxLength="500"
-                  required
-                  className="pb-textarea"
-                />
-              </div>
+          <ReclutadorFormField label="Requisitos *" htmlFor="requisitos">
+            <textarea
+              id="requisitos"
+              name="requisitos"
+              value={formData.requisitos}
+              onChange={handleChange}
+              rows="3"
+              maxLength="500"
+              required
+              className="reclutador-textarea-RP"
+            />
+          </ReclutadorFormField>
 
-              <div className="pb-row">
-                <div className="pb-field">
-                  <label htmlFor="salario">Salario *</label>
-                  <input
-                    type="number"
-                    id="salario"
-                    name="salario"
-                    value={formData.salario}
-                    onChange={handleChange}
-                    required
-                    className="pb-input"
-                  />
-                </div>
-                <div className="pb-field">
-                  <label htmlFor="numeroVacantes">Vacantes *</label>
-                  <input
-                    type="number"
-                    id="numeroVacantes"
-                    name="numeroVacantes"
-                    value={formData.numeroVacantes}
-                    onChange={handleChange}
-                    min="1"
-                    required
-                    className="pb-input"
-                  />
-                </div>
-              </div>
+          <div className="reclutador-form-grid-RP">
+            <ReclutadorFormField label="Salario *" htmlFor="salario">
+              <input
+                type="number"
+                id="salario"
+                name="salario"
+                value={formData.salario}
+                onChange={handleChange}
+                required
+                className="reclutador-input-RP"
+              />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Vacantes *" htmlFor="numeroVacantes">
+              <input
+                type="number"
+                id="numeroVacantes"
+                name="numeroVacantes"
+                value={formData.numeroVacantes}
+                onChange={handleChange}
+                min="1"
+                required
+                className="reclutador-input-RP"
+              />
+            </ReclutadorFormField>
+          </div>
 
-              <div className="pb-row">
-                <div className="pb-field">
-                  <label htmlFor="fechaLimite">Fecha limite *</label>
-                  <input
-                    type="date"
-                    id="fechaLimite"
-                    name="fechaLimite"
-                    value={formData.fechaLimite}
-                    onChange={handleChange}
-                    required
-                    className="pb-input"
-                  />
-                </div>
-                <div className="pb-field">
-                  <label htmlFor="municipioId">Municipio *</label>
-                  <select
-                    id="municipioId"
-                    name="municipioId"
-                    value={formData.municipioId}
-                    onChange={handleChange}
-                    required
-                    className="pb-select"
-                  >
-                    <option value="">Selecciona un municipio</option>
-                    {municipios.map((mun) => (
-                      <option key={mun.id} value={mun.id}>
-                        {mun.nombre} - {mun.departamento?.nombre || ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+          <div className="reclutador-form-grid-RP">
+            <ReclutadorFormField label="Fecha limite *" htmlFor="fechaLimite">
+              <input
+                type="date"
+                id="fechaLimite"
+                name="fechaLimite"
+                value={formData.fechaLimite}
+                onChange={handleChange}
+                required
+                className="reclutador-input-RP"
+              />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Municipio *" htmlFor="municipioId">
+              <select
+                id="municipioId"
+                name="municipioId"
+                value={formData.municipioId}
+                onChange={handleChange}
+                required
+                className="reclutador-select-RP"
+              >
+                <option value="">Selecciona un municipio</option>
+                {municipios.map((mun) => (
+                  <option key={mun.id} value={mun.id}>
+                    {mun.nombre} - {mun.departamento?.nombre || ""}
+                  </option>
+                ))}
+              </select>
+            </ReclutadorFormField>
+          </div>
 
-              <div className="pb-row">
-                <div className="pb-field">
-                  <label htmlFor="modalidad">Modalidad *</label>
-                  <select
-                    id="modalidad"
-                    name="modalidad"
-                    value={formData.modalidad}
-                    onChange={handleChange}
-                    required
-                    className="pb-select"
-                  >
-                    <option value="">Selecciona una modalidad</option>
-                    {modalidades.map((mod) => (
-                      <option key={mod.value} value={mod.value}>
-                        {mod.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="pb-field">
-                  <label htmlFor="tipoContrato">Tipo de contrato *</label>
-                  <select
-                    id="tipoContrato"
-                    name="tipoContrato"
-                    value={formData.tipoContrato}
-                    onChange={handleChange}
-                    required
-                    className="pb-select"
-                  >
-                    <option value="">Selecciona un tipo</option>
-                    {tiposContrato.map((tipo) => (
-                      <option key={tipo.value} value={tipo.value}>
-                        {tipo.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+          <div className="reclutador-form-grid-RP">
+            <ReclutadorFormField label="Modalidad *" htmlFor="modalidad">
+              <select
+                id="modalidad"
+                name="modalidad"
+                value={formData.modalidad}
+                onChange={handleChange}
+                required
+                className="reclutador-select-RP"
+              >
+                <option value="">Selecciona una modalidad</option>
+                {modalidades.map((mod) => (
+                  <option key={mod.value} value={mod.value}>
+                    {mod.nombre}
+                  </option>
+                ))}
+              </select>
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Tipo de contrato *" htmlFor="tipoContrato">
+              <select
+                id="tipoContrato"
+                name="tipoContrato"
+                value={formData.tipoContrato}
+                onChange={handleChange}
+                required
+                className="reclutador-select-RP"
+              >
+                <option value="">Selecciona un tipo</option>
+                {tiposContrato.map((tipo) => (
+                  <option key={tipo.value} value={tipo.value}>
+                    {tipo.nombre}
+                  </option>
+                ))}
+              </select>
+            </ReclutadorFormField>
+          </div>
 
-              <div className="pb-field">
-                <label htmlFor="nivelExperiencia">Nivel de experiencia *</label>
-                <select
-                  id="nivelExperiencia"
-                  name="nivelExperiencia"
-                  value={formData.nivelExperiencia}
-                  onChange={handleChange}
-                  required
-                  className="pb-select"
-                >
-                  <option value="">Selecciona un nivel</option>
-                  <option value="SIN_EXPERIENCIA">Sin experiencia</option>
-                  <option value="BASICO">Basico</option>
-                  <option value="INTERMEDIO">Intermedio</option>
-                  <option value="AVANZADO">Avanzado</option>
-                  <option value="EXPERTO">Experto</option>
-                </select>
-              </div>
+          <ReclutadorFormField label="Nivel de experiencia *" htmlFor="nivelExperiencia">
+            <select
+              id="nivelExperiencia"
+              name="nivelExperiencia"
+              value={formData.nivelExperiencia}
+              onChange={handleChange}
+              required
+              className="reclutador-select-RP"
+            >
+              <option value="">Selecciona un nivel</option>
+              {nivelesExperiencia.map((nivel) => (
+                <option key={nivel.value} value={nivel.value}>
+                  {nivel.nombre}
+                </option>
+              ))}
+            </select>
+          </ReclutadorFormField>
 
-              <button className="pb-btn-primary" type="submit" disabled={loading}>
-                {loading ? "Publicando..." : "Publicar"}
-              </button>
-            </form>
-          </section>
-        </main>
-      </div>
-    </>
+          <ReclutadorButton type="submit" disabled={loading}>
+            {loading ? "Publicando..." : "Publicar"}
+          </ReclutadorButton>
+        </form>
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 };
 

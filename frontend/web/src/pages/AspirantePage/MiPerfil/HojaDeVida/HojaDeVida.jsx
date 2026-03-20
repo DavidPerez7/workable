@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  BriefcaseBusiness,
-  GraduationCap,
   Plus,
   Save,
   Trash2,
@@ -11,6 +9,11 @@ import {
 import Header from "../../../../components/Header/Header";
 import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../../../components/Footer/footer";
+import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
+import AspiranteSectionHeader from "../../../../components/aspirante/AspiranteSectionHeader";
+import AspiranteFormField from "../../../../components/aspirante/AspiranteFormField";
+import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
+import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import {
   getHojasDeVidaPorAspirante,
@@ -236,7 +239,7 @@ const HojaDeVida = () => {
   };
 
   if (loading) {
-    return <div className="hoja-state-AP">Cargando hoja de vida...</div>;
+    return <div className="hoja-state-AP asp-loading">Cargando hoja de vida...</div>;
   }
 
   return (
@@ -271,86 +274,70 @@ const HojaDeVida = () => {
             </Link>
           </section>
 
-          {error && <div className="alert-AP error">{error}</div>}
-          {notice && <div className="alert-AP success">{notice}</div>}
-          {!hoja && <div className="alert-AP warning">No se encontró una hoja de vida registrada.</div>}
+          {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
+          {notice && <AspiranteAlert type="success">{notice}</AspiranteAlert>}
+          {!hoja && <AspiranteAlert type="warning">No se encontró una hoja de vida registrada.</AspiranteAlert>}
 
           <section className="hoja-grid-AP">
-            <article className="hoja-card-AP">
-              <div className="section-header-AP">
-                <div>
-                  <p className="hoja-kicker-AP">Información general</p>
-                  <h2>Contacto y resumen</h2>
-                </div>
-                <button type="button" className="primary-button-AP" onClick={guardarGeneral} disabled={saving || !hoja}>
-                  <Save size={16} />
-                  Guardar
-                </button>
-              </div>
+            <AspiranteCard className="hoja-card-AP">
+              <AspiranteSectionHeader
+                kicker="Información general"
+                title="Contacto y resumen"
+                action={
+                  <AspiranteButton type="button" onClick={guardarGeneral} disabled={saving || !hoja}>
+                    <Save size={16} />
+                    Guardar
+                  </AspiranteButton>
+                }
+              />
 
               <div className="hoja-form-grid-AP">
-                <label className="field-AP">
-                  <span>Teléfono</span>
+                <AspiranteFormField label="Teléfono">
                   <input name="telefono" value={hoja?.telefono || ""} onChange={handleGeneralChange} />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Correo electrónico</span>
-                  <input
-                    name="correoElectronico"
-                    value={hoja?.correoElectronico || ""}
-                    onChange={handleGeneralChange}
-                  />
-                </label>
+                <AspiranteFormField label="Correo electrónico">
+                  <input name="correoElectronico" value={hoja?.correoElectronico || ""} onChange={handleGeneralChange} />
+                </AspiranteFormField>
 
-                <label className="field-AP field-wide-AP">
-                  <span>Red social</span>
+                <AspiranteFormField label="Red social" fullWidth>
                   <input name="redSocial" value={hoja?.redSocial || ""} onChange={handleGeneralChange} />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP field-wide-AP">
-                  <span>Resumen profesional</span>
+                <AspiranteFormField label="Resumen profesional" fullWidth>
                   <textarea
                     name="resumenProfesional"
                     rows={5}
                     value={hoja?.resumenProfesional || ""}
                     onChange={handleGeneralChange}
                   />
-                </label>
+                </AspiranteFormField>
               </div>
-            </article>
+            </AspiranteCard>
 
-            <article className="hoja-card-AP">
-              <div className="section-header-AP">
-                <div>
-                  <p className="hoja-kicker-AP">Experiencia</p>
-                  <h2>Agregar experiencia</h2>
-                </div>
-              </div>
+            <AspiranteCard className="hoja-card-AP">
+              <AspiranteSectionHeader kicker="Experiencia" title="Agregar experiencia" />
 
               <form className="hoja-form-grid-AP" onSubmit={agregarExperiencia}>
-                <label className="field-AP">
-                  <span>Cargo</span>
+                <AspiranteFormField label="Cargo">
                   <input
                     value={nuevaExperiencia.cargo}
                     onChange={(event) =>
                       setNuevaExperiencia((current) => ({ ...current, cargo: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Empresa</span>
+                <AspiranteFormField label="Empresa">
                   <input
                     value={nuevaExperiencia.empresa}
                     onChange={(event) =>
                       setNuevaExperiencia((current) => ({ ...current, empresa: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Inicio</span>
+                <AspiranteFormField label="Inicio">
                   <input
                     type="date"
                     value={nuevaExperiencia.fechaInicio}
@@ -358,10 +345,9 @@ const HojaDeVida = () => {
                       setNuevaExperiencia((current) => ({ ...current, fechaInicio: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Fin</span>
+                <AspiranteFormField label="Fin">
                   <input
                     type="date"
                     value={nuevaExperiencia.fechaFin}
@@ -369,10 +355,9 @@ const HojaDeVida = () => {
                       setNuevaExperiencia((current) => ({ ...current, fechaFin: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP field-wide-AP">
-                  <span>Descripción</span>
+                <AspiranteFormField label="Descripción" fullWidth>
                   <textarea
                     rows={3}
                     value={nuevaExperiencia.descripcion}
@@ -380,27 +365,26 @@ const HojaDeVida = () => {
                       setNuevaExperiencia((current) => ({ ...current, descripcion: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP field-wide-AP">
-                  <span>Certificado URL</span>
+                <AspiranteFormField label="Certificado URL" fullWidth>
                   <input
                     value={nuevaExperiencia.certificadoUrl}
                     onChange={(event) =>
                       setNuevaExperiencia((current) => ({ ...current, certificadoUrl: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <button type="submit" className="primary-button-AP full-width-AP" disabled={saving || !hoja}>
+                <AspiranteButton type="submit" className="full-width-AP" disabled={saving || !hoja}>
                   <Plus size={16} />
                   Agregar experiencia
-                </button>
+                </AspiranteButton>
               </form>
 
               <div className="list-stack-AP">
                 {(hoja?.experiencias || []).length === 0 ? (
-                  <div className="empty-state-AP">No tienes experiencias registradas.</div>
+                  <div className="asp-empty">No tienes experiencias registradas.</div>
                 ) : (
                   (hoja?.experiencias || []).map((experiencia, index) => (
                     <article key={`${experiencia.cargo}-${index}`} className="item-card-AP">
@@ -409,9 +393,9 @@ const HojaDeVida = () => {
                           <h3>{experiencia.cargo || "Sin cargo"}</h3>
                           <p>{experiencia.empresa || "Empresa"}</p>
                         </div>
-                        <button type="button" className="icon-button-AP danger" onClick={() => eliminarExperiencia(index)}>
+                        <AspiranteButton type="button" variant="icon" className="danger" onClick={() => eliminarExperiencia(index)}>
                           <Trash2 size={16} />
-                        </button>
+                        </AspiranteButton>
                       </div>
                       <span>
                         {experiencia.fechaInicio || "Inicio"} - {experiencia.fechaFin || "Actualidad"}
@@ -421,39 +405,31 @@ const HojaDeVida = () => {
                   ))
                 )}
               </div>
-            </article>
+            </AspiranteCard>
 
-            <article className="hoja-card-AP hoja-card-wide-AP">
-              <div className="section-header-AP">
-                <div>
-                  <p className="hoja-kicker-AP">Estudios</p>
-                  <h2>Agregar formación</h2>
-                </div>
-              </div>
+            <AspiranteCard className="hoja-card-AP hoja-card-wide-AP">
+              <AspiranteSectionHeader kicker="Estudios" title="Agregar formación" />
 
               <form className="hoja-form-grid-AP" onSubmit={agregarEstudio}>
-                <label className="field-AP">
-                  <span>Título</span>
+                <AspiranteFormField label="Título">
                   <input
                     value={nuevoEstudio.titulo}
                     onChange={(event) =>
                       setNuevoEstudio((current) => ({ ...current, titulo: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Institución</span>
+                <AspiranteFormField label="Institución">
                   <input
                     value={nuevoEstudio.institucion}
                     onChange={(event) =>
                       setNuevoEstudio((current) => ({ ...current, institucion: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Nivel educativo</span>
+                <AspiranteFormField label="Nivel educativo">
                   <select
                     value={nuevoEstudio.nivelEducativo}
                     onChange={(event) =>
@@ -466,10 +442,9 @@ const HojaDeVida = () => {
                     <option value="POSGRADO">Posgrado</option>
                     <option value="OTRO">Otro</option>
                   </select>
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Inicio</span>
+                <AspiranteFormField label="Inicio">
                   <input
                     type="date"
                     value={nuevoEstudio.fechaInicio}
@@ -477,10 +452,9 @@ const HojaDeVida = () => {
                       setNuevoEstudio((current) => ({ ...current, fechaInicio: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP">
-                  <span>Fin</span>
+                <AspiranteFormField label="Fin">
                   <input
                     type="date"
                     value={nuevoEstudio.fechaFin}
@@ -488,27 +462,26 @@ const HojaDeVida = () => {
                       setNuevoEstudio((current) => ({ ...current, fechaFin: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <label className="field-AP field-wide-AP">
-                  <span>Certificado URL</span>
+                <AspiranteFormField label="Certificado URL" fullWidth>
                   <input
                     value={nuevoEstudio.certificadoUrl}
                     onChange={(event) =>
                       setNuevoEstudio((current) => ({ ...current, certificadoUrl: event.target.value }))
                     }
                   />
-                </label>
+                </AspiranteFormField>
 
-                <button type="submit" className="primary-button-AP full-width-AP" disabled={saving || !hoja}>
+                <AspiranteButton type="submit" className="full-width-AP" disabled={saving || !hoja}>
                   <Plus size={16} />
                   Agregar estudio
-                </button>
+                </AspiranteButton>
               </form>
 
               <div className="list-stack-AP">
                 {(hoja?.estudios || []).length === 0 ? (
-                  <div className="empty-state-AP">No tienes estudios registrados.</div>
+                  <div className="asp-empty">No tienes estudios registrados.</div>
                 ) : (
                   (hoja?.estudios || []).map((estudio, index) => (
                     <article key={`${estudio.titulo}-${index}`} className="item-card-AP">
@@ -517,9 +490,9 @@ const HojaDeVida = () => {
                           <h3>{estudio.titulo || "Sin título"}</h3>
                           <p>{estudio.institucion || "Institución"}</p>
                         </div>
-                        <button type="button" className="icon-button-AP danger" onClick={() => eliminarEstudio(index)}>
+                        <AspiranteButton type="button" variant="icon" className="danger" onClick={() => eliminarEstudio(index)}>
                           <Trash2 size={16} />
-                        </button>
+                        </AspiranteButton>
                       </div>
                       <span>
                         {estudio.nivelEducativo || "Nivel"} · {estudio.fechaInicio || "Inicio"} - {estudio.fechaFin || "Actualidad"}
@@ -528,7 +501,7 @@ const HojaDeVida = () => {
                   ))
                 )}
               </div>
-            </article>
+            </AspiranteCard>
           </section>
         </main>
       </div>

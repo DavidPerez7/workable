@@ -18,31 +18,6 @@ export const login = async (LoginCredenciales) => {
 		// Guardar objeto user básico
 		localStorage.setItem("user", JSON.stringify(data));
 		
-		// Si es reclutador, obtener datos completos incluyendo reclutadorId y empresaId
-		if (data.rol === "RECLUTADOR") {
-			try {
-				const reclutadorResponse = await axios.get(
-					`http://localhost:8080/api/reclutador/por-correo?correo=${data.correo}`,
-					{
-						headers: {
-							"Authorization": `Bearer ${data.token}`,
-							"Content-Type": "application/json"
-						}
-					}
-				);
-				
-				// Actualizar el objeto user con los datos completos del reclutador
-				const fullUserData = {
-					...data,
-					reclutadorId: reclutadorResponse.data.id,
-					empresaId: reclutadorResponse.data.empresa?.id || null
-				};
-				localStorage.setItem("user", JSON.stringify(fullUserData));
-			} catch (error) {
-				console.warn("No se pudieron obtener datos completos del reclutador:", error);
-			}
-		}
-		
 		return data;
 	} catch (error) {
 		console.error("Error de login details:", error.response?.data || error.message);

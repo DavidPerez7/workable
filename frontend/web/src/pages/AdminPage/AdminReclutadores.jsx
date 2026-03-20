@@ -8,6 +8,7 @@ export default function AdminReclutadores() {
       title="Reclutadores"
       subtitle="CRUD directo sobre el módulo /api/reclutador. Usa JSON para relaciones como municipio y empresa."
       entityName="reclutador"
+      showHeaderActions={false}
       loadAll={reclutadoresApi.getAll}
       loadById={reclutadoresApi.get}
       createItem={reclutadoresApi.create}

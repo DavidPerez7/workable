@@ -1,9 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { crearEmpresa } from "../../../api/empresaAPI";
 import { getMunicipios } from "../../../api/municipioAPI";
 import reclutadoresApi from "../../../api/reclutadoresApi";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorFormField from "../../../components/reclutador/ReclutadorFormField";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
 import "./RegistrarEmpresa.css";
 
 const RegistrarEmpresa = () => {
@@ -98,101 +101,82 @@ const RegistrarEmpresa = () => {
   };
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP">
-            <div className="reclutador-card-header-RP">
-              <div>
-                <p className="reclutador-kicker-RP">Empresa</p>
-                <h2>Registrar empresa</h2>
-              </div>
+    <ReclutadorLayout>
+      <ReclutadorCard>
+        <ReclutadorSectionHeader kicker="Empresa" title="Registrar empresa" />
+
+        <form onSubmit={handleSubmit} ref={formRef} className="empresa-form-RP">
+          <div className="empresa-row-RP">
+            <ReclutadorFormField label="Nombre *">
+              <input type="text" name="nombre" required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="NIT *">
+              <input type="text" name="nit" required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+          </div>
+
+          <div className="empresa-row-RP">
+            <ReclutadorFormField label="Numero de trabajadores *">
+              <input type="number" name="numeroTrabajadores" min="1" required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Email *">
+              <input type="email" name="email" required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+          </div>
+
+          <div className="empresa-row-RP">
+            <ReclutadorFormField label="Telefono *">
+              <input type="tel" name="telefono" required className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Logo (URL)">
+              <input type="url" name="logoUrl" className="reclutador-input-RP" />
+            </ReclutadorFormField>
+          </div>
+
+          <ReclutadorFormField label="Descripcion *">
+            <textarea name="descripcion" rows="4" required className="reclutador-textarea-RP" />
+          </ReclutadorFormField>
+
+          <ReclutadorFormField label="Municipio *">
+            <select name="municipioId" required className="reclutador-select-RP">
+              <option value="">Selecciona municipio</option>
+              {municipios.map((mun) => (
+                <option key={mun.id} value={mun.id}>
+                  {mun.nombre} - {mun.departamento?.nombre || ""}
+                </option>
+              ))}
+            </select>
+          </ReclutadorFormField>
+
+          <div className="empresa-full-RP">
+            <span className="empresa-label-RP">Categorias *</span>
+            <div className="empresa-categories-RP">
+              {[
+                "TECNOLOGIA",
+                "SOFTWARE",
+                "SALUD",
+                "EDUCACION",
+                "FINANZAS",
+                "CONSULTORIA",
+                "MANUFACTURERA",
+                "RETAIL",
+                "MARKETING",
+                "RECURSOS_HUMANOS",
+              ].map((cat) => (
+                <label key={cat} className="empresa-category-RP">
+                  <input type="checkbox" name="categories" value={cat} />
+                  <span>{cat.replace(/_/g, " ")}</span>
+                </label>
+              ))}
             </div>
+          </div>
 
-            <form onSubmit={handleSubmit} ref={formRef} className="empresa-form-RP">
-              <div className="empresa-row-RP">
-                <label>
-                  Nombre *
-                  <input type="text" name="nombre" required />
-                </label>
-                <label>
-                  NIT *
-                  <input type="text" name="nit" required />
-                </label>
-              </div>
-
-              <div className="empresa-row-RP">
-                <label>
-                  Numero de trabajadores *
-                  <input type="number" name="numeroTrabajadores" min="1" required />
-                </label>
-                <label>
-                  Email *
-                  <input type="email" name="email" required />
-                </label>
-              </div>
-
-              <div className="empresa-row-RP">
-                <label>
-                  Telefono *
-                  <input type="tel" name="telefono" required />
-                </label>
-                <label>
-                  Logo (URL)
-                  <input type="url" name="logoUrl" />
-                </label>
-              </div>
-
-              <label className="empresa-full-RP">
-                Descripcion *
-                <textarea name="descripcion" rows="4" required />
-              </label>
-
-              <label className="empresa-full-RP">
-                Municipio *
-                <select name="municipioId" required>
-                  <option value="">Selecciona municipio</option>
-                  {municipios.map((mun) => (
-                    <option key={mun.id} value={mun.id}>
-                      {mun.nombre} - {mun.departamento?.nombre || ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <div className="empresa-full-RP">
-                <span className="empresa-label-RP">Categorias *</span>
-                <div className="empresa-categories-RP">
-                  {[
-                    "TECNOLOGIA",
-                    "SOFTWARE",
-                    "SALUD",
-                    "EDUCACION",
-                    "FINANZAS",
-                    "CONSULTORIA",
-                    "MANUFACTURERA",
-                    "RETAIL",
-                    "MARKETING",
-                    "RECURSOS_HUMANOS",
-                  ].map((cat) => (
-                    <label key={cat} className="empresa-category-RP">
-                      <input type="checkbox" name="categories" value={cat} />
-                      <span>{cat.replace(/_/g, " ")}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <button type="submit" className="reclutador-button-RP" disabled={loading}>
-                {loading ? "Registrando..." : "Registrar empresa"}
-              </button>
-            </form>
-          </section>
-        </main>
-      </div>
-    </>
+          <ReclutadorButton type="submit" disabled={loading}>
+            {loading ? "Registrando..." : "Registrar empresa"}
+          </ReclutadorButton>
+        </form>
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 };
 

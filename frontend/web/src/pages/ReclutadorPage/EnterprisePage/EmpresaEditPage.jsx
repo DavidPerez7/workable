@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { getEmpresaById, actualizarEmpresa, eliminarEmpresa } from "../../../api/empresaAPI";
 import { useNavigate } from "react-router-dom";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorFormField from "../../../components/reclutador/ReclutadorFormField";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
 import "./EmpresaEditPage.css";
 
 function EmpresaEditPage() {
@@ -93,258 +99,94 @@ function EmpresaEditPage() {
 
   if (loading) {
     return (
-      <div className="empresa-edit-container">
-        <div className="loading-state">
-          <p>Cargando información de la empresa...</p>
-        </div>
-      </div>
+      <ReclutadorLayout>
+        <ReclutadorCard>Cargando información de la empresa...</ReclutadorCard>
+      </ReclutadorLayout>
     );
   }
 
   if (!form) {
     return (
-      <div className="empresa-edit-container">
-        <div className="error-state">
+      <ReclutadorLayout>
+        <ReclutadorCard>
           <p>Error: No se pudo cargar la empresa</p>
-          <button onClick={handleCancel}>Volver</button>
-        </div>
-      </div>
+          <ReclutadorButton type="button" onClick={handleCancel}>Volver</ReclutadorButton>
+        </ReclutadorCard>
+      </ReclutadorLayout>
     );
   }
 
   return (
-    <div className="empresa-edit-container">
-      <div className="edit-header">
-        <h1>Editar Información de la Empresa</h1>
-        <p className="subtitle">Actualiza los datos de tu empresa</p>
-      </div>
+    <ReclutadorLayout>
+      <ReclutadorCard>
+        <ReclutadorSectionHeader kicker="Empresa" title="Editar Información de la Empresa" subtitle="Actualiza los datos de tu empresa" />
 
-      {error && (
-        <div className="alert alert-error">
-          <span className="alert-icon">⚠️</span>
-          <span>{error}</span>
-          <button className="alert-close" onClick={() => setError("")}>×</button>
-        </div>
-      )}
+      {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
 
-      {success && (
-        <div className="alert alert-success">
-          <span className="alert-icon">✓</span>
-          <span>{success}</span>
-        </div>
-      )}
+      {success ? <ReclutadorAlert type="success">{success}</ReclutadorAlert> : null}
 
-      <form onSubmit={handleSubmit} className="empresa-form">
-        {/* Primera fila: Nombre y NIT */}
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="nombre">Nombre de la Empresa *</label>
-            <input
-              id="nombre"
-              type="text"
-              name="nombre"
-              value={form.nombre || ''}
-              onChange={handleChange}
-              placeholder="Ej: Tech Solutions S.A."
-              required
-              disabled={submitting}
-            />
+        <form onSubmit={handleSubmit} className="empresa-form">
+          <div className="form-row">
+            <ReclutadorFormField label="Nombre de la Empresa *" htmlFor="nombre">
+              <input id="nombre" type="text" name="nombre" value={form.nombre || ''} onChange={handleChange} placeholder="Ej: Tech Solutions S.A." required disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="NIT *" htmlFor="nit" hint="El NIT no puede ser modificado">
+              <input id="nit" type="text" name="nit" value={form.nit || ''} onChange={handleChange} placeholder="Ej: 9292992929" required disabled className="reclutador-input-RP" />
+            </ReclutadorFormField>
           </div>
-          <div className="form-group">
-            <label htmlFor="nit">NIT *</label>
-            <input
-              id="nit"
-              type="text"
-              name="nit"
-              value={form.nit || ''}
-              onChange={handleChange}
-              placeholder="Ej: 9292992929"
-              required
-              disabled={true}
-              title="El NIT no puede ser modificado"
-            />
-            <small className="form-hint">El NIT no puede ser modificado</small>
-          </div>
-        </div>
 
-        {/* Segunda fila: Razón Social y Número de Trabajadores */}
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="razonSocial">Razón Social</label>
-            <input
-              id="razonSocial"
-              type="text"
-              name="razonSocial"
-              value={form.razonSocial || ''}
-              onChange={handleChange}
-              placeholder="Ej: Sociedad Anónima"
-              disabled={submitting}
-            />
+          <div className="form-row">
+            <ReclutadorFormField label="Razón Social" htmlFor="razonSocial">
+              <input id="razonSocial" type="text" name="razonSocial" value={form.razonSocial || ''} onChange={handleChange} placeholder="Ej: Sociedad Anónima" disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Número de Trabajadores" htmlFor="numeroTrabajadores">
+              <input id="numeroTrabajadores" type="number" name="numeroTrabajadores" value={form.numeroTrabajadores || ''} onChange={handleChange} placeholder="Ej: 50" min="1" disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
           </div>
-          <div className="form-group">
-            <label htmlFor="numeroTrabajadores">Número de Trabajadores</label>
-            <input
-              id="numeroTrabajadores"
-              type="number"
-              name="numeroTrabajadores"
-              value={form.numeroTrabajadores || ''}
-              onChange={handleChange}
-              placeholder="Ej: 50"
-              min="1"
-              disabled={submitting}
-            />
-          </div>
-        </div>
 
-        {/* Tercera fila: Email y Teléfono */}
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="correo">Email de Contacto</label>
-            <input
-              id="correo"
-              type="email"
-              name="correo"
-              value={form.correo || ''}
-              onChange={handleChange}
-              placeholder="Ej: contacto@empresa.com"
-              disabled={submitting}
-            />
+          <div className="form-row">
+            <ReclutadorFormField label="Email de Contacto" htmlFor="correo">
+              <input id="correo" type="email" name="correo" value={form.correo || ''} onChange={handleChange} placeholder="Ej: contacto@empresa.com" disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="Teléfono" htmlFor="telefono">
+              <input id="telefono" type="tel" name="telefono" value={form.telefono || ''} onChange={handleChange} placeholder="Ej: 6015551234" disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
           </div>
-          <div className="form-group">
-            <label htmlFor="telefono">Teléfono</label>
-            <input
-              id="telefono"
-              type="tel"
-              name="telefono"
-              value={form.telefono || ''}
-              onChange={handleChange}
-              placeholder="Ej: 6015551234"
-              disabled={submitting}
-            />
-          </div>
-        </div>
 
-        {/* Cuarta fila: Dirección */}
-        <div className="form-row full-width">
-          <div className="form-group">
-            <label htmlFor="direccion">Dirección</label>
-            <input
-              id="direccion"
-              type="text"
-              name="direccion"
-              value={form.direccion || ''}
-              onChange={handleChange}
-              placeholder="Ej: Calle 123 #45-67"
-              disabled={submitting}
-            />
-          </div>
-        </div>
+          <ReclutadorFormField label="Dirección" htmlFor="direccion">
+            <input id="direccion" type="text" name="direccion" value={form.direccion || ''} onChange={handleChange} placeholder="Ej: Calle 123 #45-67" disabled={submitting} className="reclutador-input-RP" />
+          </ReclutadorFormField>
 
-        {/* Quinta fila: Website y Logo */}
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="website">Sitio Web</label>
-            <input
-              id="website"
-              type="url"
-              name="website"
-              value={form.website || ''}
-              onChange={handleChange}
-              placeholder="Ej: https://www.empresa.com"
-              disabled={submitting}
-            />
+          <div className="form-row">
+            <ReclutadorFormField label="Sitio Web" htmlFor="website">
+              <input id="website" type="url" name="website" value={form.website || ''} onChange={handleChange} placeholder="Ej: https://www.empresa.com" disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="URL del Logo" htmlFor="logo">
+              <input id="logo" type="url" name="logo" value={form.logo || ''} onChange={handleChange} placeholder="Ej: https://..." disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
           </div>
-          <div className="form-group">
-            <label htmlFor="logo">URL del Logo</label>
-            <input
-              id="logo"
-              type="url"
-              name="logo"
-              value={form.logo || ''}
-              onChange={handleChange}
-              placeholder="Ej: https://..."
-              disabled={submitting}
-            />
-          </div>
-        </div>
 
-        {/* Sexta fila: Banner y Municipio */}
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="banner">URL del Banner</label>
-            <input
-              id="banner"
-              type="url"
-              name="banner"
-              value={form.banner || ''}
-              onChange={handleChange}
-              placeholder="Ej: https://..."
-              disabled={submitting}
-            />
+          <div className="form-row">
+            <ReclutadorFormField label="URL del Banner" htmlFor="banner">
+              <input id="banner" type="url" name="banner" value={form.banner || ''} onChange={handleChange} placeholder="Ej: https://..." disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
+            <ReclutadorFormField label="ID Municipio" htmlFor="municipioId">
+              <input id="municipioId" type="number" name="municipioId" value={form.municipioId || ''} onChange={handleChange} placeholder="Ej: 76" disabled={submitting} className="reclutador-input-RP" />
+            </ReclutadorFormField>
           </div>
-          <div className="form-group">
-            <label htmlFor="municipioId">ID Municipio</label>
-            <input
-              id="municipioId"
-              type="number"
-              name="municipioId"
-              value={form.municipioId || ''}
-              onChange={handleChange}
-              placeholder="Ej: 76"
-              disabled={submitting}
-            />
-          </div>
-        </div>
 
-        {/* Descripción */}
-        <div className="form-row full-width">
-          <div className="form-group">
-            <label htmlFor="descripcion">Descripción de la Empresa</label>
-            <textarea
-              id="descripcion"
-              name="descripcion"
-              value={form.descripcion || ''}
-              onChange={handleChange}
-              placeholder="Describe tu empresa, misión, visión y valores..."
-              rows="5"
-              maxLength="1000"
-              disabled={submitting}
-            />
-            <small className="form-hint">
-              {(form.descripcion || '').length}/1000 caracteres
-            </small>
-          </div>
-        </div>
+          <ReclutadorFormField label="Descripción de la Empresa" htmlFor="descripcion" hint={`${(form.descripcion || '').length}/1000 caracteres`}>
+            <textarea id="descripcion" name="descripcion" value={form.descripcion || ''} onChange={handleChange} placeholder="Describe tu empresa, misión, visión y valores..." rows="5" maxLength="1000" disabled={submitting} className="reclutador-textarea-RP" />
+          </ReclutadorFormField>
 
-        {/* Botones */}
-        <div className="form-actions">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={submitting}
-          >
-            {submitting ? "Guardando..." : "Guardar Cambios"}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={handleCancel}
-            disabled={submitting}
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="btn btn-danger"
-            onClick={handleDelete}
-            disabled={submitting}
-            title="Eliminar esta empresa permanentemente"
-          >
-            Eliminar Empresa
-          </button>
-        </div>
-      </form>
-    </div>
+          <div className="form-actions">
+            <ReclutadorButton type="submit" disabled={submitting}>{submitting ? "Guardando..." : "Guardar Cambios"}</ReclutadorButton>
+            <ReclutadorButton type="button" onClick={handleCancel} disabled={submitting}>Cancelar</ReclutadorButton>
+            <ReclutadorButton type="button" onClick={handleDelete} disabled={submitting}>Eliminar Empresa</ReclutadorButton>
+          </div>
+        </form>
+      </ReclutadorCard>
+    </ReclutadorLayout>
   );
 }
 

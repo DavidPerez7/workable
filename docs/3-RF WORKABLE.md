@@ -234,13 +234,13 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 
 **Interfaces de Salida (Resultados):** El sistema procesa y entrega información a través de múltiples canales, transformando los datos del Backend en recursos visuales y documentos funcionales:
 
-- Generación de Documentos y Reportes: La plataforma integra una capa de servicios para la exportación de datos a formatos portátiles. Para los aspirantes, el sistema genera automáticamente su Hoja de Vida profesional en formato PDF basada en la información del perfil. Los Reclutadores tienen la capacidad de visualizar y descargar dichos archivos PDF, mientras que el Administrador dispone de una función exclusiva para la generación de reportes detallados de la actividad del sistema en formato PDF, consolidando datos de usuarios y métricas globales.  
+- Generación de Documentos y Reportes: La plataforma integra una capa de servicios para la exportación de datos a formatos portátiles. Para los aspirantes, el sistema genera automáticamente su Hoja de Vida profesional en formato PDF basada en la información del perfil. Los Reclutadores tienen la capacidad de visualizar y descargar dichos archivos PDF, mientras que el Administrador dispone de una función para exportar resúmenes y métricas de cada entidad administrada en un formato portable para revisión externa.  
     
 - Alertas de Interfaz y Feedback: El sistema proporciona retroalimentación inmediata mediante componentes visuales (alerts/toasts) ante acciones críticas. Estas notificaciones confirman al usuario la ejecución exitosa de procesos como el registro de cuenta, la publicación de ofertas o la postulación efectiva a una vacante, mejorando la experiencia de usuario (UX).  
     
 - Visualización Pública de Perfiles: La interfaz de salida incluye páginas de perfil detalladas donde se expone la información pública de candidatos y empresas. Estos perfiles son consultables por los actores del sistema (exceptuando los perfiles administrativos por seguridad), permitiendo una revisión estructurada de la trayectoria de los aspirantes (incluyendo estudios y experiencias laborales) y la reputación de los reclutadores.  
     
-- Dashboards y Analítica Visual: Los paneles administrativos presentan la información mediante una capa de visualización de datos. El sistema realiza peticiones (GET) para obtener el conteo de entidades activas e inactivas (empresas, ofertas, usuarios) y las representa mediante gráficas estadísticas que facilitan la toma de decisiones y el monitoreo del ecosistema laboral de Workable.  
+- Dashboards y Analítica Visual: Los paneles administrativos presentan la información mediante una capa de visualización de datos. El sistema realiza peticiones (GET) para obtener el conteo general de entidades gestionadas y presenta resúmenes estadísticos por módulo, permitiendo además exportar dichos datos para revisión externa.  
     
 - Salidas Externas Automatizadas: El sistema se conecta con servidores de correo externo para el envío de comunicaciones mediante el protocolo SMTP, notificando a los usuarios sobre eventos de seguridad (recuperación de contraseña) y confirmaciones de registro de forma externa a la aplicación.
 
@@ -258,35 +258,23 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | Características: | Protege los datos de usuarios mediante cifrado de contraseñas, autenticación segura con tokens JWT y validación de entradas. |
 | Descripción del requerimiento: | Las contraseñas se deben hashear con Bcrypt antes de almacenarse. La autenticación se maneja con tokens JWT que expiran en 24 horas. Se requiere validación de propiedad para editar recursos y confirmación obligatoria mediante contraseña o modales para acciones críticas. |
 
-| Identificación del requerimiento NO funcional: | RNF03 |
-| :---: | ----- |
-| Nombre del requerimiento NO funcional: | RENDIMIENTO Y TIEMPOS DE RESPUESTA |
-| Características: | Garantiza que la plataforma responda de manera ágil ante las peticiones de los diferentes roles de usuario. |
-| Descripción del requerimiento: | El inicio de sesión y las actualizaciones de perfil deben responder en menos de 2 segundos. La búsqueda y el filtrado de ofertas deben procesarse en menos de 1 segundo. La carga del dashboard administrativo y sus estadísticas no debe superar los 3 segundos. |
-
 | Identificación del requerimiento NO funcional: | RNF04 |
 | :---: | ----- |
 | Nombre del requerimiento NO funcional: | USABILIDAD Y FEEDBACK VISUAL |
-| Características: | Asegura una experiencia de usuario (UX) fluida mediante mensajes claros y componentes interactivos. |
-| Descripción del requerimiento: | El sistema debe proporcionar mensajes de éxito o error claros tras cada acción (ej: "Oferta actualizada exitosamente"). Se deben incluir modales de confirmación para evitar acciones accidentales y utilizar filtros combinables en tiempo real para mejorar la navegación. |
+| Características: | Asegura una experiencia de usuario (UX) clara mediante mensajes visibles y confirmaciones simples. |
+| Descripción del requerimiento: | El sistema debe proporcionar mensajes de éxito o error claros tras las operaciones CRUD ya implementadas. Además, las eliminaciones deben requerir confirmación del usuario y las pantallas deben mostrar la información de forma ordenada para facilitar la navegación. |
 
 | Identificación del requerimiento NO funcional: | RNF05 |
 | :---: | ----- |
 | Nombre del requerimiento NO funcional: | CUMPLIMIENTO LEGAL (DERECHO AL OLVIDO) |
-| Características: | Permite a los aspirantes ejercer su derecho a la protección de datos personales. |
-| Descripción del requerimiento: | El sistema debe permitir la eliminación permanente de la cuenta de un aspirante, asegurando que todos sus datos personales sean removidos de la base de datos tras una confirmación de seguridad. |
+| Características: | Permite a cualquier usuario ejercer su derecho a la protección de datos personales. |
+| Descripción del requerimiento: | El sistema debe permitir la eliminación permanente de la cuenta de cualquier usuario autenticado, asegurando que sus datos personales sean removidos de la base de datos tras una confirmación de seguridad. |
 
 | Identificación del requerimiento NO funcional: | RNF06 |
 | :---: | ----- |
-| Nombre del requerimiento NO funcional: | AUDITORÍA Y REGISTRO DE ACCIONES  |
-| Características: | Permite el seguimiento de las acciones administrativas para mantener la integridad de la plataforma. |
-| Descripción del requerimiento: | El sistema debe llevar un registro (log) de todas las acciones críticas realizadas por los administradores, tales como la suspensión de usuarios o la eliminación de ofertas, incluyendo notificaciones automáticas por correo a los afectados. |
-
-| Identificación del requerimiento NO funcional: | RNF07 |
-| :---: | ----- |
-| Nombre del requerimiento NO funcional: | EXPORTACIÓN DE DATOS   |
-| Características: | Facilita la obtención de información clave del sistema para análisis externos. |
-| Descripción del requerimiento: | El administrador debe tener la capacidad de exportar las métricas y estadísticas visualizadas en el dashboard para su revisión o reporte fuera de la plataforma. |
+| Nombre del requerimiento NO funcional: | EXPORTACIÓN DE DATOS EN JSON   |
+| Características: | Facilita la obtención de información resumida del sistema para análisis externos. |
+| Descripción del requerimiento: | El administrador debe tener la capacidad de exportar en formato JSON los datos resumidos que se muestran en el panel de cada entidad administrada, ya que es un formato ligero, compatible con herramientas técnicas y fácil de reutilizar para análisis, integración o validación externa. |
 
 # **3.3 REQUISITOS FUNCIONALES**
 
@@ -315,7 +303,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | :---: | ----- |
 | **Nombre del requerimiento:** | ELIMINACIÓN PERMANENTE DE CUENTA |
 | **Características:** | Permite a los usuarios (Aspirantes y Reclutadores) ejecutar la baja total de sus datos, asegurando la limpieza de registros y la integridad de la base de datos mediante procesos en cascada. |
-| **Descripción del requerimiento:** | El sistema gestionará la eliminación definitiva bajo las siguientes reglas:  Validación Frontend: El usuario debe escribir la palabra exacta "ELIMINAR" en un modal de confirmación para habilitar el botón de acción, evitando borrados accidentales.  Impacto por Rol:  Aspirante: Se elimina su registro de la tabla usuarios y todas sus postulaciones vinculadas. Reclutador: Se advierte que su cuenta está vinculada a una Entidad Empresa y que su eliminación será visible para otros reclutadores de la misma organización. Pero NO se eliminan sus ofertas publicadas.  Exclusión de Administradores: Las cuentas con rol de Administrador (ID: 1 a N) no dispondrán de esta opción en su interfaz, ya que su gestión es externa al equipo de desarrollo.  Cierre de Sesión: Tras el borrado, el sistema destruye el JWT del localStorage y redirige a la Landing Page.  (Nota: Funcionalidad de borrado físico y validación de palabra clave pendiente de implementación en Backend/Frontend). |
+| **Descripción del requerimiento:** | El sistema gestionará la eliminación definitiva bajo las siguientes reglas:  Validación Frontend: El usuario debe escribir la palabra exacta "ELIMINAR" en un modal de confirmación para habilitar el botón de acción, evitando borrados accidentales.  Impacto por Rol:  Aspirante: Se elimina su registro de la tabla usuarios y todas sus postulaciones vinculadas. Reclutador: Se advierte que su cuenta está vinculada a una Entidad Empresa y que su eliminación será visible para otros reclutadores de la misma organización. Pero NO se eliminan sus ofertas publicadas.  Cierre de Sesión: Tras el borrado, el sistema destruye el JWT del localStorage y redirige a la Landing Page.  (Nota: Funcionalidad de borrado físico y validación de palabra clave pendiente de implementación en Backend/Frontend). |
 | **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- CONFIRMACIÓN OBLIGATORIA)  RNF-04 (USABILIDAD \- ADVERTENCIA DE BORRADO)  RNF-05 (CUMPLIMIENTO LEGAL \- DERECHO AL OLVIDO) |
 
 | Identificación del requerimiento: | RF05 |
@@ -330,7 +318,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | **Nombre del requerimiento:** | GESTIÓN DE OFERTAS LABORALES |
 | **Características:** | Permite a las empresas administrar el ciclo de vida de sus vacantes, garantizando que la información sea veraz y cumpla con los estándares legales de remuneración. |
 | **Descripción del requerimiento:** | El sistema proporcionará al reclutador las siguientes funcionalidades:  Crear: Registro obligatorio de Categoría y Municipio. Validación de Salario: Si es menor al SMLV vigente, el sistema obliga a marcar el checkbox "Salario a convenir" para proceder. Consultar (Read): Vista de tarjetas con buscador por título y filtros por antigüedad/postulados. Incluye contador de candidatos en tiempo real. Gestionar Estado (Update): El reclutador puede gestionar el ciclo de vida de la oferta alternando entre estados: Activa (visible para postulaciones, no expirada), Inactiva (pausada temporalmente, sin postulaciones permitidas) y Finalizada (cerrada definitivamente, no visible en búsquedas). La edición solo se habilita en estado Inactiva para proteger la integridad de los datos. Eliminar (Hard Delete): Borrado físico de la oferta. El sistema ejecutará una limpieza en cascada que elimina los registros de postulaciones vinculadas, pero mantiene intactos los perfiles de los aspirantes. Requiere confirmación mediante modal (Aceptar/Cancelar).  (Nota: Lógica de validación de salario y borrado en cascada pendiente de programar). |
-| **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- VALIDACIÓN DE PERMISOS) RNF-03 (RENDIMIENTO \- FILTRADO EFICIENTE) RNF-04 (USABILIDAD \- MODALES DE CONFIRMACIÓN) |
+| **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- VALIDACIÓN DE PERMISOS) RNF-04 (USABILIDAD \- MODALES DE CONFIRMACIÓN) |
 
 | Identificación del requerimiento: | RF07 |
 | :---: | ----- |
@@ -344,12 +332,20 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | **Nombre del requerimiento:** | BÚSQUEDA Y FILTRADO AVANZADO DE VACANTES |
 | **Características:** | Proporciona a los aspirantes herramientas de exploración eficiente para localizar oportunidades laborales que se ajusten a su perfil y ubicación. |
 | **Descripción del requerimiento:** | El sistema implementará un módulo de búsqueda con las siguientes capacidades: Buscador por Texto: Filtrado dinámico basado en coincidencias en el Título de la oferta. Filtros Parametrizados: Selección múltiple por Municipio y Categoría Laboral (datos obligatorios heredados del RF05). Lógica de Visualización: El sistema solo mostrará ofertas en estado Activa.  Persistencia de Búsqueda: El frontend mantendrá los filtros aplicados mediante el estado (useState) para que el aspirante pueda navegar entre ofertas sin perder sus criterios de búsqueda. |
-| **Requerimientos NO funcionales:** | RNF-01 (ACCESIBILIDAD \-  FILTROS DE BÚSQUEDA)   RNF-03 (RENDIMIENTO \- BÚSQUEDA POR FILTRADO RAPIDA)   RNF-04 (USABILIDAD \- INDICADOR DE "SIN RESULTADOS") |
+| **Requerimientos NO funcionales:** | RNF-01 (ACCESIBILIDAD \-  FILTROS DE BÚSQUEDA)   RNF-04 (USABILIDAD \- INDICADOR DE "SIN RESULTADOS") |
 
 | Identificación del requerimiento: | RF09 |
 | :---: | ----- |
 | **Nombre del requerimiento:** | PANEL DE CONTROL (ADMINISTRADOR) |
-| **Características:** | Centraliza la supervisión técnica de la plataforma, permitiendo el mantenimiento de la integridad de los datos y el control de acceso de todos los usuarios. |
-| **Descripción del requerimiento:** | El sistema habilitará una interfaz de "Superusuario" para el rol ADMIN con las siguientes capacidades: CRUD Universal de Entidades: Permisos de nivel raíz para Crear, Leer, Actualizar y Eliminar (Borrado Físico) en la totalidad de las tablas del sistema (Usuarios, Empresas, Ofertas y Postulaciones). Control de Acceso (Status): El Admin podrá conmutar el campo isActive de cualquier cuenta registrada (Aspirantes, Reclutadores y Admins). Un estado Inactivo bloqueará inmediatamente la autenticación y validación del JWT en el Backend (Pendiente programar bloqueo preventivo). Gestión de Integridad: Capacidad de eliminar entidades Empresa bajo la modalidad de borrado físico en cascada, removiendo automáticamente reclutadores y ofertas asociadas para evitar huérfanos (Pendiente programar cascada). Seguridad del Root: Restricción de eliminación del Administrador ID: 1, garantizando un acceso maestro persistente. |
-| **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- FILTRO DE AUTORIZACIÓN JWT)   RNF-03 (RENDIMIENTO \- CARGA DE TABLAS RÁPIDAMENTE)   |
+| **Características:** | Centraliza la supervisión técnica de la plataforma, permitiendo el mantenimiento de las entidades principales y la exportación de datos resumidos en JSON desde el frontend. |
+| **Descripción del requerimiento:** | El sistema habilitará una interfaz administrativa para el rol ADMIN con capacidades de CRUD universal sobre las entidades principales del sistema (Usuarios, Empresas, Ofertas, Postulaciones, Hojas de Vida y Catálogos base). La interfaz debe permitir consultar, crear, editar, eliminar y buscar registros mediante componentes reutilizables. Además, el panel debe ofrecer exportación en JSON de los datos resumidos que se muestran en pantalla, implementada desde el frontend por ser una solución ligera, rápida de reutilizar y compatible con usuarios técnicos y herramientas de análisis. |
+| **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD - FILTRO DE AUTORIZACIÓN JWT)   RNF-06 (EXPORTACIÓN DE DATOS EN JSON)   |
+
+# **4 AVANCE DEL PROYECTO**
+
+Avance general: **1/3 (33%)**.
+
+- Backend: **100%**; solo faltan corregir algunos errores de `NOT NULL` y eliminación en `CASCADE` en los modelos de Aspirante y Reclutador, sin afectar de forma importante el backend.
+- API: **100%**.
+- Web: **33%** en las funcionalidades del administrador.
 

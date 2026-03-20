@@ -13,6 +13,10 @@ import {
 import Header from "../../../../components/Header/Header";
 import SidebarAspirante from "../../../../components/SidebarAspirante/SidebarAspirante";
 import Footer from "../../../../components/Footer/footer";
+import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
+import AspiranteFormField from "../../../../components/aspirante/AspiranteFormField";
+import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
+import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
 import aspirantesApi from "../../../../api/aspirantesApi";
 import { getMunicipios } from "../../../../api/municipioAPI";
 import "./ActualizarPerfil.css";
@@ -133,7 +137,7 @@ const ActualizarPerfil = () => {
   };
 
   if (loading) {
-    return <div className="actualizar-state-AP">Cargando formulario...</div>;
+    return <div className="actualizar-state-AP asp-loading">Cargando formulario...</div>;
   }
 
   return (
@@ -156,48 +160,41 @@ const ActualizarPerfil = () => {
             </button>
           </section>
 
-          {success && <div className="alert-AP success">{success}</div>}
-          {error && <div className="alert-AP error">{error}</div>}
+          {success && <AspiranteAlert type="success">{success}</AspiranteAlert>}
+          {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
 
-          <form className="form-card-AP" onSubmit={handleSubmit}>
+          <AspiranteCard as="form" className="form-card-AP" onSubmit={handleSubmit}>
             <div className="form-grid-AP">
-              <label className="field-AP">
-                <span><User size={14} /> Nombre</span>
+              <AspiranteFormField label={<><User size={14} /> Nombre</>}>
                 <input name="nombre" value={formData.nombre} onChange={handleChange} required />
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP">
-                <span><User size={14} /> Apellido</span>
+              <AspiranteFormField label={<><User size={14} /> Apellido</>}>
                 <input name="apellido" value={formData.apellido} onChange={handleChange} required />
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP">
-                <span><Mail size={14} /> Correo</span>
+              <AspiranteFormField label={<><Mail size={14} /> Correo</>}>
                 <input type="email" name="correo" value={formData.correo} onChange={handleChange} />
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP">
-                <span><Phone size={14} /> Teléfono</span>
+              <AspiranteFormField label={<><Phone size={14} /> Teléfono</>}>
                 <input name="telefono" value={formData.telefono} onChange={handleChange} />
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP">
-                <span><Calendar size={14} /> Fecha de nacimiento</span>
+              <AspiranteFormField label={<><Calendar size={14} /> Fecha de nacimiento</>}>
                 <input type="date" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} />
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP">
-                <span>Género</span>
+              <AspiranteFormField label="Género">
                 <select name="genero" value={formData.genero} onChange={handleChange}>
                   <option value="">Seleccionar</option>
                   <option value="MASCULINO">Masculino</option>
                   <option value="FEMENINO">Femenino</option>
                   <option value="OTRO">Otro</option>
                 </select>
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP field-wide-AP">
-                <span><MapPin size={14} /> Municipio</span>
+              <AspiranteFormField label={<><MapPin size={14} /> Municipio</>} fullWidth>
                 <select name="municipioId" value={formData.municipioId} onChange={handleChange}>
                   <option value="">Seleccionar municipio</option>
                   {municipios.map((municipio) => (
@@ -206,35 +203,32 @@ const ActualizarPerfil = () => {
                     </option>
                   ))}
                 </select>
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP field-wide-AP">
-                <span>Foto de perfil URL</span>
+              <AspiranteFormField label="Foto de perfil URL" fullWidth>
                 <div className="input-icon-AP">
                   <Image size={14} />
                   <input name="urlFotoPerfil" value={formData.urlFotoPerfil} onChange={handleChange} placeholder="https://..." />
                 </div>
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP field-wide-AP">
-                <span>Descripción</span>
+              <AspiranteFormField label="Descripción" fullWidth>
                 <textarea name="descripcion" value={formData.descripcion} onChange={handleChange} rows={4} />
-              </label>
+              </AspiranteFormField>
 
-              <label className="field-AP field-wide-AP">
-                <span>Resumen profesional</span>
+              <AspiranteFormField label="Resumen profesional" fullWidth>
                 <textarea name="resumen" value={formData.resumen} onChange={handleChange} rows={4} />
-              </label>
+              </AspiranteFormField>
             </div>
 
             <div className="actions-AP">
-              <button type="button" className="secondary-button-AP" onClick={() => navigate("/Aspirante/MiPerfil")}>Cancelar</button>
-              <button type="submit" className="primary-button-AP" disabled={saving}>
+              <AspiranteButton type="button" variant="secondary" onClick={() => navigate("/Aspirante/MiPerfil")}>Cancelar</AspiranteButton>
+              <AspiranteButton type="submit" disabled={saving}>
                 <Save size={16} />
                 {saving ? "Guardando..." : "Guardar cambios"}
-              </button>
+              </AspiranteButton>
             </div>
-          </form>
+          </AspiranteCard>
         </main>
       </div>
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import HeaderReclutador from "../../../components/HeaderReclutador/HeaderReclutador";
-import SidebarReclutador from "../../../components/SidebarReclutador/SidebarReclutador";
 import { getEmpresaById } from "../../../api/empresaAPI";
-import { getOfertasPorEmpresa } from "../../../api/ofertasAPI";
 import reclutadoresApi from "../../../api/reclutadoresApi";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
 import "./EnterprisePage.css";
 
 function EnterprisePage() {
@@ -18,6 +20,7 @@ function EnterprisePage() {
     const cargarDatos = async () => {
       try {
         setLoading(true);
+        setError("");
         const reclutador = await reclutadoresApi.getMyProfile();
         const empresaId = reclutador?.empresa?.id;
 
@@ -27,13 +30,15 @@ function EnterprisePage() {
           return;
         }
 
-        const [empresaData, ofertasData] = await Promise.all([
-          getEmpresaById(empresaId),
-          getOfertasPorEmpresa(empresaId),
-        ]);
+        const empresaData = await getEmpresaById(empresaId);
 
         setEmpresa(empresaData);
-        setOfertas(Array.isArray(ofertasData) ? ofertasData : []);
+        const ofertasEmpresa =
+          empresaData?.ofertas ||
+          empresaData?.listaOfertas ||
+          empresaData?.ofertasActivas ||
+          [];
+        setOfertas(Array.isArray(ofertasEmpresa) ? ofertasEmpresa : []);
       } catch (err) {
         console.error("Error al cargar empresa:", err);
         setError(err.message || "No se pudo cargar la empresa");
@@ -46,111 +51,86 @@ function EnterprisePage() {
   }, []);
 
   return (
-    <>
-      <HeaderReclutador />
-      <div className="reclutador-shell-RP">
-        <SidebarReclutador />
-        <main className="reclutador-main-RP">
-          <section className="reclutador-card-RP empresa-hero-EP">
-            <div className="empresa-hero-info-EP">
-              <div className="empresa-avatar-EP">
-                {empresa?.logo ? (
-                  <img src={empresa.logo} alt={empresa.nombre} />
-                ) : (
-                  <span>{empresa?.nombre?.charAt(0) || "E"}</span>
-                )}
+    <ReclutadorLayout>
+      <ReclutadorCard as="section" className="empresa-hero-EP">
+        <div className="empresa-hero-info-EP">
+          <div className="empresa-avatar-EP">
+            {empresa?.logo ? (
+              <img src={empresa.logo} alt={empresa.nombre} />
+            ) : (
+              <span>{empresa?.nombre?.charAt(0) || "E"}</span>
+            )}
+          </div>
+          <div>
+            <p className="reclutador-kicker-RP">Mi empresa</p>
+            <h1>{empresa?.nombre || "Empresa"}</h1>
+            <p className="empresa-meta-EP">{empresa?.municipio?.nombre || "Sin ubicacion"}</p>
+          </div>
+        </div>
+        <div className="empresa-actions-EP">
+          <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/EnterprisePage/Edit")}>
+            Editar empresa
+          </ReclutadorButton>
+          <Link to="/Reclutador/Publicacion" className="reclutador-link-RP">
+            Crear oferta
+          </Link>
+        </div>
+      </ReclutadorCard>
+
+      {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
+
+      {loading ? (
+        <ReclutadorCard>Cargando empresa...</ReclutadorCard>
+      ) : !empresa ? (
+        <ReclutadorCard>
+          <p className="empresa-empty-EP">Aun no tienes empresa registrada.</p>
+          <Link to="/Reclutador/RegistrarEmpresa" className="reclutador-button-RP">
+            Registrar empresa
+          </Link>
+        </ReclutadorCard>
+      ) : (
+        <div className="empresa-grid-EP">
+          <ReclutadorCard as="section">
+            <ReclutadorSectionHeader kicker="Descripcion" title="Sobre la empresa" />
+            <p className="empresa-text-EP">{empresa.descripcion || "Sin descripcion"}</p>
+            <div className="empresa-details-EP">
+              <div>
+                <span>NIT</span>
+                <strong>{empresa.nit || "-"}</strong>
               </div>
               <div>
-                <p className="reclutador-kicker-RP">Mi empresa</p>
-                <h1>{empresa?.nombre || "Empresa"}</h1>
-                <p className="empresa-meta-EP">
-                  {empresa?.municipio?.nombre || "Sin ubicacion"}
-                </p>
+                <span>Contacto</span>
+                <strong>{empresa.email || empresa.emailContacto || "-"}</strong>
+              </div>
+              <div>
+                <span>Telefono</span>
+                <strong>{empresa.telefono || empresa.telefonoContacto || "-"}</strong>
               </div>
             </div>
-            <div className="empresa-actions-EP">
-              <button
-                type="button"
-                className="reclutador-button-RP"
-                onClick={() => navigate("/Reclutador/EnterprisePage/Edit")}
-              >
-                Editar empresa
-              </button>
-              <Link to="/Reclutador/Publicacion" className="reclutador-link-RP">
-                Crear oferta
-              </Link>
-            </div>
-          </section>
+          </ReclutadorCard>
 
-          {error && <p className="reclutador-alert-RP error">{error}</p>}
-
-          {loading ? (
-            <div className="reclutador-card-RP">Cargando empresa...</div>
-          ) : !empresa ? (
-            <div className="reclutador-card-RP">
-              <p className="empresa-empty-EP">Aun no tienes empresa registrada.</p>
-              <Link to="/Reclutador/RegistrarEmpresa" className="reclutador-button-RP">
-                Registrar empresa
-              </Link>
-            </div>
-          ) : (
-            <div className="empresa-grid-EP">
-              <section className="reclutador-card-RP">
-                <div className="reclutador-card-header-RP">
-                  <div>
-                    <p className="reclutador-kicker-RP">Descripcion</p>
-                    <h2>Sobre la empresa</h2>
-                  </div>
-                </div>
-                <p className="empresa-text-EP">
-                  {empresa.descripcion || "Sin descripcion"}
-                </p>
-                <div className="empresa-details-EP">
-                  <div>
-                    <span>NIT</span>
-                    <strong>{empresa.nit || "-"}</strong>
-                  </div>
-                  <div>
-                    <span>Contacto</span>
-                    <strong>{empresa.email || empresa.emailContacto || "-"}</strong>
-                  </div>
-                  <div>
-                    <span>Telefono</span>
-                    <strong>{empresa.telefono || empresa.telefonoContacto || "-"}</strong>
-                  </div>
-                </div>
-              </section>
-
-              <section className="reclutador-card-RP">
-                <div className="reclutador-card-header-RP">
-                  <div>
-                    <p className="reclutador-kicker-RP">Ofertas</p>
-                    <h2>Ofertas publicadas</h2>
-                  </div>
-                  <Link to="/Reclutador/GestigOferts" className="reclutador-link-RP">
-                    Ver gestion
-                  </Link>
-                </div>
-                {ofertas.length === 0 ? (
-                  <p className="empresa-text-EP">No hay ofertas publicadas.</p>
-                ) : (
-                  <ul className="empresa-list-EP">
-                    {ofertas.slice(0, 5).map((oferta) => (
-                      <li key={oferta.id}>
-                        <span>{oferta.titulo || "Oferta"}</span>
-                        <Link to={`/Reclutador/OfertaCompleta/${oferta.id}`}>
-                          Ver
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            </div>
-          )}
-        </main>
-      </div>
-    </>
+          <ReclutadorCard as="section">
+            <ReclutadorSectionHeader
+              kicker="Ofertas"
+              title="Ofertas publicadas"
+              action={<Link to="/Reclutador/GestigOferts" className="reclutador-link-RP">Ver gestion</Link>}
+            />
+            {ofertas.length === 0 ? (
+              <p className="empresa-text-EP">No hay ofertas publicadas.</p>
+            ) : (
+              <ul className="empresa-list-EP">
+                {ofertas.slice(0, 5).map((oferta) => (
+                  <li key={oferta.id}>
+                    <span>{oferta.titulo || "Oferta"}</span>
+                    <Link to={`/Reclutador/OfertaCompleta/${oferta.id}`}>Ver</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </ReclutadorCard>
+        </div>
+      )}
+    </ReclutadorLayout>
   );
 }
 

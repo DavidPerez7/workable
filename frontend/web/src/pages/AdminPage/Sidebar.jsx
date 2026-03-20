@@ -15,7 +15,6 @@ const Sidebar = () => {
 
   return (
     <aside className="admin-sidebar">
-      <div className="sidebar-brand">WORKABLE</div>
       <nav className="admin-sidebar-nav">
         <NavLink to="/Administrador/Aspirantes" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Aspirantes</NavLink>
         <NavLink to="/Administrador/Administradores" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Administradores</NavLink>
