@@ -6,20 +6,18 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Card del formulario */
 .aspirante-form-card {
   width: 100%;
   max-width: 650px;
   background: transparent;
   padding: 1.5rem;
   min-height: 400px;
+  animation: fadeIn 0.5s ease-out;
 }
 
-/* Header del formulario */
 .aspirante-form-header {
   text-align: center;
   margin-bottom: 2.5rem;
@@ -40,12 +38,10 @@
   line-height: 1.5;
 }
 
-/* Formulario */
 .aspirante-form {
   width: 100%;
 }
 
-/* Secciones del formulario */
 .form-section {
   margin-bottom: 1rem;
   padding: 1rem;
@@ -63,7 +59,6 @@
   border-color: #bbf7d0;
 }
 
-/* Títulos de sección */
 .section-title-aspirante {
   text-align: center;
   font-size: 1.4rem;
@@ -73,21 +68,18 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  text-align: center;
 }
 
 .section-icon {
   font-size: 1.5rem;
 }
 
-/* Grid de formularios */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0.75rem;
 }
 
-/* Campos del formulario */
 .form-field {
   display: flex;
   flex-direction: column;
@@ -100,7 +92,6 @@
   color: #475569;
 }
 
-/* Checkbox field */
 .checkbox-field {
   margin-top: 1rem;
 }
@@ -121,6 +112,7 @@
   cursor: pointer;
   accent-color: #10b981;
 }
+
 .form-input {
   width: 100%;
   padding: 0.9rem 1rem;
@@ -143,12 +135,10 @@
   color: #94a3b8;
 }
 
-/* Select custom styling */
 .form-input option {
   padding: 0.5rem;
 }
 
-/* Términos y condiciones */
 .terminos-label {
   display: flex;
   align-items: start;
@@ -183,7 +173,6 @@
   margin: 0;
 }
 
-/* Botón de submit */
 .submit-button {
   width: 100%;
   padding: 1.2rem;
@@ -216,7 +205,6 @@
   box-shadow: 0 4px 12px rgba(148, 163, 184, 0.3);
 }
 
-/* Link de login */
 .login-link {
   text-align: center;
   margin-top: 1.5rem;
@@ -236,7 +224,6 @@
   text-decoration: underline;
 }
 
-/* Validación visual de inputs */
 .form-input:invalid:not(:placeholder-shown) {
   border-color: #ef4444;
 }
@@ -245,7 +232,6 @@
   border-color: #10b981;
 }
 
-/* Animaciones */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -261,7 +247,6 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .aspirante-form-container {
     padding: 1rem;
@@ -312,12 +297,10 @@
   }
 }
 
-/* Estados hover para mejor UX */
 .form-field:hover .form-label {
   color: #3b82f6;
 }
 
-/* Focus visible para accesibilidad */
 .form-input:focus-visible,
 .terminos-checkbox:focus-visible,
 .submit-button:focus-visible {
@@ -325,7 +308,6 @@
   outline-offset: 2px;
 }
 
-/* Mejora para campos de fecha en diferentes navegadores */
 .form-input[type="date"] {
   appearance: none;
   -webkit-appearance: none;
@@ -337,12 +319,10 @@
   filter: invert(0.5);
 }
 
-/* Mejora visual para números de teléfono */
 .form-input[type="tel"] {
   letter-spacing: 0.5px;
 }
 
-/* Loading state para el botón */
 .submit-button.loading {
   position: relative;
   color: transparent;

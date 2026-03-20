@@ -4,16 +4,8 @@
   flex-direction: column;
   align-items: center;
   min-height: calc(100vh - 120px);
-  background: radial-gradient(
-      circle at 20% 30%,
-      rgba(0, 0, 0, 0.2) 0%,
-      rgba(0, 0, 0, 0.1) 50%
-    ),
-    radial-gradient(
-      circle at 80% 70%,
-      rgba(59, 130, 246, 0.3) 0%,
-      rgba(245, 158, 11, 0.2) 50%
-    );
+  background: radial-gradient(circle at 20% 30%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%),
+    radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.3) 0%, rgba(245, 158, 11, 0.2) 50%);
 }
 
 .div-signup-container {
@@ -21,7 +13,7 @@
   padding: 40px;
   text-align: center;
   width: 100%;
-  max-width: 800px; /* 🔥 Antes 3000px — demasiado grande */
+  max-width: 800px;
   box-sizing: border-box;
   margin: 0 auto;
   animation: fadeIn 0.5s ease-out;
@@ -47,7 +39,6 @@
   margin-bottom: 25px;
 }
 
-/* 🔥 LA CLASE CORRECTA ES ESTA */
 .btn-signup {
   padding: 14px 24px;
   border: 1px solid #dee2e6;
@@ -103,9 +94,6 @@
   }
 }
 
-/* ================================
-   Animación
-================================ */
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Pages for general users
 import HomePage from "./pages/MainPage/HomePage";
-import LoginPage from "./components/IniciarSesion/IniciarSesion";
-import SignUpPage from "./components/Registro/registro";
-import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
+import LoginPage from "./pages/Auth/LoginPage";
+import SignUpPage from "./pages/Auth/SignUpPage";
+import ForgotPassword from "./pages/Auth/ForgotPasswordPage";
 import Empresas from "./pages/MainPage/Empresas/Empresas";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 
@@ -39,7 +39,7 @@ import OffersPage from "./pages/AdminPage/AdminOfertas";
 import UsersManagePage from "./pages/AdminPage/AdminUsuarios";
 
 // Shared components
-import ReclutadorForm from "./components/Registro/reclutadorForm/reclutadorForm";
+import ReclutadorForm from "./pages/Auth/reclutadorForm/ReclutadorForm";
 import NewReclutador from "./components/Empresa/NewReclutador";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
