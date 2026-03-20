@@ -1,97 +1,18 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
-
-:root {
-  --rec-bg: #eef2ff;
-  --rec-surface: #ffffff;
-  --rec-border: #dbe4f0;
-  --rec-text: #0f172a;
-  --rec-muted: #64748b;
-  --rec-blue: #2563eb;
-  --rec-blue-dark: #1d4ed8;
-  --rec-green: #059669;
-}
-
-.reclutador-shell-RP {
-  display: flex;
-  min-height: calc(100vh - 80px);
-  background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 30%),
-    linear-gradient(135deg, #f8fafc 0%, var(--rec-bg) 100%);
-  font-family: "Space Grotesk", sans-serif;
-  color: var(--rec-text);
-}
-
-.reclutador-main-RP {
-  flex: 1;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.reclutador-loading-RP,
-.reclutador-alert-RP {
-  padding: 1.5rem;
-  border-radius: 18px;
-  text-align: center;
-  background: var(--rec-surface);
-  border: 1px solid var(--rec-border);
-}
-
-.reclutador-alert-RP.error {
-  background: #fef2f2;
-  color: #991b1b;
-  border-color: #fecaca;
-}
-
 .reclutador-hero-RP {
-  background: linear-gradient(135deg, #ffffff, #f8fbff);
-  border: 1px solid var(--rec-border);
-  border-radius: 24px;
-  padding: 1.5rem 1.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
-}
-
-.reclutador-hero-RP h1 {
-  margin: 0;
-  font-size: clamp(1.2rem, 1.9vw, 1.75rem);
-  line-height: 1.1;
-}
-
-.reclutador-kicker-RP {
-  margin: 0 0 0.45rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--rec-blue);
+  flex-wrap: wrap;
 }
 
 .reclutador-hero-metric-RP {
-  min-width: 160px;
-  padding: 1rem 1.25rem;
-  border-radius: 18px;
-  background: linear-gradient(135deg, var(--rec-blue), var(--rec-blue-dark));
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.28);
-}
-
-.reclutador-hero-metric-RP strong {
-  font-size: 2rem;
-  line-height: 1;
-}
-
-.reclutador-hero-metric-RP span {
-  font-size: 0.85rem;
-  opacity: 0.92;
+  min-width: 150px;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  text-align: center;
 }
 
 .reclutador-actions-RP {
@@ -101,327 +22,46 @@
 }
 
 .reclutador-action-card-RP {
-  border: 1px solid var(--rec-border);
-  border-radius: 18px;
-  background: var(--rec-surface);
-  padding: 1rem;
-  text-decoration: none;
-  color: var(--rec-text);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
   display: grid;
-  gap: 0.45rem;
-  align-items: center;
+  gap: 0.35rem;
   text-align: center;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  font-size: 0.95rem;
-}
-
-.reclutador-action-card-RP svg {
-  color: var(--rec-blue);
-  margin: 0 auto;
-}
-
-.reclutador-action-card-RP strong {
-  font-size: 0.95rem;
-}
-
-.reclutador-action-card-RP span {
-  color: var(--rec-muted);
-  font-size: 0.75rem;
-  line-height: 1.3;
-}
-
-.reclutador-action-card-RP:hover {
-  transform: translateY(-2px);
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 16px 26px rgba(37, 99, 235, 0.08);
-}
-
-.reclutador-action-card-RP.danger svg {
-  color: #dc2626;
-}
-
-.reclutador-action-card-RP.danger:hover {
-  border-color: rgba(220, 38, 38, 0.32);
-  box-shadow: 0 16px 26px rgba(220, 38, 38, 0.08);
-}
-
-.reclutador-grid-RP {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.25rem;
-  align-items: start;
-}
-
-.reclutador-card-RP {
-  background: var(--rec-surface);
-  border: 1px solid var(--rec-border);
-  border-radius: 22px;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
-  padding: 1.15rem;
-}
-
-.reclutador-card-header-RP {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.reclutador-card-header-RP h2 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.reclutador-link-RP {
-  color: var(--rec-blue-dark);
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.reclutador-company-RP {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.85rem;
-  align-items: center;
-}
-
-.reclutador-company-avatar-RP {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--rec-blue), var(--rec-blue-dark));
-  display: grid;
-  place-items: center;
-  color: white;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.reclutador-company-avatar-RP img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.reclutador-company-info-RP h3 {
-  margin: 0 0 0.3rem;
-  font-size: 1.05rem;
-}
-
-.reclutador-company-info-RP p {
-  margin: 0 0 0.35rem;
-  color: var(--rec-muted);
-  font-size: 0.95rem;
-}
-
-.reclutador-company-info-RP span {
-  color: var(--rec-muted);
-  font-size: 0.85rem;
-}
-
-.reclutador-empty-RP {
-  display: grid;
-  gap: 1rem;
-  color: var(--rec-muted);
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-.reclutador-empty-RP p {
-  margin: 0.5rem 0;
-}
-
-.reclutador-button-RP {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--rec-blue), var(--rec-blue-dark));
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-  box-shadow: 0 14px 22px rgba(37, 99, 235, 0.22);
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.reclutador-button-RP:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 28px rgba(37, 99, 235, 0.3);
 }
 
 .reclutador-ofertas-list-RP {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .reclutador-oferta-item-RP {
-  padding: 1rem;
-  border: 1px solid var(--rec-border);
-  border-radius: 14px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   gap: 1rem;
-  background: #fafbfc;
-  transition: all 0.2s ease;
+  padding: 0.9rem 1rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 14px;
+  background: #f8fafc;
 }
 
-.reclutador-oferta-item-RP:hover {
-  background: var(--rec-surface);
-  border-color: var(--rec-blue);
-}
-
-.reclutador-oferta-item-RP h4 {
-  margin: 0 0 0.3rem;
-  font-size: 0.95rem;
-  color: var(--rec-text);
-}
-
-.reclutador-oferta-meta-RP {
-  margin: 0;
-  color: var(--rec-muted);
-  font-size: 0.85rem;
-}
-
+.reclutador-oferta-meta-RP,
 .reclutador-oferta-salary-RP {
-  display: inline-block;
-  margin-top: 0.5rem;
-  color: var(--rec-green);
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.reclutador-oferta-actions-RP {
-  display: flex;
-  gap: 0.5rem;
-  flex-shrink: 0;
+  margin: 0.2rem 0 0;
+  color: #64748b;
 }
 
 .reclutador-oferta-link-RP {
-  padding: 0.5rem 0.85rem;
-  border-radius: 8px;
-  background: var(--rec-blue);
-  color: white;
+  color: #1d4ed8;
+  font-weight: 700;
   text-decoration: none;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.2s ease;
 }
 
 .reclutador-oferta-link-RP:hover {
-  background: var(--rec-blue-dark);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .reclutador-hero-RP {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .reclutador-actions-RP {
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  }
-
-  .reclutador-grid-RP {
-    grid-template-columns: 1fr;
-  }
-
-  .reclutador-oferta-item-RP {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .reclutador-oferta-actions-RP {
-    width: 100%;
-  }
-
-  .reclutador-oferta-link-RP {
-    flex: 1;
-    text-align: center;
-  }
-}
-.sidebar-nav {
-  padding: 1rem 0.75rem;
-  position: sticky;
-  top: 80px;
-  height: calc(100vh - 80px);
-}
-
-.nav-list-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.nav-item-sidebar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 12px;
-  color: var(--rec-muted);
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.nav-item-sidebar.active {
-  background: #eef2ff;
-  color: var(--rec-blue-dark);
-}
-
-.nav-item-sidebar:hover {
-  background: #f1f5f9;
-  color: var(--rec-text);
-}
-
-.nav-icon {
-  display: inline-flex;
-  width: 18px;
-  height: 18px;
-}
-
-@media (max-width: 1024px) {
-  .reclutador-shell-RP {
-    flex-direction: column;
-  }
-
-  .sidebar-nav {
-    width: 100%;
-    height: auto;
-    position: static;
-    border-right: none;
-    border-bottom: 1px solid var(--rec-border);
-  }
-
-  .nav-list-sidebar {
-    flex-direction: row;
-    overflow-x: auto;
-  }
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
-  .reclutador-main-RP {
-    padding: 1rem;
-  }
-
+  .reclutador-oferta-item-RP,
   .reclutador-hero-RP {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 }
-
-/* styles removed for MVP */
