@@ -15,7 +15,7 @@ function Empresas() {
 
   return (
     <>
-      <Header />
+      <Header variant="simple" />
 
       <main className="main-empresas">
         <h1 className="empresas-title">Descubre las mejores empresas según su sector</h1>

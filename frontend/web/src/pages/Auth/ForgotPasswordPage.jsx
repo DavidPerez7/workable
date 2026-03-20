@@ -7,7 +7,7 @@ import "./ForgotPasswordPage.css";
 const ForgotPasswordPage = () => {
   return (
     <>
-      <Header />
+      <Header variant="simple" />
       <main className="main-forgot-password">
         <div className="div-forgot-password-container">
           <form className="form-forgot-password">

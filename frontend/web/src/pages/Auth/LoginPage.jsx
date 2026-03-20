@@ -42,7 +42,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <Header />
+      <Header variant="simple" showAuthActions />
       <main className="main-login">
         <div className="login-container">
           <div className="login-card">

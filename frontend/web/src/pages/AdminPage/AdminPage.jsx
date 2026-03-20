@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Footer from '../../components/Footer/footer';
-import HeaderAdmin from '../../components/HeaderAdmin/HeaderAdmin';
+import Header from '../../components/Header/Header';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import AdminUsuarios from './AdminUsuarios';
@@ -18,7 +18,7 @@ import './AdminPage.css';
 function AdminPage() {
   return (
     <div className="admin-page-shell">
-      <HeaderAdmin />
+      <Header variant="simple" />
       <div className="admin-shell">
         <Sidebar />
         <div className="admin-content">

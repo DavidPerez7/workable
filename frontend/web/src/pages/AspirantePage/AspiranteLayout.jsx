@@ -6,7 +6,7 @@ import AppPageShell from "../../components/shared/AppPageShell";
 const AspiranteLayout = ({ children, mainClassName = "", shellClassName = "", withSidebar = true }) => {
   return (
     <AppPageShell
-      header={<Header isLoggedIn={true} userRole="ASPIRANTE" />}
+      header={<Header variant="simple" />}
       sidebar={withSidebar ? <SidebarAspirante /> : null}
       footer={<Footer />}
       mainClassName={mainClassName}

@@ -1,4 +1,4 @@
-import HeaderReclutador from "../../components/HeaderReclutador/HeaderReclutador";
+import Header from "../../components/Header/Header";
 import SidebarReclutador from "../../components/SidebarReclutador/SidebarReclutador";
 import AppPageShell from "../../components/shared/AppPageShell";
 import "./ReclutadorGlobal.css";
@@ -6,7 +6,7 @@ import "./ReclutadorGlobal.css";
 const ReclutadorLayout = ({ children, mainClassName = "" }) => {
   return (
     <AppPageShell
-      header={<HeaderReclutador />}
+      header={<Header variant="simple" />}
       sidebar={<SidebarReclutador />}
       mainClassName={mainClassName ? `reclutador-main-RP ${mainClassName}` : "reclutador-main-RP"}
       shellClassName="reclutador-shell-RP"

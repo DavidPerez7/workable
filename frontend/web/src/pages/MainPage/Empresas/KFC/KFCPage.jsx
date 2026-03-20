@@ -17,7 +17,7 @@ const KFCPage = () => {
 
   return (
     <>
-      <Header />
+      <Header variant="simple" />
       <main className="mainKfc" role="main">
         <section className="sectionHeaderKfc">
           <div className="headerContentKfc">

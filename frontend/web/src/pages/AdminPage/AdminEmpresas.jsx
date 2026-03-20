@@ -1,5 +1,5 @@
 import React from 'react';
-import HeaderAdmin from '../../components/HeaderAdmin/HeaderAdmin';
+import Header from '../../components/Header/Header';
 import Sidebar from './Sidebar';
 import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
 import { getAllEmpresasDto, getEmpresaById, crearEmpresa, actualizarEmpresa, eliminarEmpresa } from '../../api/empresaAPI';
@@ -8,7 +8,7 @@ import './AdminPage.css';
 export default function AdminEmpresas() {
   return (
     <div className="admin-page-shell">
-      <HeaderAdmin />
+      <Header variant="simple" />
       <div className="admin-shell">
         <Sidebar />
         <div className="admin-content">

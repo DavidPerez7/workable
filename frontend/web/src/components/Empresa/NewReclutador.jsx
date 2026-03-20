@@ -106,7 +106,7 @@ const NewReclutador = () => {
 
   return (
     <>
-      <Header />
+      <Header variant="simple" />
       <div className="new-reclutador-container">
         <div className="new-reclutador-card">
           <h1 className="new-reclutador-title">Registro de Nuevo Reclutador</h1>

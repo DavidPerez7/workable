@@ -1,5 +1,5 @@
 import React from 'react';
-import HeaderAdmin from '../../components/HeaderAdmin/HeaderAdmin';
+import Header from '../../components/Header/Header';
 import Sidebar from './Sidebar';
 import CrudEntityPage from './CrudEntityPage/CrudEntityPage';
 import { getAllOfertas, getOfertaById, crearOferta, actualizarOferta, eliminarOferta } from '../../api/ofertasAPI';
@@ -8,7 +8,7 @@ import './AdminPage.css';
 export default function AdminOfertas() {
   return (
     <div className="admin-page-shell">
-      <HeaderAdmin />
+      <Header variant="simple" />
       <div className="admin-shell">
         <Sidebar />
         <div className="admin-content">
