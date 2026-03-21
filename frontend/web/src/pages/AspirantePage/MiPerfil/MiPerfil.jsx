@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  BookOpenText,
-  FileText,
-  LogOut,
+  BadgeInfo,
   Mail,
   MapPin,
   PencilLine,
-  Phone,
   Trash2,
   UserCircle2,
 } from "lucide-react";
 import AspiranteCard from "../../../components/aspirante/AspiranteCard";
-import AspiranteSectionHeader from "../../../components/aspirante/AspiranteSectionHeader";
 import AspiranteButton from "../../../components/aspirante/AspiranteButton";
 import AspiranteLayout from "../AspiranteLayout";
 import aspirantesApi from "../../../api/aspirantesApi";
@@ -54,11 +50,6 @@ const MiPerfil = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const cerrarSesion = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
   if (loading) {
     return (
       <AspiranteLayout shellClassName="mi-perfil-shell-AP" mainClassName="mi-perfil-main-AP">
@@ -93,47 +84,62 @@ const MiPerfil = () => {
         </div>
 
         <div className="mi-perfil-hero-text-AP">
-          <p className="mi-perfil-kicker-AP">Mi perfil</p>
           <h1>
             {usuario?.nombre} {usuario?.apellido}
           </h1>
-          <p>{usuario?.descripcion || "Resumen no disponible"}</p>
+          <p>{usuario?.correo || "Sin correo"}</p>
         </div>
 
         <div className="mi-perfil-hero-badge-AP">
-          <strong>Perfil activo</strong>
-          <span>{usuario?.municipio?.nombre || "Sin ubicación"}</span>
+          <strong>{usuario?.genero || "Género no registrado"}</strong>
+          <span>{usuario?.fechaNacimiento ? new Date(usuario.fechaNacimiento).toLocaleDateString("es-CO") : "Sin fecha"}</span>
         </div>
       </section>
 
       <section className="mi-perfil-grid-AP">
         <AspiranteCard className="mi-perfil-card-AP">
           <div className="mi-perfil-card-header-AP">
-            <Mail size={18} />
-            <h2>Contacto</h2>
+            <BadgeInfo size={18} />
+            <h2>Datos básicos</h2>
+          </div>
+          <div className="mi-perfil-field-AP">
+            <span>Id</span>
+            <strong>{usuario?.id || usuario?.usuarioId || "No registrado"}</strong>
+          </div>
+          <div className="mi-perfil-field-AP">
+            <span>Nombre</span>
+            <strong>{usuario?.nombre || "No registrado"}</strong>
+          </div>
+          <div className="mi-perfil-field-AP">
+            <span>Apellido</span>
+            <strong>{usuario?.apellido || "No registrado"}</strong>
           </div>
           <div className="mi-perfil-field-AP">
             <span>Correo</span>
             <strong>{usuario?.correo || "No registrado"}</strong>
           </div>
           <div className="mi-perfil-field-AP">
-            <span>Teléfono</span>
-            <strong>{usuario?.telefono || "No registrado"}</strong>
+            <span>Foto de perfil</span>
+            <strong className="mi-perfil-link-value-AP">
+              {usuario?.urlFotoPerfil ? (
+                <a href={usuario.urlFotoPerfil} target="_blank" rel="noreferrer">
+                  Ver URL
+                </a>
+              ) : (
+                "No registrada"
+              )}
+            </strong>
           </div>
         </AspiranteCard>
 
         <AspiranteCard className="mi-perfil-card-AP">
           <div className="mi-perfil-card-header-AP">
-            <MapPin size={18} />
-            <h2>Ubicación</h2>
+            <Mail size={18} />
+            <h2>Contacto</h2>
           </div>
           <div className="mi-perfil-field-AP">
-            <span>Municipio</span>
-            <strong>{usuario?.municipio?.nombre || "No registrado"}</strong>
-          </div>
-          <div className="mi-perfil-field-AP">
-            <span>Departamento</span>
-            <strong>{usuario?.municipio?.departamento || "No registrado"}</strong>
+            <span>Teléfono</span>
+            <strong>{usuario?.telefono || "No registrado"}</strong>
           </div>
           <div className="mi-perfil-field-AP">
             <span>Fecha de nacimiento</span>
@@ -143,20 +149,18 @@ const MiPerfil = () => {
                 : "No registrada"}
             </strong>
           </div>
-        </AspiranteCard>
-
-        <AspiranteCard className="mi-perfil-card-AP mi-perfil-card-wide-AP">
-          <div className="mi-perfil-card-header-AP">
-            <FileText size={18} />
-            <h2>Resumen</h2>
+          <div className="mi-perfil-field-AP">
+            <span>Género</span>
+            <strong>{usuario?.genero || "No registrado"}</strong>
           </div>
-          <p>{usuario?.resumen || "Aún no has agregado un resumen profesional."}</p>
+          <div className="mi-perfil-field-AP">
+            <span>Municipio</span>
+            <strong>{usuario?.municipio?.nombre || "No registrado"}</strong>
+          </div>
         </AspiranteCard>
       </section>
 
       <AspiranteCard as="section" className="mi-perfil-actions-AP">
-        <AspiranteSectionHeader kicker="Acciones" title="Atajos del aspirante" />
-
         <div className="mi-perfil-actions-grid-AP">
           <AspiranteButton as={Link} to="/Aspirante/MiPerfil/ActualizarPerfil" variant="action">
             <PencilLine size={28} />
@@ -164,28 +168,10 @@ const MiPerfil = () => {
             <span>Editar tus datos personales y de contacto.</span>
           </AspiranteButton>
 
-          <AspiranteButton as={Link} to="/Aspirante/MiPerfil/HojaDeVida" variant="action">
-            <BookOpenText size={28} />
-            <strong>Hoja de vida</strong>
-            <span>Ver y actualizar tu información profesional.</span>
-          </AspiranteButton>
-
-          <AspiranteButton as={Link} to="/Aspirante/MiPerfil/MisPostulaciones" variant="action">
-            <FileText size={28} />
-            <strong>Mis postulaciones</strong>
-            <span>Revisar y gestionar tus aplicaciones.</span>
-          </AspiranteButton>
-
           <AspiranteButton as={Link} to="/Aspirante/MiPerfil/EliminarPerfil" variant="action" className="danger">
             <Trash2 size={28} />
             <strong>Eliminar cuenta</strong>
             <span>Acción permanente para borrar tu perfil.</span>
-          </AspiranteButton>
-
-          <AspiranteButton type="button" variant="action" onClick={cerrarSesion} className="warning">
-            <LogOut size={28} />
-            <strong>Cerrar sesión</strong>
-            <span>Salir de la plataforma de aspirante.</span>
           </AspiranteButton>
         </div>
       </AspiranteCard>

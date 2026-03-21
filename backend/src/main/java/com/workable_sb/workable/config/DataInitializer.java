@@ -89,7 +89,7 @@ public class DataInitializer implements CommandLineRunner {
         aspirante.setCorreo("aspirante@example.com");
         aspirante.setPassword(passwordEncoder.encode("pass123"));
         aspirante.setTelefono("3105555555");
-        aspirante.setUrlFotoPerfil("https://example.com/avatars/aspirante.png");
+        aspirante.setUrlFotoPerfil("https://media.gettyimages.com/id/1434359719/es/foto/sonriente-hombre-de-negocios.jpg?s=2048x2048&w=gi&k=20&c=KHSSxqqSCYICEMvpBlXreEUpzvQ8qIqVr77Ja4kf1pQ=");
         aspirante.setFechaNacimiento(LocalDate.of(2000, 6, 15));
         aspirante.setMunicipio(municipio);
         aspirante.setGenero(Aspirante.Genero.MASCULINO);

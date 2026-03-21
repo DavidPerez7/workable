@@ -16,16 +16,22 @@ function Header({ variant = "public", rightContent = null, className = "", showA
 
       {rightContent ? <div className="header-right-content">{rightContent}</div> : null}
 
-      {showDefaultAuthActions ? (
-        <div className="header-actions">
-          <Link to="/Login" className="btn-login">
-            Iniciar Sesión
-          </Link>
-          <Link to="/SignUp" className="btn-signup-header">
-            Registrarse
-          </Link>
+      <div className="header-end">
+        {showDefaultAuthActions ? (
+          <div className="header-actions">
+            <Link to="/Login" className="btn-login">
+              Iniciar Sesión
+            </Link>
+            <Link to="/SignUp" className="btn-signup-header">
+              Registrarse
+            </Link>
+          </div>
+        ) : null}
+
+        <div className="header-support" aria-label="Soporte del proyecto">
+          Soporte
         </div>
-      ) : null}
+      </div>
     </header>
   );
 }

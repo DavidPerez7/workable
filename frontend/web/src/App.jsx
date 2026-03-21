@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router-dom";
 
 // Pages for general users
 import HomePage from "./pages/MainPage/HomePage";
@@ -29,8 +29,9 @@ import AspirantePage from "./pages/AspirantePage/AspirantePage";
 import MiPerfil from "./pages/AspirantePage/MiPerfil/MiPerfil";
 import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/ActualizarPerfil";
 import EliminarPerfil from "./pages/AspirantePage/MiPerfil/EliminarPerfil/EliminarPerfil";
-import MisPostulaciones from "./pages/AspirantePage/MiPerfil/MisPostulaciones/MisPostulaciones";
+import MisPostulaciones from "./pages/AspirantePage/MisPostulaciones/MisPostulaciones";
 import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
+import AspiranteOfertaCompletaPage from "./pages/AspirantePage/OfertaCompletaPage/OfertaCompletaPage";
 
 // Pages for administrators
 import AdminPage from "./pages/AdminPage/AdminPage";
@@ -73,8 +74,10 @@ function App() {
         <Route path="/Aspirante/MiPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><MiPerfil /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/ActualizarPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><ActualizarPerfil /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/EliminarPerfil" element={<ProtectedRoute requiredRole="ASPIRANTE"><EliminarPerfil /></ProtectedRoute>} />
-        <Route path="/Aspirante/MiPerfil/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
+        <Route path="/Aspirante/MiPerfil/MisPostulaciones" element={<Navigate to="/Aspirante/MisPostulaciones" replace />} />
+        <Route path="/Aspirante/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
+        <Route path="/Aspirante/OfertaCompleta/:ofertaId" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspiranteOfertaCompletaPage /></ProtectedRoute>} />
         
         {/* Rutas protegidas de Administrador */}
         <Route path="/Administrador/*" element={<ProtectedRoute requiredRole="ADMIN"><AdminPage /></ProtectedRoute>} />

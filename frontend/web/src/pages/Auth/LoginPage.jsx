@@ -43,68 +43,69 @@ const LoginPage = () => {
   return (
     <>
       <Header variant="simple" showAuthActions />
-      <main className="main-login">
-        <div className="login-container">
-          <div className="login-card">
-            <div className="login-header">
-              <h2 className="login-title">Iniciar Sesión</h2>
-              <p className="login-subtitle">Accede a tu cuenta para ver oportunidades laborales</p>
-            </div>
-
-            <form className="login-form" onSubmit={handleLogin}>
-              <div className="form-group">
-                <label className="form-label" htmlFor="correo">
-                  Correo electrónico
-                </label>
-                <input
-                  id="correo"
-                  type="email"
-                  className="form-input"
-                  placeholder="Correo electronico"
-                  value={correo}
-                  onChange={(e) => setCorreo(e.target.value)}
-                  required
-                  autoComplete="email"
-                />
+      <div className="login-page-shell">
+        <main className="main-login">
+          <div className="login-container">
+            <div className="login-card">
+              <div className="login-header">
+                <h2 className="login-title">Iniciar Sesión</h2>
               </div>
 
-              <div className="form-group">
-                <label className="form-label" htmlFor="password">
-                  Contraseña
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  className="form-input"
-                  placeholder="Contraseña"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                />
-              </div>
-
-              {errorMessage ? (
-                <div className="error-message">
-                  <span className="error-icon">⚠️</span>
-                  {errorMessage}
+              <form className="login-form" onSubmit={handleLogin}>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="correo">
+                    Correo electrónico
+                  </label>
+                  <input
+                    id="correo"
+                    type="email"
+                    className="form-input"
+                    placeholder="Correo electronico"
+                    value={correo}
+                    onChange={(e) => setCorreo(e.target.value)}
+                    required
+                    autoComplete="email"
+                  />
                 </div>
-              ) : null}
 
-              <button type="submit" className={`submit-button ${isLoading ? "loading" : ""}`} disabled={isLoading}>
-                {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
-              </button>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="password">
+                    Contraseña
+                  </label>
+                  <input
+                    id="password"
+                    type="password"
+                    className="form-input"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                  />
+                </div>
 
-              <div className="form-footer">
-                <Link to="/ForgotPassword" className="forgot-password">
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </div>
-            </form>
+                {errorMessage ? (
+                  <div className="error-message">
+                    <span className="error-icon">⚠️</span>
+                    {errorMessage}
+                  </div>
+                ) : null}
+
+                <button type="submit" className={`submit-button ${isLoading ? "loading" : ""}`} disabled={isLoading}>
+                  {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+                </button>
+
+                <div className="form-footer">
+                  <Link to="/ForgotPassword" className="forgot-password">
+                    ¿Olvidaste tu contraseña?
+                  </Link>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
+        </main>
+        <Footer />
+      </div>
     </>
   );
 };

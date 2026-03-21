@@ -11,7 +11,6 @@
 }
 
 .aspirante-shell-AP {
-  display: block;
   min-height: calc(100vh - 80px);
   background:
     radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 30%),
@@ -38,12 +37,23 @@
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
 }
 
+.aspirante-hero-copy-AP {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 42rem;
+}
+
 .aspirante-hero-AP h1 {
   margin: 0;
   color: var(--asp-text);
   font-size: clamp(1.2rem, 1.9vw, 1.75rem);
   line-height: 1.1;
-  max-width: 28rem;
+}
+
+.aspirante-hero-text-AP {
+  margin: 0;
+  color: var(--asp-muted);
+  line-height: 1.55;
 }
 
 .aspirante-kicker-AP,
@@ -79,11 +89,47 @@
   opacity: 0.92;
 }
 
+.aspirante-guides-AP {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.aspirante-guide-card-AP {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--asp-border);
+  border-radius: 18px;
+  padding: 1rem 1.05rem;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.aspirante-guide-card-AP strong {
+  color: var(--asp-text);
+}
+
+.aspirante-guide-card-AP span,
+.aspirante-help-AP {
+  color: var(--asp-muted);
+  line-height: 1.5;
+}
+
+.aspirante-help-AP {
+  margin: 0;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
 .aspirante-content-AP {
   display: grid;
-  grid-template-columns: 290px minmax(0, 1.25fr) minmax(340px, 1fr);
+  grid-template-columns: 340px minmax(0, 1fr);
   gap: 1.25rem;
   align-items: start;
+}
+
+.aspirante-listing-AP {
+  min-width: 0;
 }
 
 .aspirante-actions-AP {
@@ -144,6 +190,17 @@
   padding: 1.15rem;
 }
 
+.aspirante-filters-AP .app-section-header,
+.aspirante-listing-AP .app-section-header {
+  margin-bottom: 1rem;
+}
+
+  .aspirante-filters-AP .app-section-header h2,
+  .aspirante-listing-AP .app-section-header h2 {
+    font-size: 1.65rem;
+    letter-spacing: normal;
+  }
+
 .filters-form-AP {
   display: grid;
   gap: 0.9rem;
@@ -183,33 +240,41 @@
 }
 
 .offer-card-AP {
-  padding: 1rem;
-  cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 1.1rem 1.15rem;
+  cursor: default;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
 }
 
 .offer-card-AP:hover,
 .offer-card-AP.active {
-  transform: translateY(-2px);
-  border-color: rgba(37, 99, 235, 0.38);
-  box-shadow: 0 16px 26px rgba(37, 99, 235, 0.08);
+  border-color: var(--asp-border);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  transform: none;
 }
 
-.offer-card-top-AP {
+.offer-card-header-AP {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
 }
 
-.offer-card-top-AP h3 {
+.offer-card-title-group-AP {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.offer-card-title-group-AP h3 {
   margin: 0;
   color: var(--asp-text);
-  font-size: 1rem;
+  font-size: 1.06rem;
+  line-height: 1.25;
 }
 
 .offer-company-AP,
-.offer-meta-AP,
 .offer-footer-AP,
 .detail-title-row-AP p,
 .detail-note-AP,
@@ -219,47 +284,88 @@
 }
 
 .offer-company-AP {
-  margin: 0.4rem 0 0;
+  margin: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.88rem;
+  padding: 0.45rem 0.7rem;
+  background: #f8fbff;
+  border: 1px solid var(--asp-border);
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--asp-text);
+  width: fit-content;
 }
 
 .offer-chip-AP,
 .detail-badge-AP {
-  padding: 0.45rem 0.7rem;
+  padding: 0.45rem 0.8rem;
   background: #eff6ff;
   color: var(--asp-blue-dark);
   border: 1px solid #bfdbfe;
-}
-
-.offer-meta-AP {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 0.85rem;
-  font-size: 0.85rem;
-}
-
-.offer-meta-AP span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  align-self: flex-start;
 }
 
 .offer-footer-AP {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: 0.9rem;
-  padding-top: 0.9rem;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--asp-border);
+}
+
+.offer-inline-meta-AP {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.offer-inline-meta-AP span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  background: #f8fbff;
+  border: 1px solid var(--asp-border);
+  border-radius: 999px;
+  color: var(--asp-muted);
+  font-size: 0.84rem;
+}
+
+.offer-actions-AP {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.offer-actions-AP .asp-button,
+.offer-actions-AP .asp-button-secondary,
+.offer-actions-AP .app-button,
+.offer-actions-AP .app-button-secondary {
+  padding: 0.72rem 0.9rem;
 }
 
 .offer-footer-AP strong {
   color: var(--asp-green);
+}
+
+.offer-salary-AP {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  white-space: nowrap;
 }
 
 .detail-card-AP {
@@ -327,6 +433,10 @@
 }
 
 @media (max-width: 1200px) {
+  .aspirante-guides-AP {
+    grid-template-columns: 1fr;
+  }
+
   .aspirante-actions-AP {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -349,6 +459,10 @@
     padding: 1rem;
   }
 
+  .aspirante-hero-AP {
+    padding: 1.2rem 1.1rem;
+  }
+
   .aspirante-actions-AP {
     grid-template-columns: 1fr;
   }
@@ -356,10 +470,22 @@
   .aspirante-hero-AP,
   .section-header-AP,
   .detail-title-row-AP,
-  .offer-card-top-AP,
+  .offer-card-header-AP,
   .offer-footer-AP {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .offer-inline-meta-AP {
+    width: 100%;
+  }
+
+  .offer-actions-AP {
+    justify-content: stretch;
+  }
+
+  .offer-actions-AP > * {
+    width: 100%;
   }
 
   .detail-grid-AP {

@@ -94,7 +94,7 @@
 }
 
 .hoja-card-AP {
-  padding: 1.15rem;
+  padding: 0.8rem;
 }
 
 .hoja-card-wide-AP {
@@ -106,13 +106,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .hoja-form-grid-AP {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem;
+  gap: 0.45rem;
 }
 
 .field-wide-AP {
@@ -124,16 +124,16 @@
 }
 
 .list-stack-AP {
-  margin-top: 1rem;
+  margin-top: 0.55rem;
   display: grid;
-  gap: 0.85rem;
+  gap: 0.55rem;
 }
 
 .item-card-AP {
   border: 1px solid var(--hv-border);
   border-radius: 18px;
   background: #f8fbff;
-  padding: 1rem;
+  padding: 0.7rem;
 }
 
 .item-top-AP {
@@ -158,6 +158,33 @@
   text-align: center;
   border: 1px dashed var(--hv-border);
   border-radius: 16px;
+}
+
+.hoja-main-AP .app-form-field,
+.hoja-main-AP .asp-form-field {
+  gap: 0.2rem;
+}
+
+.hoja-main-AP .app-form-field input,
+.hoja-main-AP .app-form-field textarea,
+.hoja-main-AP .app-form-field select,
+.hoja-main-AP .asp-form-field input,
+.hoja-main-AP .asp-form-field textarea,
+.hoja-main-AP .asp-form-field select {
+  padding: 0.55rem 0.7rem;
+  border-radius: 12px;
+}
+
+.hoja-main-AP .app-form-field textarea,
+.hoja-main-AP .asp-form-field textarea {
+  min-height: 64px;
+}
+
+.hoja-main-AP .app-form-field label,
+.hoja-main-AP .asp-form-field label,
+.hoja-main-AP .app-form-field > span,
+.hoja-main-AP .asp-form-field > span {
+  font-size: 0.78rem;
 }
 
 @media (max-width: 768px) {

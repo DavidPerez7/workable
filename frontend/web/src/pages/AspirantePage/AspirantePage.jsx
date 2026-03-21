@@ -2,14 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Briefcase,
-  BookOpenText,
   Building2,
-  FileText,
   MapPin,
   Search,
-  Send,
-  UserRoundPen,
-  UserRoundX,
   SlidersHorizontal,
 } from "lucide-react";
 import "./AspirantePage.css";
@@ -74,7 +69,6 @@ const AspirantePage = () => {
 
   const [ofertas, setOfertas] = useState([]);
   const [municipios, setMunicipios] = useState([]);
-  const [selectedOferta, setSelectedOferta] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState("");
@@ -136,12 +130,6 @@ const AspirantePage = () => {
       const data = await buscarOfertasAvanzada(payload);
       const ofertasData = Array.isArray(data) ? data : [];
       setOfertas(ofertasData);
-      setSelectedOferta((current) => {
-        if (current && ofertasData.some((oferta) => oferta.id === current.id)) {
-          return ofertasData.find((oferta) => oferta.id === current.id) || ofertasData[0] || null;
-        }
-        return ofertasData[0] || null;
-      });
       setNotice(
         ofertasData.length
           ? `Se encontraron ${ofertasData.length} ofertas.`
@@ -222,61 +210,21 @@ const AspirantePage = () => {
   };
 
   return (
-    <AspiranteLayout withSidebar={false} shellClassName="aspirante-shell-AP" mainClassName="aspirante-main-AP">
-      <section className="aspirante-hero-AP">
-        <div>
-          <h1>Encuentra ofertas y postúlate</h1>
-        </div>
-
-        <div className="aspirante-hero-stats-AP">
-          <strong>{ofertas.length}</strong>
-          <span>ofertas visibles</span>
-        </div>
-      </section>
-
-      <section className="aspirante-actions-AP">
-        <AspiranteCard as={Link} to="/Aspirante/MiPerfil" className="aspirante-action-card-AP">
-          <FileText size={22} />
-          <strong>Mi perfil</strong>
-          <span>Ver tus datos y accesos principales.</span>
-        </AspiranteCard>
-
-        <AspiranteCard as={Link} to="/Aspirante/MiPerfil/ActualizarPerfil" className="aspirante-action-card-AP">
-          <UserRoundPen size={22} />
-          <strong>Actualizar perfil</strong>
-          <span>Editar información personal y contacto.</span>
-        </AspiranteCard>
-
-        <AspiranteCard as={Link} to="/Aspirante/MiPerfil/HojaDeVida" className="aspirante-action-card-AP">
-          <BookOpenText size={22} />
-          <strong>Hoja de vida</strong>
-          <span>Revisar estudios, experiencia y resumen.</span>
-        </AspiranteCard>
-
-        <AspiranteCard as={Link} to="/Aspirante/MiPerfil/MisPostulaciones" className="aspirante-action-card-AP">
-          <Briefcase size={22} />
-          <strong>Mis postulaciones</strong>
-          <span>Seguir el estado de tus aplicaciones.</span>
-        </AspiranteCard>
-
-        <AspiranteCard as={Link} to="/Aspirante/MiPerfil/EliminarPerfil" className="aspirante-action-card-AP danger">
-          <UserRoundX size={22} />
-          <strong>Eliminar cuenta</strong>
-          <span>Acción permanente para borrar tu perfil.</span>
-        </AspiranteCard>
-      </section>
-
+    <AspiranteLayout shellClassName="aspirante-shell-AP" mainClassName="aspirante-main-AP">
       <section className="aspirante-content-AP">
         <AspiranteCard as="aside" className="aspirante-filters-AP">
           <AspiranteSectionHeader
-            kicker="Filtros"
-            title="Filtrar ofertas"
+            title="FILTROS"
             action={
               <AspiranteButton type="button" variant="secondary" onClick={limpiarFiltros}>
                 Limpiar
               </AspiranteButton>
             }
           />
+
+          <p className="aspirante-help-AP">
+            Ajusta los filtros para reducir resultados y encontrar más rápido la vacante adecuada.
+          </p>
 
           <form className="filters-form-AP" onSubmit={handleSubmit}>
             <AspiranteFormField label="Cargo o nombre">
@@ -378,10 +326,12 @@ const AspirantePage = () => {
 
         <AspiranteCard as="section" className="aspirante-listing-AP">
           <AspiranteSectionHeader
-            kicker="Resultados"
-            title="Ofertas disponibles"
-            action={<span className="asp-badge neutral">{ofertas.length} resultados</span>}
+            title="OFERTAS DISPONIBLES"
           />
+
+          <p className="aspirante-help-AP">
+            Revisa el listado y abre el detalle completo de la oferta que te interese.
+          </p>
 
           {loading ? (
             <div className="asp-loading">Cargando ofertas...</div>
@@ -394,11 +344,10 @@ const AspirantePage = () => {
               {ofertas.map((oferta) => (
                 <article
                   key={oferta.id}
-                  className={`offer-card-AP ${selectedOferta?.id === oferta.id ? "active" : ""}`}
-                  onClick={() => setSelectedOferta(oferta)}
+                  className="offer-card-AP"
                 >
-                  <div className="offer-card-top-AP">
-                    <div>
+                  <div className="offer-card-header-AP">
+                    <div className="offer-card-title-group-AP">
                       <h3>{oferta.titulo || "Sin título"}</h3>
                       <p className="offer-company-AP">
                         <Building2 size={14} />
@@ -410,107 +359,38 @@ const AspirantePage = () => {
                     </span>
                   </div>
 
-                  <div className="offer-meta-AP">
-                    <span>
-                      <MapPin size={14} />
-                      {oferta.municipio?.nombre || "Sin ubicación"}
-                    </span>
-                    <span>
-                      <Briefcase size={14} />
-                      {oferta.nivelExperiencia || "Sin experiencia"}
-                    </span>
-                  </div>
-
                   <div className="offer-footer-AP">
-                    <strong>
+                    <strong className="offer-salary-AP">
                       {oferta.salario ? formatearSalario(oferta.salario) : "Salario no publicado"}
                     </strong>
-                    <small>
-                      {oferta.fechaPublicacion
-                        ? new Date(oferta.fechaPublicacion).toLocaleDateString("es-CO")
-                        : "Reciente"}
-                    </small>
+                    <div className="offer-inline-meta-AP">
+                      <span>
+                        <MapPin size={14} />
+                        {oferta.municipio?.nombre || "Sin ubicación"}
+                      </span>
+                      <span>
+                        <Briefcase size={14} />
+                        {oferta.nivelExperiencia || "Sin experiencia"}
+                      </span>
+                    </div>
+                    <div className="offer-actions-AP">
+                      <AspiranteButton as={Link} to={`/Aspirante/OfertaCompleta/${oferta.id}`} variant="secondary">
+                        Detalle
+                      </AspiranteButton>
+                      <AspiranteButton
+                        type="button"
+                        onClick={() => handlePostularse(oferta.id)}
+                        disabled={postulandoId === oferta.id}
+                      >
+                        {postulandoId === oferta.id ? "Postulando..." : "Postularme"}
+                      </AspiranteButton>
+                    </div>
                   </div>
                 </article>
               ))}
             </div>
           )}
         </AspiranteCard>
-
-        <section className="asp-card aspirante-detail-AP">
-          <AspiranteSectionHeader kicker="Detalle" title="Oferta seleccionada" />
-
-          {selectedOferta ? (
-            <article className="detail-card-AP">
-              <div className="detail-title-row-AP">
-                <div>
-                  <h3>{selectedOferta.titulo || "Sin título"}</h3>
-                  <p>
-                    {selectedOferta.empresa?.nombre || "Empresa"} · {selectedOferta.municipio?.nombre || "Sin ubicación"}
-                  </p>
-                </div>
-                <span className="detail-badge-AP">
-                  {selectedOferta.tipoContrato || "Contrato"}
-                </span>
-              </div>
-
-              <div className="detail-grid-AP">
-                <div>
-                  <strong>Modalidad</strong>
-                  <span>{selectedOferta.modalidad || "No definida"}</span>
-                </div>
-                <div>
-                  <strong>Experiencia</strong>
-                  <span>{selectedOferta.nivelExperiencia || "No definida"}</span>
-                </div>
-                <div>
-                  <strong>Salario</strong>
-                  <span>
-                    {selectedOferta.salario ? formatearSalario(selectedOferta.salario) : "No especificado"}
-                  </span>
-                </div>
-                <div>
-                  <strong>Fecha límite</strong>
-                  <span>
-                    {selectedOferta.fechaLimite
-                      ? new Date(selectedOferta.fechaLimite).toLocaleDateString("es-CO")
-                      : "Sin fecha"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="detail-section-AP">
-                <h4>Descripción</h4>
-                <p>{selectedOferta.descripcion || "Sin descripción disponible"}</p>
-              </div>
-
-              {selectedOferta.requisitos && (
-                <div className="detail-section-AP">
-                  <h4>Requisitos</h4>
-                  <p>{selectedOferta.requisitos}</p>
-                </div>
-              )}
-
-              <AspiranteButton
-                type="button"
-                className="asp-full-width"
-                onClick={() => handlePostularse(selectedOferta.id)}
-                disabled={postulandoId === selectedOferta.id}
-              >
-                <Send size={16} />
-                {postulandoId === selectedOferta.id ? "Postulando..." : "Postularme"}
-              </AspiranteButton>
-
-              <p className="detail-note-AP">
-                La postulación usa el endpoint real del módulo aspirante.
-              </p>
-            </article>
-          ) : (
-            <div className="asp-empty">
-              Selecciona una oferta para ver su detalle.
-            </div>
-          )}
-        </section>
       </section>
     </AspiranteLayout>
   );

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
+  Download,
   Plus,
   Save,
   Trash2,
   UserCircle2,
 } from "lucide-react";
+import { jsPDF } from "jspdf";
 import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
 import AspiranteSectionHeader from "../../../../components/aspirante/AspiranteSectionHeader";
 import AspiranteFormField from "../../../../components/aspirante/AspiranteFormField";
@@ -91,6 +93,8 @@ const serializarHoja = (hoja) => ({
   estudios: hoja.estudios,
   experiencias: hoja.experiencias,
 });
+
+const formatoTexto = (valor) => valor || "No registrado";
 
 const HojaDeVida = () => {
   const navigate = useNavigate();
@@ -236,6 +240,85 @@ const HojaDeVida = () => {
     await persistirHoja(nextHoja, "Experiencia eliminada.");
   };
 
+  const descargarPdf = () => {
+    const doc = new jsPDF();
+    const margenIzquierdo = 14;
+    const anchoTexto = 180;
+    let cursorY = 18;
+
+    const agregarTitulo = (texto) => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text(texto, margenIzquierdo, cursorY);
+      cursorY += 8;
+    };
+
+    const agregarSubtitulo = (texto) => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.text(texto, margenIzquierdo, cursorY);
+      cursorY += 6;
+    };
+
+    const agregarTexto = (texto) => {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      const lineas = doc.splitTextToSize(texto, anchoTexto);
+      doc.text(lineas, margenIzquierdo, cursorY);
+      cursorY += lineas.length * 5 + 2;
+    };
+
+    const nuevaPaginaSiHaceFalta = () => {
+      if (cursorY > 275) {
+        doc.addPage();
+        cursorY = 18;
+      }
+    };
+
+    agregarTitulo("HOJA DE VIDA");
+    agregarTexto(`Nombre: ${formatoTexto(perfil?.nombre)} ${formatoTexto(perfil?.apellido)}`);
+    agregarTexto(`Correo: ${formatoTexto(perfil?.correo)}`);
+    agregarTexto(`Telefono: ${formatoTexto(hoja?.telefono || perfil?.telefono)}`);
+    agregarTexto(`Fecha de nacimiento: ${perfil?.fechaNacimiento ? new Date(perfil.fechaNacimiento).toLocaleDateString("es-CO") : "No registrada"}`);
+    agregarTexto(`Genero: ${formatoTexto(perfil?.genero)}`);
+    agregarTexto(`Municipio: ${formatoTexto(perfil?.municipio?.nombre)}`);
+    agregarTexto(`URL foto perfil: ${formatoTexto(perfil?.urlFotoPerfil)}`);
+    cursorY += 2;
+
+    nuevaPaginaSiHaceFalta();
+    agregarSubtitulo("Resumen profesional");
+    agregarTexto(formatoTexto(hoja?.resumenProfesional));
+
+    nuevaPaginaSiHaceFalta();
+    agregarSubtitulo("Estudios");
+    if (Array.isArray(hoja?.estudios) && hoja.estudios.length > 0) {
+      hoja.estudios.forEach((estudio, index) => {
+        nuevaPaginaSiHaceFalta();
+        agregarTexto(`${index + 1}. ${formatoTexto(estudio.titulo)} - ${formatoTexto(estudio.institucion)} (${formatoTexto(estudio.nivelEducativo)})`);
+        agregarTexto(`   ${formatoTexto(estudio.fechaInicio)} a ${formatoTexto(estudio.fechaFin)}`);
+      });
+    } else {
+      agregarTexto("No hay estudios registrados.");
+    }
+
+    nuevaPaginaSiHaceFalta();
+    agregarSubtitulo("Experiencia");
+    if (Array.isArray(hoja?.experiencias) && hoja.experiencias.length > 0) {
+      hoja.experiencias.forEach((experiencia, index) => {
+        nuevaPaginaSiHaceFalta();
+        agregarTexto(`${index + 1}. ${formatoTexto(experiencia.cargo)} - ${formatoTexto(experiencia.empresa)}`);
+        agregarTexto(`   ${formatoTexto(experiencia.fechaInicio)} a ${formatoTexto(experiencia.fechaFin)}`);
+        if (experiencia.descripcion) {
+          agregarTexto(`   ${experiencia.descripcion}`);
+        }
+      });
+    } else {
+      agregarTexto("No hay experiencia registrada.");
+    }
+
+    doc.save(`hoja-de-vida-${perfil?.nombre || "aspirante"}.pdf`);
+  };
+
   if (loading) {
     return (
       <AspiranteLayout shellClassName="hoja-shell-AP" mainClassName="hoja-main-AP">
@@ -265,9 +348,10 @@ const HojaDeVida = () => {
           </div>
         </div>
 
-        <Link to="/Aspirante/MiPerfil" className="app-link-button">
-          Volver al perfil
-        </Link>
+        <AspiranteButton type="button" variant="secondary" onClick={descargarPdf}>
+          <Download size={16} />
+          Descargar PDF
+        </AspiranteButton>
       </section>
 
       {error && <AspiranteAlert type="error">{error}</AspiranteAlert>}
@@ -303,7 +387,7 @@ const HojaDeVida = () => {
             <AspiranteFormField label="Resumen profesional" fullWidth>
               <textarea
                 name="resumenProfesional"
-                rows={5}
+                rows={3}
                 value={hoja?.resumenProfesional || ""}
                 onChange={handleGeneralChange}
               />
@@ -355,7 +439,7 @@ const HojaDeVida = () => {
 
             <AspiranteFormField label="Descripción" fullWidth>
               <textarea
-                rows={3}
+                rows={2}
                 value={nuevaExperiencia.descripcion}
                 onChange={(event) =>
                   setNuevaExperiencia((current) => ({ ...current, descripcion: event.target.value }))

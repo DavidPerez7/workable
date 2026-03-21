@@ -1,7 +1,13 @@
 @import "./AuthCommon.css";
 
+.login-page-shell {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+}
+
 .main-login {
-  min-height: calc(100vh - 80px - 60px);
+  flex: 1;
   background: radial-gradient(circle at 20% 30%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%),
     radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.3) 0%, rgba(245, 158, 11, 0.2) 50%);
   display: flex;
@@ -22,6 +28,9 @@
   padding: 3rem;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.5s ease-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-header {
@@ -37,18 +46,11 @@
   line-height: 1.2;
 }
 
-.login-subtitle {
-  font-size: 1rem;
-  color: #64748b;
-  margin-top: 0.5rem;
-  line-height: 1.5;
-}
-
 .login-form {
   display: flex;
   flex-direction: column;
   width: 380px;
-  height: 480px;
+  gap: 0.5rem;
 }
 
 .form-footer {
@@ -62,6 +64,10 @@
 }
 
 @media (max-width: 768px) {
+  .login-page-shell {
+    min-height: calc(100vh - 80px);
+  }
+
   .main-login {
     padding: 1.5rem;
   }
@@ -74,12 +80,13 @@
     font-size: 1.75rem;
   }
 
-  .login-subtitle {
-    font-size: 0.95rem;
-  }
 }
 
 @media (max-width: 480px) {
+  .login-page-shell {
+    min-height: calc(100vh - 80px);
+  }
+
   .main-login {
     padding: 1rem;
   }

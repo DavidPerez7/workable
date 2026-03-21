@@ -1,0 +1,80 @@
+.oferta-detail-main-AP {
+  display: grid;
+  gap: 1rem;
+}
+
+.oferta-detail-hero-AP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.oferta-detail-hero-AP h1 {
+  margin: 0.2rem 0 0;
+  color: var(--asp-text);
+}
+
+.oferta-detail-subtitle-AP {
+  margin: 0.35rem 0 0;
+  color: var(--asp-muted);
+}
+
+.oferta-detail-actions-AP {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.oferta-detail-grid-AP {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.oferta-detail-card-AP {
+  display: grid;
+  gap: 1rem;
+}
+
+.oferta-detail-meta-AP {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.oferta-detail-meta-AP > div {
+  background: #f8fbff;
+  border: 1px solid var(--asp-border);
+  border-radius: 16px;
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.oferta-detail-meta-AP strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--asp-text);
+}
+
+.oferta-detail-meta-AP span,
+.oferta-detail-text-AP {
+  color: var(--asp-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .oferta-detail-hero-AP,
+  .oferta-detail-grid-AP {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .oferta-detail-meta-AP {
+    grid-template-columns: 1fr;
+  }
+}

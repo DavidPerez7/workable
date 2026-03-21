@@ -12,7 +12,7 @@
 
 .reclutador-form {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1040px;
   padding: 1.1rem 1.25rem 1rem;
   background: #ffffff;
   border: 1px solid #dbe5f0;
@@ -33,6 +33,10 @@
   border-radius: 14px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+}
+
+.reclutador-form .form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .personal-section {

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AlertCircle, RefreshCcw, Trash2 } from "lucide-react";
-import AspiranteCard from "../../../../components/aspirante/AspiranteCard";
-import AspiranteButton from "../../../../components/aspirante/AspiranteButton";
-import AspiranteAlert from "../../../../components/aspirante/AspiranteAlert";
-import AspiranteLayout from "../../AspiranteLayout";
-import aspirantesApi from "../../../../api/aspirantesApi";
+import AspiranteCard from "../../../components/aspirante/AspiranteCard";
+import AspiranteButton from "../../../components/aspirante/AspiranteButton";
+import AspiranteAlert from "../../../components/aspirante/AspiranteAlert";
+import AspiranteLayout from "../AspiranteLayout";
+import aspirantesApi from "../../../api/aspirantesApi";
 import {
   eliminarPostulacion,
-} from "../../../../api/postulacionesAPI";
+} from "../../../api/postulacionesAPI";
 import "./MisPostulaciones.css";
 
 const getEstadoClass = (estado) => {
