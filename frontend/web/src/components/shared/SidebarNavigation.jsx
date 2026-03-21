@@ -119,8 +119,10 @@ const SidebarNavigation = ({ variant = "reclutador" }) => {
   };
 
   const cerrarSesion = () => {
-    localStorage.clear();
-    navigate("/login");
+    if (window.confirm("¿Estás seguro de que quieres cerrar sesión?")) {
+      localStorage.clear();
+      navigate("/login");
+    }
   };
 
   return (

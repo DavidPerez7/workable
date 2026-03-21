@@ -59,6 +59,19 @@ public class PostulacionController {
         }
     }
 
+    // GET BY ASPIRANTE
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
+    @GetMapping("/aspirante/{aspiranteId}")
+    public ResponseEntity<?> getByAspiranteId(@PathVariable Long aspiranteId) {
+        try {
+            return ResponseEntity.ok(postulacionService.getByAspiranteId(aspiranteId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener postulaciones por aspirante: " + e.getMessage()));
+        }
+    }
+
     // GET BY OFERTA
     @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
     @GetMapping("/oferta/{ofertaId}")

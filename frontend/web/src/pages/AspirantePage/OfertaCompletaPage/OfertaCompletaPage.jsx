@@ -8,7 +8,7 @@ import AspiranteButton from "../../../components/aspirante/AspiranteButton";
 import AspiranteAlert from "../../../components/aspirante/AspiranteAlert";
 import { getOfertaById } from "../../../api/ofertasAPI";
 import { crearPostulacion } from "../../../api/postulacionesAPI";
-import "./OfertaCompletaPage.css";
+import "./OfertaCompletaPageSimple.css";
 
 const formatSalary = (salary) => {
   if (!salary) return "Salario no especificado";
@@ -96,14 +96,13 @@ const OfertaCompletaPage = () => {
               <p className="aspirante-kicker-AP">Detalle completo</p>
               <h1>{oferta.titulo || "Sin título"}</h1>
               <p className="oferta-detail-subtitle-AP">
-                {oferta.empresa?.nombre || "Empresa"} · {oferta.municipio?.nombre || "Sin ubicación"}
+                <Link to={`/Empresas/${oferta.empresa?.id}`} className="empresa-link" title={`Ver perfil de ${oferta.empresa?.nombre}`}>
+                  {oferta.empresa?.nombre || "Empresa"} • Ver perfil
+                </Link>
               </p>
             </div>
             <div className="oferta-detail-actions-AP">
               <span className="detail-badge-AP">{oferta.tipoContrato || "Contrato"}</span>
-              <AspiranteButton as={Link} to="/Aspirante" variant="secondary">
-                Volver
-              </AspiranteButton>
             </div>
           </AspiranteCard>
 
@@ -136,6 +135,22 @@ const OfertaCompletaPage = () => {
                 <div>
                   <strong>Fecha límite</strong>
                   <span>{formatDate(oferta.fechaLimite || oferta.fechaPublicacion)}</span>
+                </div>
+                <div>
+                  <strong>Fecha publicación</strong>
+                  <span>{formatDate(oferta.fechaPublicacion)}</span>
+                </div>
+                <div>
+                  <strong>Tipo contrato</strong>
+                  <span>{oferta.tipoContrato || "No definido"}</span>
+                </div>
+                <div>
+                  <strong>Número vacantes</strong>
+                  <span>{oferta.numeroVacantes || "No especificado"}</span>
+                </div>
+                <div>
+                  <strong>Estado</strong>
+                  <span>{oferta.estado || "No definido"}</span>
                 </div>
               </div>
             </AspiranteCard>

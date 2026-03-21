@@ -6,6 +6,7 @@ import LoginPage from "./pages/Auth/LoginPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
 import ForgotPassword from "./pages/Auth/ForgotPasswordPage";
 import Empresas from "./pages/MainPage/Empresas/Empresas";
+import EmpresaPerfilPage from "./pages/MainPage/Empresas/EmpresaPerfilPage";
 import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 
 // Pages for recruiters
@@ -85,6 +86,7 @@ function App() {
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />
         <Route path="/Empresas" element={<Empresas />} />
+        <Route path="/Empresas/:empresaId" element={<EmpresaPerfilPage />} />
         <Route path="/KFCPage" element={<KFCPage />} />
         <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />
         <Route path="/SignUpPage/NewReclutador" element={<NewReclutador />} />

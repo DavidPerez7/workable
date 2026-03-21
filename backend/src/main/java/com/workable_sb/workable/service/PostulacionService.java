@@ -76,6 +76,13 @@ public class PostulacionService {
 		return postulacionRepo.findByOferta_Id(ofertaId);
 	}
 
+	public List<Postulacion> getByAspiranteId(Long aspiranteId) {
+		if (aspiranteId == null) {
+			throw new IllegalArgumentException("El ID del aspirante no puede ser nulo");
+		}
+		return postulacionRepo.findByAspirante_Id(aspiranteId);
+	}
+
 	// UPDATE
 	public Postulacion update(Long id, Postulacion postulacion) {
 		if (id == null) {

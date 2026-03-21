@@ -1,0 +1,134 @@
+.oferta-detail-main-AP {
+  display: block;
+}
+
+.oferta-detail-hero-AP {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.06);
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.empresa-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.empresa-link:hover {
+  text-decoration: underline;
+}
+
+.oferta-detail-hero-AP h1 {
+  margin: 0.1rem 0 0;
+  color: #0f172a;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.aspirante-kicker-AP {
+  color: #3b82f6;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 0.3rem;
+}
+
+.oferta-detail-subtitle-AP {
+  margin: 0.2rem 0 0;
+  color: #475569;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.detail-badge-AP {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #cbd5e1;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 800;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+}
+
+.oferta-detail-grid-AP {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.oferta-detail-card-AP {
+  display: grid;
+  gap: 1rem;
+}
+
+.oferta-detail-meta-AP {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.oferta-detail-meta-AP > div {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  transition: box-shadow 0.2s ease;
+}
+
+.oferta-detail-meta-AP > div:hover {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.oferta-detail-meta-AP span {
+  color: #475569;
+  font-weight: 700;
+}
+
+.oferta-detail-text-AP {
+  margin: 0 0 1rem;
+  color: #334155;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.oferta-detail-card-AP .app-button,
+.oferta-detail-card-AP .app-button-primary,
+.oferta-detail-card-AP .app-button-secondary {
+  width: 100%;
+  min-height: 2.9rem;
+  border-radius: 16px;
+  font-size: 0.95rem;
+}
+
+.oferta-detail-card-AP .app-button {
+  margin-top: auto;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.oferta-detail-card-AP .app-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+}
+
+@media (max-width: 768px) {
+  .oferta-detail-actions-AP {
+    justify-content: flex-start;
+  }
+}

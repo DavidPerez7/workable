@@ -32,7 +32,15 @@
   background: var(--mp-surface);
   border: 1px solid var(--mp-border);
   border-radius: 22px;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.mi-perfil-hero-AP:hover,
+.mi-perfil-card-AP:hover,
+.mi-perfil-actions-AP:hover {
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
 }
 
 .mi-perfil-hero-AP {
@@ -44,14 +52,16 @@
 }
 
 .mi-perfil-avatar-AP {
-  width: 92px;
-  height: 92px;
-  border-radius: 22px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
   overflow: hidden;
   background: linear-gradient(135deg, var(--mp-blue), var(--mp-blue-dark));
   display: grid;
   place-items: center;
   color: white;
+  border: 4px solid white;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
 }
 
 .mi-perfil-avatar-AP img {
@@ -60,15 +70,25 @@
   object-fit: cover;
 }
 
-.mi-perfil-hero-text-AP h1,
-.mi-perfil-section-header-AP h2,
 .mi-perfil-card-header-AP h2 {
   margin: 0;
-  color: var(--mp-text);
+  color: var(--mp-blue-dark);
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .mi-perfil-hero-text-AP h1 {
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--mp-text);
+  margin: 0;
+}
+
+.mi-perfil-hero-text-AP p {
+  font-size: 1.2rem;
+  color: var(--mp-blue);
+  font-weight: 500;
+  margin: 0.25rem 0 0;
 }
 
 .mi-perfil-hero-text-AP p,
@@ -90,15 +110,17 @@
 .mi-perfil-hero-badge-AP {
   display: grid;
   gap: 0.2rem;
-  padding: 0.9rem 1rem;
+  padding: 1rem 1.2rem;
   border-radius: 18px;
   background: linear-gradient(135deg, #eff6ff, #dbeafe);
   color: var(--mp-blue-dark);
-  border: 1px solid #bfdbfe;
+  border: 2px solid #bfdbfe;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
 .mi-perfil-hero-badge-AP strong {
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .mi-perfil-grid-AP {
@@ -151,7 +173,8 @@
 
 .mi-perfil-field-AP strong {
   color: var(--mp-text);
-  font-size: 0.98rem;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .mi-perfil-link-value-AP a {

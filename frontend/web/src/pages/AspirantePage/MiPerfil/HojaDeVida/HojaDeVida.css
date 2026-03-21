@@ -29,7 +29,13 @@
   background: var(--hv-surface);
   border: 1px solid var(--hv-border);
   border-radius: 22px;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.hoja-hero-AP:hover,
+.hoja-card-AP:hover {
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
 }
 
 .hoja-hero-AP {
@@ -47,15 +53,17 @@
 }
 
 .hoja-avatar-AP {
-  width: 88px;
-  height: 88px;
-  border-radius: 22px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
   overflow: hidden;
   background: linear-gradient(135deg, var(--hv-blue), var(--hv-blue-dark));
   display: grid;
   place-items: center;
   color: white;
   flex-shrink: 0;
+  border: 4px solid white;
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
 }
 
 .hoja-avatar-AP img {
@@ -73,19 +81,40 @@
   color: var(--hv-blue);
 }
 
-.hoja-hero-AP h1,
-.section-header-AP h2 {
-  margin: 0;
+.hoja-hero-AP h1 {
+  font-size: 2rem;
+  font-weight: 700;
   color: var(--hv-text);
+  margin: 0.5rem 0 0.25rem;
 }
 
-.hoja-hero-AP p,
-.item-card-AP p,
-.item-card-AP span,
-.empty-state-AP {
-  margin: 0.35rem 0 0;
-  color: var(--hv-muted);
-  line-height: 1.5;
+.hoja-hero-AP p {
+  font-size: 1.1rem;
+  color: var(--hv-blue);
+  font-weight: 500;
+}
+
+.hoja-kicker-AP {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--hv-blue-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.section-header-AP h2 {
+  margin: 0;
+  color: var(--hv-blue-dark);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.section-header-AP .kicker {
+  color: var(--hv-blue);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
 }
 
 .hoja-grid-AP {
@@ -132,25 +161,36 @@
 .item-card-AP {
   border: 1px solid var(--hv-border);
   border-radius: 18px;
-  background: #f8fbff;
-  padding: 0.7rem;
+  background: linear-gradient(135deg, #f8fbff 0%, #eef2ff 100%);
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.item-top-AP {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
+.item-card-AP:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
 }
 
 .item-top-AP h3 {
   margin: 0;
   color: var(--hv-text);
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .item-top-AP p {
-  margin: 0.35rem 0 0;
+  margin: 0.25rem 0 0;
+  color: var(--hv-blue);
+  font-weight: 500;
+}
+
+.item-card-AP span {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--hv-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .empty-state-AP {
@@ -175,9 +215,16 @@
   border-radius: 12px;
 }
 
-.hoja-main-AP .app-form-field textarea,
-.hoja-main-AP .asp-form-field textarea {
-  min-height: 64px;
+.hoja-main-AP .asp-form-field textarea[name="resumenProfesional"] {
+  font-size: 1rem;
+  line-height: 1.6;
+  border: 2px solid var(--hv-border);
+  background: #f8fbff;
+}
+
+.hoja-main-AP .asp-form-field textarea[name="resumenProfesional"]:focus {
+  border-color: var(--hv-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .hoja-main-AP .app-form-field label,
