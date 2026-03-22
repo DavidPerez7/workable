@@ -55,6 +55,10 @@ const ReclutadorPage = () => {
     }
   };
 
+  // Calcular métricas simples
+  const ofertasActivas = ofertas.filter(oferta => oferta.estadoOferta === "ABIERTA" || oferta.estado === "ACTIVA").length;
+  const postulacionesTotales = ofertas.reduce((total, oferta) => total + (oferta.postulaciones?.length || 0), 0);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("usuarioId");
@@ -72,70 +76,41 @@ const ReclutadorPage = () => {
               <p className="reclutador-kicker-RP">Panel reclutador</p>
               <h1>Gestiona tu empresa y ofertas</h1>
             </div>
-            <div className="reclutador-hero-metric-RP">
-              <strong>{ofertas.length}</strong>
-              <span>ofertas activas</span>
+            <div className="reclutador-hero-metrics-RP">
+              <div className="metric-RP">
+                <strong>{ofertasActivas}</strong>
+                <span>Ofertas activas</span>
+              </div>
+              <div className="metric-RP">
+                <strong>{postulacionesTotales}</strong>
+                <span>Postulaciones totales</span>
+              </div>
             </div>
           </ReclutadorCard>
 
           {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
 
           <div className="reclutador-actions-RP">
-            <ReclutadorButton as={Link} to="/Reclutador/ProfileEditPage" variant="action">
-              <Settings size={20} />
-              <strong>Mi Perfil</strong>
-              <span>Editar información personal</span>
+            <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="action">
+              <Plus size={20} />
+              <strong>Crear Oferta</strong>
+              <span>Publicar nueva vacante</span>
             </ReclutadorButton>
             <ReclutadorButton as={Link} to="/Reclutador/EnterprisePage" variant="action">
               <Building2 size={20} />
-              <strong>Mi Empresa</strong>
-              <span>Gestionar empresa</span>
+              <strong>Gestionar Empresa</strong>
+              <span>Editar datos corporativos</span>
             </ReclutadorButton>
-            <ReclutadorButton as={Link} to="/Reclutador/GestigOferts" variant="action">
+            <ReclutadorButton as={Link} to="/Reclutador/Ofertas" variant="action">
               <FileText size={20} />
-              <strong>Ofertas</strong>
-              <span>Ver todas mis ofertas</span>
-            </ReclutadorButton>
-            <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="action">
-              <Plus size={20} />
-              <strong>Nueva oferta</strong>
-              <span>Crear oferta laboral</span>
-            </ReclutadorButton>
-            <ReclutadorButton type="button" variant="action" className="danger" onClick={handleLogout}>
-              <LogOut size={20} />
-              <strong>Salir</strong>
-              <span>Cerrar sesión</span>
+              <strong>Ver Postulaciones</strong>
+              <span>Revisar candidatos</span>
             </ReclutadorButton>
           </div>
 
           <section className="reclutador-grid-RP">
             <ReclutadorCard as="article">
-              <ReclutadorSectionHeader kicker="Información" title="Mi Empresa" />
-
-              {empresa ? (
-                <div className="reclutador-company-RP">
-                  <div className="reclutador-company-avatar-RP">
-                    {empresa.logo ? <img src={empresa.logo} alt={empresa.nombre} /> : <span>{empresa.nombre?.charAt(0) || "E"}</span>}
-                  </div>
-                  <div className="reclutador-company-info-RP">
-                    <h3>{empresa.nombre}</h3>
-                    <p>{empresa.descripcion || "Sin descripción"}</p>
-                    <span>📍 {empresa.municipio?.nombre || "Sin ubicación"}</span>
-                  </div>
-                </div>
-              ) : (
-                <ReclutadorEmptyState action={(
-                  <Link to="/Reclutador/RegistrarEmpresa" className="reclutador-button-RP">
-                    Registrar empresa
-                  </Link>
-                )}>
-                  <p>Aún no tienes una empresa registrada.</p>
-                </ReclutadorEmptyState>
-              )}
-            </ReclutadorCard>
-
-            <ReclutadorCard as="article">
-              <ReclutadorSectionHeader kicker="Mis ofertas" title="Ofertas Activas" />
+              <ReclutadorSectionHeader kicker="Mis ofertas" title="Ofertas Recientes" />
 
               {ofertas.length === 0 ? (
                 <ReclutadorEmptyState action={(
@@ -146,33 +121,43 @@ const ReclutadorPage = () => {
                   <p>No tienes ofertas publicadas.</p>
                 </ReclutadorEmptyState>
               ) : (
-                <div className="reclutador-ofertas-list-RP">
-                  {ofertas.map((oferta) => (
-                    <div key={oferta.id} className="reclutador-oferta-item-RP">
-                      <div>
-                        <h4>{oferta.titulo}</h4>
-                        <p className="reclutador-oferta-meta-RP">
-                          {oferta.municipio?.nombre || oferta.ubicacion} • {oferta.modalidad}
-                        </p>
-                        {oferta.salario && (
-                          <span className="reclutador-oferta-salary-RP">
-                            ${oferta.salario.toLocaleString("es-CO")}
-                          </span>
-                        )}
+                <>
+                  <div className="reclutador-ofertas-list-RP">
+                    {ofertas.slice(0, 3).map((oferta) => (
+                      <div key={oferta.id} className="reclutador-oferta-item-RP">
+                        <div>
+                          <h4>{oferta.titulo}</h4>
+                          <p className="reclutador-oferta-meta-RP">
+                            {oferta.municipio?.nombre || oferta.ubicacion} • {oferta.modalidad}
+                          </p>
+                          {oferta.salario && (
+                            <span className="reclutador-oferta-salary-RP">
+                              ${oferta.salario.toLocaleString("es-CO")}
+                            </span>
+                          )}
+                        </div>
+                        <div className="reclutador-oferta-actions-RP">
+                          <Link to={`/Reclutador/Ofertas`} className="reclutador-oferta-link-RP">
+                            Ver
+                          </Link>
+                        </div>
                       </div>
-                      <div className="reclutador-oferta-actions-RP">
-                        <Link to={`/Reclutador/GestigOferts`} className="reclutador-oferta-link-RP">
-                          Ver
-                        </Link>
-                      </div>
+                    ))}
+                  </div>
+                  {ofertas.length > 3 && (
+                    <div className="reclutador-view-all-RP">
+                      <Link to="/Reclutador/Ofertas" className="reclutador-link-RP">
+                        Ver todas las ofertas ({ofertas.length})
+                      </Link>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
             </ReclutadorCard>
           </section>
         </>
       )}
+
     </ReclutadorLayout>
   );
 };

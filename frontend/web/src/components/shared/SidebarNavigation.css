@@ -7,11 +7,17 @@
 }
 
 .sidebar-nav--reclutador {
-	width: 260px;
+	width: 185px;
+	min-width: 185px;
+	max-width: 185px;
 	min-height: calc(100vh - 80px);
-	padding: 16px 12px;
+	padding: 1rem 0.6rem;
+	position: sticky;
+	top: 80px;
+	height: calc(100vh - 80px);
+	overflow-y: auto;
 	border-right: 1px solid #e5e7eb;
-	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+	box-shadow: 0 2px 8px rgba(54, 80, 195, 0.04);
 }
 
 .sidebar-nav--aspirante {
@@ -46,36 +52,35 @@
 	transition: all 0.2s ease;
 }
 
-.sidebar-nav--reclutador .nav-item-sidebar,
-.sidebar-nav--reclutador .profile-button-sidebar {
-	padding: 11px 14px;
-	border-radius: 12px;
-	font-weight: 700;
-	border: 1px solid #e5e7eb;
-	color: #0f172a;
+.sidebar-nav--reclutador .nav-list-sidebar {
+	gap: 0.25rem;
 }
 
 .sidebar-nav--reclutador .nav-item-sidebar {
-	background: #f8fafc;
+	padding: 0.7rem 0.75rem;
+	border-radius: 10px;
+	color: #475569;
+	font-weight: 500;
+	font-size: 0.85rem;
+	border: 1px solid transparent;
 }
 
-.sidebar-nav--reclutador .nav-item-sidebar:hover,
-.sidebar-nav--reclutador .profile-button-sidebar:hover {
-	background: #eef4ff;
-	border-color: #bfdbfe;
+.sidebar-nav--reclutador .nav-item-sidebar:not(.active):hover {
+	background: #eef2f7;
+	color: #1e293b;
+	border-color: #dbe3ed;
 }
 
 .sidebar-nav--reclutador .nav-item-sidebar.active {
-	background: #eff6ff;
-	border-color: #93c5fd;
+	background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+	color: white;
+	font-weight: 600;
+	border-color: rgba(255, 255, 255, 0.14);
+	box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .sidebar-nav--reclutador .profile-button-sidebar {
-	margin-top: 12px;
-	justify-content: center;
-	background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-	color: #fff;
-	box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+	display: none;
 }
 
 .sidebar-nav--aspirante .nav-list-sidebar {
@@ -89,6 +94,7 @@
 	font-weight: 500;
 	font-size: 0.85rem;
 	border: 1px solid transparent;
+	font-family: "Inter", sans-serif;
 }
 
 
@@ -135,6 +141,10 @@
 	font-weight: 700;
 	cursor: pointer;
 	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: "Inter", sans-serif;
 }
 
 .sidebar-logout-button:hover {

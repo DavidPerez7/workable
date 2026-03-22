@@ -64,6 +64,14 @@ public class OfertaService {
                 .orElseThrow(() -> new RuntimeException("Oferta no encontrada"));
     }
 
+    // READ BY EMPRESA
+    public List<Oferta> getByEmpresaId(Long empresaId) {
+        if (empresaId == null) {
+            throw new IllegalArgumentException("El ID de empresa no puede ser nulo");
+        }
+        return ofertaRepository.findByEmpresaId(empresaId);
+    }
+
     // UPDATE
     public Oferta update(Long id, Oferta request) {
         if (id == null) {

@@ -114,4 +114,30 @@ public class EmpresaService {
             empresaRepository.delete(existing);
         }
     }
+
+    // PUNTUAR EMPRESA
+    public void puntuarEmpresa(Long empresaId, Long aspiranteId, float puntuacion) {
+        if (puntuacion < 1.0f || puntuacion > 5.0f) {
+            throw new IllegalArgumentException("La puntuación debe estar entre 1.0 y 5.0");
+        }
+
+        Empresa empresa = getById(empresaId);
+
+        // Verificar si el aspirante ya puntuó
+        boolean yaPuntuo = empresa.getPuntuaciones().stream()
+            .anyMatch(p -> p.getAspiranteId().equals(aspiranteId));
+
+        if (yaPuntuo) {
+            throw new RuntimeException("El aspirante ya ha puntuado esta empresa");
+        }
+
+        // Agregar nueva puntuación
+        com.workable_sb.workable.models.embedded.EmpresaPuntuacion nuevaPuntuacion =
+            new com.workable_sb.workable.models.embedded.EmpresaPuntuacion(
+                aspiranteId, puntuacion, java.time.LocalDateTime.now()
+            );
+        empresa.getPuntuaciones().add(nuevaPuntuacion);
+
+        empresaRepository.save(empresa);
+    }
 }

@@ -1,104 +1,132 @@
 package com.workable.mobile.ui.auth
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
-import androidx.compose.ui.graphics.Color
+import com.workable.mobile.data.ApiClient
+import com.workable.mobile.data.LoginRequest
+import com.workable.mobile.data.SessionManager
+import com.workable.mobile.ui.components.WorkableHeroCard
+import com.workable.mobile.ui.components.WorkablePageBackground
+import com.workable.mobile.ui.components.WorkablePill
+import com.workable.mobile.ui.components.WorkablePrimaryButton
+import com.workable.mobile.ui.components.WorkableScrollableColumn
+import com.workable.mobile.ui.components.WorkableSecondaryButton
+import com.workable.mobile.ui.components.WorkableSurfaceCard
+import com.workable.mobile.ui.components.WorkableTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var showText by remember { mutableStateOf(false) }
-    var textColor by remember { mutableStateOf(Color(0xFF6200EE)) } // Color primary
-    var contador by remember { mutableStateOf(0) }
+    var loading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Bienvenido a Workable",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
+    fun login() {
+        scope.launch {
+            loading = true
+            errorMessage = null
 
-        Spacer(modifier = Modifier.height(16.dp))
+            try {
+                val response = ApiClient.authService.login(LoginRequest(correo.trim(), password))
+                SessionManager.saveLogin(context, response)
 
-        Text(
-            text = "Iniciar sesion",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Text(
-            text = "Email",
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(onClick = { navController.navigate("register")}) {
-            Text("Registrarse")
+                val role = response.rol?.uppercase() ?: "ASPIRANTE"
+                navController.navigate("dashboard/$role") {
+                    popUpTo("login") { inclusive = true }
+                }
+            } catch (error: Exception) {
+                errorMessage = error.message ?: "No se pudo iniciar sesión"
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            } finally {
+                loading = false
+            }
         }
+    }
 
-        Button(onClick = { navController.navigate("aspirante") }) {
-            Text("Entrar Aspirante")
+    WorkablePageBackground {
+        WorkableScrollableColumn(verticalSpacing = 16.dp) {
+            WorkableHeroCard(
+                title = "Iniciar sesión",
+                subtitle = "Entra con tu correo y contraseña para acceder a tu panel según tu rol."
+            ) {
+                androidx.compose.foundation.layout.Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    WorkablePill(
+                        text = "Acceso seguro",
+                        modifier = Modifier.weight(1f)
+                    )
+                    WorkablePill(
+                        text = "Mobile",
+                        modifier = Modifier.weight(1f),
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+
+            WorkableSurfaceCard {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    WorkableTextField(
+                        value = correo,
+                        onValueChange = { correo = it },
+                        label = "Correo electrónico",
+                    )
+
+                    WorkableTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = "Contraseña",
+                        visualTransformation = PasswordVisualTransformation(),
+                    )
+
+                    errorMessage?.let {
+                        Text(text = it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+
+                    WorkablePrimaryButton(
+                        text = if (loading) "Ingresando..." else "Entrar",
+                        onClick = { login() },
+                        enabled = !loading && correo.isNotBlank() && password.isNotBlank()
+                    )
+
+                    WorkableSecondaryButton(
+                        text = "Ir a registro",
+                        onClick = { navController.navigate("register") }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
         }
-
-        if (showText) {
-            Text("Hola, $email, tu contraseña es $password")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = {
-            email = ""
-            password = ""
-        }, enabled = email.isNotEmpty() && password.isNotEmpty()) {
-            Text("Limpiar")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = { textColor = Color(0xFF03DAC6) }) { // Color secondary
-            Text("Cambiar color")
-        }
-
-        Text(
-            text = "sunga",
-            color = textColor
-        )
-
-        Button(onClick = { contador++ }) {
-            Text("Contar")
-        }
-
-        Text(
-            text = "Contador: $contador",
-            color = textColor
-        )
     }
 }

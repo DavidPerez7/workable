@@ -1,0 +1,35 @@
+name: Puntuar Empresa
+description: Permite a un aspirante puntuar una empresa (1.0 a 5.0). Solo una puntuación por aspirante por empresa.
+
+request:
+  url: "{{baseUrl}}/api/empresa/{{empresaId}}/puntuar"
+  method: POST
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: Bearer {{token}}
+  body:
+    mode: json
+    json: |
+      {
+        "puntuacion": 4.5
+      }
+
+response:
+  - status: 200
+    description: Puntuación registrada exitosamente
+    body: |
+      {
+        "message": "Puntuación registrada"
+      }
+  - status: 400
+    description: Error de validación (puntuación fuera de rango, ya puntuó, etc.)
+    body: |
+      {
+        "error": "La puntuación debe estar entre 1.0 y 5.0"
+      }
+  - status: 401
+    description: No autenticado
+  - status: 404
+    description: Empresa no encontrada

@@ -492,3 +492,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.postulacion-empresa-link-AP {
+  width: fit-content;
+}

@@ -349,10 +349,17 @@ const AspirantePage = () => {
                   <div className="offer-card-header-AP">
                     <div className="offer-card-title-group-AP">
                       <h3>{oferta.titulo || "Sin título"}</h3>
-                      <p className="offer-company-AP">
-                        <Building2 size={14} />
-                        {oferta.empresa?.nombre || "Empresa"}
-                      </p>
+                      {oferta.empresa?.id ? (
+                        <Link to={`/EmpresaPerfil/${oferta.empresa.id}`} className="postulacion-empresa-link-AP" title={`Empresa: ${oferta.empresa.nombre || "Empresa"}`}>
+                          <Building2 size={14} />
+                          {oferta.empresa.nombre || "Empresa"}
+                        </Link>
+                      ) : (
+                        <span className="postulacion-empresa-link-AP">
+                          <Building2 size={14} />
+                          {oferta.empresa?.nombre || "Empresa"}
+                        </span>
+                      )}
                     </div>
                     <span className="offer-chip-AP">
                       {oferta.modalidad || "Modalidad"}

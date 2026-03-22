@@ -7,6 +7,8 @@ import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
 import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
 import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
 import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
+import CrearEmpresaModal from "../../../components/reclutador/CrearEmpresaModal";
+import UnirseEmpresaModal from "../../../components/reclutador/UnirseEmpresaModal";
 import "./EnterprisePage.css";
 
 function EnterprisePage() {
@@ -15,6 +17,8 @@ function EnterprisePage() {
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
+  const [isUnirseModalOpen, setIsUnirseModalOpen] = useState(false);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -50,86 +54,123 @@ function EnterprisePage() {
     cargarDatos();
   }, []);
 
+  const handleEmpresaSuccess = () => {
+    // Recargar la página para mostrar la empresa
+    window.location.reload();
+  };
+
   return (
-    <ReclutadorLayout>
-      <ReclutadorCard as="section" className="empresa-hero-EP">
-        <div className="empresa-hero-info-EP">
-          <div className="empresa-avatar-EP">
-            {empresa?.logo ? (
-              <img src={empresa.logo} alt={empresa.nombre} />
-            ) : (
-              <span>{empresa?.nombre?.charAt(0) || "E"}</span>
-            )}
-          </div>
-          <div>
-            <p className="reclutador-kicker-RP">Mi empresa</p>
-            <h1>{empresa?.nombre || "Empresa"}</h1>
-            <p className="empresa-meta-EP">{empresa?.municipio?.nombre || "Sin ubicacion"}</p>
-          </div>
-        </div>
-        <div className="empresa-actions-EP">
-          <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/EnterprisePage/Edit")}>
-            Editar empresa
-          </ReclutadorButton>
-          <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="link">
-            Crear oferta
-          </ReclutadorButton>
-        </div>
-      </ReclutadorCard>
+    <ReclutadorLayout shellClassName="empresa-shell-EP" mainClassName="empresa-main-EP">
+      {empresa ? (
+        <>
+          <section className="empresa-hero-EP">
+            <div className="empresa-avatar-EP">
+              {empresa?.logo ? (
+                <img src={empresa.logo} alt={empresa.nombre} />
+              ) : (
+                <span>{empresa?.nombre?.charAt(0) || "E"}</span>
+              )}
+            </div>
 
-      {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
+            <div className="empresa-hero-text-EP">
+              <h1>{empresa.nombre}</h1>
+              <p>{empresa.email || "Sin email"}</p>
+            </div>
 
-      {loading ? (
-        <ReclutadorCard>Cargando empresa...</ReclutadorCard>
-      ) : !empresa ? (
-        <ReclutadorCard>
-          <p className="empresa-empty-EP">Aun no tienes empresa registrada.</p>
-          <ReclutadorButton as={Link} to="/Reclutador/RegistrarEmpresa">
-            Registrar empresa
-          </ReclutadorButton>
-        </ReclutadorCard>
-      ) : (
-        <div className="empresa-grid-EP">
-          <ReclutadorCard as="section">
-            <ReclutadorSectionHeader kicker="Descripcion" title="Sobre la empresa" />
-            <p className="empresa-text-EP">{empresa.descripcion || "Sin descripcion"}</p>
-            <div className="empresa-details-EP">
-              <div>
+            <div className="empresa-hero-badge-EP">
+              <strong>NIT: {empresa.nit || "Sin NIT"}</strong>
+              <span>{empresa.municipio?.nombre || "Sin ubicación"}</span>
+            </div>
+          </section>
+
+          <section className="empresa-grid-EP">
+            <ReclutadorCard className="empresa-card-EP">
+              <div className="empresa-card-header-EP">
+                <h2>Datos básicos</h2>
+              </div>
+              <div className="empresa-field-EP">
+                <span>Nombre</span>
+                <strong>{empresa.nombre || "No registrado"}</strong>
+              </div>
+              <div className="empresa-field-EP">
                 <span>NIT</span>
-                <strong>{empresa.nit || "-"}</strong>
+                <strong>{empresa.nit || "No registrado"}</strong>
               </div>
-              <div>
-                <span>Contacto</span>
-                <strong>{empresa.email || empresa.emailContacto || "-"}</strong>
+              <div className="empresa-field-EP">
+                <span>Número de trabajadores</span>
+                <strong>{empresa.numeroTrabajadores || "No registrado"}</strong>
               </div>
-              <div>
-                <span>Telefono</span>
-                <strong>{empresa.telefono || empresa.telefonoContacto || "-"}</strong>
+              <div className="empresa-field-EP">
+                <span>Descripción</span>
+                <strong>{empresa.descripcion || "No registrada"}</strong>
               </div>
+            </ReclutadorCard>
+
+            <ReclutadorCard className="empresa-card-EP">
+              <div className="empresa-card-header-EP">
+                <h2>Contacto</h2>
+              </div>
+              <div className="empresa-field-EP">
+                <span>Email</span>
+                <strong>{empresa.email || "No registrado"}</strong>
+              </div>
+              <div className="empresa-field-EP">
+                <span>Teléfono</span>
+                <strong>{empresa.telefono || "No registrado"}</strong>
+              </div>
+              <div className="empresa-field-EP">
+                <span>Municipio</span>
+                <strong>{empresa.municipio?.nombre || "No registrado"}</strong>
+              </div>
+            </ReclutadorCard>
+          </section>
+
+          <ReclutadorCard as="section" className="empresa-actions-EP">
+            <div className="empresa-actions-grid-EP">
+              <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/EnterprisePage/Edit")} variant="action">
+                <strong>Editar empresa</strong>
+                <span>Actualizar datos corporativos.</span>
+              </ReclutadorButton>
+
+              <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="action">
+                <strong>Crear oferta</strong>
+                <span>Publicar nueva oportunidad laboral.</span>
+              </ReclutadorButton>
             </div>
           </ReclutadorCard>
+        </>
+      ) : (
+        <>
+          {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
 
-          <ReclutadorCard as="section">
-            <ReclutadorSectionHeader
-              kicker="Ofertas"
-              title="Ofertas publicadas"
-              action={<ReclutadorButton as={Link} to="/Reclutador/GestigOferts" variant="link">Ver gestion</ReclutadorButton>}
-            />
-            {ofertas.length === 0 ? (
-              <p className="empresa-text-EP">No hay ofertas publicadas.</p>
-            ) : (
-              <ul className="empresa-list-EP">
-                {ofertas.slice(0, 5).map((oferta) => (
-                  <li key={oferta.id}>
-                    <span>{oferta.titulo || "Oferta"}</span>
-                    <Link to={`/Reclutador/OfertaCompleta/${oferta.id}`}>Ver</Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </ReclutadorCard>
-        </div>
+          {loading ? (
+            <ReclutadorCard>Cargando empresa...</ReclutadorCard>
+          ) : (
+            <ReclutadorCard>
+              <p className="empresa-empty-EP">Aun no tienes empresa registrada.</p>
+              <div className="empresa-actions-EP">
+                <ReclutadorButton onClick={() => setIsCrearModalOpen(true)}>
+                  Crear Empresa
+                </ReclutadorButton>
+                <ReclutadorButton variant="secondary" onClick={() => setIsUnirseModalOpen(true)}>
+                  Unirse a Empresa
+                </ReclutadorButton>
+              </div>
+            </ReclutadorCard>
+          )}
+        </>
       )}
+
+      <CrearEmpresaModal
+        isOpen={isCrearModalOpen}
+        onClose={() => setIsCrearModalOpen(false)}
+        onSuccess={handleEmpresaSuccess}
+      />
+      <UnirseEmpresaModal
+        isOpen={isUnirseModalOpen}
+        onClose={() => setIsUnirseModalOpen(false)}
+        onSuccess={handleEmpresaSuccess}
+      />
     </ReclutadorLayout>
   );
 }

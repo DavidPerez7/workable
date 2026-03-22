@@ -59,6 +59,20 @@ public class OfertaController {
         }
     }
 
+    // READ BY EMPRESA
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR')")
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<?> getByEmpresaId(@PathVariable Long empresaId) {
+        try {
+            List<Oferta> ofertas = ofertaService.getByEmpresaId(empresaId);
+            return ResponseEntity.ok(ofertas);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener ofertas por empresa: " + e.getMessage()));
+        }
+    }
+
     // SEARCH - BÚSQUEDA CON FILTROS (ADMIN y ASPIRANTE)
     @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
     @PostMapping("/search")

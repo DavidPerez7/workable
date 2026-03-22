@@ -2,23 +2,129 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.reclutador-kicker-RP {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.reclutador-hero-RP h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.reclutador-hero-metrics-RP {
+  display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
-.reclutador-hero-metric-RP {
-  min-width: 150px;
-  padding: 1rem 1.1rem;
-  border-radius: 16px;
+.metric-RP {
+  min-width: 120px;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
   text-align: center;
+  font-size: 0.9rem;
+}
+
+.metric-RP strong {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.metric-RP span {
+  font-size: 0.8rem;
+  opacity: 0.9;
 }
 
 .reclutador-actions-RP {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.reclutador-view-all-RP {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.reclutador-link-RP {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.reclutador-link-RP:hover {
+  text-decoration: underline;
+}
+
+.reclutador-grid-RP {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.reclutador-company-RP {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reclutador-company-avatar-RP {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.reclutador-company-avatar-RP img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.reclutador-company-info-RP h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.reclutador-company-info-RP p {
+  margin: 0 0 0.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.reclutador-company-info-RP span {
+  color: #2563eb;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .reclutador-ofertas-list-RP {
@@ -29,26 +135,57 @@
 .reclutador-oferta-item-RP {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
+  padding: 1rem;
+  border-radius: 12px;
   background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.2s ease;
 }
 
-.reclutador-oferta-meta-RP,
-.reclutador-oferta-salary-RP {
-  margin: 0.2rem 0 0;
+.reclutador-oferta-item-RP:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reclutador-oferta-item-RP h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.reclutador-oferta-meta-RP {
+  margin: 0 0 0.5rem;
   color: #64748b;
+  font-size: 0.85rem;
+}
+
+.reclutador-oferta-salary-RP {
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .reclutador-oferta-link-RP {
-  color: #1d4ed8;
-  font-weight: 700;
+  color: #2563eb;
+  font-weight: 600;
   text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: #eef2ff;
+  transition: background 0.2s ease;
 }
 
 .reclutador-oferta-link-RP:hover {
-  text-decoration: underline;
+  background: #dbeafe;
+  text-decoration: none;
+}
+
+.empresa-actions-RP {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 768px) {
@@ -56,5 +193,13 @@
   .reclutador-hero-RP {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .reclutador-grid-RP {
+    grid-template-columns: 1fr;
+  }
+
+  .reclutador-actions-RP {
+    grid-template-columns: 1fr;
   }
 }

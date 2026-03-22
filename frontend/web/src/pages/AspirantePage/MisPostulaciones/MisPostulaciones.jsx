@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { AlertCircle, CalendarDays, Clock3, Link2, Trash2, X } from "lucide-react";
+import { AlertCircle, Building2, CalendarDays, Clock3, Link2, Trash2, X } from "lucide-react";
 import AspiranteCard from "../../../components/aspirante/AspiranteCard";
 import AspiranteButton from "../../../components/aspirante/AspiranteButton";
 import AspiranteAlert from "../../../components/aspirante/AspiranteAlert";
@@ -246,15 +246,15 @@ const MisPostulaciones = () => {
                       const empresaNombre = postulacion.oferta?.empresa?.nombre || "Empresa";
 
                       return empresaId ? (
-                        <Link
-                          to={`/Empresas/${empresaId}`}
-                          className="postulacion-empresa-link-AP"
-                          title={`Ver perfil de ${empresaNombre}`}
-                        >
-                          {empresaNombre} · Ver perfil
+                        <Link to={`/EmpresaPerfil/${empresaId}`} className="postulacion-empresa-link-AP" title={`Empresa: ${empresaNombre}`}>
+                          <Building2 size={14} />
+                          {empresaNombre}
                         </Link>
                       ) : (
-                        empresaNombre
+                        <span className="postulacion-empresa-link-AP">
+                          <Building2 size={14} />
+                          {empresaNombre}
+                        </span>
                       );
                     })()}
                   </p>

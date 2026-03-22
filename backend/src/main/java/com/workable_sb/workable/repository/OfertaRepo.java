@@ -43,4 +43,7 @@ public interface OfertaRepo extends JpaRepository<Oferta, Long> {
             "FROM Oferta o JOIN o.empresa e JOIN o.municipio m " +
             "WHERE o.estado = :estado")
     List<OfertaSummaryDTO> findAllSummaryByEstado(@Param("estado") EstadoOferta estado);
+
+    // OBTENER OFERTAS POR EMPRESA
+    List<Oferta> findByEmpresaId(Long empresaId);
 }

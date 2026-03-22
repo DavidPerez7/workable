@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import "./SidebarNavigation.css";
 
 const sidebarVariants = {
@@ -23,7 +24,7 @@ const sidebarVariants = {
         ),
       },
       {
-        path: "/Reclutador/GestigOferts",
+        path: "/Reclutador/Ofertas",
         label: "Ofertas",
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -33,7 +34,7 @@ const sidebarVariants = {
         ),
       },
       {
-        path: "/Reclutador/RegistrarEmpresa",
+        path: "/Reclutador/EnterprisePage",
         label: "Empresa",
         icon: (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -145,8 +146,9 @@ const SidebarNavigation = ({ variant = "reclutador" }) => {
           </Link>
         ) : null}
 
-        {variant === "aspirante" ? (
+        {variant === "aspirante" || variant === "reclutador" ? (
           <button type="button" className="sidebar-logout-button" onClick={cerrarSesion}>
+            <LogOut size={16} />
             Cerrar sesión
           </button>
         ) : null}

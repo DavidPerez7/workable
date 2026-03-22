@@ -161,22 +161,24 @@
 .item-card-AP {
   border: 1px solid var(--hv-border);
   border-radius: 18px;
-  background: linear-gradient(135deg, #f8fbff 0%, #eef2ff 100%);
-  padding: 1rem;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  background: var(--hv-surface);
+  padding: 0.75rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.item-card-AP:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+.item-top-AP {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .item-top-AP h3 {
   margin: 0;
   color: var(--hv-text);
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
 .item-top-AP p {
@@ -187,7 +189,7 @@
 
 .item-card-AP span {
   display: block;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   color: var(--hv-muted);
   font-size: 0.9rem;
   font-weight: 500;

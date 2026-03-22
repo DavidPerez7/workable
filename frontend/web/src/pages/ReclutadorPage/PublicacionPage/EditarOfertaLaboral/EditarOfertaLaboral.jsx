@@ -118,7 +118,7 @@ const EditarOfertaLaboral = () => {
 
       await actualizarOferta(ofertaId, datosActualizados);
       alert("Oferta actualizada exitosamente ✔");
-      navigate("/Reclutador/GestigOferts");
+      navigate("/Reclutador/Ofertas");
     } catch (err) {
       console.error("Error al actualizar:", err);
       alert(`Error al actualizar la oferta: ${err.message}`);
@@ -140,7 +140,7 @@ const EditarOfertaLaboral = () => {
       <ReclutadorLayout>
         <div className="reclutador-card-RP">
           <p className="reclutador-alert-RP error">{error}</p>
-          <button onClick={() => navigate("/Reclutador/GestigOferts")} className="reclutador-button-RP">
+          <button onClick={() => navigate("/Reclutador/Ofertas")} className="reclutador-button-RP">
             Volver
           </button>
         </div>

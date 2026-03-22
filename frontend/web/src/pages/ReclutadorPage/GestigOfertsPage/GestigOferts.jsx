@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
 import { getEmpresaById } from "../../../api/empresaAPI";
-import { eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
+import { getOfertasByEmpresaId, eliminarOferta, cambiarEstadoOferta } from "../../../api/ofertasAPI";
 import ReclutadorLayout from "../ReclutadorLayout";
 import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
 import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
@@ -34,13 +34,8 @@ const GestigOfertsPage = () => {
         throw new Error('No se encontró ID de empresa. Registra una empresa primero.');
       }
 
-      const empresa = await getEmpresaById(empresaId);
-      const ofertasEmpresa =
-        empresa?.ofertas ||
-        empresa?.listaOfertas ||
-        empresa?.ofertasActivas ||
-        [];
-      setOfertas(Array.isArray(ofertasEmpresa) ? ofertasEmpresa : []);
+      const ofertasEmpresa = await getOfertasByEmpresaId(empresaId);
+      setOfertas(ofertasEmpresa);
     } catch (err) {
       console.error('Error al cargar ofertas:', err);
       setOfertas([]);

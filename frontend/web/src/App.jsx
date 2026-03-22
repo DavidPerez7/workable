@@ -5,9 +5,6 @@ import HomePage from "./pages/MainPage/HomePage";
 import LoginPage from "./pages/Auth/LoginPage";
 import SignUpPage from "./pages/Auth/SignUpPage";
 import ForgotPassword from "./pages/Auth/ForgotPasswordPage";
-import Empresas from "./pages/MainPage/Empresas/Empresas";
-import EmpresaPerfilPage from "./pages/MainPage/Empresas/EmpresaPerfilPage";
-import KFCPage from "./pages/MainPage/Empresas/KFC/KFCPage";
 
 // Pages for recruiters
 import ReclutadorPage from "./pages/ReclutadorPage/ReclutadorPage";
@@ -23,7 +20,6 @@ import EmpresaEditPage from "./pages/ReclutadorPage/EnterprisePage/EmpresaEditPa
 import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
 import OfertaCompletaPage from "./pages/ReclutadorPage/OfertaCompletaPage/OfertaCompletaPage";
 import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
-import RegistrarEmpresa from "./pages/ReclutadorPage/RegistarEmpresa/RegistrarEmpresa";
 
 // Pages for aspirants
 import AspirantePage from "./pages/AspirantePage/AspirantePage";
@@ -44,6 +40,7 @@ import UsersManagePage from "./pages/AdminPage/AdminUsuarios";
 import ReclutadorForm from "./pages/Auth/reclutadorForm/ReclutadorForm";
 import NewReclutador from "./components/Empresa/NewReclutador";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import EmpresaPerfilPage from "./pages/EmpresaPerfilPage/EmpresaPerfilPage";
 
 function App() {
   return (
@@ -60,7 +57,7 @@ function App() {
         <Route path="/Reclutador/Configuracion" element={<ProtectedRoute requiredRole="RECLUTADOR"><ConfigPage /></ProtectedRoute>} />
         <Route path="/Reclutador/EditarPerfil" element={<ProtectedRoute requiredRole="RECLUTADOR"><ProfileEditPage /></ProtectedRoute>} />
         <Route path="/Reclutador/Publicacion" element={<ProtectedRoute requiredRole="RECLUTADOR"><PublicacionPage /></ProtectedRoute>} />
-        <Route path="/Reclutador/GestigOferts" element={<ProtectedRoute requiredRole="RECLUTADOR"><GestigOfertsPage /></ProtectedRoute>} />
+        <Route path="/Reclutador/Ofertas" element={<ProtectedRoute requiredRole="RECLUTADOR"><GestigOfertsPage /></ProtectedRoute>} />
         <Route path="/Reclutador/ReclutadorProfile" element={<ProtectedRoute requiredRole="RECLUTADOR"><ReclutadorProfile /></ProtectedRoute>} />
         <Route path="/Reclutador/EnterprisePage" element={<ProtectedRoute requiredRole="RECLUTADOR"><EnterprisePage /></ProtectedRoute>} />
         <Route path="/Reclutador/EnterprisePage/Create" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaCreatePage /></ProtectedRoute>} />
@@ -68,7 +65,6 @@ function App() {
         <Route path="/Reclutador/EditarOfertaLaboral" element={<ProtectedRoute requiredRole="RECLUTADOR"><EditarOfertaLaboral /></ProtectedRoute>} />
         <Route path="/Reclutador/OfertaCompleta/:ofertaId" element={<ProtectedRoute requiredRole="RECLUTADOR"><OfertaCompletaPage /></ProtectedRoute>} />
         <Route path="/Reclutador/VerPostulacionesRecibidas" element={<ProtectedRoute requiredRole="RECLUTADOR"><VerPostulacionesRecibidas /></ProtectedRoute>} />
-        <Route path="/Reclutador/RegistrarEmpresa" element={<ProtectedRoute requiredRole="RECLUTADOR"><RegistrarEmpresa /></ProtectedRoute>} />
         
         {/* Rutas protegidas de Aspirante */}
         <Route path="/Aspirante" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspirantePage /></ProtectedRoute>} />
@@ -80,14 +76,14 @@ function App() {
         <Route path="/Aspirante/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
         <Route path="/Aspirante/OfertaCompleta/:ofertaId" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspiranteOfertaCompletaPage /></ProtectedRoute>} />
         
+        {/* Ruta para perfil de empresa */}
+        <Route path="/EmpresaPerfil/:empresaId" element={<EmpresaPerfilPage />} />
+        
         {/* Rutas protegidas de Administrador */}
         <Route path="/Administrador/*" element={<ProtectedRoute requiredRole="ADMIN"><AdminPage /></ProtectedRoute>} />
         <Route path="/Administrador/Empresas" element={<ProtectedRoute requiredRole="ADMIN"><AdminEmpresas/></ProtectedRoute>} />
         <Route path="/Administrador/Ofertas" element={<ProtectedRoute requiredRole="ADMIN"><OffersPage /></ProtectedRoute>} />
         <Route path="/Administrador/Usuarios" element={<ProtectedRoute requiredRole="ADMIN"><UsersManagePage /></ProtectedRoute>} />
-        <Route path="/Empresas" element={<Empresas />} />
-        <Route path="/Empresas/:empresaId" element={<EmpresaPerfilPage />} />
-        <Route path="/KFCPage" element={<KFCPage />} />
         <Route path="/reclutador/ReclutadorForm" element={<ReclutadorForm />} />
         <Route path="/SignUpPage/NewReclutador" element={<NewReclutador />} />
       </Routes>

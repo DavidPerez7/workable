@@ -23,9 +23,13 @@ import org.hibernate.annotations.OnDeleteAction;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.workable_sb.workable.models.embedded.EmpresaPuntuacion;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -66,6 +70,10 @@ public class Empresa {
     @Column(name = "categoria", length = 50, nullable = false)
     private Set<Category> categories = new HashSet<>();
 
+    @ElementCollection
+    @CollectionTable(name = "empresa_puntuaciones", joinColumns = @JoinColumn(name = "empresa_id"))
+    private List<EmpresaPuntuacion> puntuaciones = new ArrayList<>();
+
     @NotNull(message = "El municipio es obligatorio")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "municipio_id", nullable = false, referencedColumnName = "id")
@@ -82,6 +90,7 @@ public class Empresa {
     @Column(length = 500)
     private String logoUrl;
 
+    @Transient
     private float puntuacion = 0.0f;
 
     private LocalDate fechaCreacion;
@@ -97,6 +106,16 @@ public class Empresa {
         SERVICIOS,
         AGRICULTURA,
         OTRO
+    }
+
+    public float getPuntuacion() {
+        if (puntuaciones == null || puntuaciones.isEmpty()) {
+            return 0.0f;
+        }
+        return (float) puntuaciones.stream()
+            .mapToDouble(EmpresaPuntuacion::getPuntuacion)
+            .average()
+            .orElse(0.0);
     }
 
     @PrePersist

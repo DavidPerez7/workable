@@ -165,7 +165,7 @@ const PublicacionPage = () => {
         municipioId: "",
       }));
 
-      navigate("/Reclutador/GestigOferts");
+      navigate("/Reclutador/Ofertas");
 
     } catch (error) {
       console.error("Error completo:", error);

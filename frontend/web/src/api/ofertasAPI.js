@@ -33,6 +33,16 @@ export const getOfertaById = async (id) => {
   }
 };
 
+export const getOfertasByEmpresaId = async (empresaId) => {
+  try {
+    const response = await API.get(`/api/oferta/empresa/${empresaId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error al obtener ofertas por empresa ${empresaId}:`, error);
+    throw error;
+  }
+};
+
 export const buscarOfertasAvanzada = async (filtros = {}) => {
   try {
     const response = await API.post('/api/oferta/search', filtros);

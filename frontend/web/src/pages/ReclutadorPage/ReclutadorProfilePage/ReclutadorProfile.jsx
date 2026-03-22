@@ -70,7 +70,7 @@ function ReclutadorProfile() {
         <ReclutadorSectionHeader kicker="Acciones" title="Atajos del reclutador" />
         <div className="profile-actions-RPF">
           <Link to="/Reclutador/EditarPerfil" className="reclutador-button-RP">Editar perfil</Link>
-          <Link to="/Reclutador/GestigOferts" className="reclutador-button-RP">Gestionar ofertas</Link>
+          <Link to="/Reclutador/Ofertas" className="reclutador-button-RP">Gestionar ofertas</Link>
           <Link to="/Reclutador/Publicacion" className="reclutador-button-RP">Publicar oferta</Link>
           <Link to="/Reclutador/Configuracion" className="reclutador-button-RP">Configuracion</Link>
           <ReclutadorButton type="button" onClick={cerrarSesion}>Cerrar sesion</ReclutadorButton>
