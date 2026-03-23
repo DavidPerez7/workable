@@ -146,7 +146,7 @@ La plataforma Workable está diseñada para centralizar el proceso de reclutamie
     
 - Panel Administrativo (Dashboard): Proporciona herramientas de moderación para supervisar usuarios y ofertas, asegurando que el contenido de la plataforma cumpla con las políticas establecidas. Además, genera métricas y reportes sobre la actividad del sistema.   
     
-- Sistema de Notificaciones: Implementación de un servicio de mensajería vía correo electrónico para confirmar acciones críticas como registros exitosos, postulaciones y procesos de recuperación de credenciales. Estas funcionalidades se han derivado de las minutas de análisis y el documento previo de Requisitos del Sistema (mencionado en la sección 1.5), los cuales sirven como base técnica para el desarrollo de los 17 requerimientos funcionales detallados en la sección 3 de este documento.
+- Sistema de Recuperación de Contraseña: Implementación de un servicio de mensajería vía correo electrónico para recuperación de credenciales mediante link único. Estas funcionalidades se han derivado de las minutas de análisis y el documento previo de Requisitos del Sistema (mencionado en la sección 1.5), los cuales sirven como base técnica para el desarrollo de los 17 requerimientos funcionales detallados en la sección 3 de este documento.
 
 # **2.3 CARACTERISTICAS DE LOS USUARIOS**
 
@@ -242,7 +242,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
     
 - Dashboards y Analítica Visual: Los paneles administrativos presentan la información mediante una capa de visualización de datos. El sistema realiza peticiones (GET) para obtener el conteo general de entidades gestionadas y presenta resúmenes estadísticos por módulo, permitiendo además exportar dichos datos para revisión externa.  
     
-- Salidas Externas Automatizadas: El sistema se conecta con servidores de correo externo para el envío de comunicaciones mediante el protocolo SMTP, notificando a los usuarios sobre eventos de seguridad (recuperación de contraseña) y confirmaciones de registro de forma externa a la aplicación.
+- Salidas Externas Automatizadas: El sistema se conecta con servidores de correo externo para el envío de comunicaciones mediante el protocolo SMTP, notificando a los usuarios sobre eventos de seguridad (recuperación de contraseña) de forma externa a la aplicación.
 
 # **3.2 REQUISITOS NO FUNCIONALES**
 
@@ -282,7 +282,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | :---: | ----- |
 | **Nombre del requerimiento:** | REGISTRO DE USUARIOS |
 | **Características:** | Permite la creación de cuentas de usuario (Aspirate y Reclutador) diferenciadas, automatizando la activación inicial y preparando las credenciales de acceso inmediato mediante tokens de seguridad. |
-| **Descripción del requerimiento:** | El sistema gestionará el registro mediante dos formularios independientes:  Aspirantes: Captura de nombre, apellido, correo (único), teléfono, fecha de nacimiento, municipio, género y contraseña (con validación de confirmación).  Reclutadores: Captura de datos personales y Razón Social. La relación con la empresa se crea con una FK nullable, permitiendo vinculación posterior.  Lógica de Finalización: Al completar el registro, el backend setea el estado como Activo y retorna un JWT ya configurado con el rol del usuario. El sistema almacena este token en el localStorage y redirige automáticamente al usuario hacia la interfaz de Inicio de Sesión para validar su entrada formal. Se incluye el envío de un correo de bienvenida (SMTP pendiente de implementar). |
+| **Descripción del requerimiento:** | El sistema gestionará el registro mediante dos formularios independientes:  Aspirantes: Captura de nombre, apellido, correo (único), teléfono, fecha de nacimiento, municipio, género y contraseña (con validación de confirmación).  Reclutadores: Captura de datos personales y Razón Social. La relación con la empresa se crea con una FK nullable, permitiendo vinculación posterior.  Lógica de Finalización: Al completar el registro, el backend setea el estado como Activo y retorna un JWT ya configurado con el rol del usuario. El sistema almacena este token en el localStorage y redirige automáticamente al usuario hacia la interfaz de Inicio de Sesión para validar su entrada formal. |
 | **Requerimientos NO funcionales:** | RNF-01 (ACCESIBILIDAD \- NAVEGACIÓN POR TECLADO) RNF-02 (SEGURIDAD \- VALIDACIÓN DE DATOS) RNF-04 (USABILIDAD \- MENSAJES CLAROS DE ERROR) |
 
 | Identificación del requerimiento: | RF02 |
@@ -303,7 +303,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | :---: | ----- |
 | **Nombre del requerimiento:** | ELIMINACIÓN PERMANENTE DE CUENTA |
 | **Características:** | Permite a los usuarios (Aspirantes y Reclutadores) ejecutar la baja total de sus datos, asegurando la limpieza de registros y la integridad de la base de datos mediante procesos en cascada. |
-| **Descripción del requerimiento:** | El sistema gestionará la eliminación definitiva bajo las siguientes reglas:  Validación Frontend: El usuario debe escribir la palabra exacta "ELIMINAR" en un modal de confirmación para habilitar el botón de acción, evitando borrados accidentales.  Impacto por Rol:  Aspirante: Se elimina su registro de la tabla usuarios y todas sus postulaciones vinculadas. Reclutador: Se advierte que su cuenta está vinculada a una Entidad Empresa y que su eliminación será visible para otros reclutadores de la misma organización. Pero NO se eliminan sus ofertas publicadas.  Cierre de Sesión: Tras el borrado, el sistema destruye el JWT del localStorage y redirige a la Landing Page.  (Nota: Funcionalidad de borrado físico y validación de palabra clave pendiente de implementación en Backend/Frontend). |
+| **Descripción del requerimiento:** | El sistema gestionará la eliminación definitiva bajo las siguientes reglas:  Validación Frontend: El usuario debe escribir la palabra exacta "ELIMINAR" en un modal de confirmación para habilitar el botón de acción, evitando borrados accidentales.  Impacto por Rol:  Aspirante: Se elimina su registro de la tabla usuarios y todas sus postulaciones vinculadas directamente. Reclutador: Se advierte que su cuenta está vinculada a una Entidad Empresa y que su eliminación será visible para otros reclutadores de la misma organización. Pero NO se eliminan sus ofertas publicadas.  Cierre de Sesión: Tras el borrado, el sistema destruye el JWT del localStorage y redirige a la Landing Page.  (Nota: Funcionalidad de borrado físico implementada en Backend, eliminando postulaciones en cascada). |
 | **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- CONFIRMACIÓN OBLIGATORIA)  RNF-04 (USABILIDAD \- ADVERTENCIA DE BORRADO)  RNF-05 (CUMPLIMIENTO LEGAL \- DERECHO AL OLVIDO) |
 
 | Identificación del requerimiento: | RF05 |
@@ -317,7 +317,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 | :---: | ----- |
 | **Nombre del requerimiento:** | GESTIÓN DE OFERTAS LABORALES |
 | **Características:** | Permite a las empresas administrar el ciclo de vida de sus vacantes, garantizando que la información sea veraz y cumpla con los estándares legales de remuneración. |
-| **Descripción del requerimiento:** | El sistema proporcionará al reclutador las siguientes funcionalidades:  Crear: Registro obligatorio de Categoría y Municipio. Validación de Salario: Si es menor al SMLV vigente, el sistema obliga a marcar el checkbox "Salario a convenir" para proceder. Consultar (Read): Vista de tarjetas con buscador por título y filtros por antigüedad/postulados. Incluye contador de candidatos en tiempo real. Gestionar Estado (Update): El reclutador puede gestionar el ciclo de vida de la oferta alternando entre estados: Activa (visible para postulaciones, no expirada), Inactiva (pausada temporalmente, sin postulaciones permitidas) y Finalizada (cerrada definitivamente, no visible en búsquedas). La edición solo se habilita en estado Inactiva para proteger la integridad de los datos. Eliminar (Hard Delete): Borrado físico de la oferta. El sistema ejecutará una limpieza en cascada que elimina los registros de postulaciones vinculadas, pero mantiene intactos los perfiles de los aspirantes. Requiere confirmación mediante modal (Aceptar/Cancelar).  (Nota: Lógica de validación de salario y borrado en cascada pendiente de programar). |
+| **Descripción del requerimiento:** | El sistema proporcionará al reclutador las siguientes funcionalidades:  Crear: Registro obligatorio de Categoría y Municipio. Validación de Salario: Si es menor al SMLV vigente, el sistema lanza error y no permite proceder. Consultar (Read): Vista de tarjetas con buscador por título y filtros por antigüedad/postulados. Incluye contador de candidatos en tiempo real. Gestionar Estado (Update): El reclutador puede gestionar el ciclo de vida de la oferta alternando entre estados: Activa (visible para postulaciones, no expirada), Inactiva (pausada temporalmente, sin postulaciones permitidas) y Finalizada (cerrada definitivamente, no visible en búsquedas). La edición solo se habilita en estado Inactiva para proteger la integridad de los datos. Eliminar (Hard Delete): Borrado físico de la oferta. El sistema ejecutará una limpieza en cascada que elimina los registros de postulaciones vinculadas, pero mantiene intactos los perfiles de los aspirantes. Requiere confirmación mediante modal (Aceptar/Cancelar).  (Nota: Lógica de validación de salario implementada en Backend). |
 | **Requerimientos NO funcionales:** | RNF-02 (SEGURIDAD \- VALIDACIÓN DE PERMISOS) RNF-04 (USABILIDAD \- MODALES DE CONFIRMACIÓN) |
 
 | Identificación del requerimiento: | RF07 |
@@ -345,7 +345,7 @@ Este apartado describe los mecanismos de interacción entre el usuario y el sist
 
 Avance general: **1/3 (33%)**.
 
-- Backend: **100%**; solo faltan corregir algunos errores de `NOT NULL` y eliminación en `CASCADE` en los modelos de Aspirante y Reclutador, sin afectar de forma importante el backend.
+- Backend: **100%**; validaciones de seguridad, eliminación en cascada y salario implementadas.
 - API: **100%**.
 - Web: **33%** en las funcionalidades del administrador.
 

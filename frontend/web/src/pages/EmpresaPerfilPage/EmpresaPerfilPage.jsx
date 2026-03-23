@@ -10,6 +10,8 @@ import AppPageShell from "../../components/shared/AppPageShell";
 import { getEmpresaById } from "../../api/empresaAPI";
 import { getOfertasPorEmpresa } from "../../api/ofertasAPI";
 import "./EmpresaPerfilPage.css";
+
+const formatDate = (value) => {
   if (!value) return "Sin fecha";
   try {
     return new Date(value).toLocaleDateString("es-CO");

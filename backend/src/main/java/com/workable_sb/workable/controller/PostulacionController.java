@@ -47,6 +47,7 @@ public class PostulacionController {
     }
 
     // READ BY ID
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {

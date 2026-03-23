@@ -48,6 +48,12 @@ public class OfertaService {
             }
         }
 
+        // Validación de salario mínimo vs SMLV
+        final long SMLV = 1300000L; // SMLV colombiano aproximado
+        if (request.getSalario() != null && request.getSalario() < SMLV) {
+            throw new IllegalArgumentException("El salario no puede ser menor al SMLV (" + SMLV + "). Use 'Salario a convenir' si aplica.");
+        }
+
         return ofertaRepository.save(request);
     }
 

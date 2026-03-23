@@ -10,9 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workable_sb.workable.models.Aspirante;
 import com.workable_sb.workable.models.HojaVida;
 import com.workable_sb.workable.models.Municipio;
+import com.workable_sb.workable.models.Postulacion;
 import com.workable_sb.workable.repository.AspiranteRepo;
 import com.workable_sb.workable.repository.HojaVidaRepo;
 import com.workable_sb.workable.repository.MunicipioRepo;
+import com.workable_sb.workable.service.PostulacionService;
 
 @Service
 @Transactional
@@ -25,6 +27,9 @@ public class AspiranteService {
 
     @Autowired
     private MunicipioRepo municipioRepo;
+
+    @Autowired
+    private PostulacionService postulacionService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -101,6 +106,11 @@ public class AspiranteService {
         if (id == null) return;
         Aspirante existing = getById(id);
         if (existing != null) {
+            // Eliminar todas las postulaciones del aspirante
+            List<Postulacion> postulaciones = postulacionService.getByAspiranteId(id);
+            for (Postulacion postulacion : postulaciones) {
+                postulacionService.delete(postulacion.getId());
+            }
             aspiranteRepo.delete(existing);
         }
     }
