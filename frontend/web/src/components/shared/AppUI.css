@@ -417,8 +417,9 @@
   text-decoration: none;
   color: var(--app-text);
   text-align: left;
-  display: grid;
-  gap: 0.35rem;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
   align-items: center;
   cursor: pointer;
 }

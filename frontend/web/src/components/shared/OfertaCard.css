@@ -1,0 +1,84 @@
+.oferta-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.oferta-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.oferta-card-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.oferta-card-modalidad {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  background: #f1f5f9;
+  border-radius: 6px;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.oferta-card-descripcion {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.oferta-card-meta {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.oferta-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.oferta-card-meta svg {
+  color: #0f172a;
+  flex-shrink: 0;
+}
+
+.oferta-card-salary {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #059669;
+  margin: 0.5rem 0;
+}
+
+.oferta-card-link {
+  color: #1e40af;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  background: #dbeafe;
+  transition: all 0.2s ease;
+  display: inline-block;
+  font-size: 0.95rem;
+  text-align: center;
+  align-self: flex-start;
+}
+
+.oferta-card-link:hover {
+  background: #bfdbfe;
+  text-decoration: none;
+  transform: translateX(2px);
+}

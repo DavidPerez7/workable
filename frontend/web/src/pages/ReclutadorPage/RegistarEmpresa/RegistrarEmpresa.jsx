@@ -89,7 +89,7 @@ const RegistrarEmpresa = () => {
 
       // Recargar la página para que los cambios se reflejen inmediatamente
       setTimeout(() => {
-        window.location.href = "/Reclutador/EnterprisePage";
+        window.location.href = "/Reclutador/Empresa";
       }, 500);
 
     } catch (error) {

@@ -27,7 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.workable.mobile.data.ApiClient
@@ -145,7 +148,7 @@ fun RegisterScreen(navController: NavController) {
     }
 
     WorkablePageBackground {
-        WorkableScrollableColumn(verticalSpacing = 12.dp) {
+        WorkableScrollableColumn(verticalSpacing = 10.dp) {
             WorkableHeroCard(
                 title = "Regístrate en Workable",
                 subtitle = "Elige tu rol arriba y completa el formulario con una experiencia más cercana a la web."
@@ -169,10 +172,9 @@ fun RegisterScreen(navController: NavController) {
                 }
             }
 
-            WorkableSurfaceCard {
+            WorkableSurfaceCard(contentPadding = 16.dp) {
                 Column(
-                    modifier = Modifier.padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     WorkableTextField(value = nombre, onValueChange = { nombre = it }, label = "Nombre")
                     WorkableTextField(value = apellido, onValueChange = { apellido = it }, label = "Apellido")
@@ -181,20 +183,26 @@ fun RegisterScreen(navController: NavController) {
                     WorkableTextField(value = fechaNacimiento, onValueChange = { fechaNacimiento = it }, label = "Fecha de nacimiento (YYYY-MM-DD)")
 
                     if (rolSeleccionado == "ASPIRANTE") {
-                        Text(text = "Género", style = MaterialTheme.typography.labelLarge)
+                        Text(text = "Género", style = MaterialTheme.typography.labelLarge, color = Color.Black)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                             listOf("MASCULINO", "FEMENINO", "OTRO").forEach { option ->
                                 FilterChip(
                                     selected = genero == option,
                                     onClick = { genero = option },
                                     label = { Text(option.lowercase().replaceFirstChar { it.uppercase() }) },
+                                    colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                                        containerColor = androidx.compose.ui.graphics.Color.White,
+                                        labelColor = Color.Black,
+                                        selectedContainerColor = Color(0xFF1B337A),
+                                        selectedLabelColor = androidx.compose.ui.graphics.Color.White,
+                                    ),
                                     modifier = Modifier.weight(1f)
                                 )
                             }
                         }
                     }
 
-                    Text(text = "Municipio", style = MaterialTheme.typography.labelLarge)
+                    Text(text = "Municipio", style = MaterialTheme.typography.labelLarge, color = Color.Black)
                     Box(modifier = Modifier.fillMaxWidth()) {
                         WorkableTextField(
                             value = municipioSeleccionado?.nombre.orEmpty(),
@@ -236,14 +244,20 @@ fun RegisterScreen(navController: NavController) {
                         enabled = !loading && !loadingMunicipios
                     )
 
-                    WorkableSecondaryButton(
+                    Text(
                         text = "Ya tengo cuenta",
-                        onClick = { navController.navigate("login") }
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navController.navigate("login") },
+                        color = Color(0xFF1B337A),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
         }
     }
 }

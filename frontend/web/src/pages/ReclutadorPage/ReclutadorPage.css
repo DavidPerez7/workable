@@ -1,63 +1,58 @@
 .reclutador-hero-RP {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   gap: 2rem;
-  flex-wrap: wrap;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  color: #1e293b;
 }
 
 .reclutador-kicker-RP {
-  color: #64748b;
-  font-size: 0.9rem;
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-}
-
-.reclutador-hero-RP h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
   color: #1e293b;
-  margin: 0;
 }
 
 .reclutador-hero-metrics-RP {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .metric-RP {
-  min-width: 120px;
-  padding: 0.8rem 1rem;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff;
+  flex: 1;
+  padding: 1.5rem 2rem;
+  border-radius: 10px;
+  border: 3px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e293b;
   text-align: center;
   font-size: 0.9rem;
 }
 
 .metric-RP strong {
   display: block;
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 0.35rem;
 }
 
 .metric-RP span {
-  font-size: 0.8rem;
-  opacity: 0.9;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .reclutador-actions-RP {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 2.5rem 0;
 }
 
 .reclutador-view-all-RP {
@@ -77,8 +72,9 @@
 
 .reclutador-grid-RP {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 2.5rem;
 }
 
 .reclutador-company-RP {
@@ -129,57 +125,44 @@
 
 .reclutador-ofertas-list-RP {
   display: grid;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .reclutador-oferta-item-RP {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.5rem;
+  padding: 1.5rem;
   border-radius: 12px;
-  background: #f8fafc;
+  background: white;
   border: 1px solid #e2e8f0;
-  transition: box-shadow 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .reclutador-oferta-item-RP:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.reclutador-oferta-item-RP h4 {
-  margin: 0 0 0.25rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.reclutador-oferta-meta-RP {
-  margin: 0 0 0.5rem;
-  color: #64748b;
-  font-size: 0.85rem;
-}
-
-.reclutador-oferta-salary-RP {
-  color: #059669;
-  font-weight: 600;
-  font-size: 0.9rem;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
 }
 
 .reclutador-oferta-link-RP {
-  color: #2563eb;
+  color: #1e40af;
   font-weight: 600;
   text-decoration: none;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 8px;
-  background: #eef2ff;
-  transition: background 0.2s ease;
+  background: #dbeafe;
+  transition: all 0.2s ease;
+  display: inline-block;
+  font-size: 0.95rem;
 }
 
 .reclutador-oferta-link-RP:hover {
-  background: #dbeafe;
+  background: #bfdbfe;
   text-decoration: none;
+  transform: translateX(2px);
 }
 
 .empresa-actions-RP {
@@ -189,10 +172,22 @@
 }
 
 @media (max-width: 768px) {
-  .reclutador-oferta-item-RP,
   .reclutador-hero-RP {
+    padding: 1.5rem;
+  }
+
+  .reclutador-hero-RP h1 {
+    font-size: 1.5rem;
+  }
+
+  .reclutador-oferta-item-RP {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
+  }
+
+  .reclutador-oferta-actions-RP {
+    align-self: flex-start;
   }
 
   .reclutador-grid-RP {
@@ -201,5 +196,10 @@
 
   .reclutador-actions-RP {
     grid-template-columns: 1fr;
+  }
+
+  .oferta-header-RP {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

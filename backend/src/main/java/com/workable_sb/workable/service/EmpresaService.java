@@ -28,6 +28,10 @@ public class EmpresaService {
 
     // CREATE
     public Empresa create(Empresa request, Long usuarioId) {
+        if (!isValidNit(request.getNit())) {
+            throw new RuntimeException("NIT inválido: debe ser un número de 10 dígitos");
+        }
+
         if (empresaRepository.existsByNit(request.getNit())) {
             throw new RuntimeException("NIT ya está en uso");
         }
@@ -91,6 +95,9 @@ public class EmpresaService {
         if (request.getNombre() != null) existing.setNombre(request.getNombre());
         if (request.getDescripcion() != null) existing.setDescripcion(request.getDescripcion());
         if (request.getNumeroTrabajadores() != null) existing.setNumeroTrabajadores(request.getNumeroTrabajadores());
+        if (request.getEmail() != null) existing.setEmail(request.getEmail());
+        if (request.getTelefono() != null) existing.setTelefono(request.getTelefono());
+        if (request.getLogoUrl() != null) existing.setLogoUrl(request.getLogoUrl());
         if (request.getCategories() != null) existing.setCategories(request.getCategories());
         if (request.getNit() != null) existing.setNit(request.getNit());
 
@@ -139,5 +146,13 @@ public class EmpresaService {
         empresa.getPuntuaciones().add(nuevaPuntuacion);
 
         empresaRepository.save(empresa);
+    }
+
+    // VALIDAR NIT COLOMBIANO (MÍNIMO VIABLE: 10 dígitos)
+    private boolean isValidNit(String nit) {
+        if (nit == null || nit.length() != 10) {
+            return false;
+        }
+        return nit.matches("\\d{10}");
     }
 }

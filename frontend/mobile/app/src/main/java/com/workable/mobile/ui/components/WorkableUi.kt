@@ -32,11 +32,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.workable.mobile.ui.theme.WorkablePrimary
 
 private val WorkableCardShape = RoundedCornerShape(28.dp)
 private val WorkablePillShape = RoundedCornerShape(999.dp)
@@ -46,31 +48,68 @@ fun WorkablePageBackground(content: @Composable BoxScope.() -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFF8FAFC),
-                        MaterialTheme.colorScheme.background,
-                        Color(0xFFF1F5F9),
-                    )
+            .drawBehind {
+                // First radial gradient
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color.Black.copy(alpha = 0.2f), Color.Black.copy(alpha = 0.1f)),
+                        center = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.3f),
+                        radius = size.maxDimension
+                    ),
+                    center = androidx.compose.ui.geometry.Offset(size.width * 0.2f, size.height * 0.3f),
+                    radius = size.maxDimension
                 )
-            )
+                // Second radial gradient
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(Color(0xFF3B82F6).copy(alpha = 0.3f), Color(0xFFF59E0B).copy(alpha = 0.2f)),
+                        center = androidx.compose.ui.geometry.Offset(size.width * 0.8f, size.height * 0.7f),
+                        radius = size.maxDimension
+                    ),
+                    center = androidx.compose.ui.geometry.Offset(size.width * 0.8f, size.height * 0.7f),
+                    radius = size.maxDimension
+                )
+            }
     ) {
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 40.dp, end = 18.dp)
-                .size(160.dp)
+                .padding(top = 32.dp, end = 16.dp)
+                .size(140.dp)
                 .clip(WorkablePillShape)
-                .background(Color(0xFF3B82F6).copy(alpha = 0.16f))
+                .background(Color(0xFF93C5FD).copy(alpha = 0.20f))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 110.dp, start = 18.dp)
+                .size(72.dp)
+                .clip(WorkablePillShape)
+                .background(Color(0xFFFDE68A).copy(alpha = 0.30f))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 10.dp)
+                .size(88.dp)
+                .clip(WorkablePillShape)
+                .background(Color(0xFFBFDBFE).copy(alpha = 0.18f))
         )
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(bottom = 120.dp, start = 8.dp)
-                .size(104.dp)
+                .padding(bottom = 96.dp, start = 10.dp)
+                .size(96.dp)
                 .clip(WorkablePillShape)
-                .background(Color(0xFFF59E0B).copy(alpha = 0.16f))
+                .background(Color(0xFFFDE68A).copy(alpha = 0.34f))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = 42.dp, end = 28.dp)
+                .size(58.dp)
+                .clip(WorkablePillShape)
+                .background(Color(0xFF93C5FD).copy(alpha = 0.16f))
         )
         content()
     }
@@ -104,7 +143,7 @@ fun WorkableSurfaceCard(
             .fillMaxWidth()
             .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.9f), WorkableCardShape),
         shape = WorkableCardShape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 14.dp),
     ) {
         Column(
@@ -121,17 +160,17 @@ fun WorkableSectionHeader(title: String, subtitle: String) {
         Text(
             text = "WORKABLE",
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
+            color = WorkablePrimary,
         )
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = Color.Black,
         )
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = Color.Black,
         )
     }
 }
@@ -164,8 +203,8 @@ fun WorkableTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
-        placeholder = placeholder?.let { { Text(it) } },
+        label = { Text(label, color = Color.Black) },
+        placeholder = placeholder?.let { { Text(it, color = Color.Black) } },
         modifier = modifier.fillMaxWidth(),
         singleLine = singleLine,
         maxLines = maxLines,
@@ -174,13 +213,17 @@ fun WorkableTextField(
         shape = RoundedCornerShape(14.dp),
         visualTransformation = visualTransformation,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            cursorColor = MaterialTheme.colorScheme.primary,
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedBorderColor = WorkablePrimary,
+            unfocusedBorderColor = WorkablePrimary.copy(alpha = 0.75f),
+            focusedLabelColor = WorkablePrimary,
+            unfocusedLabelColor = Color.Black,
+            cursorColor = WorkablePrimary,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            focusedPlaceholderColor = Color.Black,
+            unfocusedPlaceholderColor = Color.Black,
         ),
     )
 }
@@ -220,15 +263,15 @@ fun WorkableSelectablePill(
         modifier = modifier,
         shape = WorkablePillShape,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
+            containerColor = if (selected) WorkablePrimary else Color.White,
         ),
-        border = BorderStroke(1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+        border = BorderStroke(1.dp, WorkablePrimary),
         elevation = CardDefaults.cardElevation(defaultElevation = if (selected) 1.dp else 0.dp),
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
-            color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (selected) Color.White else Color.Black,
             style = MaterialTheme.typography.labelLarge,
         )
     }
@@ -247,8 +290,8 @@ fun WorkablePrimaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = WorkablePrimary,
+            contentColor = Color.White,
         ),
     ) {
         Text(text)
@@ -267,6 +310,10 @@ fun WorkableSecondaryButton(
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = WorkablePrimary,
+        ),
+        border = BorderStroke(1.dp, WorkablePrimary),
     ) {
         Text(text)
     }
@@ -285,12 +332,12 @@ fun WorkableModuleCard(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = Color.Black,
         )
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = Color.Black,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
             WorkablePrimaryButton(
@@ -348,17 +395,17 @@ fun WorkableHeroCard(
         Text(
             text = "WORKABLE",
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary,
+            color = WorkablePrimary,
         )
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = Color.Black,
         )
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = Color.Black,
         )
         content()
     }

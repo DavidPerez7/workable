@@ -9,14 +9,10 @@ import ForgotPassword from "./pages/Auth/ForgotPasswordPage";
 // Pages for recruiters
 import ReclutadorPage from "./pages/ReclutadorPage/ReclutadorPage";
 import InfoRecPage from "./pages/ReclutadorPage/InfoReclutadorPage/InfoRecPage";
-import ConfigPage from "./pages/ReclutadorPage/ConfigPage/ConfigPage";
 import ProfileEditPage from "./pages/ReclutadorPage/ProfileEditPage/ProfileEditPage";
 import PublicacionPage from "./pages/ReclutadorPage/PublicacionPage/PublicacionPage";
 import GestigOfertsPage from "./pages/ReclutadorPage/GestigOfertsPage/GestigOferts";
 import ReclutadorProfile from "./pages/ReclutadorPage/ReclutadorProfilePage/ReclutadorProfile";
-import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
-import EmpresaCreatePage from "./pages/ReclutadorPage/EnterprisePage/EmpresaCreatePage";
-import EmpresaEditPage from "./pages/ReclutadorPage/EnterprisePage/EmpresaEditPage";
 import EditarOfertaLaboral from "./pages/ReclutadorPage/PublicacionPage/EditarOfertaLaboral/EditarOfertaLaboral";
 import OfertaCompletaPage from "./pages/ReclutadorPage/OfertaCompletaPage/OfertaCompletaPage";
 import VerPostulacionesRecibidas from "./components/VerPostulacionesRecibidas/VerPostulacionesRecibidas";
@@ -28,6 +24,7 @@ import ActualizarPerfil from "./pages/AspirantePage/MiPerfil/ActualizarPerfil/Ac
 import EliminarPerfil from "./pages/AspirantePage/MiPerfil/EliminarPerfil/EliminarPerfil";
 import MisPostulaciones from "./pages/AspirantePage/MisPostulaciones/MisPostulaciones";
 import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
+import ReclutadorHojaDeVida from "./pages/ReclutadorPage/HojaDeVida/HojaDeVida";
 import AspiranteOfertaCompletaPage from "./pages/AspirantePage/OfertaCompletaPage/OfertaCompletaPage";
 
 // Pages for administrators
@@ -41,6 +38,7 @@ import ReclutadorForm from "./pages/Auth/reclutadorForm/ReclutadorForm";
 import NewReclutador from "./components/Empresa/NewReclutador";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import EmpresaPerfilPage from "./pages/EmpresaPerfilPage/EmpresaPerfilPage";
+import RedirectEmpresa from "./components/RedirectEmpresa/RedirectEmpresa";
 
 function App() {
   return (
@@ -54,17 +52,21 @@ function App() {
         {/* Rutas protegidas de Reclutador */}
         <Route path="/Reclutador" element={<ProtectedRoute requiredRole="RECLUTADOR"><ReclutadorPage /></ProtectedRoute>} />
         <Route path="/Reclutador/Reclutamiento" element={<ProtectedRoute requiredRole="RECLUTADOR"><InfoRecPage /></ProtectedRoute>} />
-        <Route path="/Reclutador/Configuracion" element={<ProtectedRoute requiredRole="RECLUTADOR"><ConfigPage /></ProtectedRoute>} />
         <Route path="/Reclutador/EditarPerfil" element={<ProtectedRoute requiredRole="RECLUTADOR"><ProfileEditPage /></ProtectedRoute>} />
         <Route path="/Reclutador/Publicacion" element={<ProtectedRoute requiredRole="RECLUTADOR"><PublicacionPage /></ProtectedRoute>} />
         <Route path="/Reclutador/Ofertas" element={<ProtectedRoute requiredRole="RECLUTADOR"><GestigOfertsPage /></ProtectedRoute>} />
         <Route path="/Reclutador/ReclutadorProfile" element={<ProtectedRoute requiredRole="RECLUTADOR"><ReclutadorProfile /></ProtectedRoute>} />
-        <Route path="/Reclutador/EnterprisePage" element={<ProtectedRoute requiredRole="RECLUTADOR"><EnterprisePage /></ProtectedRoute>} />
-        <Route path="/Reclutador/EnterprisePage/Create" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaCreatePage /></ProtectedRoute>} />
-        <Route path="/Reclutador/EnterprisePage/Edit" element={<ProtectedRoute requiredRole="RECLUTADOR"><EmpresaEditPage /></ProtectedRoute>} />
-        <Route path="/Reclutador/EditarOfertaLaboral" element={<ProtectedRoute requiredRole="RECLUTADOR"><EditarOfertaLaboral /></ProtectedRoute>} />
-        <Route path="/Reclutador/OfertaCompleta/:ofertaId" element={<ProtectedRoute requiredRole="RECLUTADOR"><OfertaCompletaPage /></ProtectedRoute>} />
-        <Route path="/Reclutador/VerPostulacionesRecibidas" element={<ProtectedRoute requiredRole="RECLUTADOR"><VerPostulacionesRecibidas /></ProtectedRoute>} />
+        <Route path="/Reclutador/Empresa" element={<ProtectedRoute requiredRole="RECLUTADOR"><RedirectEmpresa /></ProtectedRoute>} />
+        <Route path="/Reclutador/oferta/:ofertaId" element={<ProtectedRoute requiredRole="RECLUTADOR"><OfertaCompletaPage /></ProtectedRoute>} />
+        <Route path="/Reclutador/oferta/:ofertaId/postulaciones" element={<ProtectedRoute requiredRole="RECLUTADOR"><VerPostulacionesRecibidas /></ProtectedRoute>} />
+        <Route
+          path="/Reclutador/HojaDeVida/:aspiranteId"
+          element={
+            <ProtectedRoute requiredRole="RECLUTADOR">
+              <ReclutadorHojaDeVida editable={false} />
+            </ProtectedRoute>
+          }
+        />
         
         {/* Rutas protegidas de Aspirante */}
         <Route path="/Aspirante" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspirantePage /></ProtectedRoute>} />
@@ -74,7 +76,7 @@ function App() {
         <Route path="/Aspirante/MiPerfil/MisPostulaciones" element={<Navigate to="/Aspirante/MisPostulaciones" replace />} />
         <Route path="/Aspirante/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
-        <Route path="/Aspirante/OfertaCompleta/:ofertaId" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspiranteOfertaCompletaPage /></ProtectedRoute>} />
+        <Route path="/Aspirante/oferta/:ofertaId" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspiranteOfertaCompletaPage /></ProtectedRoute>} />
         
         {/* Ruta para perfil de empresa */}
         <Route path="/EmpresaPerfil/:empresaId" element={<EmpresaPerfilPage />} />

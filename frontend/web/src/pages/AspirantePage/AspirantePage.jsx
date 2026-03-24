@@ -17,6 +17,7 @@ import AspiranteLayout from "./AspiranteLayout";
 import { buscarOfertasAvanzada } from "../../api/ofertasAPI";
 import { getMunicipios } from "../../api/municipioAPI";
 import { crearPostulacion } from "../../api/postulacionesAPI";
+import aspirantesApi from "../../api/aspirantesApi";
 
 const filtrosIniciales = {
   texto: "",
@@ -74,6 +75,7 @@ const AspirantePage = () => {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [postulandoId, setPostulandoId] = useState(null);
+  const [postulacionesUsuario, setPostulacionesUsuario] = useState([]);
   const [filters, setFilters] = useState({
     ...filtrosIniciales,
     texto: textoUrl,
@@ -151,6 +153,18 @@ const AspirantePage = () => {
       const [municipiosData] = await Promise.all([getMunicipios()]);
       const listaMunicipios = Array.isArray(municipiosData) ? municipiosData : [];
       setMunicipios(listaMunicipios);
+
+      // Cargar postulaciones del usuario
+      const usuarioId = localStorage.getItem("usuarioId");
+      if (usuarioId) {
+        try {
+          const aspirante = await aspirantesApi.get(Number(usuarioId));
+          setPostulacionesUsuario(aspirante.postulaciones || []);
+        } catch (err) {
+          console.warn("Error al cargar postulaciones:", err);
+        }
+      }
+
       await cargarOfertas(
         {
           ...filtrosIniciales,
@@ -174,6 +188,8 @@ const AspirantePage = () => {
     cargarDatosIniciales();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
+
+  const yaPostulado = (ofertaId) => postulacionesUsuario.some(p => p.ofertaId === ofertaId);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -381,15 +397,15 @@ const AspirantePage = () => {
                       </span>
                     </div>
                     <div className="offer-actions-AP">
-                      <AspiranteButton as={Link} to={`/Aspirante/OfertaCompleta/${oferta.id}`} variant="secondary">
+                      <AspiranteButton as={Link} to={`/Aspirante/oferta/${oferta.id}`} variant="secondary">
                         Detalle
                       </AspiranteButton>
                       <AspiranteButton
                         type="button"
                         onClick={() => handlePostularse(oferta.id)}
-                        disabled={postulandoId === oferta.id}
+                        disabled={yaPostulado(oferta.id) || postulandoId === oferta.id}
                       >
-                        {postulandoId === oferta.id ? "Postulando..." : "Postularme"}
+                        {yaPostulado(oferta.id) ? "Ya postulado" : postulandoId === oferta.id ? "Postulando..." : "Postularme"}
                       </AspiranteButton>
                     </div>
                   </div>

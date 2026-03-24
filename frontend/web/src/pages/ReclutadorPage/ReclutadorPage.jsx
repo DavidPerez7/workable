@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Building2,
   FileText,
   Plus,
-  Settings,
-  LogOut,
 } from "lucide-react";
 import reclutadoresApi from "../../api/reclutadoresApi";
 import { getEmpresaById } from "../../api/empresaAPI";
+import { getOfertasByEmpresaId } from "../../api/ofertasAPI";
+import { obtenerPostulacionesPorOferta } from "../../api/postulacionesAPI";
+import OfertaCard from "../../components/shared/OfertaCard";
 import ReclutadorLayout from "./ReclutadorLayout";
 import ReclutadorCard from "../../components/reclutador/ReclutadorCard";
 import ReclutadorSectionHeader from "../../components/reclutador/ReclutadorSectionHeader";
@@ -37,15 +37,53 @@ const ReclutadorPage = () => {
       setReclutador(datosReclutador);
 
       if (datosReclutador?.empresa?.id) {
-        const dataEmpresa = await getEmpresaById(datosReclutador.empresa.id);
-        setEmpresa(dataEmpresa);
+        const empresaId = datosReclutador.empresa.id;
+        
+        const [empresaResult, ofertasResult] = await Promise.allSettled([
+          getEmpresaById(empresaId),
+          getOfertasByEmpresaId(empresaId),
+        ]);
 
-        const ofertasEmpresa =
-          dataEmpresa?.ofertas ||
-          dataEmpresa?.listaOfertas ||
-          dataEmpresa?.ofertasActivas ||
-          [];
-        setOfertas(Array.isArray(ofertasEmpresa) ? ofertasEmpresa : []);
+        if (empresaResult.status === "fulfilled") {
+          setEmpresa(empresaResult.value);
+        }
+
+        if (ofertasResult.status === "fulfilled") {
+          let ofertasConPostulaciones = Array.isArray(ofertasResult.value) ? ofertasResult.value : [];
+          
+          // Cargar postulaciones para cada oferta en paralelo
+          if (ofertasConPostulaciones.length > 0) {
+            const postulacionesPromesas = ofertasConPostulaciones.map(oferta =>
+              obtenerPostulacionesPorOferta(oferta.id)
+                .then(postulaciones => ({
+                  ofertaId: oferta.id,
+                  postulaciones: Array.isArray(postulaciones) ? postulaciones : []
+                }))
+                .catch(() => ({
+                  ofertaId: oferta.id,
+                  postulaciones: []
+                }))
+            );
+
+            const postulacionesResultados = await Promise.all(postulacionesPromesas);
+            
+            // Mapear postulaciones a suas ofertas
+            const mapPostulaciones = {};
+            postulacionesResultados.forEach(({ ofertaId, postulaciones }) => {
+              mapPostulaciones[ofertaId] = postulaciones.length;
+            });
+
+            // Enriquecer ofertas con conteo de postulaciones
+            ofertasConPostulaciones = ofertasConPostulaciones.map(oferta => ({
+              ...oferta,
+              postulacionesCount: mapPostulaciones[oferta.id] || 0
+            }));
+          }
+          
+          setOfertas(ofertasConPostulaciones);
+        } else {
+          setOfertas([]);
+        }
       }
     } catch (err) {
       console.error("Error al cargar datos:", err);
@@ -55,15 +93,19 @@ const ReclutadorPage = () => {
     }
   };
 
-  // Calcular métricas simples
+  // Calcular métricas
   const ofertasActivas = ofertas.filter(oferta => oferta.estadoOferta === "ABIERTA" || oferta.estado === "ACTIVA").length;
-  const postulacionesTotales = ofertas.reduce((total, oferta) => total + (oferta.postulaciones?.length || 0), 0);
+  const postulacionesTotales = ofertas.reduce((total, oferta) => total + (oferta.postulacionesCount || 0), 0);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuarioId");
-    window.location.href = "/";
-  };
+  // Calcular ofertas recientes (5 más recientes y activas)
+  const ofertasRecientes = ofertas
+    .filter(oferta => oferta.estado === "ACTIVA")
+    .sort((a, b) => {
+      const fechaA = a.fechaPublicacion ? new Date(a.fechaPublicacion).getTime() : 0;
+      const fechaB = b.fechaPublicacion ? new Date(b.fechaPublicacion).getTime() : 0;
+      return fechaB - fechaA; // Descendente (más recientes primero)
+    })
+    .slice(0, 5);
 
   return (
     <ReclutadorLayout>
@@ -74,7 +116,6 @@ const ReclutadorPage = () => {
           <ReclutadorCard as="section" className="reclutador-hero-RP">
             <div>
               <p className="reclutador-kicker-RP">Panel reclutador</p>
-              <h1>Gestiona tu empresa y ofertas</h1>
             </div>
             <div className="reclutador-hero-metrics-RP">
               <div className="metric-RP">
@@ -89,24 +130,6 @@ const ReclutadorPage = () => {
           </ReclutadorCard>
 
           {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
-
-          <div className="reclutador-actions-RP">
-            <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="action">
-              <Plus size={20} />
-              <strong>Crear Oferta</strong>
-              <span>Publicar nueva vacante</span>
-            </ReclutadorButton>
-            <ReclutadorButton as={Link} to="/Reclutador/EnterprisePage" variant="action">
-              <Building2 size={20} />
-              <strong>Gestionar Empresa</strong>
-              <span>Editar datos corporativos</span>
-            </ReclutadorButton>
-            <ReclutadorButton as={Link} to="/Reclutador/Ofertas" variant="action">
-              <FileText size={20} />
-              <strong>Ver Postulaciones</strong>
-              <span>Revisar candidatos</span>
-            </ReclutadorButton>
-          </div>
 
           <section className="reclutador-grid-RP">
             <ReclutadorCard as="article">
@@ -123,31 +146,19 @@ const ReclutadorPage = () => {
               ) : (
                 <>
                   <div className="reclutador-ofertas-list-RP">
-                    {ofertas.slice(0, 3).map((oferta) => (
-                      <div key={oferta.id} className="reclutador-oferta-item-RP">
-                        <div>
-                          <h4>{oferta.titulo}</h4>
-                          <p className="reclutador-oferta-meta-RP">
-                            {oferta.municipio?.nombre || oferta.ubicacion} • {oferta.modalidad}
-                          </p>
-                          {oferta.salario && (
-                            <span className="reclutador-oferta-salary-RP">
-                              ${oferta.salario.toLocaleString("es-CO")}
-                            </span>
-                          )}
-                        </div>
-                        <div className="reclutador-oferta-actions-RP">
-                          <Link to={`/Reclutador/Ofertas`} className="reclutador-oferta-link-RP">
-                            Ver
-                          </Link>
-                        </div>
-                      </div>
+                    {ofertasRecientes.map((oferta) => (
+                      <OfertaCard 
+                        key={oferta.id} 
+                        oferta={oferta} 
+                        rol="RECLUTADOR" 
+                        variant="detailed" 
+                      />
                     ))}
                   </div>
-                  {ofertas.length > 3 && (
+                  {ofertasRecientes.length > 0 && ofertas.length > ofertasRecientes.length && (
                     <div className="reclutador-view-all-RP">
                       <Link to="/Reclutador/Ofertas" className="reclutador-link-RP">
-                        Ver todas las ofertas ({ofertas.length})
+                        Ver todas las ofertas ({ofertasActivas})
                       </Link>
                     </div>
                   )}

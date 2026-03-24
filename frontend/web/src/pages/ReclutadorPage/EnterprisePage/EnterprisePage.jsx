@@ -1,17 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getEmpresaById } from "../../../api/empresaAPI";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
-import ReclutadorLayout from "../ReclutadorLayout";
-import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
-import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
-import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
-import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
-import CrearEmpresaModal from "../../../components/reclutador/CrearEmpresaModal";
-import UnirseEmpresaModal from "../../../components/reclutador/UnirseEmpresaModal";
-import "./EnterprisePage.css";
 
 function EnterprisePage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const redirectToEmpresa = async () => {
+      try {
+        const reclutador = await reclutadoresApi.getMyProfile();
+        const empresaId = reclutador?.empresa?.id;
+        if (empresaId) {
+          navigate(`/EmpresaPerfil/${empresaId}`, { replace: true });
+        } else {
+          alert("No tienes empresa asignada. Crea o únete a una empresa primero.");
+          navigate("/Reclutador");
+        }
+      } catch (err) {
+        console.error("Error al obtener empresa:", err);
+        navigate("/Reclutador");
+      }
+    };
+    redirectToEmpresa();
+  }, [navigate]);
+
+  return <div>Redirigiendo al perfil de tu empresa...</div>;
+}
+
+export default EnterprisePage;
   const navigate = useNavigate();
   const [empresa, setEmpresa] = useState(null);
   const [ofertas, setOfertas] = useState([]);

@@ -3,7 +3,12 @@ import SidebarAspirante from "../../components/SidebarAspirante/SidebarAspirante
 import Footer from "../../components/Footer/footer";
 import AppPageShell from "../../components/shared/AppPageShell";
 
-const AspiranteLayout = ({ children, mainClassName = "", shellClassName = "", withSidebar = true }) => {
+const AspiranteLayout = ({
+  children,
+  mainClassName = "",
+  shellClassName = "",
+  withSidebar = true,
+}) => {
   return (
     <AppPageShell
       header={<Header variant="simple" />}

@@ -1,5 +1,6 @@
+import React from "react";
 import SidebarNavigation from "../shared/SidebarNavigation";
 
-const SidebarReclutador = () => <SidebarNavigation variant="reclutador" />;
+const SidebarReclutador = React.memo(() => <SidebarNavigation variant="reclutador" />);
 
 export default SidebarReclutador;

@@ -4,6 +4,7 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+	font-family: "Inter", sans-serif;
 }
 
 .sidebar-nav--reclutador {
@@ -63,6 +64,7 @@
 	font-weight: 500;
 	font-size: 0.85rem;
 	border: 1px solid transparent;
+	font-family: "Inter", sans-serif;
 }
 
 .sidebar-nav--reclutador .nav-item-sidebar:not(.active):hover {

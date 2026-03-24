@@ -1,15 +1,13 @@
 package com.workable.mobile.ui.auth
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +18,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -69,32 +70,15 @@ fun LoginScreen(navController: NavController) {
     }
 
     WorkablePageBackground {
-        WorkableScrollableColumn(verticalSpacing = 16.dp) {
+        WorkableScrollableColumn(verticalSpacing = 12.dp) {
             WorkableHeroCard(
                 title = "Iniciar sesión",
                 subtitle = "Entra con tu correo y contraseña para acceder a tu panel según tu rol."
-            ) {
-                androidx.compose.foundation.layout.Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    WorkablePill(
-                        text = "Acceso seguro",
-                        modifier = Modifier.weight(1f)
-                    )
-                    WorkablePill(
-                        text = "Mobile",
-                        modifier = Modifier.weight(1f),
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
+            )
 
-            WorkableSurfaceCard {
+            WorkableSurfaceCard(contentPadding = 16.dp) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     WorkableTextField(
                         value = correo,
@@ -119,14 +103,20 @@ fun LoginScreen(navController: NavController) {
                         enabled = !loading && correo.isNotBlank() && password.isNotBlank()
                     )
 
-                    WorkableSecondaryButton(
+                    Text(
                         text = "Ir a registro",
-                        onClick = { navController.navigate("register") }
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { navController.navigate("register") },
+                        color = Color(0xFF1B337A),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        textDecoration = TextDecoration.Underline,
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
         }
     }
 }

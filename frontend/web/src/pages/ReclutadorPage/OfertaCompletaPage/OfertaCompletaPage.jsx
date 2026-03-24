@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { Edit, Users, Trash2 } from "lucide-react";
 import { getOfertaById, eliminarOferta } from "../../../api/ofertasAPI";
 import { obtenerPostulacionesPorOferta } from "../../../api/postulacionesAPI";
 import ReclutadorLayout from "../ReclutadorLayout";
-import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
-import ReclutadorSectionHeader from "../../../components/reclutador/ReclutadorSectionHeader";
-import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
-import ReclutadorAlert from "../../../components/reclutador/ReclutadorAlert";
-import "./OfertaCompletaPage.css";
 
 const OfertaCompletaPage = () => {
   const { ofertaId } = useParams();
@@ -68,7 +64,7 @@ const OfertaCompletaPage = () => {
   if (loading) {
     return (
       <ReclutadorLayout>
-        <ReclutadorCard>Cargando oferta...</ReclutadorCard>
+        <div>Cargando oferta...</div>
       </ReclutadorLayout>
     );
   }
@@ -76,12 +72,12 @@ const OfertaCompletaPage = () => {
   if (error || !oferta) {
     return (
       <ReclutadorLayout>
-        <ReclutadorCard>
-          <ReclutadorAlert>{error || "Oferta no encontrada"}</ReclutadorAlert>
-          <Link to="/Reclutador" className="reclutador-button-RP">
+        <div style={{ padding: "2rem", textAlign: "center", color: "#dc2626" }}>
+          <h2>{error || "Oferta no encontrada"}</h2>
+          <Link to="/Reclutador" style={{ marginTop: "1rem", display: "inline-block", color: "#1b337a" }}>
             Volver
           </Link>
-        </ReclutadorCard>
+        </div>
       </ReclutadorLayout>
     );
   }
@@ -106,49 +102,164 @@ const OfertaCompletaPage = () => {
 
   return (
     <ReclutadorLayout>
-      <ReclutadorCard as="section">
-        <ReclutadorSectionHeader
-          kicker="Oferta"
-          title={oferta.titulo || oferta.nom}
-          action={<span className="oferta-estado-RP">{oferta.estado || oferta.estadoOferta || "ACTIVA"}</span>}
-        />
-
-        <div className="oferta-grid-RP">
+      <div style={{ display: "grid", gap: "1.5rem" }}>
+        {/* Hero Section */}
+        <div style={{ background: "white", borderRadius: "12px", padding: "2rem", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)" }}>
           <div>
-            <p className="oferta-label-RP">Descripcion</p>
-            <p className="oferta-text-RP">{oferta.descripcion || oferta.desc || "No disponible"}</p>
+            <p style={{ margin: "0 0 0.5rem", color: "#2563eb", textTransform: "uppercase", fontSize: "0.75rem", fontWeight: "800" }}>
+              Detalle completo
+            </p>
+            <h1 style={{ margin: "0 0 0.5rem", fontSize: "2.5rem", fontWeight: "700", color: "#0f172a" }}>
+              {oferta.titulo || "Sin título"}
+            </h1>
+            <p style={{ margin: "0", color: "#64748b", fontSize: "1.1rem" }}>
+              <Link to={`/Empresas/${oferta.empresa?.id}`} style={{ color: "#2563eb", textDecoration: "none", fontWeight: "700" }}>
+                {oferta.empresa?.nombre || "Empresa"} • Ver perfil
+              </Link>
+            </p>
           </div>
-          <div>
-            <p className="oferta-label-RP">Empresa</p>
-            <p className="oferta-text-RP">{oferta.empresa?.nombre || "No especificada"}</p>
-          </div>
-          <div>
-            <p className="oferta-label-RP">Ubicacion</p>
-            <p className="oferta-text-RP">{oferta.municipio?.nombre || oferta.ubicacion || "-"}</p>
-          </div>
-          <div>
-            <p className="oferta-label-RP">Salario</p>
-            <p className="oferta-text-RP">{formatSalary(oferta.salario)}</p>
-          </div>
-          <div>
-            <p className="oferta-label-RP">Experiencia</p>
-            <p className="oferta-text-RP">{oferta.nivelExperiencia || "-"}</p>
-          </div>
-          <div>
-            <p className="oferta-label-RP">Fecha limite</p>
-            <p className="oferta-text-RP">{formatDate(oferta.fechaLimite || oferta.fechaPublicacion)}</p>
+          <div style={{ marginTop: "1rem" }}>
+            <span style={{ display: "inline-block", padding: "0.5rem 1rem", background: "#f1f5f9", borderRadius: "999px", fontSize: "0.9rem", fontWeight: "600", color: "#0f172a" }}>
+              {oferta.estado || "Estado"}
+            </span>
           </div>
         </div>
 
-        <div className="oferta-actions-RP">
-          <ReclutadorButton as={Link} to="/Reclutador" variant="link">Volver</ReclutadorButton>
-          <ReclutadorButton as={Link} to={`/Reclutador/EditarOfertaLaboral?ofertaId=${ofertaId}`} variant="link">Editar</ReclutadorButton>
-          <ReclutadorButton as={Link} to="/Reclutador/VerPostulacionesRecibidas" state={{ ofertaId }} variant="link">Ver postulaciones ({postulaciones.length})</ReclutadorButton>
-          <ReclutadorButton type="button" onClick={handleDeleteOferta} disabled={deleting}>
-            {deleting ? "Eliminando..." : "Eliminar"}
-          </ReclutadorButton>
+        {/* Info Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
+          <div style={{ background: "white", borderRadius: "12px", padding: "1.5rem", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)" }}>
+            <p style={{ margin: "0 0 1rem", color: "#2563eb", textTransform: "uppercase", fontSize: "0.75rem", fontWeight: "800" }}>
+              Resumen
+            </p>
+            <h2 style={{ margin: "0 0 1rem", fontSize: "1.5rem", fontWeight: "700", color: "#0f172a" }}>
+              Información principal
+            </h2>
+            <div style={{ display: "grid", gap: "1rem" }}>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Empresa</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{oferta.empresa?.nombre || "No especificada"}</p>
+              </div>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Ubicación</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{oferta.municipio?.nombre || oferta.ubicacion || "-"}</p>
+              </div>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Modalidad</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{oferta.modalidad || "No definida"}</p>
+              </div>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Experiencia</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{oferta.nivelExperiencia || "No definida"}</p>
+              </div>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Salario</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{formatSalary(oferta.salario)}</p>
+              </div>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Fecha límite</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{formatDate(oferta.fechaLimite || oferta.fechaPublicacion)}</p>
+              </div>
+              <div>
+                <strong style={{ color: "#0f172a" }}>Tipo contrato</strong>
+                <p style={{ margin: "0.25rem 0 0", color: "#64748b" }}>{oferta.tipoContrato || "No definido"}</p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: "white", borderRadius: "12px", padding: "1.5rem", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)" }}>
+            <p style={{ margin: "0 0 1rem", color: "#2563eb", textTransform: "uppercase", fontSize: "0.75rem", fontWeight: "800" }}>
+              Descripción
+            </p>
+            <h2 style={{ margin: "0 0 1rem", fontSize: "1.5rem", fontWeight: "700", color: "#0f172a" }}>
+              Detalles de la oferta
+            </h2>
+            <p style={{ margin: "0 0 1rem", color: "#475569", lineHeight: "1.6" }}>
+              {oferta.descripcion || "Sin descripción disponible."}
+            </p>
+            {oferta.requisitos ? (
+              <>
+                <p style={{ margin: "1.5rem 0 0.5rem", color: "#2563eb", textTransform: "uppercase", fontSize: "0.75rem", fontWeight: "800" }}>
+                  Requisitos
+                </p>
+                <p style={{ margin: "0", color: "#475569", lineHeight: "1.6" }}>
+                  {oferta.requisitos}
+                </p>
+              </>
+            ) : null}
+          </div>
         </div>
-      </ReclutadorCard>
+
+        {/* Actions */}
+        <div style={{ background: "white", borderRadius: "12px", padding: "1.5rem", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)" }}>
+          <p style={{ margin: "0 0 1rem", color: "#2563eb", textTransform: "uppercase", fontSize: "0.75rem", fontWeight: "800" }}>
+            Acciones
+          </p>
+          <h2 style={{ margin: "0 0 1rem", fontSize: "1.5rem", fontWeight: "700", color: "#0f172a" }}>
+            Gestionar oferta
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.75rem" }}>
+            <Link
+              to={`/Reclutador/EditarOfertaLaboral?ofertaId=${ofertaId}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                padding: "0.75rem 1rem",
+                background: "#2563eb",
+                border: "none",
+                borderRadius: "10px",
+                color: "white",
+                textDecoration: "none",
+                fontWeight: "600",
+                cursor: "pointer"
+              }}
+            >
+              <Edit size={16} /> Editar oferta
+            </Link>
+            <Link
+              to={`/Reclutador/oferta/${ofertaId}/postulaciones`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                padding: "0.75rem 1rem",
+                background: "#2563eb",
+                border: "none",
+                borderRadius: "10px",
+                color: "white",
+                textDecoration: "none",
+                fontWeight: "600",
+                cursor: "pointer"
+              }}
+            >
+              <Users size={16} /> Ver postulaciones ({postulaciones.length})
+            </Link>
+            <button
+              type="button"
+              onClick={handleDeleteOferta}
+              disabled={deleting}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                padding: "0.75rem 1rem",
+                background: "#dc2626",
+                border: "none",
+                borderRadius: "10px",
+                color: "white",
+                fontWeight: "600",
+                cursor: deleting ? "not-allowed" : "pointer",
+                opacity: deleting ? 0.6 : 1
+              }}
+            >
+              <Trash2 size={16} /> {deleting ? "Eliminando..." : "Eliminar oferta"}
+            </button>
+          </div>
+        </div>
+      </div>
     </ReclutadorLayout>
   );
 };

@@ -224,7 +224,7 @@ public class DataInitializer implements CommandLineRunner {
         empresa1.setTelefono("6013078000");
         empresa1.setNumeroTrabajadores(5000);
         empresa1.setPuntuacion(4.5f);
-        empresa1.setLogoUrl("https://www.bancolombia.com/wcm/connect/www.bancolombia.com-1.0.0/hogar/imagenes/logo-bancolombia.png");
+        empresa1.setLogoUrl("https://imgs.search.brave.com/C6eoaxsMSpa9u9FRpBOkJ2HKsDjn6My5UUb71f8HMyc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbGF5/LWxoLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9kcFg3Z0UyR00y/UFU3YTRfNGRpck1V/ZzNWbzh3OUZjQkdY/ZG5XVm9TbGZ3NWt4/RUx0MkJ3cmVoRXd3/bjIxQ1JyaHdNPXMy/NTYtcnc");
         empresa1.setMunicipio(municipioBogota);
         empresa1.getCategories().add(Empresa.Category.FINANZAS);
         empresa1.getCategories().add(Empresa.Category.TECNOLOGIA);

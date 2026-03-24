@@ -8,6 +8,7 @@ import AspiranteButton from "../../../components/aspirante/AspiranteButton";
 import AspiranteAlert from "../../../components/aspirante/AspiranteAlert";
 import { getOfertaById } from "../../../api/ofertasAPI";
 import { crearPostulacion } from "../../../api/postulacionesAPI";
+import aspirantesApi from "../../../api/aspirantesApi";
 import "./OfertaCompletaPageSimple.css";
 
 const formatSalary = (salary) => {
@@ -36,6 +37,7 @@ const OfertaCompletaPage = () => {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [postulando, setPostulando] = useState(false);
+  const [yaPostulado, setYaPostulado] = useState(false);
 
   useEffect(() => {
     const cargarOferta = async () => {
@@ -44,6 +46,19 @@ const OfertaCompletaPage = () => {
         setError("");
         const data = await getOfertaById(ofertaId);
         setOferta(data);
+
+        // Verificar si ya se postuló
+        const usuarioId = localStorage.getItem("usuarioId");
+        if (usuarioId) {
+          try {
+            const aspirante = await aspirantesApi.get(Number(usuarioId));
+            const postulaciones = aspirante.postulaciones || [];
+            const yaPostuladoCheck = postulaciones.some(p => p.ofertaId === Number(ofertaId));
+            setYaPostulado(yaPostuladoCheck);
+          } catch (err) {
+            console.warn("Error al verificar postulación previa:", err);
+          }
+        }
       } catch (err) {
         console.error("Error al cargar la oferta:", err);
         setError("No se pudo cargar el detalle de la oferta.");
@@ -164,9 +179,9 @@ const OfertaCompletaPage = () => {
                   <p className="oferta-detail-text-AP">{oferta.requisitos}</p>
                 </>
               ) : null}
-              <AspiranteButton type="button" onClick={handlePostularse} disabled={postulando}>
-                <Send size={16} />
-                {postulando ? "Postulando..." : "Postularme"}
+              <AspiranteButton type="button" onClick={handlePostularse} disabled={yaPostulado || postulando}>
+                {yaPostulado ? "Ya te has postulado" : postulando ? "Postulando..." : "Postularme"}
+                {!yaPostulado && <Send size={16} />}
               </AspiranteButton>
             </AspiranteCard>
           </section>

@@ -132,3 +132,97 @@
     justify-content: flex-start;
   }
 }
+
+.oferta-actions-RP {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.7rem;
+  overflow-x: auto;
+}
+
+.oferta-actions-RP .app-button,
+.oferta-actions-RP .app-button-primary,
+.oferta-actions-RP .app-button-secondary {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  padding: 0.95rem 1.1rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+}
+
+.oferta-actions-RP .app-button-secondary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #93c5fd;
+  color: #ffffff;
+}
+
+.oferta-actions-RP .app-button-secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+}
+
+.oferta-actions-RP .app-button {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: #93c5fd;
+  color: #ffffff;
+}
+
+.oferta-actions-RP .app-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(59, 130, 246, 0.22);
+}
+
+.oferta-actions-RP .app-button-secondary:first-child {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #93c5fd;
+}
+
+.oferta-actions-RP .app-button-secondary:first-child:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  box-shadow: 0 12px 22px rgba(37, 99, 235, 0.22);
+}
+
+.oferta-actions-RP .app-button-secondary:nth-child(2) {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #93c5fd;
+}
+
+.oferta-actions-RP .app-button-secondary:nth-child(2):hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+.oferta-actions-RP .app-button:nth-child(3) {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  border-color: #fca5a5 !important;
+}
+
+.oferta-actions-RP .app-button:nth-child(3):hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+}
+
+@media (max-width: 700px) {
+  .oferta-actions-RP {
+    overflow-x: auto;
+  }
+
+  .oferta-actions-RP .app-button,
+  .oferta-actions-RP .app-button-primary,
+  .oferta-actions-RP .app-button-secondary {
+    flex: 0 0 auto;
+    min-width: 180px;
+  }
+}

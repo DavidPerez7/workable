@@ -50,7 +50,7 @@ const GestigOfertsPage = () => {
   };
 
   const handleVerPostulaciones = (id) => {
-    navigate('/Reclutador/VerPostulacionesRecibidas', { state: { ofertaId: id } });
+    navigate(`/Reclutador/oferta/${id}/postulaciones`);
   };
 
   const handleEliminar = async (id) => {

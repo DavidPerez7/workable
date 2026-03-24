@@ -45,7 +45,7 @@ public class HojaVidaController {
     }
 
     // READ BY ID
-    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE', 'RECLUTADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
@@ -59,7 +59,7 @@ public class HojaVidaController {
     }
 
     // READ BY ASPIRANTE
-    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ASPIRANTE', 'RECLUTADOR')")
     @GetMapping("/aspirante/{aspiranteId}")
     public ResponseEntity<?> getByAspirante(@PathVariable Long aspiranteId) {
         try {

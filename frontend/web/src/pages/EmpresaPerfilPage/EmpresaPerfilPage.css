@@ -6,26 +6,26 @@
   min-height: calc(100vh - 160px);
 }
 
-.empresa-perfil-container {
+.empresa-perfil-main .empresa-perfil-container {
   width: 100%;
   display: grid;
   gap: 2rem;
 }
 
-.empresa-perfil-loading,
-.empresa-perfil-error {
+.empresa-perfil-main .empresa-perfil-loading,
+.empresa-perfil-main .empresa-perfil-error {
   text-align: center;
   padding: 4rem 2rem;
   color: #64748b;
 }
 
-.empresa-perfil-error h2 {
+.empresa-perfil-main .empresa-perfil-error h2 {
   color: #dc2626;
   margin-bottom: 1rem;
 }
 
 /* Hero Section */
-.empresa-perfil-hero {
+.empresa-perfil-main .empresa-perfil-hero {
   background: white;
   border-radius: 12px;
   padding: 2rem;
@@ -35,7 +35,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.empresa-perfil-avatar {
+.empresa-perfil-main .empresa-perfil-avatar {
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -46,21 +46,21 @@
   flex-shrink: 0;
 }
 
-.empresa-perfil-avatar img {
+.empresa-perfil-main .empresa-perfil-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
 
-.empresa-perfil-hero-info h1 {
+.empresa-perfil-main .empresa-perfil-hero-info h1 {
   font-size: 2.5rem;
   font-weight: 700;
   color: #1e293b;
   margin: 0 0 0.5rem;
 }
 
-.empresa-perfil-hero-info p {
+.empresa-perfil-main .empresa-perfil-hero-info p {
   color: #64748b;
   margin: 0 0 1rem;
   font-size: 1.1rem;
@@ -73,7 +73,7 @@
   color: #475569;
 }
 
-.empresa-perfil-meta span {
+.empresa-perfil-main .empresa-perfil-meta span {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -86,7 +86,7 @@
   color: #0f172a;
 }
 
-.empresa-perfil-puntuacion {
+.empresa-perfil-main .empresa-perfil-puntuacion {
   padding: 0.25rem 0.75rem;
   border-radius: 999px;
   font-weight: 600;
@@ -94,28 +94,53 @@
   box-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
 }
 
-.empresa-perfil-puntuacion.puntuacion-alta {
+.empresa-perfil-main .empresa-perfil-puntuacion.puntuacion-alta {
   background: linear-gradient(135deg, #10b981, #059669);
   color: white;
 }
 
-.empresa-perfil-puntuacion.puntuacion-media {
+.empresa-perfil-main .empresa-perfil-puntuacion.puntuacion-media {
   background: linear-gradient(135deg, #fbbf24, #f59e0b);
   color: white;
 }
 
-.empresa-perfil-puntuacion.puntuacion-baja {
+.empresa-perfil-main .empresa-perfil-puntuacion.puntuacion-baja {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
 }
 
-.empresa-perfil-puntuar {
+.empresa-perfil-main .empresa-perfil-editar {
+  margin-top: 1rem;
+}
+
+.empresa-perfil-main .empresa-perfil-editar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+.empresa-perfil-main .empresa-perfil-editar-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+}
+
+.empresa-perfil-main .empresa-perfil-puntuar {
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
 }
 
-.empresa-perfil-puntuar input {
+.empresa-perfil-main .empresa-perfil-puntuar input {
   width: 60px;
   padding: 0.5rem;
   border: 1px solid #dbe4f0;
@@ -123,7 +148,7 @@
   text-align: center;
 }
 
-.empresa-perfil-puntuar button {
+.empresa-perfil-main .empresa-perfil-puntuar button {
   padding: 0.5rem 1rem;
   background: #2563eb;
   color: white;
@@ -133,17 +158,17 @@
   font-weight: 500;
 }
 
-.empresa-perfil-puntuar button:hover:not(:disabled) {
+.empresa-perfil-main .empresa-perfil-puntuar button:hover:not(:disabled) {
   background: #1d4ed8;
 }
 
-.empresa-perfil-puntuar button:disabled {
+.empresa-perfil-main .empresa-perfil-puntuar button:disabled {
   background: #9ca3af;
   cursor: not-allowed;
 }
 
 /* Resumen */
-.empresa-perfil-resumen h2 {
+.empresa-perfil-main .empresa-perfil-resumen h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: #1e293b;
@@ -156,7 +181,7 @@
   gap: 1rem;
 }
 
-.empresa-perfil-resumen-item {
+.empresa-perfil-main .empresa-perfil-resumen-item {
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
@@ -166,33 +191,33 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.empresa-perfil-resumen-item svg {
+.empresa-perfil-main .empresa-perfil-resumen-item svg {
   color: #2563eb;
   flex-shrink: 0;
 }
 
-.empresa-perfil-resumen-item strong {
+.empresa-perfil-main .empresa-perfil-resumen-item strong {
   display: block;
   font-size: 0.9rem;
   color: #64748b;
   margin-bottom: 0.25rem;
 }
 
-.empresa-perfil-resumen-item span {
+.empresa-perfil-main .empresa-perfil-resumen-item span {
   font-size: 1rem;
   color: #1e293b;
   font-weight: 500;
 }
 
 /* Ofertas */
-.empresa-perfil-ofertas h2 {
+.empresa-perfil-main .empresa-perfil-ofertas h2 {
   font-size: 1.5rem;
   font-weight: 600;
   color: #1e293b;
   margin-bottom: 1.5rem;
 }
 
-.empresa-perfil-no-ofertas {
+.empresa-perfil-main .empresa-perfil-no-ofertas {
   text-align: center;
   color: #64748b;
   padding: 2rem;
@@ -204,90 +229,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
-}
-
-.empresa-perfil-oferta-card {
-  padding: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.empresa-perfil-oferta-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.empresa-perfil-oferta-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-}
-
-.empresa-perfil-oferta-header h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
-  flex: 1;
-}
-
-.empresa-perfil-oferta-modalidad {
-  background: #eff6ff;
-  color: #2563eb;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.empresa-perfil-oferta-descripcion {
-  color: #64748b;
-  margin: 0 0 1rem;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  line-clamp: 3;
-  box-orient: vertical;
-  overflow: hidden;
-}
-
-.empresa-perfil-oferta-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-bottom: 1rem;
-}
-
-.empresa-perfil-oferta-meta span {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.empresa-perfil-oferta-salary {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #059669;
-  margin-bottom: 1rem;
-}
-
-.empresa-perfil-oferta-link {
-  display: inline-block;
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border: 1px solid #2563eb;
-  border-radius: 6px;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.empresa-perfil-oferta-link:hover {
-  background: #2563eb;
-  color: white;
 }
 
 /* Responsive */
@@ -308,4 +249,167 @@
   .empresa-perfil-ofertas-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Modal de Edición */
+.empresa-edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.empresa-edit-modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.empresa-edit-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.empresa-edit-modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.empresa-edit-modal-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.empresa-edit-modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.empresa-edit-modal-body {
+  padding: 1.5rem;
+}
+
+.empresa-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empresa-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.empresa-edit-field label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.empresa-edit-field input,
+.empresa-edit-field textarea {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+
+.empresa-edit-field input:focus,
+.empresa-edit-field textarea:focus,
+.empresa-edit-field select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.empresa-edit-field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.empresa-edit-select {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.empresa-edit-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.empresa-edit-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.empresa-edit-btn-cancel {
+  padding: 0.75rem 1.5rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.empresa-edit-btn-cancel:hover {
+  background: #e5e7eb;
+}
+
+.empresa-edit-btn-save {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.empresa-edit-btn-save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+}
+
+.empresa-edit-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }

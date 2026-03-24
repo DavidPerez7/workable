@@ -260,7 +260,7 @@ function EmpresaPerfilPage() {
                         </div>
                         <div className="empresa-perfil-offer-meta-EP">
                           <span>{formatSalary(oferta.salario)}</span>
-                          <Link to={`/Aspirante/OfertaCompleta/${oferta.id}`}>Ver oferta</Link>
+                          <Link to={rol === "RECLUTADOR" ? `/Reclutador/oferta/${oferta.id}` : `/Aspirante/oferta/${oferta.id}`}>Ver oferta</Link>
                         </div>
                       </article>
                     ))}

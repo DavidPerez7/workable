@@ -55,7 +55,12 @@ export const actualizarEmpresa = async (id, empresaData) => {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || "Error al actualizar empresa");
+    throw new Error(errorData.message || `Error al actualizar empresa (${response.status})`);
+  }
+
+  // Algunos endpoints devuelven 204 No Content
+  if (response.status === 204) {
+    return { success: true };
   }
 
   return response.json();
