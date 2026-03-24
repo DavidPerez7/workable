@@ -69,6 +69,15 @@ public class ReclutadorService {
         reclutador.setEmpresa(empresa);
         return reclutadorRepo.save(reclutador);
     }
+
+    // READ BY EMPRESA
+    public List<Reclutador> getByEmpresaId(Long empresaId) {
+        if (empresaId == null) {
+            throw new IllegalArgumentException("El ID de empresa no puede ser nulo");
+        }
+        return reclutadorRepo.findAllByEmpresaId(empresaId);
+    }
+
     // UPDATE
     public Reclutador update(Long id, Reclutador request) {
         if (id == null) {

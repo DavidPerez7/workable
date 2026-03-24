@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { LogOut, ChevronLeft, ChevronRight } from "lucide-react";
 import reclutadoresApi from "../../api/reclutadoresApi";
 import "./SidebarNavigation.css";
 
@@ -82,17 +82,6 @@ const sidebarVariants = {
           </svg>
         ),
       },
-      {
-        path: "/Aspirante/MisPostulaciones",
-        label: "Postulaciones",
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 6h16" />
-            <path d="M4 12h10" />
-            <path d="M4 18h16" />
-          </svg>
-        ),
-      },
     ],
   },
 };
@@ -102,9 +91,8 @@ const SidebarNavigation = ({ variant = "reclutador" }) => {
   const navigate = useNavigate();
   const config = sidebarVariants[variant] || sidebarVariants.reclutador;
   const isActive = (item) => {
-    // Caso especial para Empresa en reclutador - check si estamos viendo una empresa
     if (variant === "reclutador" && item.path === "/Reclutador/Empresa") {
-      return location.pathname.startsWith("/EmpresaPerfil/");
+      return location.pathname === item.path || location.pathname.startsWith("/EmpresaPerfil/");
     }
 
     if (item.match === "includes") {
@@ -115,20 +103,16 @@ const SidebarNavigation = ({ variant = "reclutador" }) => {
   };
 
   const handleNavigation = useCallback(async (item) => {
-    // Caso especial para "Empresa" en reclutador
     if (variant === "reclutador" && item.path === "/Reclutador/Empresa") {
       try {
         const reclutador = await reclutadoresApi.getMyProfile();
         if (reclutador?.empresa?.id) {
           navigate(`/EmpresaPerfil/${reclutador.empresa.id}`, { replace: false });
-        } else {
-          navigate("/Reclutador", { replace: false });
+          return;
         }
       } catch (err) {
         console.error("Error obteniendo empresa:", err);
-        navigate("/Reclutador", { replace: false });
       }
-      return;
     }
 
     if (typeof item.path === 'function') {
@@ -136,7 +120,7 @@ const SidebarNavigation = ({ variant = "reclutador" }) => {
     } else {
       navigate(item.path);
     }
-  }, [variant, navigate]);
+  }, [navigate, variant]);
 
   const cerrarSesion = () => {
     if (window.confirm("¿Estás seguro de que quieres cerrar sesión?")) {
@@ -145,8 +129,24 @@ const SidebarNavigation = ({ variant = "reclutador" }) => {
     }
   };
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
+  const goForward = () => {
+    navigate(1);
+  };
+
   return (
     <aside className={config.shellClassName}>
+      <div className="sidebar-navigation-controls">
+        <button type="button" className="nav-control-button" onClick={goBack} title="Ir atrás">
+          <ChevronLeft size={16} />
+        </button>
+        <button type="button" className="nav-control-button" onClick={goForward} title="Ir adelante">
+          <ChevronRight size={16} />
+        </button>
+      </div>
       <nav className={config.navClassName}>
         {config.items.map((item) => (
           <div

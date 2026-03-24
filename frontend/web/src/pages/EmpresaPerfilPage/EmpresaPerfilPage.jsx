@@ -28,6 +28,7 @@ function EmpresaPerfilPage() {
   const [rol, setRol] = useState(() => (localStorage.getItem("rol") || "").toUpperCase());
   const [empresa, setEmpresa] = useState(null);
   const [ofertas, setOfertas] = useState([]);
+  const [reclutadores, setReclutadores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [puntuacionInput, setPuntuacionInput] = useState("");
@@ -86,9 +87,10 @@ function EmpresaPerfilPage() {
           console.warn("Error al cargar municipios:", munError);
         }
 
-        const [empresaResult, ofertasResult] = await Promise.allSettled([
+        const [empresaResult, ofertasResult, reclutadoresResult] = await Promise.allSettled([
           getEmpresaById(empresaId),
           getOfertasByEmpresaId(empresaId),
+          reclutadoresApi.getByEmpresa(empresaId),
         ]);
 
         if (empresaResult.status === "fulfilled") {
@@ -102,6 +104,13 @@ function EmpresaPerfilPage() {
         } else {
           console.error("Error al cargar ofertas:", ofertasResult.reason);
           setOfertas([]);
+        }
+
+        if (reclutadoresResult.status === "fulfilled") {
+          setReclutadores(Array.isArray(reclutadoresResult.value) ? reclutadoresResult.value : []);
+        } else {
+          console.error("Error al cargar reclutadores:", reclutadoresResult.reason);
+          setReclutadores([]);
         }
 
         // Check if owner
@@ -397,6 +406,30 @@ function EmpresaPerfilPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="empresa-perfil-reclutadores">
+          <div className="empresa-perfil-section-head">
+            <h2>Reclutadores vinculados</h2>
+            <span>{reclutadores.length}</span>
+          </div>
+          {reclutadores.length === 0 ? (
+            <p className="empresa-perfil-no-reclutadores">Todavía no hay reclutadores vinculados a esta empresa.</p>
+          ) : (
+            <div className="empresa-perfil-reclutadores-list">
+              {reclutadores.map((reclutador) => (
+                <div key={reclutador.id} className="empresa-perfil-reclutador-chip">
+                  <div className="empresa-perfil-reclutador-avatar">
+                    {(reclutador.nombre || "R").charAt(0).toUpperCase()}
+                  </div>
+                  <div className="empresa-perfil-reclutador-info">
+                    <strong>{reclutador.nombre || "Reclutador"} {reclutador.apellido || ""}</strong>
+                    <span>{reclutador.correo || "Sin correo"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Ofertas */}

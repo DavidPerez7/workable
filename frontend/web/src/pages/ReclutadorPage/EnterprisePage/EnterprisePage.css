@@ -1,0 +1,268 @@
+/* EnterprisePage.css */
+.empresa-shell-EP {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.empresa-main-EP {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.empresa-hero-EP {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.empresa-avatar-EP {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.empresa-avatar-EP img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.empresa-hero-text-EP {
+  flex: 1;
+}
+
+.empresa-hero-text-EP h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.empresa-hero-text-EP p {
+  margin: 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.empresa-hero-badge-EP {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.empresa-hero-badge-EP strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.empresa-hero-badge-EP span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Grid Section */
+.empresa-grid-EP {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.empresa-card-EP {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.empresa-card-header-EP {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.empresa-card-header-EP h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.empresa-field-EP {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.empresa-field-EP:last-child {
+  border-bottom: none;
+}
+
+.empresa-field-EP span {
+  color: #666;
+  font-weight: 500;
+}
+
+.empresa-field-EP strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Unirse a Empresa Section */
+.unirse-empresa-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.unirse-empresa-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.unirse-empresa-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.unirse-empresa-header h2 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.unirse-empresa-header p {
+  margin: 0;
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.unirse-empresa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 6px;
+}
+
+.unirse-empresa-footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.unirse-empresa-footer p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: white;
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .empresa-main-EP {
+    padding: 1rem;
+  }
+
+  .empresa-hero-EP {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .empresa-hero-badge-EP {
+    align-items: center;
+  }
+
+  .empresa-grid-EP {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .unirse-empresa-card {
+    padding: 2rem;
+    margin: 1rem;
+  }
+
+  .unirse-empresa-header h2 {
+    font-size: 1.5rem;
+  }
+}

@@ -130,6 +130,11 @@ const reclutadoresApi = {
     }
   },
 
+  // Unirse a empresa por código de invitación (alias de updateByCode)
+  unirseEmpresa: async (codigoInvitacion) => {
+    return reclutadoresApi.updateByCode(codigoInvitacion);
+  },
+
   // Asignar empresa al reclutador logueado
   asignarEmpresa: async (empresaId) => {
     try {

@@ -36,8 +36,11 @@ export const getOfertaById = async (id) => {
 export const getOfertasByEmpresaId = async (empresaId) => {
   try {
     const response = await API.get(`/api/oferta/empresa/${empresaId}`);
-    return response.data;
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
+    if (error.response?.status === 404 || error.response?.status === 204) {
+      return [];
+    }
     console.error(`Error al obtener ofertas por empresa ${empresaId}:`, error);
     throw error;
   }
@@ -156,8 +159,11 @@ export const actualizarOferta = async (id, ofertaData) => {
 // Cambiar estado de oferta (ABIERTA/CERRADA)
 export const cambiarEstadoOferta = async (id, estado) => {
   try {
-    const response = await API.patch(`/api/oferta/${id}/estado`, null, {
-      params: { estado }
+    // Mapear estados del frontend al backend
+    const estadoBackend = estado === "ABIERTA" ? "ACTIVA" : "INACTIVA";
+
+    const response = await API.put(`/api/oferta/${id}`, {
+      estado: estadoBackend
     });
     return response.data;
   } catch (error) {

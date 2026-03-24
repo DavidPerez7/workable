@@ -13,6 +13,7 @@
   z-index: 1000;
   overflow-y: auto;
   gap: 12px;
+  font-family: "Inter", sans-serif;
 }
 
 .admin-sidebar .admin-sidebar-nav {
@@ -44,6 +45,7 @@
   justify-content: flex-start;
   border: 1px solid transparent;
   transition: all 0.2s ease;
+  font-family: "Inter", sans-serif;
 }
 
 .admin-sidebar .nav-link::after,
@@ -73,6 +75,7 @@
   cursor: pointer;
   font-weight: 700;
   transition: all 0.2s ease;
+  font-family: "Inter", sans-serif;
 }
 
 .btn-logout-sidebar:hover {

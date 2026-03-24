@@ -1,88 +1,86 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import reclutadoresApi from "../../../api/reclutadoresApi";
+import ReclutadorLayout from "../ReclutadorLayout";
+import ReclutadorCard from "../../../components/reclutador/ReclutadorCard";
+import ReclutadorButton from "../../../components/reclutador/ReclutadorButton";
+import "./EnterprisePage.css";
 
 function EnterprisePage() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const redirectToEmpresa = async () => {
-      try {
-        const reclutador = await reclutadoresApi.getMyProfile();
-        const empresaId = reclutador?.empresa?.id;
-        if (empresaId) {
-          navigate(`/EmpresaPerfil/${empresaId}`, { replace: true });
-        } else {
-          alert("No tienes empresa asignada. Crea o únete a una empresa primero.");
-          navigate("/Reclutador");
-        }
-      } catch (err) {
-        console.error("Error al obtener empresa:", err);
-        navigate("/Reclutador");
-      }
-    };
-    redirectToEmpresa();
-  }, [navigate]);
-
-  return <div>Redirigiendo al perfil de tu empresa...</div>;
-}
-
-export default EnterprisePage;
-  const navigate = useNavigate();
+  const [reclutador, setReclutador] = useState(null);
   const [empresa, setEmpresa] = useState(null);
-  const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
-  const [isUnirseModalOpen, setIsUnirseModalOpen] = useState(false);
+  const [codigoInvitacion, setCodigoInvitacion] = useState("");
+  const [uniendo, setUniendo] = useState(false);
 
   useEffect(() => {
-    const cargarDatos = async () => {
+    const cargarPerfil = async () => {
       try {
         setLoading(true);
-        setError("");
-        const reclutador = await reclutadoresApi.getMyProfile();
-        const empresaId = reclutador?.empresa?.id;
-
-        if (!empresaId) {
-          setEmpresa(null);
-          setOfertas([]);
-          return;
+        const perfil = await reclutadoresApi.getMyProfile();
+        setReclutador(perfil);
+        setEmpresa(perfil?.empresa);
+        if (perfil?.empresa?.id) {
+          navigate(`/EmpresaPerfil/${perfil.empresa.id}`, { replace: true });
         }
-
-        const empresaData = await getEmpresaById(empresaId);
-
-        setEmpresa(empresaData);
-        const ofertasEmpresa =
-          empresaData?.ofertas ||
-          empresaData?.listaOfertas ||
-          empresaData?.ofertasActivas ||
-          [];
-        setOfertas(Array.isArray(ofertasEmpresa) ? ofertasEmpresa : []);
       } catch (err) {
-        console.error("Error al cargar empresa:", err);
-        setError(err.message || "No se pudo cargar la empresa");
+        console.error("Error al cargar perfil:", err);
+        setError("Error al cargar el perfil");
       } finally {
         setLoading(false);
       }
     };
 
-    cargarDatos();
-  }, []);
+    cargarPerfil();
+  }, [navigate]);
 
-  const handleEmpresaSuccess = () => {
-    // Recargar la página para mostrar la empresa
-    window.location.reload();
+  const handleUnirseEmpresa = async (e) => {
+    e.preventDefault();
+    if (!codigoInvitacion.trim()) {
+      setError("Por favor ingresa un código de invitación");
+      return;
+    }
+
+    try {
+      setUniendo(true);
+      setError("");
+      await reclutadoresApi.unirseEmpresa(codigoInvitacion);
+      // Recargar el perfil para mostrar la empresa
+      const perfilActualizado = await reclutadoresApi.getMyProfile();
+      setReclutador(perfilActualizado);
+      setEmpresa(perfilActualizado?.empresa);
+      if (perfilActualizado?.empresa?.id) {
+        navigate(`/EmpresaPerfil/${perfilActualizado.empresa.id}`, { replace: true });
+        return;
+      }
+      setCodigoInvitacion("");
+    } catch (err) {
+      console.error("Error al unirse a empresa:", err);
+      setError(err.response?.data?.error || "Error al unirse a la empresa");
+    } finally {
+      setUniendo(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <ReclutadorLayout>
+        <div className="loading-container">Cargando...</div>
+      </ReclutadorLayout>
+    );
+  }
 
   return (
     <ReclutadorLayout shellClassName="empresa-shell-EP" mainClassName="empresa-main-EP">
       {empresa ? (
+        // Mostrar información de la empresa si ya pertenece a una
         <>
           <section className="empresa-hero-EP">
             <div className="empresa-avatar-EP">
-              {empresa?.logo ? (
-                <img src={empresa.logo} alt={empresa.nombre} />
+              {empresa?.logoUrl ? (
+                <img src={empresa.logoUrl} alt={empresa.nombre} />
               ) : (
                 <span>{empresa?.nombre?.charAt(0) || "E"}</span>
               )}
@@ -140,53 +138,47 @@ export default EnterprisePage;
               </div>
             </ReclutadorCard>
           </section>
-
-          <ReclutadorCard as="section" className="empresa-actions-EP">
-            <div className="empresa-actions-grid-EP">
-              <ReclutadorButton type="button" onClick={() => navigate("/Reclutador/EnterprisePage/Edit")} variant="action">
-                <strong>Editar empresa</strong>
-                <span>Actualizar datos corporativos.</span>
-              </ReclutadorButton>
-
-              <ReclutadorButton as={Link} to="/Reclutador/Publicacion" variant="action">
-                <strong>Crear oferta</strong>
-                <span>Publicar nueva oportunidad laboral.</span>
-              </ReclutadorButton>
-            </div>
-          </ReclutadorCard>
         </>
       ) : (
-        <>
-          {error ? <ReclutadorAlert>{error}</ReclutadorAlert> : null}
+        // Mostrar formulario para unirse a empresa si no pertenece a ninguna
+        <section className="unirse-empresa-section">
+          <ReclutadorCard className="unirse-empresa-card">
+            <div className="unirse-empresa-header">
+              <h2>Únete a una Empresa</h2>
+              <p>Ingresa el código de invitación que te proporcionó tu empresa</p>
+            </div>
 
-          {loading ? (
-            <ReclutadorCard>Cargando empresa...</ReclutadorCard>
-          ) : (
-            <ReclutadorCard>
-              <p className="empresa-empty-EP">Aun no tienes empresa registrada.</p>
-              <div className="empresa-actions-EP">
-                <ReclutadorButton onClick={() => setIsCrearModalOpen(true)}>
-                  Crear Empresa
-                </ReclutadorButton>
-                <ReclutadorButton variant="secondary" onClick={() => setIsUnirseModalOpen(true)}>
-                  Unirse a Empresa
-                </ReclutadorButton>
+            <form onSubmit={handleUnirseEmpresa} className="unirse-empresa-form">
+              <div className="form-group">
+                <label htmlFor="codigoInvitacion">Código de Invitación</label>
+                <input
+                  type="text"
+                  id="codigoInvitacion"
+                  value={codigoInvitacion}
+                  onChange={(e) => setCodigoInvitacion(e.target.value)}
+                  placeholder="Ingresa el código de invitación"
+                  required
+                  disabled={uniendo}
+                />
               </div>
-            </ReclutadorCard>
-          )}
-        </>
-      )}
 
-      <CrearEmpresaModal
-        isOpen={isCrearModalOpen}
-        onClose={() => setIsCrearModalOpen(false)}
-        onSuccess={handleEmpresaSuccess}
-      />
-      <UnirseEmpresaModal
-        isOpen={isUnirseModalOpen}
-        onClose={() => setIsUnirseModalOpen(false)}
-        onSuccess={handleEmpresaSuccess}
-      />
+              {error && <div className="error-message">{error}</div>}
+
+              <ReclutadorButton
+                type="submit"
+                variant="primary"
+                disabled={uniendo || !codigoInvitacion.trim()}
+              >
+                {uniendo ? "Uniéndose..." : "Unirse a Empresa"}
+              </ReclutadorButton>
+            </form>
+
+            <div className="unirse-empresa-footer">
+              <p>¿No tienes un código? Contacta al administrador de tu empresa.</p>
+            </div>
+          </ReclutadorCard>
+        </section>
+      )}
     </ReclutadorLayout>
   );
 }

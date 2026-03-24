@@ -141,7 +141,7 @@ const ReclutadorPage = () => {
                     Crear oferta
                   </Link>
                 )}>
-                  <p>No tienes ofertas publicadas.</p>
+                  <p>Aún no has publicado tu primera oferta.</p>
                 </ReclutadorEmptyState>
               ) : (
                 <>

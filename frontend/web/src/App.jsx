@@ -26,6 +26,7 @@ import MisPostulaciones from "./pages/AspirantePage/MisPostulaciones/MisPostulac
 import HojaDeVida from "./pages/AspirantePage/MiPerfil/HojaDeVida/HojaDeVida";
 import ReclutadorHojaDeVida from "./pages/ReclutadorPage/HojaDeVida/HojaDeVida";
 import AspiranteOfertaCompletaPage from "./pages/AspirantePage/OfertaCompletaPage/OfertaCompletaPage";
+import AspiranteEmpresaPage from "./pages/AspiranteEmpresaPage/AspiranteEmpresaPage";
 
 // Pages for administrators
 import AdminPage from "./pages/AdminPage/AdminPage";
@@ -39,6 +40,7 @@ import NewReclutador from "./components/Empresa/NewReclutador";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import EmpresaPerfilPage from "./pages/EmpresaPerfilPage/EmpresaPerfilPage";
 import RedirectEmpresa from "./components/RedirectEmpresa/RedirectEmpresa";
+import EnterprisePage from "./pages/ReclutadorPage/EnterprisePage/EnterprisePage";
 
 function App() {
   return (
@@ -56,7 +58,7 @@ function App() {
         <Route path="/Reclutador/Publicacion" element={<ProtectedRoute requiredRole="RECLUTADOR"><PublicacionPage /></ProtectedRoute>} />
         <Route path="/Reclutador/Ofertas" element={<ProtectedRoute requiredRole="RECLUTADOR"><GestigOfertsPage /></ProtectedRoute>} />
         <Route path="/Reclutador/ReclutadorProfile" element={<ProtectedRoute requiredRole="RECLUTADOR"><ReclutadorProfile /></ProtectedRoute>} />
-        <Route path="/Reclutador/Empresa" element={<ProtectedRoute requiredRole="RECLUTADOR"><RedirectEmpresa /></ProtectedRoute>} />
+        <Route path="/Reclutador/Empresa" element={<ProtectedRoute requiredRole="RECLUTADOR"><EnterprisePage /></ProtectedRoute>} />
         <Route path="/Reclutador/oferta/:ofertaId" element={<ProtectedRoute requiredRole="RECLUTADOR"><OfertaCompletaPage /></ProtectedRoute>} />
         <Route path="/Reclutador/oferta/:ofertaId/postulaciones" element={<ProtectedRoute requiredRole="RECLUTADOR"><VerPostulacionesRecibidas /></ProtectedRoute>} />
         <Route
@@ -76,6 +78,7 @@ function App() {
         <Route path="/Aspirante/MiPerfil/MisPostulaciones" element={<Navigate to="/Aspirante/MisPostulaciones" replace />} />
         <Route path="/Aspirante/MisPostulaciones" element={<ProtectedRoute requiredRole="ASPIRANTE"><MisPostulaciones /></ProtectedRoute>} />
         <Route path="/Aspirante/MiPerfil/HojaDeVida" element={<ProtectedRoute requiredRole="ASPIRANTE"><HojaDeVida /></ProtectedRoute>} />
+        <Route path="/Aspirante/Empresa" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspiranteEmpresaPage /></ProtectedRoute>} />
         <Route path="/Aspirante/oferta/:ofertaId" element={<ProtectedRoute requiredRole="ASPIRANTE"><AspiranteOfertaCompletaPage /></ProtectedRoute>} />
         
         {/* Ruta para perfil de empresa */}

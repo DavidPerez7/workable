@@ -158,23 +158,42 @@ const VerPostulacionesRecibidas = () => {
         <div className="vp-header-section">
           <div className="vp-header-content">
             <h1 className="vp-header-title">POSTULACIONES RECIBIDAS</h1>
-            <div className="vp-stats">
-              <div className="vp-stat-item">
-                <span className="vp-stat-number">{postulaciones.length}</span>
-                <span className="vp-stat-label">Total</span>
+          </div>
+        </div>
+
+        {/* Oferta referenciada arriba de los stats */}
+        <div className="vp-offer-card">
+          <div className="vp-offer-card__header">
+            <div className="vp-offer-card__title-row">
+              <p className="vp-offer-card__kicker">Oferta referenciada</p>
+              <div className="vp-offer-card__title-action">
+                <h2 className="vp-offer-card__title">{oferta?.titulo || "Sin título"}</h2>
+                <Link to={`/Reclutador/oferta/${ofertaId}`} className="vp-offer-card__view-btn">
+                  Ver
+                </Link>
               </div>
-              <div className="vp-stat-item">
-                <span className="vp-stat-number">
-                  {postulaciones.filter(p => p.estado === 'PENDIENTE').length}
-                </span>
-                <span className="vp-stat-label">Pendientes</span>
-              </div>
-              <div className="vp-stat-item">
-                <span className="vp-stat-number">
-                  {postulaciones.filter(p => p.estado === 'ACEPTADO').length}
-                </span>
-                <span className="vp-stat-label">Aceptados</span>
-              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats cards */}
+        <div className="vp-stats-section">
+          <div className="vp-stats">
+            <div className="vp-stat-item">
+              <span className="vp-stat-number">{postulaciones.length}</span>
+              <span className="vp-stat-label">Total</span>
+            </div>
+            <div className="vp-stat-item">
+              <span className="vp-stat-number">
+                {postulaciones.filter(p => p.estado === 'PENDIENTE').length}
+              </span>
+              <span className="vp-stat-label">Pendientes</span>
+            </div>
+            <div className="vp-stat-item">
+              <span className="vp-stat-number">
+                {postulaciones.filter(p => p.estado === 'ACEPTADO').length}
+              </span>
+              <span className="vp-stat-label">Aceptados</span>
             </div>
           </div>
         </div>
@@ -231,21 +250,6 @@ const VerPostulacionesRecibidas = () => {
           </AspiranteCard>
 
           <div className="vp-main-column">
-            <div className="vp-offer-card">
-              <div className="vp-offer-card__header">
-                <div className="vp-offer-card__title-row">
-                  <p className="vp-offer-card__kicker">Oferta referenciada</p>
-                  <div className="vp-offer-card__title-action">
-                    <h2 className="vp-offer-card__title">{oferta?.titulo || "Sin título"}</h2>
-                    <Link to={`/Reclutador/oferta/${ofertaId}`} className="vp-offer-card__view-btn">
-                      Ver
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
             <div className="vp-container">
           {postulacionesFiltradas.length === 0 ? (
             <div className="vp-empty">

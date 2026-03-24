@@ -225,6 +225,97 @@
   border-radius: 8px;
 }
 
+.empresa-perfil-main .empresa-perfil-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.empresa-perfil-main .empresa-perfil-section-head h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.empresa-perfil-main .empresa-perfil-section-head span {
+  min-width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.empresa-perfil-main .empresa-perfil-reclutadores {
+  background: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.empresa-perfil-main .empresa-perfil-reclutadores-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.empresa-perfil-main .empresa-perfil-reclutador-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  min-width: 220px;
+}
+
+.empresa-perfil-main .empresa-perfil-reclutador-avatar {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.empresa-perfil-main .empresa-perfil-reclutador-info {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.empresa-perfil-main .empresa-perfil-reclutador-info strong {
+  color: #0f172a;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.empresa-perfil-main .empresa-perfil-reclutador-info span {
+  color: #64748b;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empresa-perfil-main .empresa-perfil-no-reclutadores {
+  text-align: center;
+  color: #64748b;
+  padding: 1rem 0.5rem 0.25rem;
+  margin: 0;
+}
+
 .empresa-perfil-ofertas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -248,6 +339,10 @@
 
   .empresa-perfil-ofertas-grid {
     grid-template-columns: 1fr;
+  }
+
+  .empresa-perfil-main .empresa-perfil-reclutador-chip {
+    min-width: 100%;
   }
 }
 

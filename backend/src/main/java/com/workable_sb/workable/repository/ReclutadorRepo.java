@@ -10,4 +10,5 @@ import com.workable_sb.workable.models.Reclutador;
 public interface ReclutadorRepo extends JpaRepository<Reclutador, Long> {
     Optional<Reclutador> findByCorreo(String correo);
     Optional<Reclutador> findByEmpresaId(Long empresaId);
+    java.util.List<Reclutador> findAllByEmpresaId(Long empresaId);
 }

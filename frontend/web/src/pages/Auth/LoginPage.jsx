@@ -96,8 +96,8 @@ const LoginPage = () => {
                 </button>
 
                 <div className="form-footer">
-                  <Link to="/ForgotPassword" className="forgot-password">
-                    ¿Olvidaste tu contraseña?
+                  <Link to="/Signup" className="forgot-password">
+                    No tienes cuenta? Crea una cuenta
                   </Link>
                 </div>
               </form>

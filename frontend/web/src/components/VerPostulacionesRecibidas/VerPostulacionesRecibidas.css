@@ -33,6 +33,71 @@
   width: 100%;
 }
 
+/* Oferta referenciada arriba */
+.vp-offer-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.vp-offer-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vp-offer-card__title-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vp-offer-card__kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.vp-offer-card__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.vp-offer-card__title-action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vp-offer-card__view-btn {
+  padding: 0.375rem 0.75rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.vp-offer-card__view-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Stats section */
+.vp-stats-section {
+  margin-bottom: 1.5rem;
+}
+
 .vp-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(92px, 1fr));

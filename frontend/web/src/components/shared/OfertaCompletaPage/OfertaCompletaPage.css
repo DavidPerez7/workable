@@ -41,7 +41,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: 2px solid;
   border-radius: 10px;
   text-decoration: none;
@@ -49,49 +49,97 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
-  min-width: 160px;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .oferta-action-edit-RP {
-  background: transparent;
   color: #2563eb;
   border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.1);
 }
 
 .oferta-action-edit-RP:hover {
   color: #1d4ed8;
   border-color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.1);
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .oferta-action-view-RP {
-  background: transparent;
-  color: #2563eb;
-  border-color: #2563eb;
+  color: #059669;
+  border-color: #059669;
+  background: rgba(5, 150, 105, 0.1);
 }
 
 .oferta-action-view-RP:hover {
-  color: #1d4ed8;
-  border-color: #1d4ed8;
+  color: #047857;
+  border-color: #047857;
+  background: rgba(5, 150, 105, 0.2);
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
 }
 
 .oferta-action-delete-RP {
-  background: transparent;
   color: #dc2626;
   border-color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
 }
 
 .oferta-action-delete-RP:hover:not(:disabled) {
   color: #b91c1c;
   border-color: #b91c1c;
+  background: rgba(220, 38, 38, 0.2);
   transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
 }
 
 .oferta-action-delete-RP:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+.empresa-link-shared {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
+  background: #f8fbff;
+  border: 1px solid #dbe4f0;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #0f172a;
+  text-decoration: none;
+}
+
+.empresa-link-shared:hover {
+  background: #f1f5f9;
+  text-decoration: none;
+}
+.oferta-action-apply-RP {
+  color: #059669;
+  border-color: #059669;
+}
+
+.oferta-action-apply-RP:hover:not(:disabled) {
+  color: #047857;
+  border-color: #047857;
+  background: rgba(5, 150, 105, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+}
+
+.oferta-info-item-full-RP {
+  grid-column: span 2;
+  padding: 0.5rem;
+  background: rgba(248, 250, 252, 0.7);
+  border-radius: 8px;
+  border-left: 3px solid #2563eb;
+  transition: all 0.2s ease;
+  margin-bottom: 0.25rem;
 }
 
 /* Estilos mejorados para resumen y descripción */
@@ -105,8 +153,8 @@
 }
 
 .oferta-section-title-RP {
-  margin: 0 0 1.5rem;
-  font-size: 1.5rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #0f172a;
   line-height: 1.3;
@@ -114,20 +162,22 @@
 
 .oferta-info-grid-RP {
   display: grid;
-  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
 }
 
 .oferta-info-item-RP {
-  padding: 1rem;
-  background: #f8fafc;
+  padding: 0.5rem;
+  background: rgba(248, 250, 252, 0.7);
   border-radius: 8px;
-  border-left: 4px solid #2563eb;
+  border-left: 3px solid #2563eb;
   transition: all 0.2s ease;
+  margin-bottom: 0.25rem;
 }
 
 .oferta-info-item-RP:hover {
-  background: #f1f5f9;
-  transform: translateX(2px);
+  background: rgba(241, 245, 249, 0.8);
+  transform: translateX(1px);
 }
 
 .oferta-info-label-RP {
@@ -147,7 +197,7 @@
 }
 
 .oferta-description-RP {
-  margin: 0 0 1.5rem;
+  margin: 0 0 0.75rem;
   color: #334155;
   line-height: 1.7;
   font-size: 1rem;

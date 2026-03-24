@@ -150,6 +150,17 @@ const aspirantesApi = {
       console.error(`Error deleting aspirante ${id}:`, error);
       throw error;
     }
+  },
+
+  // Unirse a una empresa por código
+  unirseEmpresa: async (codigo) => {
+    try {
+      const response = await API.put('/api/aspirante/unirse-empresa', { codigo });
+      return response.data;
+    } catch (error) {
+      console.error('Error al unirse a empresa:', error);
+      throw error;
+    }
   }
 };
 

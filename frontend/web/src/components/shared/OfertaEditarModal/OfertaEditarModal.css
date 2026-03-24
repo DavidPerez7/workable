@@ -1,0 +1,105 @@
+.oferta-modal-overlay-EP {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.62);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1rem;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.oferta-modal-card-EP {
+  width: min(100%, 900px);
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  padding: 1.5rem;
+}
+
+.oferta-modal-header-EP {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.oferta-modal-kicker-EP {
+  margin: 0 0 0.25rem;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.oferta-modal-header-EP h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #0f172a;
+}
+
+.oferta-modal-close-EP {
+  border: none;
+  background: #f1f5f9;
+  color: #334155;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.oferta-modal-actions-EP {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.oferta-modal-loading-EP,
+.oferta-modal-error-EP {
+  padding: 1.25rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.oferta-modal-error-EP {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.pb-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.pb-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .oferta-modal-overlay-EP {
+    padding: 1rem;
+  }
+
+  .oferta-modal-card-EP {
+    padding: 1rem;
+  }
+
+  .pb-row {
+    grid-template-columns: 1fr;
+  }
+
+  .oferta-modal-actions-EP {
+    flex-direction: column-reverse;
+  }
+}

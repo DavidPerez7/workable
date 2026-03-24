@@ -47,6 +47,7 @@ public class SecurityConfig {
                 // RUTAS PUBLICAS
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/municipio", "/api/municipio/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 
                 // TODOS LOS ENDPOINTS /api/** exigen solo estar autenticado

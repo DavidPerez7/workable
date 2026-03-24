@@ -1,60 +1,605 @@
+/* Layout lado a lado */
+.gestion-content-GO {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* Filtros siempre visibles */
+.filters-panel-GO {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  height: fit-content;
+  position: sticky;
+  top: 1rem;
+}
+
+/* Estilos del párrafo explicativo como en postulaciones */
+.aspirante-help-AP {
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.filters-form-GO {
+  padding: 1.5rem;
+}
+
+.filters-grid-GO {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-field-GO {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-label-GO {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-input-icon-GO {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-input-icon-GO svg {
+  position: absolute;
+  left: 0.75rem;
+  color: #6b7280;
+  z-index: 1;
+}
+
+.filter-input-icon-GO input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.875rem;
+}
+
+.filter-input-icon-GO input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filter-field-GO select,
+.filter-field-GO input[type="number"] {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.875rem;
+}
+
+.filter-field-GO select:focus,
+.filter-field-GO input[type="number"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filters-actions-GO {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.filters-actions-GO button {
+  width: 100%;
+}
+
+/* Hero compacto para gestión de ofertas */
+.gestion-hero-GO {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.gestion-hero-GO::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  opacity: 0.3;
+}
+
+.hero-content-GO {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+  gap: 2rem;
+}
+
+.hero-text-GO {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-kicker-GO {
+  display: inline-block;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.hero-title-GO {
+  color: #1f2937;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.hero-description-GO {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 400px;
+}
+
+.hero-action-GO {
+  flex-shrink: 0;
+}
+
+.nueva-oferta-btn-GO {
+  background: transparent !important;
+  color: #2563eb !important;
+  border: 2px solid #2563eb !important;
+  padding: 1rem 2rem !important;
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  min-width: 280px !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: none !important;
+}
+
+.nueva-oferta-btn-GO:hover {
+  background: rgba(37, 99, 235, 0.1) !important;
+  border-color: #1d4ed8 !important;
+  color: #1d4ed8 !important;
+  transform: translateY(-1px) !important;
+}
+
+.nueva-oferta-btn-GO svg {
+  flex-shrink: 0;
+}
+
+/* Responsive para el hero */
+@media (max-width: 1024px) {
+  .gestion-hero-GO {
+    padding: 1.75rem 2rem;
+  }
+
+  .hero-content-GO {
+    gap: 1.5rem;
+  }
+
+  .hero-title-GO {
+    font-size: 1.75rem;
+  }
+
+  .nueva-oferta-btn-GO {
+    min-width: 240px !important;
+    padding: 0.875rem 1.75rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .gestion-hero-GO {
+    padding: 1.5rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-content-GO {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .hero-text-GO {
+    text-align: center;
+    width: 100%;
+  }
+
+  .hero-kicker-GO {
+    align-self: center;
+  }
+
+  .hero-title-GO {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .hero-description-GO {
+    text-align: center;
+    max-width: none;
+  }
+
+  .hero-action-GO {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .nueva-oferta-btn-GO {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: 320px !important;
+  }
+}
+
+/* Tabla moderna y profesional */
 .table-wrapper-GO {
-  overflow-x: auto;
+  overflow: hidden;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.table-wrapper-GO:hover {
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.table-header-GO {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #475569;
+  font-weight: 600;
+  letter-spacing: 0.025em;
 }
 
 .tabla-gestion-GO {
   width: 100%;
-  border-collapse: collapse;
-  min-width: 720px;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 900px;
 }
 
 .tabla-gestion-GO th,
 .tabla-gestion-GO td {
-  padding: 0.85rem 0.9rem;
+  padding: 0.875rem 1.25rem;
   text-align: left;
-  border-bottom: 1px solid #dbe4f0;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.15s ease;
 }
 
 .tabla-gestion-GO thead th {
-  background: #f8fafc;
-  color: #475569;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #374151;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 2px solid #e2e8f0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.tabla-gestion-GO tbody tr {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tabla-gestion-GO tbody tr:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.tabla-gestion-GO tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.td-titulo-GO {
+  font-weight: 600;
+  color: #1e293b;
+  max-width: 220px;
+  line-height: 1.4;
+  font-size: 0.9375rem;
+}
+
+.td-titulo-GO:hover {
+  color: #2563eb;
+}
+
+.td-location-GO {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #64748b;
+  font-size: 0.8125rem;
+  max-width: 180px;
+}
+
+.td-location-GO svg {
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.td-salary-GO {
+  font-weight: 700;
+  color: #059669;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.badge-estado-GO {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 16px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.badge-activa-GO {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #166534;
+  border-color: #86efac;
+}
+
+.badge-activa-GO:hover {
+  background: linear-gradient(135deg, #bbf7d0 0%, #a7f3d0 100%);
+}
+
+.badge-cerrada-GO {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border-color: #fcd34d;
+}
+
+.badge-cerrada-GO:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
 }
 
 .td-acciones-GO {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.25rem;
+  min-width: 280px;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-.td-titulo-GO {
-  font-weight: 700;
+/* Botones con texto integrado - compactos */
+.td-acciones-GO button {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  padding: 0.375rem 0.625rem;
+  min-width: 90px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  position: relative;
+  white-space: nowrap;
 }
 
-.badge-estado-GO {
-  display: inline-flex;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
+.td-acciones-GO button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-.badge-activa-GO {
-  background: #dcfce7;
-  color: #166534;
+.td-acciones-GO button:active {
+  transform: translateY(0);
 }
 
-.badge-cerrada-GO {
-  background: #fee2e2;
-  color: #991b1b;
+/* Botones específicos con colores transparentes */
+.td-acciones-GO button:first-child {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
-.btn-editar-GO,
-.btn-estado-GO,
-.btn-eliminar-GO {
-  border: 1px solid #dbe4f0;
-  background: #fff;
-  border-radius: 10px;
-  padding: 0.55rem 0.8rem;
-  font: inherit;
-  cursor: pointer;
+.td-acciones-GO button:first-child:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.td-acciones-GO button:nth-child(2) {
+  background: rgba(107, 114, 128, 0.1);
+  color: #374151;
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.td-acciones-GO button:nth-child(2):hover {
+  background: rgba(107, 114, 128, 0.15);
+  border-color: rgba(107, 114, 128, 0.3);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
+}
+
+.td-acciones-GO button:nth-child(3) {
+  border: 2px solid;
+  font-weight: 600;
+  min-width: 42px;
+}
+
+.td-acciones-GO button:nth-child(3)[title*="Cerrar"] {
+  background: rgba(245, 158, 11, 0.1);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.td-acciones-GO button:nth-child(3)[title*="Cerrar"]:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.td-acciones-GO button:nth-child(3)[title*="Abrir"] {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.td-acciones-GO button:nth-child(3)[title*="Abrir"]:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.td-acciones-GO button:last-child {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.td-acciones-GO button:last-child:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.td-acciones-GO button:focus {
+  outline: 2px solid rgba(59, 130, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Card de ofertas */
+.offers-listing-GO {
+  min-width: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .gestion-content-GO {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .filters-panel-GO {
+    position: static;
+  }
+
+  .filters-grid-GO {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .table-wrapper-GO {
+    border-radius: 12px;
+  }
+
+  .table-header-GO {
+    padding: 1rem 1.5rem;
+  }
+
+  .tabla-gestion-GO th,
+  .tabla-gestion-GO td {
+    padding: 1rem 1.25rem;
+  }
+
+  .td-titulo-GO {
+    max-width: 180px;
+    font-size: 0.875rem;
+  }
+
+  .td-acciones-GO {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 240px;
+    gap: 0.25rem;
+  }
+
+  .td-acciones-GO button {
+    padding: 0.375rem 0.5rem;
+    min-width: 70px;
+    height: 28px;
+    font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-wrapper-GO {
+    border-radius: 8px;
+    margin: 0 -0.5rem;
+  }
+
+  .table-header-GO {
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .tabla-gestion-GO {
+    min-width: 700px;
+  }
+
+  .tabla-gestion-GO th,
+  .tabla-gestion-GO td {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .td-acciones-GO {
+    min-width: 220px;
+    gap: 0.1875rem;
+  }
+
+  .td-acciones-GO button {
+    padding: 0.3125rem 0.4375rem;
+    min-width: 60px;
+    height: 26px;
+    font-size: 0.625rem;
+  }
 }

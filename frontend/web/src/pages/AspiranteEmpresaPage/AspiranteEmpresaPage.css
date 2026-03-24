@@ -1,0 +1,157 @@
+/* Página de Empresa para Aspirantes */
+.empresa-header-AEP {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.back-button-AEP {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.empresa-title-AEP {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Información de empresa cuando ya pertenece */
+.empresa-info-AEP {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.empresa-icon-AEP {
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.empresa-details-AEP h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.empresa-nit-AEP {
+  color: #64748b;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.empresa-descripcion-AEP {
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.empresa-stats-AEP {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat-AEP {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Formulario para unirse a empresa */
+.unirse-empresa-AEP {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.unirse-icon-AEP {
+  color: #3b82f6;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.unirse-empresa-AEP h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+}
+
+.unirse-description-AEP {
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.unirse-form-AEP {
+  max-width: 400px;
+  margin: 0 auto 2rem auto;
+}
+
+.unirse-button-AEP {
+  width: 100% !important;
+  padding: 0.875rem 1.5rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.unirse-info-AEP {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.unirse-info-AEP p {
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.unirse-info-AEP strong {
+  color: #1e293b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .empresa-header-AEP {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .empresa-title-AEP {
+    font-size: 1.5rem;
+  }
+
+  .empresa-info-AEP {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .empresa-stats-AEP {
+    justify-content: center;
+  }
+
+  .unirse-empresa-AEP {
+    padding: 2rem 1rem;
+  }
+
+  .unirse-description-AEP {
+    font-size: 0.9rem;
+  }
+}

@@ -7,6 +7,38 @@
 	font-family: "Inter", sans-serif;
 }
 
+.sidebar-navigation-controls {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 1rem;
+	justify-content: center;
+}
+
+.nav-control-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 1px solid #e5e7eb;
+	border-radius: 6px;
+	background: #f9fafb;
+	color: #6b7280;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 14px;
+}
+
+.nav-control-button:hover {
+	background: #f3f4f6;
+	border-color: #d1d5db;
+	color: #374151;
+}
+
+.nav-control-button:active {
+	background: #e5e7eb;
+}
+
 .sidebar-nav--reclutador {
 	width: 185px;
 	min-width: 185px;

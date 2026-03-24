@@ -57,6 +57,20 @@ public class ReclutadorController {
         }
     }
 
+    // READ BY EMPRESA
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECLUTADOR', 'ASPIRANTE')")
+    @GetMapping("/empresa/{empresaId}")
+    public ResponseEntity<?> getByEmpresaId(@PathVariable Long empresaId) {
+        try {
+            List<Reclutador> reclutadores = reclutadorService.getByEmpresaId(empresaId);
+            return ResponseEntity.ok(reclutadores);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Error al obtener reclutadores por empresa: " + e.getMessage()));
+        }
+    }
+
     // ASIGNAR EMPRESA POR CÓDIGO
     @PreAuthorize("hasRole('RECLUTADOR')")
     @PutMapping("/empresa/{codigoInvitacion}")

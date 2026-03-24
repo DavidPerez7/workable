@@ -97,6 +97,7 @@ public class OfertaService {
         if (request.getModalidad() != null) existing.setModalidad(request.getModalidad());
         if (request.getTipoContrato() != null) existing.setTipoContrato(request.getTipoContrato());
         if (request.getRequisitos() != null) existing.setRequisitos(request.getRequisitos());
+        if (request.getEstado() != null) existing.setEstado(request.getEstado());
 
         if (request.getMunicipio() != null) {
             Long municipioId = request.getMunicipio().getId();
