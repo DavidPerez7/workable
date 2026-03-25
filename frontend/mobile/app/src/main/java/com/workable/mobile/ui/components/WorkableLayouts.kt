@@ -63,6 +63,7 @@ fun WorkableAppScaffold(
     title: String,
     role: String,
     menuItems: List<AppMenuItem>,
+    showFooter: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -73,73 +74,94 @@ fun WorkableAppScaffold(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                drawerContainerColor = Color.White,
+                drawerContainerColor = WorkablePrimary,
             ) {
-                Box(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .background(WorkablePrimary),
-                    contentAlignment = Alignment.CenterStart
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 16.dp)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "WORKABLE",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = role.uppercase(),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = Color.White.copy(alpha = 0.7f)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .background(WorkablePrimary),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Text(
+                                text = "WORKABLE",
+                                style = MaterialTheme.typography.headlineMedium,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = role.uppercase(),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.White.copy(alpha = 0.75f)
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(14.dp))
+
+                    Text(
+                        text = "NAVEGACIÓN",
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.65f),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    menuItems.forEach { item ->
+                        NavigationDrawerItem(
+                            label = { Text(item.label) },
+                            selected = currentRoute == item.route,
+                            onClick = {
+                                scope.launch { drawerState.close() }
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId)
+                                    launchSingleTop = true
+                                }
+                            },
+                            icon = { Icon(item.icon, contentDescription = null) },
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedContainerColor = Color.White.copy(alpha = 0.18f),
+                                selectedTextColor = Color.White,
+                                selectedIconColor = Color.White,
+                                unselectedTextColor = Color.White,
+                                unselectedIconColor = Color.White.copy(alpha = 0.78f)
+                            )
                         )
                     }
-                }
-                Spacer(Modifier.height(12.dp))
-                
-                menuItems.forEach { item ->
+
+                    Spacer(Modifier.height(12.dp))
+
+                    Divider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+
                     NavigationDrawerItem(
-                        label = { Text(item.label) },
-                        selected = currentRoute == item.route,
+                        label = { Text("Cerrar Sesión") },
+                        selected = false,
                         onClick = {
                             scope.launch { drawerState.close() }
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
+                            SessionManager.clear(navController.context)
+                            navController.navigate("login") {
+                                popUpTo(0)
                             }
                         },
-                        icon = { Icon(item.icon, contentDescription = null) },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+                        icon = { Icon(Icons.Outlined.ExitToApp, contentDescription = null) },
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
                         colors = NavigationDrawerItemDefaults.colors(
-                            selectedContainerColor = WorkablePrimary.copy(alpha = 0.1f),
-                            selectedTextColor = WorkablePrimary,
-                            selectedIconColor = WorkablePrimary,
-                            unselectedTextColor = Color.Black,
-                            unselectedIconColor = Color.Gray
+                            unselectedTextColor = Color(0xFFFFD7D7),
+                            unselectedIconColor = Color(0xFFFFD7D7)
                         )
                     )
                 }
-
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-                NavigationDrawerItem(
-                    label = { Text("Cerrar Sesión") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        SessionManager.clear(navController.context)
-                        navController.navigate("login") {
-                            popUpTo(0)
-                        }
-                    },
-                    icon = { Icon(Icons.Outlined.ExitToApp, contentDescription = null) },
-                    modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                    colors = NavigationDrawerItemDefaults.colors(
-                        unselectedTextColor = Color.Red,
-                        unselectedIconColor = Color.Red
-                    )
-                )
             }
         }
     ) {
@@ -147,11 +169,13 @@ fun WorkableAppScaffold(
             topBar = {
                 CenterAlignedTopAppBar(
                     title = {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Medium
-                        )
+                        if (title.isNotBlank()) {
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -165,6 +189,11 @@ fun WorkableAppScaffold(
                         navigationIconContentColor = Color.White
                     )
                 )
+            },
+            bottomBar = {
+                if (showFooter) {
+                    WorkableFooter()
+                }
             },
             containerColor = WorkableBackground,
         ) { paddingValues ->

@@ -12,22 +12,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,15 +38,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.workable.mobile.data.ApiClient
 import com.workable.mobile.data.IdRef
+import com.workable.mobile.data.OfertaSearchDto
 import com.workable.mobile.data.PostulacionRequest
 import com.workable.mobile.data.SessionManager
 import com.workable.mobile.ui.components.WorkableAppScaffold
@@ -56,6 +58,7 @@ import com.workable.mobile.ui.components.WorkableSecondaryButton
 import com.workable.mobile.ui.components.WorkableSectionHeader
 import com.workable.mobile.ui.components.WorkableSectionDivider
 import com.workable.mobile.ui.components.WorkableScrollableColumn
+import com.workable.mobile.ui.components.WorkableSelectablePill
 import com.workable.mobile.ui.components.WorkableTextField
 import com.workable.mobile.ui.components.WorkableSurfaceCard
 import kotlinx.coroutines.launch
@@ -66,167 +69,222 @@ private val aspiranteMenu = listOf(
     AppMenuItem("Hoja de Vida", "aspirante/hoja-vida", Icons.Outlined.AccountCircle),
 )
 
+private data class OfertaFilters(
+    val cargo: String = "",
+    val ubicacion: String = "",
+    val modalidad: String = "",
+    val salarioMin: String = "",
+    val salarioMax: String = "",
+)
+
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun AspiranteOfertasScreen(navController: NavController) {
     val context = LocalContext.current
+    val screenScope = rememberCoroutineScope()
     var ofertas by remember { mutableStateOf<List<Map<String, Any?>>>(emptyList()) }
-    var municipios by remember { mutableStateOf<List<Map<String, Any?>>>(emptyList()) }
+    var municipios by remember { mutableStateOf<List<com.workable.mobile.data.MunicipioDto>>(emptyList()) }
+    var postulacionesUsuario by remember { mutableStateOf<Set<Long>>(emptySet()) }
+    var filters by remember { mutableStateOf(OfertaFilters()) }
+    var municipioExpanded by remember { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
+    var searching by remember { mutableStateOf(false) }
     var notice by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    // Filtros
-    var searchText by remember { mutableStateOf("") }
-    var municipio by remember { mutableStateOf("") }
-    var modalidad by remember { mutableStateOf("") }
-    var experiencia by remember { mutableStateOf("") }
-    var salarioMin by remember { mutableStateOf("") }
-    var salarioMax by remember { mutableStateOf("") }
-    var showFilters by remember { mutableStateOf(false) }
-    var municipioExpanded by remember { mutableStateOf(false) }
-    var modalidadExpanded by remember { mutableStateOf(false) }
-    var experienciaExpanded by remember { mutableStateOf(false) }
+    fun cargarOfertas(appliedFilters: OfertaFilters = filters) {
+        val criteria = OfertaSearchDto(
+            cargo = appliedFilters.cargo.trim().ifBlank { null },
+            modalidad = appliedFilters.modalidad.trim().ifBlank { null },
+            ubicacion = appliedFilters.ubicacion.trim().ifBlank { null },
+            salarioMin = appliedFilters.salarioMin.trim().toDoubleOrNull(),
+            salarioMax = appliedFilters.salarioMax.trim().toDoubleOrNull(),
+        )
 
-    val modalidadOptions = remember(ofertas) {
-        listOf("") + ofertas.mapNotNull { it["modalidad"] as? String }.map { it.trim() }.filter { it.isNotBlank() }.distinct().sorted()
-    }
-    val experienciaOptions = remember(ofertas) {
-        listOf("") + ofertas.mapNotNull { it["experiencia"] as? String }.map { it.trim() }.filter { it.isNotBlank() }.distinct().sorted()
-    }
-
-    val filteredOfertas = remember(ofertas, searchText, municipio, modalidad, experiencia, salarioMin, salarioMax) {
-        ofertas.filter { oferta ->
-            val titulo = (oferta["cargo"] as? String ?: "").lowercase()
-            val descripcion = (oferta["descripcion"] as? String ?: "").lowercase()
-            val empresa = (oferta["empresa"] as? Map<String, Any?>)?.get("nombre") as? String ?: ""
-            val matchesSearch = searchText.isEmpty() ||
-                titulo.contains(searchText.lowercase()) ||
-                descripcion.contains(searchText.lowercase()) ||
-                empresa.lowercase().contains(searchText.lowercase())
-
-            val matchesMunicipio = municipio.isEmpty() ||
-                (oferta["municipio"] as? Map<String, Any?>)?.get("nombre") == municipio
-
-            val matchesModalidad = modalidad.isEmpty() ||
-                (oferta["modalidad"] as? String) == modalidad
-
-            val matchesExperiencia = experiencia.isEmpty() ||
-                (oferta["experiencia"] as? String) == experiencia
-
-            val salMin = (oferta["salarioMin"] as? Number)?.toLong() ?: 0L
-            val salMax = (oferta["salarioMax"] as? Number)?.toLong() ?: 0L
-            val filterSalMin = salarioMin.toLongOrNull() ?: 0L
-            val filterSalMax = salarioMax.toLongOrNull() ?: Long.MAX_VALUE
-            val matchesSalario = salMin >= filterSalMin && salMax <= filterSalMax
-
-            matchesSearch && matchesMunicipio && matchesModalidad && matchesExperiencia && matchesSalario
+        screenScope.launch {
+            searching = true
+            try {
+                ofertas = ApiClient.ofertaService.search(criteria)
+                notice = if (ofertas.isEmpty()) {
+                    "No hay ofertas para los filtros seleccionados."
+                } else {
+                    "Se encontraron ${ofertas.size} ofertas."
+                }
+                error = null
+            } catch (e: Exception) {
+                error = "Error al cargar datos: ${e.message}"
+            } finally {
+                searching = false
+                loading = false
+            }
         }
+    }
+
+    fun limpiarFiltros() {
+        filters = OfertaFilters()
+        cargarOfertas(OfertaFilters())
     }
 
     LaunchedEffect(Unit) {
         try {
-            ofertas = ApiClient.ofertaService.getAll()
-            municipios = ApiClient.municipioService.getMunicipios().map { mapOf("id" to it.id, "nombre" to it.nombre) }
+            municipios = ApiClient.municipioService.getMunicipios()
+            val userId = SessionManager.getUserId(context)
+            if (userId != -1L) {
+                postulacionesUsuario = ApiClient.postulacionService
+                    .getByAspiranteId(userId)
+                    .mapNotNull { post ->
+                        val oferta = post["oferta"] as? Map<String, Any?>
+                        (oferta?.get("id") as? Number)?.toLong()
+                    }
+                    .toSet()
+            }
+            cargarOfertas()
         } catch (e: Exception) {
             error = "Error al cargar datos: ${e.message}"
-        } finally {
-            loading = false
         }
     }
 
     WorkableAppScaffold(
         navController = navController,
-        title = "Ofertas Disponibles",
+        title = "",
         role = SessionManager.getRole(context) ?: "ASPIRANTE",
-        menuItems = aspiranteMenu
+        menuItems = aspiranteMenu,
+        showFooter = true
     ) {
-        WorkableScrollableColumn(verticalSpacing = 16.dp) {
-            WorkableSurfaceCard(contentPadding = 18.dp) {
-                WorkableSectionHeader("FILTRAR OFERTAS", subtitle = "")
-                WorkableSecondaryButton(
-                    text = if (showFilters) "Ocultar filtros" else "Mostrar filtros",
-                    onClick = { showFilters = !showFilters },
-                    modifier = Modifier.fillMaxWidth()
+        WorkableScrollableColumn(verticalSpacing = 16.dp, contentPadding = 0.dp) {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = "OFERTAS DISPONIBLES",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF111111)
+                )
+                Text(
+                    text = "Revisa el listado y abre el detalle completo de la oferta que te interese.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF6B7280)
+                )
+            }
+
+            WorkableSurfaceCard(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                contentPadding = 8.dp,
+                verticalSpacing = 6.dp,
+                elevation = 0.dp,
+                borderWidth = 1.dp,
+                borderColor = Color(0xFFD6DEE8),
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Text(
+                    text = "FILTROS DE OFERTAS",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF111111)
                 )
 
-                AnimatedVisibility(
-                    visible = showFilters,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
+                WorkableTextField(
+                    value = filters.cargo,
+                    onValueChange = { filters = filters.copy(cargo = it) },
+                    label = "Cargo o palabra clave",
+                    placeholder = "Ej. desarrollador, auxiliar"
+                )
+
+                ExposedDropdownMenuBox(
+                    expanded = municipioExpanded,
+                    onExpandedChange = { municipioExpanded = !municipioExpanded }
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        WorkableTextField(
-                            value = searchText,
-                            onValueChange = { searchText = it },
-                            label = "Buscar ofertas...",
-                            placeholder = "Cargo, empresa, descripción..."
-                        )
-
-                        DropdownFilterField(
-                            label = "Municipio",
-                            value = municipio,
-                            placeholder = if (municipios.isEmpty()) "Cargando municipios..." else "Selecciona un municipio",
-                            options = listOf("") + municipios.mapNotNull { it["nombre"] as? String }.filter { it.isNotBlank() }.distinct().sorted(),
-                            expanded = municipioExpanded,
-                            onExpandedChange = { municipioExpanded = it },
-                            onSelected = { municipio = it }
-                        )
-
-                        DropdownFilterField(
-                            label = "Modalidad",
-                            value = modalidad,
-                            placeholder = if (modalidadOptions.size <= 1) "Sin opciones" else "Selecciona una modalidad",
-                            options = modalidadOptions,
-                            expanded = modalidadExpanded,
-                            onExpandedChange = { modalidadExpanded = it },
-                            onSelected = { modalidad = it }
-                        )
-
-                        DropdownFilterField(
-                            label = "Experiencia",
-                            value = experiencia,
-                            placeholder = if (experienciaOptions.size <= 1) "Sin opciones" else "Selecciona experiencia",
-                            options = experienciaOptions,
-                            expanded = experienciaExpanded,
-                            onExpandedChange = { experienciaExpanded = it },
-                            onSelected = { experiencia = it }
-                        )
-
-                        WorkableTextField(
-                            value = salarioMin,
-                            onValueChange = { salarioMin = it },
-                            label = "Salario mínimo",
-                            placeholder = "Ej: 1000000",
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                        WorkableTextField(
-                            value = salarioMax,
-                            onValueChange = { salarioMax = it },
-                            label = "Salario máximo",
-                            placeholder = "Ej: 5000000",
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                        WorkablePrimaryButton(
-                            text = "Buscar",
+                    OutlinedTextField(
+                        value = filters.ubicacion.ifBlank { "Selecciona un municipio" },
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Ubicación") },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth(),
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = municipioExpanded) }
+                    )
+                    ExposedDropdownMenu(
+                        expanded = municipioExpanded,
+                        onDismissRequest = { municipioExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Todos los municipios") },
                             onClick = {
-                                notice = "Filtros aplicados. ${filteredOfertas.size} ofertas encontradas."
-                                error = null
-                            },
+                                filters = filters.copy(ubicacion = "")
+                                municipioExpanded = false
+                            }
+                        )
+                        municipios.forEach { municipio ->
+                            DropdownMenuItem(
+                                text = { Text(municipio.nombre) },
+                                onClick = {
+                                    filters = filters.copy(ubicacion = municipio.nombre)
+                                    municipioExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = "Modalidad",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color(0xFF111111)
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                        WorkableSelectablePill(
+                            text = "Todas",
+                            selected = filters.modalidad.isBlank(),
+                            onClick = { filters = filters.copy(modalidad = "") }
+                        )
+                        WorkableSelectablePill(
+                            text = "Presencial",
+                            selected = filters.modalidad == "PRESENCIAL",
+                            onClick = { filters = filters.copy(modalidad = "PRESENCIAL") }
+                        )
+                        WorkableSelectablePill(
+                            text = "Remoto",
+                            selected = filters.modalidad == "REMOTO",
+                            onClick = { filters = filters.copy(modalidad = "REMOTO") }
                         )
                     }
                 }
-            }
 
-            WorkableSurfaceCard(contentPadding = 18.dp) {
-                WorkableSectionHeader("OFERTAS DISPONIBLES", subtitle = "")
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    WorkableTextField(
+                        value = filters.salarioMin,
+                        onValueChange = { filters = filters.copy(salarioMin = it) },
+                        label = "Salario min",
+                        placeholder = "0",
+                        modifier = Modifier.weight(1f)
+                    )
+                    WorkableTextField(
+                        value = filters.salarioMax,
+                        onValueChange = { filters = filters.copy(salarioMax = it) },
+                        label = "Salario max",
+                        placeholder = "3000000",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
-                Text(
-                    text = "Ajusta los filtros para reducir resultados y encontrar la oferta ideal.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    WorkableSecondaryButton(
+                        text = if (searching) "Buscando..." else "Buscar",
+                        onClick = { cargarOfertas(filters) },
+                        enabled = !searching,
+                        modifier = Modifier.weight(1f)
+                    )
+                    WorkableSecondaryButton(
+                        text = "Limpiar",
+                        onClick = { limpiarFiltros() },
+                        enabled = !searching,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
 
                 notice?.let {
                     Text(
@@ -235,7 +293,7 @@ fun AspiranteOfertasScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(0xFFD1FAE5), RoundedCornerShape(8.dp))
-                            .padding(12.dp)
+                            .padding(10.dp)
                     )
                 }
 
@@ -246,81 +304,43 @@ fun AspiranteOfertasScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color(0xFFFEE2E2), RoundedCornerShape(8.dp))
-                            .padding(12.dp)
+                            .padding(10.dp)
                     )
                 }
+            }
 
-                if (loading) {
-                    Text("Cargando ofertas...", modifier = Modifier.padding(16.dp))
-                } else if (filteredOfertas.isEmpty()) {
-                    Text("No hay ofertas disponibles con los filtros aplicados.", modifier = Modifier.padding(16.dp))
-                } else {
-                    filteredOfertas.forEach { oferta ->
-                        OfertaCard(oferta = oferta, navController = navController)
-                    }
+            if (loading) {
+                Text("Cargando ofertas...", modifier = Modifier.padding(16.dp))
+            } else if (ofertas.isEmpty()) {
+                Text("No hay ofertas disponibles.", modifier = Modifier.padding(16.dp))
+            } else {
+                ofertas.forEach { oferta ->
+                    OfertaCard(
+                        oferta = oferta,
+                        navController = navController,
+                        yaPostulado = ((oferta["id"] as? Number)?.toLong() ?: 0L) in postulacionesUsuario
+                    )
                 }
             }
         }
     }
 }
 
-@Composable
-private fun DropdownFilterField(
-    label: String,
-    value: String,
-    placeholder: String,
-    options: List<String>,
-    expanded: Boolean,
-    onExpandedChange: (Boolean) -> Unit,
-    onSelected: (String) -> Unit,
-) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        WorkableTextField(
-            value = value,
-            onValueChange = {},
-            label = label,
-            placeholder = placeholder,
-            readOnly = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(14.dp))
-                .clickable { onExpandedChange(true) }
-        )
 
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) }
-        ) {
-            options.forEach { option ->
-                val text = if (option.isBlank()) "Todos" else option
-                DropdownMenuItem(
-                    text = { Text(text) },
-                    onClick = {
-                        onSelected(option)
-                        onExpandedChange(false)
-                    }
-                )
-            }
-        }
-    }
-}
 
 @Composable
-fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
+fun OfertaCard(oferta: Map<String, Any?>, navController: NavController, yaPostulado: Boolean) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var applying by remember { mutableStateOf(false) }
 
     val id = (oferta["id"] as? Number)?.toLong() ?: 0L
-    val titulo = oferta["cargo"] as? String ?: "Sin cargo"
-    val descripcion = oferta["descripcion"] as? String ?: "Sin descripción"
-    val salarioMin = normalizeMoney(oferta["salarioMin"])
-    val salarioMax = normalizeMoney(oferta["salarioMax"])
-    val empresaMap = oferta["empresa"] as? Map<String, Any?>
-    val empresaNombre = empresaMap?.get("nombre") as? String ?: "Confidencial"
+    val titulo = oferta["titulo"] as? String ?: "Sin título"
+    val salario = normalizeMoney(oferta["salario"])
     val modalidad = (oferta["modalidad"] as? String) ?: "Remoto"
     val municipio = (oferta["municipio"] as? Map<String, Any?>)?.get("nombre") as? String ?: "Ubicación desconocida"
-    val experiencia = (oferta["experiencia"] as? String) ?: "Sin especificar"
+    val empresa = (oferta["empresa"] as? Map<String, Any?>)?.get("nombre") as? String ?: "Empresa"
+    val experiencia = oferta["nivelExperiencia"] as? String ?: "Sin experiencia"
 
     fun postularse() {
         scope.launch {
@@ -347,59 +367,158 @@ fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
     }
 
     fun verDetalle() {
-        // Por ahora, mostrar toast. En el futuro, navegar a pantalla de detalle
-        Toast.makeText(context, "Detalle de oferta: $titulo", Toast.LENGTH_SHORT).show()
+        navController.navigate("aspirante/oferta/$id")
     }
 
-    WorkableSurfaceCard(contentPadding = 18.dp) {
-        // Header
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(text = titulo, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Text(text = empresaNombre, style = MaterialTheme.typography.titleSmall, color = Color.Gray)
-            WorkablePill(text = modalidad, containerColor = Color(0xFFEFF6FF), contentColor = Color(0xFF1D4ED8))
-        }
-
-        // Footer
+    WorkableSurfaceCard(
+        contentPadding = 8.dp,
+        verticalSpacing = 3.dp,
+        elevation = 0.dp,
+        borderWidth = 1.dp,
+        borderColor = Color(0xFFD6DEE8),
+        shape = RoundedCornerShape(0.dp)
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.Top
         ) {
-            // Salary
             Text(
-                text = "$$salarioMin - $$salarioMax",
-                style = MaterialTheme.typography.labelLarge,
-                color = Color(0xFF059669),
-                fontWeight = FontWeight.Bold
+                text = titulo,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier.weight(1f)
             )
-
-            // Meta
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = municipio,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B)
-                )
-                Text(
-                    text = experiencia,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B)
-                )
-            }
-
-            // Actions
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                WorkableSecondaryButton(
-                    text = "Detalle",
-                    onClick = { verDetalle() }
-                )
-                WorkablePrimaryButton(
-                    text = if (applying) "Enviando..." else "Postularme",
-                    onClick = { postularse() },
-                    enabled = !applying
-                )
-            }
+            WorkablePill(text = modalidad, containerColor = Color(0xFFF1F5F9), contentColor = Color(0xFF475569))
         }
+
+        CompanyChip(text = empresa)
+
+        WorkableSectionDivider()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OfferInfoChip(
+                text = "${'$'} $salario",
+                icon = Icons.Filled.List,
+                containerColor = Color(0xFFDCFCE7),
+                contentColor = Color(0xFF166534),
+                modifier = Modifier.weight(1f)
+            )
+            OfferInfoChip(
+                text = municipio,
+                icon = Icons.Outlined.Search,
+                containerColor = Color(0xFFF8FAFC),
+                contentColor = Color(0xFF475569),
+                modifier = Modifier.weight(1f)
+            )
+            OfferInfoChip(
+                text = experiencia,
+                icon = Icons.Outlined.List,
+                containerColor = Color(0xFFF8FAFC),
+                contentColor = Color(0xFF475569),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            WorkableSecondaryButton(
+                text = "Detalle",
+                onClick = { verDetalle() },
+                modifier = Modifier.weight(1f)
+            )
+            WorkableBlueButton(
+                text = if (yaPostulado) "Ya postulado" else if (applying) "Enviando..." else "Postularme",
+                onClick = { postularse() },
+                enabled = !yaPostulado && !applying,
+                containerColor = if (yaPostulado) Color(0xFF1D4ED8).copy(alpha = 0.42f) else Color(0xFF1D4ED8),
+                contentColor = Color.White,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+fun OfferInfoChip(
+    text: String,
+    icon: ImageVector,
+    containerColor: Color,
+    contentColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .background(containerColor, RoundedCornerShape(999.dp))
+            .padding(horizontal = 8.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = contentColor, modifier = Modifier.size(14.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = contentColor,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+fun CompanyChip(text: String) {
+    Row(
+        modifier = Modifier
+            .background(Color(0xFFF8FAFC), RoundedCornerShape(999.dp))
+            .border(1.dp, Color(0xFFD8E0EA), RoundedCornerShape(999.dp))
+            .padding(horizontal = 9.dp, vertical = 5.dp),
+        horizontalArrangement = Arrangement.spacedBy(0.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF475569),
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+fun WorkableBlueButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    icon: ImageVector? = null,
+    containerColor: Color = androidx.compose.ui.graphics.Color(0xFF1D4ED8),
+    contentColor: Color = Color.White,
+) {
+    androidx.compose.material3.Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        shape = RoundedCornerShape(14.dp),
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = containerColor,
+            disabledContentColor = contentColor,
+        ),
+    ) {
+        if (icon != null) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp))
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(text)
     }
 }
 

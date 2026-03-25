@@ -39,9 +39,14 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.workable.mobile.ui.theme.WorkablePrimary
 
 private val WorkableCardShape = RoundedCornerShape(28.dp)
@@ -147,41 +152,45 @@ fun WorkableScrollableColumn(
 fun WorkableSurfaceCard(
     modifier: Modifier = Modifier,
     contentPadding: Dp = 20.dp,
+    verticalSpacing: Dp = 12.dp,
+    elevation: Dp = 14.dp,
+    borderWidth: Dp = 1.dp,
+    borderColor: Color = MaterialTheme.colorScheme.outline.copy(alpha = 0.9f),
+    shape: Shape = WorkableCardShape,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.9f), WorkableCardShape),
-        shape = WorkableCardShape,
+            .border(borderWidth, borderColor, shape),
+        shape = shape,
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 14.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation),
     ) {
         Column(
             modifier = Modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(verticalSpacing),
             content = content,
         )
     }
 }
 
 @Composable
-fun WorkableSectionHeader(title: String, subtitle: String) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+fun WorkableFooter() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF1B337A))
+            .padding(horizontal = 24.dp, vertical = 14.dp),
+        contentAlignment = Alignment.Center
+    ) {
         Text(
-            text = "WORKABLE",
-            style = MaterialTheme.typography.labelLarge,
-            color = WorkablePrimary,
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.Black,
-        )
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Black,
+            text = "WORKABLE - SENA",
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.08.em,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -428,5 +437,26 @@ fun WorkableHeroCard(
             color = Color.Black,
         )
         content()
+    }
+}
+
+@Composable
+fun WorkableSectionHeader(
+    title: String,
+    subtitle: String,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.Black,
+        )
+        if (subtitle.isNotEmpty()) {
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Black.copy(alpha = 0.7f),
+            )
+        }
     }
 }
