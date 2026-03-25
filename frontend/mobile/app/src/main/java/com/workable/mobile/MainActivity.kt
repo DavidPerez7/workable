@@ -58,10 +58,12 @@ class MainActivity : ComponentActivity() {
                         composable("register") { RegisterScreen(navController) }
                         composable("login") { LoginScreen(navController) }
                         composable("dashboard/{role}") { backStackEntry ->
-                            DashboardScreen(
-                                navController = navController,
-                                role = backStackEntry.arguments?.getString("role") ?: "ASPIRANTE",
-                            )
+                            val role = backStackEntry.arguments?.getString("role") ?: "ASPIRANTE"
+                            if (role == "ASPIRANTE") {
+                                AspiranteOfertasScreen(navController)
+                            } else {
+                                DashboardScreen(navController, role)
+                            }
                         }
                         composable("aspirante") { DashboardScreen(navController, "ASPIRANTE") }
                         composable("aspirante/ofertas") { AspiranteOfertasScreen(navController) }
