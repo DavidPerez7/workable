@@ -625,7 +625,7 @@ run_both_parallel() {
     
     if [ $BACKEND_EXIT -eq 0 ] && [ $FRONTEND_EXIT -eq 0 ]; then
         print_success "SYSTEM: Backend y frontend listos"
-        echo -e "${BOLD}Acceso:${NC} Backend http://localhost:$BACKEND_PORT, Frontend http://localhost:$FRONTEND_PORT"
+        echo -e "${BOLD}ACCESO:${NC} Backend http://<IP-ELASTICA>:$BACKEND_PORT, Frontend http://<IP-ELASTICA>:$FRONTEND_PORT"
         return 0
     else
         print_error "SYSTEM: Error iniciando servicios"
