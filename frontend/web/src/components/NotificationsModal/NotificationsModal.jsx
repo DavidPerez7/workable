@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, X } from 'lucide-react';
+import { API_BASE_URL } from '../../api/apiBase';
 import './NotificationsModal.css';
 
 const NotificationsModal = () => {
@@ -17,7 +18,7 @@ const NotificationsModal = () => {
   const cargarNotificaciones = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/notificacion/aspirante', {
+      const response = await fetch(`${API_BASE_URL}/api/notificacion/aspirante`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -40,7 +41,7 @@ const NotificationsModal = () => {
   const marcarComoLeida = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:8080/api/notificacion/${id}/marcar-leida`, {
+      await fetch(`${API_BASE_URL}/api/notificacion/${id}/marcar-leida`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

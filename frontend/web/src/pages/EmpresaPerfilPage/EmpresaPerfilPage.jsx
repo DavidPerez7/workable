@@ -9,6 +9,7 @@ import AppCard from "../../components/shared/AppCard";
 import OfertaCard from "../../components/shared/OfertaCard";
 import AppPageShell from "../../components/shared/AppPageShell";
 import { getEmpresaById, actualizarEmpresa } from "../../api/empresaAPI";
+import { API_BASE_URL } from "../../api/apiBase";
 import { getMunicipios } from "../../api/municipioAPI";
 import { getOfertasByEmpresaId } from "../../api/ofertasAPI";
 import reclutadoresApi from "../../api/reclutadoresApi";
@@ -212,7 +213,7 @@ function EmpresaPerfilPage() {
 
     try {
       setPuntuando(true);
-      const response = await fetch(`http://localhost:8080/api/empresa/${empresaId}/puntuar`, {
+      const response = await fetch(`${API_BASE_URL}/api/empresa/${empresaId}/puntuar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

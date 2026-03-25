@@ -6,13 +6,27 @@
 
 set -e
 
-# Colores para output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+FAST_MODE=false
+QUIET_MODE=false
+
+# Colores para output (solo si no quiet)
+if [ "$QUIET_MODE" = false ]; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    CYAN='\033[0;36m'
+    BOLD='\033[1m'
+    NC='\033[0m' # No Color
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    CYAN=''
+    BOLD='\033[1m'  # Bold sigue para importantes
+    NC=''
+fi
 
 # Rutas relativas
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -46,34 +60,44 @@ sanitize_terminal() {
     printf '\033[<u' 2>/dev/null || true
 }
 
-# Asegurar limpieza del tty al salir
-trap 'sanitize_terminal' EXIT
+# Asegurar limpieza del tty al salir (solo en interactivo)
+trap 'if [ "$QUIET_MODE" = false ]; then sanitize_terminal; fi' EXIT
 
-# Normalizar terminal desde el inicio del script
-sanitize_terminal
+# Normalizar terminal solo en modo interactivo
+if [ "$QUIET_MODE" = false ]; then
+    sanitize_terminal
+fi
 
 # ===== FUNCIONES AUXILIARES =====
 
 print_header() {
-    echo -e "\n${BLUE}========================================${NC}"
-    echo -e "${BLUE}   $1${NC}"
-    echo -e "${BLUE}========================================${NC}\n"
+    if [ "$QUIET_MODE" = false ]; then
+        echo -e "\n${BLUE}========================================${NC}"
+        echo -e "${BLUE}   $1${NC}"
+        echo -e "${BLUE}========================================${NC}\n"
+    fi
 }
 
 print_success() {
-    echo -e "${GREEN}✓ $1${NC}"
+    if [ "$QUIET_MODE" = false ]; then
+        echo -e "${GREEN}✓ $1${NC}"
+    fi
 }
 
 print_error() {
-    echo -e "${RED}✗ $1${NC}"
+    echo -e "${BOLD}${RED}✗ $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠ $1${NC}"
+    if [ "$QUIET_MODE" = false ]; then
+        echo -e "${YELLOW}⚠ $1${NC}"
+    fi
 }
 
 print_info() {
-    echo -e "${CYAN}ℹ $1${NC}"
+    if [ "$QUIET_MODE" = false ]; then
+        echo -e "${CYAN}ℹ $1${NC}"
+    fi
 }
 
 # Verificar si una herramienta está disponible
@@ -263,76 +287,30 @@ force_kill_frontend() {
     sleep 2
 }
 
-# Verificar y iniciar MySQL (XAMPP)
+# Verificar y iniciar MariaDB
 ensure_mysql_running() {
-    print_header "Verificando MySQL"
+    print_header "Verificando MariaDB"
     
-    if pgrep -x "mysqld" > /dev/null; then
-        print_success "MySQL ya está corriendo"
-        sleep 2
+    if pgrep -x "mariadbd" > /dev/null || pgrep -x "mysqld" > /dev/null; then
+        print_success "MariaDB/MySQL ya está corriendo"
         return 0
     fi
     
-    print_warning "MySQL no está corriendo. Intentando iniciar XAMPP..."
-    
-    # Intentar diferentes ubicaciones de XAMPP
-    local xampp_paths=(
-        "/opt/lampp/lampp"
-        "/home/*/lampp/lampp"
-        "$HOME/lampp/lampp"
-        "$HOME/.local/lampp/lampp"
-    )
-    
-    for xampp_path in "${xampp_paths[@]}"; do
-        if [ -f "$xampp_path" ]; then
-            print_info "Encontrado XAMPP en: $xampp_path"
-            
-            # Dar permisos de ejecución si es necesario
-            chmod +x "$xampp_path" 2>/dev/null || true
-            
-            print_info "Iniciando XAMPP..."
-            if sudo "$xampp_path" start 2>&1 | tee -a "$HEALTH_CHECK_LOG"; then
-                print_success "XAMPP iniciado correctamente"
-                print_warning "Esperando 15 segundos para que MySQL esté listo..."
-                sleep 15
-                
-                # Verificar que MySQL está realmente corriendo
-                if pgrep -x "mysqld" > /dev/null; then
-                    print_success "MySQL verificado y corriendo"
-                    return 0
-                else
-                    print_error "MySQL no responde después de iniciar XAMPP"
-                    return 1
-                fi
-            else
-                print_warning "XAMPP no se inició correctamente con: $xampp_path"
-            fi
+    print_info "Iniciando MariaDB con systemctl..."
+    if sudo systemctl start mariadb 2>&1 | tee -a "$HEALTH_CHECK_LOG"; then
+        print_success "MariaDB iniciado"
+        sleep 2  # Espera mínima
+        if mysqladmin ping --silent; then
+            print_success "MariaDB verificado y corriendo"
+            return 0
+        else
+            print_error "MariaDB no responde después de iniciar"
+            return 1
         fi
-    done
-    
-    # Si no se encontró XAMPP, intentar iniciar mysqld directamente
-    print_warning "XAMPP no encontrado. Intentando iniciar mysqld directamente..."
-    if command -v mysqld &> /dev/null; then
-        # Usar systemctl si está disponible
-        if command -v systemctl &> /dev/null; then
-            print_info "Intentando iniciar MySQL con systemctl..."
-            if sudo systemctl start mysql 2>&1 | tee -a "$HEALTH_CHECK_LOG"; then
-                print_success "MySQL iniciado con systemctl"
-                sleep 5
-                return 0
-            elif sudo systemctl start mariadb 2>&1 | tee -a "$HEALTH_CHECK_LOG"; then
-                print_success "MariaDB iniciado con systemctl"
-                sleep 5
-                return 0
-            fi
-        fi
+    else
+        print_error "No se pudo iniciar MariaDB con systemctl"
+        return 1
     fi
-    
-    print_error "No se pudo iniciar MySQL. Asegúrate de que:"
-    echo "  1. XAMPP esté instalado en /opt/lampp"
-    echo "  2. O MySQL/MariaDB esté instalado y disponible en PATH"
-    echo "  3. O puedas ejecutar 'sudo systemctl start mysql'"
-    return 1
 }
 
 # Health check para el backend
@@ -528,7 +506,13 @@ run_backend() {
     print_warning "Esto puede tomar algunos minutos la primera vez..."
     
     # Compilar
-    if ! mvn clean package -DskipTests 2>&1 | tee "$BACKEND_LOG"; then
+    MAVEN_OPTS=""
+    if [ "$FAST_MODE" = true ]; then
+        MAVEN_OPTS="-DskipTests -T $(nproc) --offline"
+    else
+        MAVEN_OPTS="-DskipTests"
+    fi
+    if ! mvn clean package $MAVEN_OPTS 2>&1 | tee "$BACKEND_LOG"; then
         print_error "Error compilando el backend. Revisa el log: $BACKEND_LOG"
         return 1
     fi
@@ -577,7 +561,13 @@ run_backend_background() {
     print_success "Compilando Backend..."
     
     # Compilar
-    if ! mvn clean package -DskipTests -q 2>&1 | tee -a "$BACKEND_LOG"; then
+    MAVEN_OPTS="-q"
+    if [ "$FAST_MODE" = true ]; then
+        MAVEN_OPTS="$MAVEN_OPTS -DskipTests -T $(nproc) --offline"
+    else
+        MAVEN_OPTS="$MAVEN_OPTS -DskipTests"
+    fi
+    if ! mvn clean package $MAVEN_OPTS 2>&1 | tee -a "$BACKEND_LOG"; then
         print_error "Error compilando backend"
         print_error "Revisa: $BACKEND_LOG"
         return 1
@@ -844,6 +834,14 @@ main_menu() {
 # ===== PUNTO DE ENTRADA =====
 
 # Verificar si se ejecuta con argumentos
+# Parsear argumentos globales
+for arg in "$@"; do
+    case $arg in
+        --fast) FAST_MODE=true ;;
+        --quiet) QUIET_MODE=true ;;
+    esac
+done
+
 if [ "$1" == "--backend-only" ]; then
     check_dependencies || exit 1
     validate_project_structure || exit 1

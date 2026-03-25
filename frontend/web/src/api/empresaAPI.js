@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "./apiBase";
+
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   return {
@@ -9,7 +11,7 @@ const getAuthHeaders = () => {
 // NOTE: controller reduced to the 5 standard methods. Use getAllEmpresasDto for listing.
 
 export const getEmpresaById = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/empresa/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/api/empresa/${id}`, {
     headers: getAuthHeaders()
   });
   if (!response.ok) {
@@ -22,7 +24,7 @@ export const getEmpresaById = async (id) => {
 // as the API was reduced to the standard CRUD methods. If needed, implement service-side support first.
 
 export const getAllEmpresasDto = async () => {
-  const response = await fetch("http://localhost:8080/api/empresa", {
+  const response = await fetch(`${API_BASE_URL}/api/empresa`, {
     headers: getAuthHeaders()
   });
   if (!response.ok) {
@@ -32,7 +34,7 @@ export const getAllEmpresasDto = async () => {
 };
 
 export const crearEmpresa = async (empresaData) => {
-  const response = await fetch("http://localhost:8080/api/empresa", {
+  const response = await fetch(`${API_BASE_URL}/api/empresa`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(empresaData),
@@ -47,7 +49,7 @@ export const crearEmpresa = async (empresaData) => {
 };
 
 export const actualizarEmpresa = async (id, empresaData) => {
-  const response = await fetch(`http://localhost:8080/api/empresa/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/api/empresa/${id}`, {
     method: "PUT",
     headers: getAuthHeaders(),
     body: JSON.stringify(empresaData),
@@ -72,7 +74,7 @@ export const eliminarEmpresa = async (id) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error('No se encontró token de autenticación. Por favor inicia sesión.');
 
-  const response = await fetch(`http://localhost:8080/api/empresa/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/api/empresa/${id}`, {
     method: "DELETE",
     headers: getAuthHeaders(),
   });
