@@ -365,6 +365,56 @@ check_backend_health() {
     return 1
 }
 
+# Validar que el frontend tenga una version de Node compatible antes de intentar instalar dependencias
+check_frontend_node_version() {
+    if ! check_command "node"; then
+        print_error "Node.js no está instalado o no está en PATH"
+        return 1
+    fi
+
+    local node_major
+    node_major=$(node -p "process.versions.node.split('.')[0]" 2>/dev/null || echo 0)
+
+    if [ "$node_major" -lt 18 ]; then
+        print_error "La versión de Node.js es incompatible para el frontend: $(node --version)"
+        print_error "Instala Node.js 18 o superior antes de ejecutar el frontend"
+        return 1
+    fi
+
+    print_success "Node.js compatible para frontend: $(node --version)"
+    return 0
+}
+
+# Instalar dependencias del frontend solo cuando falten y fallar si la instalación no funciona
+ensure_frontend_dependencies() {
+    cd "$FRONTEND_DIR"
+
+    if [ ! -f "package.json" ]; then
+        print_error "No se encuentra package.json en $FRONTEND_DIR"
+        return 1
+    fi
+
+    if [ -d "node_modules" ]; then
+        print_success "node_modules ya existe, no se requiere instalación"
+        return 0
+    fi
+
+    if ! check_frontend_node_version; then
+        return 1
+    fi
+
+    print_warning "node_modules no encontrado. Instalando dependencias del frontend..."
+    if ! npm install --legacy-peer-deps 2>&1 | tee -a "$FRONTEND_LOG"; then
+        local install_exit_code=${PIPESTATUS[0]}
+        print_error "Error instalando dependencias de frontend"
+        print_error "npm install falló con código de salida: $install_exit_code"
+        return "$install_exit_code"
+    fi
+
+    print_success "Dependencias del frontend instaladas correctamente"
+    return 0
+}
+
 # Validar que existen los directorios y archivos necesarios
 validate_project_structure() {
     print_header "Validando Estructura del Proyecto"
@@ -497,27 +547,17 @@ run_backend() {
 run_frontend() {
     print_header "INICIANDO FRONTEND (Vite)"
     
-    cd "$FRONTEND_DIR"
-    
-    if [ ! -f "package.json" ]; then
-        print_error "No se encuentra package.json en $FRONTEND_DIR"
+    if ! ensure_frontend_dependencies; then
         return 1
     fi
-    
-    # Verificar si node_modules existe
-    if [ ! -d "node_modules" ]; then
-        print_warning "node_modules no encontrado. Instalando dependencias..."
-        if ! npm install 2>&1 | tee "$FRONTEND_LOG"; then
-            print_error "Error instalando dependencias de frontend"
-            return 1
-        fi
-    fi
+
+    cd "$FRONTEND_DIR"
     
     print_success "Iniciando Vite en puerto $FRONTEND_PORT..."
     echo -e "${YELLOW}Presiona Ctrl+C para detener el frontend${NC}"
     
     # Ejecutar
-    npm run dev 2>&1 | tee "$FRONTEND_LOG"
+    npm run dev -- --host 0.0.0.0 2>&1 | tee "$FRONTEND_LOG"
     
     # Si llega aquí, se presionó Ctrl+C
     print_warning "Frontend detenido"
@@ -581,16 +621,11 @@ run_backend_background() {
 run_frontend_background() {
     print_header "INSTALANDO E INICIANDO FRONTEND EN BACKGROUND"
     
-    cd "$FRONTEND_DIR"
-    
-    # Verificar si node_modules existe
-    if [ ! -d "node_modules" ]; then
-        print_warning "Instalando dependencias de Frontend..."
-        if ! npm install --legacy-peer-deps -q 2>&1 | tee -a "$FRONTEND_LOG"; then
-            print_error "Error instalando dependencias de frontend"
-            return 1
-        fi
+    if ! ensure_frontend_dependencies; then
+        return 1
     fi
+
+    cd "$FRONTEND_DIR"
     
     # Verificar que no hay procesos previos
     print_info "Verificando que no hay procesos previos del frontend..."
@@ -601,7 +636,7 @@ run_frontend_background() {
     
     # Ejecutar en background
     print_info "Iniciando Vite..."
-    npm run dev > "$FRONTEND_LOG" 2>&1 &
+    npm run dev -- --host 0.0.0.0 > "$FRONTEND_LOG" 2>&1 &
     
     local frontend_pid=$!
     echo $frontend_pid > "$FRONTEND_PID_FILE"
