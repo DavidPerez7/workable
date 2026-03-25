@@ -8,6 +8,7 @@ set -e
 
 FAST_MODE=false
 QUIET_MODE=false
+PARALLEL_MODE=false
 
 # Colores para output (solo si no quiet)
 if [ "$QUIET_MODE" = false ]; then
@@ -272,7 +273,7 @@ ensure_mysql_running() {
 
 # Health check para el backend
 check_backend_health() {
-    local max_attempts=10
+    local max_attempts=25
     local attempt=1
     
     print_info "BACKEND: Health check (${max_attempts} intentos)..."
@@ -287,7 +288,7 @@ check_backend_health() {
             fi
         fi
         
-        sleep 0.5
+        sleep 1
         attempt=$((attempt + 1))
     done
     
@@ -727,18 +728,6 @@ elif [ "$1" == "--frontend-bg" ]; then
     validate_project_structure || exit 1
     run_frontend_background || exit 1
     print_info "Frontend en background. Para detener: kill $(cat $FRONTEND_PID_FILE)"
-    sleep 99999
-elif [ "$PARALLEL_MODE" = true ]; then
-    check_dependencies || exit 1
-    validate_project_structure || exit 1
-    run_both_parallel || exit 1
-    sleep 99999
-    check_dependencies || exit 1
-    validate_project_structure || exit 1
-    run_backend_background || exit 1
-    run_frontend_background || exit 1
-    echo -e "\n${GREEN}✓ Backend en puerto $BACKEND_PORT${NC}"
-    echo -e "${GREEN}✓ Frontend en puerto $FRONTEND_PORT${NC}"
     sleep 99999
 elif [ "$PARALLEL_MODE" = true ]; then
     check_dependencies || exit 1
