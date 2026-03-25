@@ -10,19 +10,25 @@ object SessionManager {
     private const val KEY_NAME = "nombre"
     private const val KEY_LASTNAME = "apellido"
     private const val KEY_EMAIL = "correo"
+    private const val KEY_EMPRESA_ID = "empresaId"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     fun saveLogin(context: Context, response: LoginResponse) {
+        val empresaId = (response.empresa?.get("id") as? Number)?.toLong() ?: -1L
+        
         prefs(context).edit()
             .putString(KEY_TOKEN, response.token)
             .putLong(KEY_USER_ID, response.usuarioId ?: -1L)
+            .putLong(KEY_EMPRESA_ID, empresaId)
             .putString(KEY_ROLE, response.rol)
             .putString(KEY_NAME, response.nombre)
             .putString(KEY_LASTNAME, response.apellido)
             .putString(KEY_EMAIL, response.correo)
             .apply()
     }
+    
+    fun getEmpresaId(context: Context): Long = prefs(context).getLong(KEY_EMPRESA_ID, -1L)
 
     fun getRole(context: Context): String? = prefs(context).getString(KEY_ROLE, null)
 

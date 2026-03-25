@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.workable.mobile.data.ApiClient
 import com.workable.mobile.data.SessionManager
 import com.workable.mobile.ui.auth.LoginScreen
 import com.workable.mobile.ui.auth.RegisterScreen
@@ -24,9 +25,19 @@ import com.workable.mobile.ui.pages.admin.AdminReclutadoresScreen
 import com.workable.mobile.ui.pages.DashboardScreen
 import com.workable.mobile.ui.theme.WorkableTheme
 
+import com.workable.mobile.ui.pages.aspirante.AspiranteHojaVidaScreen
+import com.workable.mobile.ui.pages.aspirante.AspiranteOfertasScreen
+import com.workable.mobile.ui.pages.aspirante.AspirantePostulacionesScreen
+
+import com.workable.mobile.ui.pages.reclutador.ReclutadorEmpresaScreen
+import com.workable.mobile.ui.pages.reclutador.ReclutadorOfertasScreen
+import com.workable.mobile.ui.pages.reclutador.ReclutadorPostulacionesOfertaScreen
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        ApiClient.setToken(SessionManager.getToken(this))
 
         val startDestination = when (SessionManager.getRole(this)) {
             "ADMIN" -> "dashboard/ADMIN"
@@ -53,6 +64,17 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("aspirante") { DashboardScreen(navController, "ASPIRANTE") }
+                        composable("aspirante/ofertas") { AspiranteOfertasScreen(navController) }
+                        composable("aspirante/postulaciones") { AspirantePostulacionesScreen(navController) }
+                        composable("aspirante/hoja-vida") { AspiranteHojaVidaScreen(navController) }
+                        
+                        composable("reclutador/empresa") { ReclutadorEmpresaScreen(navController) }
+                        composable("reclutador/ofertas") { ReclutadorOfertasScreen(navController) }
+                        composable("reclutador/oferta/{id}/postulaciones") { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0L
+                            ReclutadorPostulacionesOfertaScreen(navController, id)
+                        }
+
                         composable("admin") { DashboardScreen(navController, "ADMIN") }
                         composable("reclutador") { DashboardScreen(navController, "RECLUTADOR") }
                         composable("admin/home") { AdminHubScreen(navController) }

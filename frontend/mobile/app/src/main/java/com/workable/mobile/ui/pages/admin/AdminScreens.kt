@@ -32,6 +32,11 @@ import com.workable.mobile.data.SessionManager
 import com.workable.mobile.ui.components.WorkableHeroCard
 import com.workable.mobile.ui.components.WorkableMetricCard
 import com.workable.mobile.ui.components.WorkablePageBackground
+import com.workable.mobile.ui.components.WorkableAppScaffold
+import com.workable.mobile.ui.components.AppMenuItem
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.clickable
 import com.workable.mobile.ui.components.WorkablePill
 import com.workable.mobile.ui.components.WorkablePrimaryButton
 import com.workable.mobile.ui.components.WorkableScrollableColumn
@@ -42,11 +47,66 @@ import com.workable.mobile.ui.components.WorkableSurfaceCard
 import com.workable.mobile.ui.components.WorkableTextField
 import kotlinx.coroutines.launch
 
-private data class AdminModuleSpec(
-    val title: String,
-    val route: String,
-    val subtitle: String,
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+
+private val adminMenu = listOf(
+    AppMenuItem("Inicio", "admin/home", Icons.Outlined.Home),
+    AppMenuItem("Aspirantes", "admin/aspirantes", Icons.Outlined.Person),
+    AppMenuItem("Administradores", "admin/administradores", Icons.Filled.Settings),
+    AppMenuItem("Reclutadores", "admin/reclutadores", Icons.Filled.Face),
+    AppMenuItem("Empresas", "admin/empresas", Icons.Filled.Info),
+    AppMenuItem("Ofertas", "admin/ofertas", Icons.Filled.List),
+    AppMenuItem("Postulaciones", "admin/postulaciones", Icons.Filled.List),
+    AppMenuItem("Hojas de Vida", "admin/hojas-de-vida", Icons.Filled.Info),
+    AppMenuItem("Municipios", "admin/municipios", Icons.Filled.Place),
 )
+
+// -- ADMIN HUB --
+
+@Composable
+fun AdminHubScreen(navController: NavController) {
+    val context = LocalContext.current
+    
+    WorkableAppScaffold(
+        navController = navController,
+        title = "Panel Administrativo",
+        role = "ADMIN",
+        menuItems = adminMenu
+    ) {
+        WorkableScrollableColumn {
+            WorkableHeroCard(
+                title = "Bienvenido Admin",
+                subtitle = "Selecciona un módulo del menú lateral para gestionar la plataforma."
+            )
+            
+            WorkableSectionHeader("Módulos", "Accesos rápidos")
+            
+            adminMenu.drop(1).chunked(2).forEach { rowItems ->
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                     rowItems.forEach { item ->
+                         WorkableSurfaceCard(
+                             modifier = Modifier
+                                .weight(1f)
+                                .clickable { navController.navigate(item.route) },
+                             contentPadding = 16.dp
+                         ) {
+                             Icon(item.icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                             Text(item.label, style = MaterialTheme.typography.titleMedium)
+                         }
+                     }
+                     if (rowItems.size == 1) Spacer(Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
 
 private fun authHeader(context: Context): String? {
     val token = SessionManager.getToken(context)
@@ -488,11 +548,11 @@ private fun DetailNode(title: String, value: Any?) {
 
 @Composable
 private fun AdminCrudScreen(
+    navController: NavController,
     title: String,
     subtitle: String,
     entityName: String,
     samplePayload: Map<String, Any?>,
-    onBack: () -> Unit,
     loadAll: suspend (String?) -> List<Map<String, Any?>>,
     loadById: suspend (String?, Long) -> Map<String, Any?>,
     createItem: suspend (String?, Map<String, Any?>) -> Map<String, Any?>,
@@ -623,8 +683,14 @@ private fun AdminCrudScreen(
         reload()
     }
 
-    WorkablePageBackground {
+    WorkableAppScaffold(
+        navController = navController,
+        title = title,
+        role = "ADMIN",
+        menuItems = adminMenu
+    ) {
         WorkableScrollableColumn(verticalSpacing = 12.dp) {
+
             WorkableHeroCard(
                 title = title,
                 subtitle = subtitle,
@@ -632,7 +698,7 @@ private fun AdminCrudScreen(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                     WorkableSecondaryButton(
                         text = "Volver",
-                        onClick = onBack,
+                        onClick = { navController.popBackStack() },
                         modifier = Modifier.weight(1f),
                     )
                     WorkablePrimaryButton(
@@ -841,7 +907,7 @@ private fun AdminCrudScreen(
 @Composable
 fun AdminAspirantesScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Aspirantes",
         subtitle = "CRUD completo para aspirantes, con formularios compactos y relaciones JSON como en la web.",
         entityName = "aspirante",
@@ -858,7 +924,6 @@ fun AdminAspirantesScreen(navController: NavController) {
             "ubicacion" to "",
             "rol" to "ASPIRANTE",
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getAspirantes(it) },
         loadById = { auth, id -> service.getAspirante(auth, id) },
         createItem = { auth, payload -> service.createAspirante(auth, payload) },
@@ -870,7 +935,7 @@ fun AdminAspirantesScreen(navController: NavController) {
 @Composable
 fun AdminAdministradoresScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Administradores",
         subtitle = "CRUD completo para administradores.",
         entityName = "administrador",
@@ -887,7 +952,6 @@ fun AdminAdministradoresScreen(navController: NavController) {
             "ubicacion" to "",
             "rol" to "ADMIN",
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getAdministradores(it) },
         loadById = { auth, id -> service.getAdministrador(auth, id) },
         createItem = { auth, payload -> service.createAdministrador(auth, payload) },
@@ -899,7 +963,7 @@ fun AdminAdministradoresScreen(navController: NavController) {
 @Composable
 fun AdminReclutadoresScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Reclutadores",
         subtitle = "CRUD completo para reclutadores y su empresa asociada.",
         entityName = "reclutador",
@@ -915,7 +979,6 @@ fun AdminReclutadoresScreen(navController: NavController) {
             "empresa" to linkedMapOf("id" to 1),
             "rol" to "RECLUTADOR",
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getReclutadores(it) },
         loadById = { auth, id -> service.getReclutador(auth, id) },
         createItem = { auth, payload -> service.createReclutador(auth, payload) },
@@ -927,7 +990,7 @@ fun AdminReclutadoresScreen(navController: NavController) {
 @Composable
 fun AdminEmpresasScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Empresas",
         subtitle = "CRUD completo para empresas con su catálogo de categorías.",
         entityName = "empresa",
@@ -944,7 +1007,6 @@ fun AdminEmpresasScreen(navController: NavController) {
             "municipio" to linkedMapOf("id" to 1),
             "categories" to mutableListOf<String>(),
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getEmpresas(it) },
         loadById = { auth, id -> service.getEmpresa(auth, id) },
         createItem = { auth, payload -> service.createEmpresa(auth, payload) },
@@ -956,7 +1018,7 @@ fun AdminEmpresasScreen(navController: NavController) {
 @Composable
 fun AdminOfertasScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Ofertas",
         subtitle = "CRUD completo para ofertas laborales.",
         entityName = "oferta",
@@ -975,7 +1037,6 @@ fun AdminOfertasScreen(navController: NavController) {
             "estado" to "ABIERTA",
             "municipio" to linkedMapOf("id" to 1),
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getOfertas(it) },
         loadById = { auth, id -> service.getOferta(auth, id) },
         createItem = { auth, payload -> service.createOferta(auth, payload) },
@@ -987,7 +1048,7 @@ fun AdminOfertasScreen(navController: NavController) {
 @Composable
 fun AdminPostulacionesScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Postulaciones",
         subtitle = "CRUD completo para postulaciones entre aspirantes y ofertas.",
         entityName = "postulación",
@@ -996,7 +1057,6 @@ fun AdminPostulacionesScreen(navController: NavController) {
             "oferta" to linkedMapOf("id" to 1),
             "estado" to "PENDIENTE",
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getPostulaciones(it) },
         loadById = { auth, id -> service.getPostulacion(auth, id) },
         createItem = { auth, payload -> service.createPostulacion(auth, payload) },
@@ -1008,7 +1068,7 @@ fun AdminPostulacionesScreen(navController: NavController) {
 @Composable
 fun AdminHojasDeVidaScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Hojas de vida",
         subtitle = "CRUD completo para hojas de vida y sus listas de estudios y experiencias.",
         entityName = "hoja de vida",
@@ -1038,7 +1098,6 @@ fun AdminHojasDeVidaScreen(navController: NavController) {
                 )
             ),
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getHojasDeVida(it) },
         loadById = { auth, id -> service.getHojaDeVida(auth, id) },
         createItem = { auth, payload -> service.createHojaDeVida(auth, payload) },
@@ -1050,7 +1109,7 @@ fun AdminHojasDeVidaScreen(navController: NavController) {
 @Composable
 fun AdminMunicipiosScreen(navController: NavController) {
     val service = remember { ApiClient.adminCrudService }
-    AdminCrudScreen(
+    AdminCrudScreen(navController = navController,
         title = "Municipios",
         subtitle = "CRUD completo para municipios.",
         entityName = "municipio",
@@ -1059,7 +1118,6 @@ fun AdminMunicipiosScreen(navController: NavController) {
             "nombre" to "",
             "departamento" to "BOGOTA_DC",
         ),
-        onBack = { navController.popBackStack() },
         loadAll = { service.getMunicipios(it) },
         loadById = { auth, id -> service.getMunicipio(auth, id) },
         createItem = { auth, payload -> service.createMunicipio(auth, payload) },
@@ -1068,58 +1126,4 @@ fun AdminMunicipiosScreen(navController: NavController) {
     )
 }
 
-@Composable
-fun AdminHubScreen(navController: NavController) {
-    val modules = remember {
-        listOf(
-            AdminModuleSpec("Aspirantes", "admin/aspirantes", "Usuarios aspirantes y su información base."),
-            AdminModuleSpec("Administradores", "admin/administradores", "Accesos internos y cuentas administrativas."),
-            AdminModuleSpec("Reclutadores", "admin/reclutadores", "Usuarios empresa con permisos de publicación."),
-            AdminModuleSpec("Empresas", "admin/empresas", "Perfil corporativo, categorías y contacto."),
-            AdminModuleSpec("Ofertas", "admin/ofertas", "Vacantes y estados de publicación."),
-            AdminModuleSpec("Postulaciones", "admin/postulaciones", "Seguimiento del flujo de aplicación."),
-            AdminModuleSpec("Hojas de vida", "admin/hojas-de-vida", "CVs completos con estudios y experiencia."),
-            AdminModuleSpec("Municipios", "admin/municipios", "Catálogo base de ubicaciones."),
-        )
-    }
 
-    WorkablePageBackground {
-        WorkableScrollableColumn(verticalSpacing = 12.dp) {
-            WorkableHeroCard(
-                title = "Panel administrativo",
-                subtitle = "Todas las pantallas CRUD del admin web, compactadas y adaptadas a móvil.",
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    WorkablePill(text = "ADMIN", modifier = Modifier.weight(1f))
-                    WorkablePill(text = "Mobile", modifier = Modifier.weight(1f))
-                }
-            }
-
-            WorkableSectionHeader(
-                title = "Módulos",
-                subtitle = "Abre cualquier CRUD desde aquí.",
-            )
-
-            modules.forEach { module ->
-                WorkableSurfaceCard(contentPadding = 16.dp) {
-                    Text(
-                        text = module.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Text(
-                        text = module.subtitle,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    WorkablePrimaryButton(
-                        text = "Abrir",
-                        onClick = { navController.navigate(module.route) },
-                    )
-                }
-            }
-
-            WorkableSectionDivider()
-        }
-    }
-}

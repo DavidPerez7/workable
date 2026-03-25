@@ -57,16 +57,14 @@ fun DashboardScreen(navController: NavController, role: String) {
                 DashboardModule("Municipios", "Mantiene catálogos base.", "admin/municipios"),
             )
             "RECLUTADOR" -> listOf(
-                DashboardModule("Empresas", "Consulta o gestiona empresas."),
-                DashboardModule("Ofertas", "Publica o edita vacantes."),
-                DashboardModule("Postulaciones", "Revisa candidatos."),
-                DashboardModule("Municipios", "Ubicaciones disponibles."),
+                DashboardModule("Empresas", "Consulta o gestiona empresas.", "reclutador/empresa"),
+                DashboardModule("Ofertas", "Publica o edita vacantes y revisa candidatos.", "reclutador/ofertas"),
             )
             else -> listOf(
-                DashboardModule("Mi perfil", "Revisa tu información personal."),
-                DashboardModule("Ofertas", "Explora vacantes activas."),
-                DashboardModule("Mis postulaciones", "Sigue el estado de tus aplicaciones."),
-                DashboardModule("Hoja de vida", "Actualiza tu experiencia."),
+                DashboardModule("Mi perfil", "Revisa tu información personal.", "aspirante/hoja-vida"),
+                DashboardModule("Ofertas", "Explora vacantes activas.", "aspirante/ofertas"),
+                DashboardModule("Mis postulaciones", "Sigue el estado de tus aplicaciones.", "aspirante/postulaciones"),
+                DashboardModule("Hoja de vida", "Actualiza tu experiencia.", "aspirante/hoja-vida"),
             )
         }
     }

@@ -55,6 +55,7 @@ fun LoginScreen(navController: NavController) {
             try {
                 val response = ApiClient.authService.login(LoginRequest(correo.trim(), password))
                 SessionManager.saveLogin(context, response)
+                ApiClient.setToken(response.token)
 
                 val role = response.rol?.uppercase() ?: "ASPIRANTE"
                 navController.navigate("dashboard/$role") {
