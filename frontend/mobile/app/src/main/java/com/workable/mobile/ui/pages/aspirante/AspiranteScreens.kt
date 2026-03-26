@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +35,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,7 +54,10 @@ import com.workable.mobile.data.PostulacionRequest
 import com.workable.mobile.data.SessionManager
 import com.workable.mobile.ui.components.WorkableAppScaffold
 import com.workable.mobile.ui.components.AppMenuItem
+import com.workable.mobile.ui.components.AspirantePageBackground
+
 import com.workable.mobile.ui.components.WorkablePill
+import com.workable.mobile.ui.components.WorkableSelectablePill
 import com.workable.mobile.ui.components.WorkablePrimaryButton
 import com.workable.mobile.ui.components.WorkableSecondaryButton
 import com.workable.mobile.ui.components.WorkableSectionHeader
@@ -59,12 +66,171 @@ import com.workable.mobile.ui.components.WorkableScrollableColumn
 import com.workable.mobile.ui.components.WorkableTextField
 import com.workable.mobile.ui.components.WorkableSurfaceCard
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
 
 private val aspiranteMenu = listOf(
     AppMenuItem("Ofertas", "aspirante/ofertas", Icons.Outlined.Search),
     AppMenuItem("Mis Postulaciones", "aspirante/postulaciones", Icons.Outlined.List),
     AppMenuItem("Hoja de Vida", "aspirante/hoja-vida", Icons.Outlined.AccountCircle),
 )
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AspirantePlainSurfaceCard(
+    contentPadding: androidx.compose.ui.unit.Dp = 12.dp,
+    content: @Composable () -> Unit,
+) {
+    androidx.compose.material3.Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            Color(0xFF6B7280)
+        ),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color.White),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        androidx.compose.foundation.layout.Column(
+            modifier = Modifier.padding(contentPadding),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            content = { content() }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AspirantePlainTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String? = null,
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else 4,
+    readOnly: Boolean = false,
+    enabled: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+) {
+    androidx.compose.material3.OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { if (label.isNotBlank()) Text(label, color = Color.Gray) },
+        placeholder = placeholder?.let { { Text(it, color = Color.Gray) } },
+        modifier = modifier,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        readOnly = readOnly,
+        enabled = enabled,
+        shape = RoundedCornerShape(14.dp),
+        keyboardOptions = keyboardOptions,
+        colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0xFF6B7280),
+            unfocusedBorderColor = Color(0xFF6B7280),
+            focusedLabelColor = Color.Gray,
+            unfocusedLabelColor = Color.Gray,
+            cursorColor = com.workable.mobile.ui.theme.WorkablePrimary,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = Color.Black,
+            focusedPlaceholderColor = Color.Gray,
+            unfocusedPlaceholderColor = Color.Gray,
+        ),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AspirantePlainSelectablePill(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val containerColor =
+        if (selected) com.workable.mobile.ui.theme.WorkablePrimary else Color.White
+    val contentColor = if (selected) Color.White else Color.Black
+
+    androidx.compose.material3.Card(
+        onClick = onClick,
+        modifier = modifier,
+        shape = RoundedCornerShape(999.dp),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            Color(0xFF6B7280)
+        ),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = containerColor),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
+            color = contentColor,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AspirantePlainPrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    androidx.compose.material3.Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        shape = RoundedCornerShape(14.dp),
+        elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+        ),
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = com.workable.mobile.ui.theme.WorkablePrimary,
+            contentColor = Color.White,
+        ),
+    ) {
+        Text(text)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AspirantePlainSecondaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    androidx.compose.material3.Button(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .border(
+                1.dp,
+                Color(0xFF6B7280),
+                RoundedCornerShape(14.dp)
+            ),
+        enabled = enabled,
+        shape = RoundedCornerShape(14.dp),
+        elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+        ),
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = Color.White,
+            contentColor = com.workable.mobile.ui.theme.WorkablePrimary,
+        ),
+    ) {
+        Text(text)
+    }
+}
 
 @Composable
 fun AspiranteOfertasScreen(navController: NavController) {
@@ -77,7 +243,8 @@ fun AspiranteOfertasScreen(navController: NavController) {
 
     // Filtros
     var searchText by remember { mutableStateOf("") }
-    var municipio by remember { mutableStateOf("") }
+    var municipioNombre by remember { mutableStateOf("") }
+    var municipioId by remember { mutableStateOf<Long?>(null) }
     var modalidad by remember { mutableStateOf("") }
     var experiencia by remember { mutableStateOf("") }
     var salarioMin by remember { mutableStateOf("") }
@@ -94,7 +261,7 @@ fun AspiranteOfertasScreen(navController: NavController) {
         listOf("") + ofertas.mapNotNull { it["experiencia"] as? String }.map { it.trim() }.filter { it.isNotBlank() }.distinct().sorted()
     }
 
-    val filteredOfertas = remember(ofertas, searchText, municipio, modalidad, experiencia, salarioMin, salarioMax) {
+    val filteredOfertas = remember(ofertas, searchText, municipioNombre, municipioId, modalidad, experiencia, salarioMin, salarioMax) {
         ofertas.filter { oferta ->
             val titulo = (oferta["cargo"] as? String ?: "").lowercase()
             val descripcion = (oferta["descripcion"] as? String ?: "").lowercase()
@@ -104,8 +271,18 @@ fun AspiranteOfertasScreen(navController: NavController) {
                 descripcion.contains(searchText.lowercase()) ||
                 empresa.lowercase().contains(searchText.lowercase())
 
-            val matchesMunicipio = municipio.isEmpty() ||
-                (oferta["municipio"] as? Map<String, Any?>)?.get("nombre") == municipio
+            val ofertaMunicipio = oferta["municipio"] as? Map<String, Any?>
+            val ofertaMunicipioId = when (val v = ofertaMunicipio?.get("id")) {
+                            is Number -> v.toLong()
+                            is String -> v.toLongOrNull()
+                            else -> null
+                        }
+                        val ofertaMunicipioNombre = ofertaMunicipio?.get("nombre") as? String
+                        val matchesMunicipio = when {
+                            municipioId != null -> ofertaMunicipioId == municipioId
+                            municipioNombre.isBlank() -> true
+                            else -> ofertaMunicipioNombre == municipioNombre
+                        }
 
             val matchesModalidad = modalidad.isEmpty() ||
                 (oferta["modalidad"] as? String) == modalidad
@@ -140,123 +317,166 @@ fun AspiranteOfertasScreen(navController: NavController) {
         role = SessionManager.getRole(context) ?: "ASPIRANTE",
         menuItems = aspiranteMenu
     ) {
-        WorkableScrollableColumn(verticalSpacing = 16.dp) {
-            WorkableSurfaceCard(contentPadding = 18.dp) {
-                WorkableSectionHeader("FILTRAR OFERTAS", subtitle = "")
-                WorkableSecondaryButton(
-                    text = if (showFilters) "Ocultar filtros" else "Mostrar filtros",
-                    onClick = { showFilters = !showFilters },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                AnimatedVisibility(
-                    visible = showFilters,
-                    enter = expandVertically(),
-                    exit = shrinkVertically()
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        WorkableTextField(
-                            value = searchText,
-                            onValueChange = { searchText = it },
-                            label = "Buscar ofertas...",
-                            placeholder = "Cargo, empresa, descripción..."
+        AspirantePageBackground {
+            WorkableScrollableColumn(verticalSpacing = 8.dp) {
+                AspirantePlainSurfaceCard(contentPadding = 10.dp) {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            text = "FILTROS DE OFERTAS",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
                         )
-
-                        DropdownFilterField(
-                            label = "Municipio",
-                            value = municipio,
-                            placeholder = if (municipios.isEmpty()) "Cargando municipios..." else "Selecciona un municipio",
-                            options = listOf("") + municipios.mapNotNull { it["nombre"] as? String }.filter { it.isNotBlank() }.distinct().sorted(),
-                            expanded = municipioExpanded,
-                            onExpandedChange = { municipioExpanded = it },
-                            onSelected = { municipio = it }
-                        )
-
-                        DropdownFilterField(
-                            label = "Modalidad",
-                            value = modalidad,
-                            placeholder = if (modalidadOptions.size <= 1) "Sin opciones" else "Selecciona una modalidad",
-                            options = modalidadOptions,
-                            expanded = modalidadExpanded,
-                            onExpandedChange = { modalidadExpanded = it },
-                            onSelected = { modalidad = it }
-                        )
-
-                        DropdownFilterField(
-                            label = "Experiencia",
-                            value = experiencia,
-                            placeholder = if (experienciaOptions.size <= 1) "Sin opciones" else "Selecciona experiencia",
-                            options = experienciaOptions,
-                            expanded = experienciaExpanded,
-                            onExpandedChange = { experienciaExpanded = it },
-                            onSelected = { experiencia = it }
-                        )
-
-                        WorkableTextField(
-                            value = salarioMin,
-                            onValueChange = { salarioMin = it },
-                            label = "Salario mínimo",
-                            placeholder = "Ej: 1000000",
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                        WorkableTextField(
-                            value = salarioMax,
-                            onValueChange = { salarioMax = it },
-                            label = "Salario máximo",
-                            placeholder = "Ej: 5000000",
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
-
-                        WorkablePrimaryButton(
-                            text = "Buscar",
-                            onClick = {
-                                notice = "Filtros aplicados. ${filteredOfertas.size} ofertas encontradas."
-                                error = null
-                            },
+                        Text(
+                            text = "Revisa el listado y abre el detalle completo de la oferta que te interese.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Black
                         )
                     }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        // Búsqueda
+                        AspirantePlainTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            label = "Nombre",
+                            placeholder = "Nombre o palabra clave"
+                        )
+
+                        // Ubicación
+                        DropdownFilterField(
+                            label = "Ubicación",
+                            value = municipioNombre,
+                            placeholder = "Todos",
+                            options = listOf("") + municipios.mapNotNull { it["nombre"] as? String }.filter { it.isNotBlank() },
+                            expanded = municipioExpanded,
+                            onExpandedChange = { municipioExpanded = it },
+                            onSelected = { selected ->
+                                municipioNombre = selected
+                                municipioId = if (selected.isBlank()) {
+                                    null
+                                } else {
+                                    val idAny = municipios.firstOrNull { (it["nombre"] as? String) == selected }?.get("id")
+                                    when (idAny) {
+                                        is Number -> idAny.toLong()
+                                        is String -> idAny.toLongOrNull()
+                                        else -> null
+                                    }
+                                }
+                            }
+                        )
+
+                        // Modalidad (pills)
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = "Modalidad",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                AspirantePlainSelectablePill(
+                                    text = "Todas",
+                                    selected = modalidad.isBlank(),
+                                    onClick = { modalidad = "" },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                AspirantePlainSelectablePill(
+                                    text = "Presencial",
+                                    selected = modalidad.equals("Presencial", ignoreCase = true),
+                                    onClick = { modalidad = "Presencial" },
+                                    modifier = Modifier.weight(1f)
+                                )
+                                AspirantePlainSelectablePill(
+                                    text = "Remoto",
+                                    selected = modalidad.equals("Remoto", ignoreCase = true),
+                                    onClick = { modalidad = "Remoto" },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+
+                        // Rango salarial
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            AspirantePlainTextField(
+                                value = salarioMin,
+                                onValueChange = { salarioMin = it },
+                                label = "Rango Salarial",
+                                placeholder = "Salario min",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.weight(1f)
+                            )
+                            AspirantePlainTextField(
+                                value = salarioMax,
+                                onValueChange = { salarioMax = it },
+                                label = "Salario max",
+                                placeholder = "Salario max",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        // Botones
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            AspirantePlainPrimaryButton(
+                                text = "Buscar",
+                                onClick = {
+                                    notice = "Filtros aplicados. ${filteredOfertas.size} ofertas encontradas."
+                                    error = null
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                            AspirantePlainSecondaryButton(
+                                text = "Limpiar",
+                                onClick = {
+                                    searchText = ""
+                                    municipioNombre = ""
+                                    municipioId = null
+                                    modalidad = ""
+                                    experiencia = ""
+                                    salarioMin = ""
+                                    salarioMax = ""
+                                    notice = null
+                                    error = null
+                                },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                 }
-            }
 
-            WorkableSurfaceCard(contentPadding = 18.dp) {
-                WorkableSectionHeader("OFERTAS DISPONIBLES", subtitle = "")
+                AspirantePlainSurfaceCard(contentPadding = 10.dp) {
+                    WorkableSectionHeader("OFERTAS DISPONIBLES", subtitle = "Revisa el listado y abre el detalle completo de la oferta que te interese.")
 
-                Text(
-                    text = "Ajusta los filtros para reducir resultados y encontrar la oferta ideal.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
+                    notice?.let {
+                        Text(
+                            text = it,
+                            color = Color(0xFF059669),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFD1FAE5), RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        )
+                    }
 
-                notice?.let {
-                    Text(
-                        text = it,
-                        color = Color(0xFF059669),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFD1FAE5), RoundedCornerShape(8.dp))
-                            .padding(12.dp)
-                    )
-                }
+                    error?.let {
+                        Text(
+                            text = it,
+                            color = Color(0xFFDC2626),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFFEE2E2), RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        )
+                    }
 
-                error?.let {
-                    Text(
-                        text = it,
-                        color = Color(0xFFDC2626),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFFFEE2E2), RoundedCornerShape(8.dp))
-                            .padding(12.dp)
-                    )
-                }
-
-                if (loading) {
-                    Text("Cargando ofertas...", modifier = Modifier.padding(16.dp))
-                } else if (filteredOfertas.isEmpty()) {
-                    Text("No hay ofertas disponibles con los filtros aplicados.", modifier = Modifier.padding(16.dp))
-                } else {
-                    filteredOfertas.forEach { oferta ->
-                        OfertaCard(oferta = oferta, navController = navController)
+                    if (loading) {
+                        Text("Cargando ofertas...", modifier = Modifier.padding(12.dp))
+                    } else if (filteredOfertas.isEmpty()) {
+                        Text("No hay ofertas disponibles con los filtros aplicados.", modifier = Modifier.padding(12.dp))
+                    } else {
+                        filteredOfertas.forEach { oferta ->
+                            OfertaCard(oferta = oferta, navController = navController)
+                        }
                     }
                 }
             }
@@ -274,19 +494,41 @@ private fun DropdownFilterField(
     onExpandedChange: (Boolean) -> Unit,
     onSelected: (String) -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        WorkableTextField(
-            value = value,
-            onValueChange = {},
-            label = label,
-            placeholder = placeholder,
-            readOnly = true,
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(14.dp))
+                .border(
+                    1.dp,
+                    Color(0xFF6B7280),
+                    RoundedCornerShape(14.dp)
+                )
+                .background(Color.White)
                 .clickable { onExpandedChange(true) }
-        )
+                .padding(horizontal = 14.dp, vertical = 12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = if (value.isBlank()) placeholder else value,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (value.isBlank()) Color.Gray else Color.Black
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "▾",
+                    color = Color(0xFF6B7280)
+                )
+            }
 
+        }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) }
@@ -308,6 +550,8 @@ private fun DropdownFilterField(
 @Composable
 fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
     val context = LocalContext.current
+
+    val municipios = remember { mutableStateListOf<com.workable.mobile.data.MunicipioDto>() }
     val scope = rememberCoroutineScope()
     var applying by remember { mutableStateOf(false) }
 
@@ -351,12 +595,19 @@ fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
         Toast.makeText(context, "Detalle de oferta: $titulo", Toast.LENGTH_SHORT).show()
     }
 
-    WorkableSurfaceCard(contentPadding = 18.dp) {
+    AspirantePlainSurfaceCard(contentPadding = 12.dp) {
         // Header
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(text = titulo, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(text = empresaNombre, style = MaterialTheme.typography.titleSmall, color = Color.Gray)
-            WorkablePill(text = modalidad, containerColor = Color(0xFFEFF6FF), contentColor = Color(0xFF1D4ED8))
+            WorkablePill(
+                text = modalidad,
+                containerColor = Color(0xFFEFF6FF),
+                contentColor = Color(0xFF1D4ED8),
+                modifier = Modifier
+                    .border(1.dp, Color(0xFF6B7280), RoundedCornerShape(999.dp))
+                    .clip(RoundedCornerShape(999.dp))
+            )
         }
 
         // Footer
@@ -389,11 +640,11 @@ fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
 
             // Actions
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                WorkableSecondaryButton(
+                AspirantePlainSecondaryButton(
                     text = "Detalle",
                     onClick = { verDetalle() }
                 )
-                WorkablePrimaryButton(
+                AspirantePlainPrimaryButton(
                     text = if (applying) "Enviando..." else "Postularme",
                     onClick = { postularse() },
                     enabled = !applying
@@ -473,6 +724,9 @@ fun PostulacionCard(post: Map<String, Any?>) {
             }
             WorkablePill(
                 text = estado.replace("_", " "),
+                modifier = Modifier
+                    .border(1.dp, Color(0xFF6B7280), RoundedCornerShape(999.dp))
+                    .clip(RoundedCornerShape(999.dp)),
                 containerColor = bgColor,
                 contentColor = textColor
             )
@@ -824,4 +1078,3 @@ private fun serializeHojaVida(hoja: HojaVidaDraft): Map<String, Any?> {
         "experiencias" to experiencias,
     )
 }
-

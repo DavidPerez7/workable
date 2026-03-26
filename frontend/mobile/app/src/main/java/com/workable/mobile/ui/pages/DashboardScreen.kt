@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.workable.mobile.data.SessionManager
+import com.workable.mobile.ui.components.AspirantePageBackground
 import com.workable.mobile.ui.components.WorkableHeroCard
 import com.workable.mobile.ui.components.WorkablePageBackground
 import com.workable.mobile.ui.components.WorkablePill
@@ -69,7 +70,7 @@ fun DashboardScreen(navController: NavController, role: String) {
         }
     }
 
-    WorkablePageBackground {
+    val dashboardContent: @Composable () -> Unit = {
         WorkableScrollableColumn(verticalSpacing = 16.dp) {
             WorkableHeroCard(
                 title = when (roleUpper) {
@@ -151,6 +152,12 @@ fun DashboardScreen(navController: NavController, role: String) {
                 }
             )
         }
+    }
+
+    if (roleUpper == "ASPIRANTE") {
+        AspirantePageBackground { dashboardContent() }
+    } else {
+        WorkablePageBackground { dashboardContent() }
     }
 }
 
