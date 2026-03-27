@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.clickable
@@ -47,9 +48,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.navigation.NavController
 import com.workable.mobile.data.ApiClient
 import com.workable.mobile.data.IdRef
+import com.workable.mobile.data.OfertaSearchDto
 import com.workable.mobile.data.PostulacionRequest
 import com.workable.mobile.data.SessionManager
 import com.workable.mobile.ui.components.WorkableAppScaffold
@@ -165,7 +168,7 @@ private fun AspirantePlainSelectablePill(
     ) {
         Text(
             text = text,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             color = contentColor,
             style = MaterialTheme.typography.labelLarge,
         )
@@ -182,7 +185,10 @@ private fun AspirantePlainPrimaryButton(
 ) {
     androidx.compose.material3.Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        // Ensure explicit height so all primary buttons render consistently
+        modifier = modifier
+            .height(40.dp)
+            .fillMaxWidth(),
         enabled = enabled,
         shape = RoundedCornerShape(14.dp),
         elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
@@ -194,6 +200,8 @@ private fun AspirantePlainPrimaryButton(
             containerColor = com.workable.mobile.ui.theme.WorkablePrimary,
             contentColor = Color.White,
         ),
+        // Force consistent internal padding (horizontal only) so visual height matches secondary button
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 0.dp)
     ) {
         Text(text)
     }
@@ -207,17 +215,22 @@ private fun AspirantePlainSecondaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
+    val shape = RoundedCornerShape(14.dp)
+
     androidx.compose.material3.Button(
         onClick = onClick,
+        // Force border to match the exact 40dp height and remove any visual gap
         modifier = modifier
+            .height(40.dp)
             .fillMaxWidth()
             .border(
                 1.dp,
                 Color(0xFF6B7280),
-                RoundedCornerShape(14.dp)
-            ),
+                shape
+            )
+            .clip(shape),
         enabled = enabled,
-        shape = RoundedCornerShape(14.dp),
+        shape = shape,
         elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
@@ -225,10 +238,68 @@ private fun AspirantePlainSecondaryButton(
         ),
         colors = androidx.compose.material3.ButtonDefaults.buttonColors(
             containerColor = Color.White,
-            contentColor = com.workable.mobile.ui.theme.WorkablePrimary,
+            // No blue text; normal text like "Buscar"
+            contentColor = Color.Black,
         ),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 0.dp)
     ) {
         Text(text)
+    }
+}
+
+@Composable
+private fun OfferChip(
+    text: String,
+    containerColor: Color,
+    contentColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    if (text.isBlank()) return
+
+    androidx.compose.material3.Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(999.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = containerColor),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            color = contentColor,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
+}
+
+@Composable
+private fun ActionPill36(
+    text: String,
+    containerColor: Color,
+    contentColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(14.dp)
+    androidx.compose.material3.Card(
+        modifier = modifier
+            .height(36.dp)
+            .clip(shape),
+        shape = shape,
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = containerColor),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                color = contentColor,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                modifier = Modifier.padding(horizontal = 14.dp)
+            )
+        }
     }
 }
 
@@ -236,7 +307,8 @@ private fun AspirantePlainSecondaryButton(
 fun AspiranteOfertasScreen(navController: NavController) {
     val context = LocalContext.current
     var ofertas by remember { mutableStateOf<List<Map<String, Any?>>>(emptyList()) }
-    var municipios by remember { mutableStateOf<List<Map<String, Any?>>>(emptyList()) }
+    var municipios by remember { mutableStateOf<List<com.workable.mobile.data.MunicipioDto>>(emptyList()) }
+    var appliedOfertaIds by remember { mutableStateOf<Set<Long>>(emptySet()) }
     var loading by remember { mutableStateOf(true) }
     var notice by remember { mutableStateOf<String?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -302,10 +374,33 @@ fun AspiranteOfertasScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         try {
-            ofertas = ApiClient.ofertaService.getAll()
-            municipios = ApiClient.municipioService.getMunicipios().map { mapOf("id" to it.id, "nombre" to it.nombre) }
+            // Asegurar que ApiClient tiene el token actual antes de llamar al backend
+            val currentToken = SessionManager.getToken(context)
+            ApiClient.setToken(currentToken)
+            // Token establecido para consultar ofertas y municipios
+
+            // Cargar ofertas
+            ofertas = ApiClient.ofertaService.search(OfertaSearchDto())
+
+            // Cargar municipios directamente como lista de DTOs desde el backend
+            municipios = ApiClient.municipioService.getMunicipios()
+
+            // Cargar qué ofertas ya fueron postuladas por el usuario actual
+            val userId = SessionManager.getUserId(context)
+            if (userId != -1L) {
+                val postulaciones = ApiClient.postulacionService.getByAspiranteId(userId)
+                appliedOfertaIds = postulaciones
+                    .mapNotNull { post ->
+                        val ofertaMap = post["oferta"] as? Map<String, Any?>
+                        val ofertaId = ofertaMap?.get("id")
+                        (ofertaId as? Number)?.toLong()
+                    }
+                    .toSet()
+            }
+
         } catch (e: Exception) {
             error = "Error al cargar datos: ${e.message}"
+
         } finally {
             loading = false
         }
@@ -319,36 +414,63 @@ fun AspiranteOfertasScreen(navController: NavController) {
     ) {
         AspirantePageBackground {
             WorkableScrollableColumn(verticalSpacing = 8.dp) {
-                AspirantePlainSurfaceCard(contentPadding = 10.dp) {
+                AspirantePlainSurfaceCard(contentPadding = 6.dp) {
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            text = "FILTROS DE OFERTAS",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Text(
-                            text = "Revisa el listado y abre el detalle completo de la oferta que te interese.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black
-                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showFilters = !showFilters }
+                                .padding(horizontal = 4.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "FILTROS DE OFERTAS",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = if (showFilters) "▴" else "▾",
+                                    color = Color(0xFF6B7280),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                            if (showFilters) {
+                                Text(
+                                    text = "Revisa el listado y abre el detalle completo de la oferta que te interese.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black
+                                )
+                            }
+                        }
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        // Búsqueda
+                    if (showFilters) Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        // Búsqueda (compactado verticalmente)
                         AspirantePlainTextField(
                             value = searchText,
                             onValueChange = { searchText = it },
                             label = "Nombre",
-                            placeholder = "Nombre o palabra clave"
+                            placeholder = "Nombre o palabra clave",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp),
+                            singleLine = true,
+                            maxLines = 1,
                         )
+
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         // Ubicación
                         DropdownFilterField(
                             label = "Ubicación",
                             value = municipioNombre,
                             placeholder = "Todos",
-                            options = listOf("") + municipios.mapNotNull { it["nombre"] as? String }.filter { it.isNotBlank() },
+                            // Poblar opciones directamente desde la lista de DTOs (nombre)
+                            options = listOf("") + municipios.mapNotNull { it.nombre }.filter { it.isNotBlank() },
                             expanded = municipioExpanded,
                             onExpandedChange = { municipioExpanded = it },
                             onSelected = { selected ->
@@ -356,15 +478,13 @@ fun AspiranteOfertasScreen(navController: NavController) {
                                 municipioId = if (selected.isBlank()) {
                                     null
                                 } else {
-                                    val idAny = municipios.firstOrNull { (it["nombre"] as? String) == selected }?.get("id")
-                                    when (idAny) {
-                                        is Number -> idAny.toLong()
-                                        is String -> idAny.toLongOrNull()
-                                        else -> null
-                                    }
+                                    // Buscar el municipio por su nombre y devolver su id (MunicipioDto.id es Long)
+                                    municipios.firstOrNull { it.nombre == selected }?.id
                                 }
                             }
                         )
+
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         // Modalidad (pills)
                         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -373,7 +493,7 @@ fun AspiranteOfertasScreen(navController: NavController) {
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray
                             )
-                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                 AspirantePlainSelectablePill(
                                     text = "Todas",
                                     selected = modalidad.isBlank(),
@@ -395,15 +515,19 @@ fun AspiranteOfertasScreen(navController: NavController) {
                             }
                         }
 
-                        // Rango salarial
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        // Rango salarial (compactado verticalmente)
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             AspirantePlainTextField(
                                 value = salarioMin,
                                 onValueChange = { salarioMin = it },
                                 label = "Rango Salarial",
                                 placeholder = "Salario min",
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(40.dp),
+                                singleLine = true,
+                                maxLines = 1,
                             )
                             AspirantePlainTextField(
                                 value = salarioMax,
@@ -411,20 +535,26 @@ fun AspiranteOfertasScreen(navController: NavController) {
                                 label = "Salario max",
                                 placeholder = "Salario max",
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(40.dp),
+                                singleLine = true,
+                                maxLines = 1,
                             )
                         }
 
                         // Botones
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             AspirantePlainPrimaryButton(
                                 text = "Buscar",
                                 onClick = {
                                     notice = "Filtros aplicados. ${filteredOfertas.size} ofertas encontradas."
                                     error = null
                                 },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
                             )
+                            Spacer(modifier = Modifier.width(6.dp))
                             AspirantePlainSecondaryButton(
                                 text = "Limpiar",
                                 onClick = {
@@ -438,7 +568,8 @@ fun AspiranteOfertasScreen(navController: NavController) {
                                     notice = null
                                     error = null
                                 },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier
+                                    .weight(1f)
                             )
                         }
                     }
@@ -475,7 +606,11 @@ fun AspiranteOfertasScreen(navController: NavController) {
                         Text("No hay ofertas disponibles con los filtros aplicados.", modifier = Modifier.padding(12.dp))
                     } else {
                         filteredOfertas.forEach { oferta ->
-                            OfertaCard(oferta = oferta, navController = navController)
+                            OfertaCard(
+                                oferta = oferta,
+                                navController = navController,
+                                appliedOfertaIds = appliedOfertaIds
+                            )
                         }
                     }
                 }
@@ -494,6 +629,46 @@ private fun DropdownFilterField(
     onExpandedChange: (Boolean) -> Unit,
     onSelected: (String) -> Unit,
 ) {
+    // Contexto y estado local de opciones
+    val context = LocalContext.current
+    var localOptions by remember { mutableStateOf(options) }
+    val municipiosState = remember { mutableStateListOf<com.workable.mobile.data.MunicipioDto>() }
+
+    // Si el padre pasa opciones útiles, mantenerlas y recalcular cuando cambien.
+    LaunchedEffect(key1 = options) {
+        if (options.isNotEmpty() && options.any { it.isNotBlank() }) {
+            localOptions = options
+        } else {
+            // dejamos localOptions tal cual; la carga real la realizamos cuando se abre el dropdown
+            // para evitar llamadas tempranas que podrían no tener token aún.
+            localOptions = options
+        }
+    }
+
+    // Al abrir el dropdown, aseguramos el token y solicitamos municipios si hace falta.
+    LaunchedEffect(key1 = expanded) {
+        if (expanded) {
+            try {
+                // Asegurar que ApiClient tenga el token actual (según la doc: Authorization Bearer)
+                ApiClient.setToken(SessionManager.getToken(context))
+
+                // Si las opciones locales están vacías o sólo contienen el placeholder, cargar desde backend.
+                val needsFetch = localOptions.isEmpty() || localOptions.all { it.isBlank() }
+                if (needsFetch) {
+                    val fetched = ApiClient.municipioService.getMunicipios()
+                    municipiosState.clear()
+                    municipiosState.addAll(fetched)
+                    localOptions = listOf("") + municipiosState.mapNotNull { it.nombre }.filter { it.isNotBlank() }
+                }
+
+
+            } catch (e: Exception) {
+
+                localOptions = listOf("")
+            }
+        }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             text = label,
@@ -505,6 +680,7 @@ private fun DropdownFilterField(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(40.dp)
                 .clip(RoundedCornerShape(14.dp))
                 .border(
                     1.dp,
@@ -513,9 +689,9 @@ private fun DropdownFilterField(
                 )
                 .background(Color.White)
                 .clickable { onExpandedChange(true) }
-                .padding(horizontal = 14.dp, vertical = 12.dp)
+                .padding(horizontal = 12.dp)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
                 Text(
                     text = if (value.isBlank()) placeholder else value,
                     style = MaterialTheme.typography.bodyMedium,
@@ -531,12 +707,14 @@ private fun DropdownFilterField(
         }
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { onExpandedChange(false) }
+            onDismissRequest = { onExpandedChange(false) },
+            modifier = Modifier.background(Color.White),
+            offset = DpOffset(0.dp, 6.dp)
         ) {
-            options.forEach { option ->
+            localOptions.forEach { option ->
                 val text = if (option.isBlank()) "Todos" else option
                 DropdownMenuItem(
-                    text = { Text(text) },
+                    text = { Text(text, color = Color.Black) },
                     onClick = {
                         onSelected(option)
                         onExpandedChange(false)
@@ -548,7 +726,11 @@ private fun DropdownFilterField(
 }
 
 @Composable
-fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
+fun OfertaCard(
+    oferta: Map<String, Any?>,
+    navController: NavController,
+    appliedOfertaIds: Set<Long>
+) {
     val context = LocalContext.current
 
     val municipios = remember { mutableStateListOf<com.workable.mobile.data.MunicipioDto>() }
@@ -556,15 +738,20 @@ fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
     var applying by remember { mutableStateOf(false) }
 
     val id = (oferta["id"] as? Number)?.toLong() ?: 0L
-    val titulo = oferta["cargo"] as? String ?: "Sin cargo"
+    val titulo = (oferta["cargo"] as? String)?.takeIf { it.isNotBlank() }
+        ?: (oferta["titulo"] as? String)?.takeIf { it.isNotBlank() }
+        ?: "Sin cargo"
     val descripcion = oferta["descripcion"] as? String ?: "Sin descripción"
-    val salarioMin = normalizeMoney(oferta["salarioMin"])
-    val salarioMax = normalizeMoney(oferta["salarioMax"])
+    // El backend retorna el salario como `salario` (Long). Así evitamos mostrar 0$.
+    val salarioMin = normalizeMoney(oferta["salario"])
+    // Para que el chip muestre un solo valor cuando min==max.
+    val salarioMax = salarioMin
     val empresaMap = oferta["empresa"] as? Map<String, Any?>
     val empresaNombre = empresaMap?.get("nombre") as? String ?: "Confidencial"
     val modalidad = (oferta["modalidad"] as? String) ?: "Remoto"
     val municipio = (oferta["municipio"] as? Map<String, Any?>)?.get("nombre") as? String ?: "Ubicación desconocida"
-    val experiencia = (oferta["experiencia"] as? String) ?: "Sin especificar"
+    val experiencia = (oferta["experiencia"] as? String)?.takeIf { it.isNotBlank() }.orEmpty()
+    val yaPostulado = appliedOfertaIds.contains(id)
 
     fun postularse() {
         scope.launch {
@@ -591,64 +778,439 @@ fun OfertaCard(oferta: Map<String, Any?>, navController: NavController) {
     }
 
     fun verDetalle() {
-        // Por ahora, mostrar toast. En el futuro, navegar a pantalla de detalle
-        Toast.makeText(context, "Detalle de oferta: $titulo", Toast.LENGTH_SHORT).show()
+        // Navegar a pantalla de detalle (ofertaId)
+        navController.navigate("aspirante/oferta/${id}")
     }
 
-    AspirantePlainSurfaceCard(contentPadding = 12.dp) {
-        // Header
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(text = titulo, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Text(text = empresaNombre, style = MaterialTheme.typography.titleSmall, color = Color.Gray)
-            WorkablePill(
-                text = modalidad,
-                containerColor = Color(0xFFEFF6FF),
-                contentColor = Color(0xFF1D4ED8),
-                modifier = Modifier
-                    .border(1.dp, Color(0xFF6B7280), RoundedCornerShape(999.dp))
-                    .clip(RoundedCornerShape(999.dp))
-            )
-        }
-
-        // Footer
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
+    androidx.compose.material3.Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color(0xFFF3F4F6)),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            // Salary
-            Text(
-                text = "$$salarioMin - $$salarioMax",
-                style = MaterialTheme.typography.labelLarge,
-                color = Color(0xFF059669),
-                fontWeight = FontWeight.Bold
-            )
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = titulo,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    val municipioDisplay = if (municipio.equals("Bogota", ignoreCase = true) || municipio.equals("Bogotá", ignoreCase = true)) {
+                        "Bogotá"
+                    } else {
+                        municipio
+                    }
 
-            // Meta
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = municipio,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B)
-                )
-                Text(
-                    text = experiencia,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        OfferChip(
+                            text = empresaNombre,
+                            containerColor = Color(0xFFE5E7EB),
+                            contentColor = Color(0xFF111827),
+                        )
+                        Text(
+                            text = municipioDisplay,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF64748B)
+                        )
+                    }
+                }
+
+                OfferChip(
+                    text = modalidad,
+                    containerColor = Color(0xFFEFF6FF),
+                    contentColor = Color(0xFF1D4ED8),
                 )
             }
 
-            // Actions
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AspirantePlainSecondaryButton(
-                    text = "Detalle",
-                    onClick = { verDetalle() }
+            // Footer
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Salary chip
+                OfferChip(
+                    text = if (salarioMin == salarioMax) "${'$'} ${salarioMin}" else "${'$'} ${salarioMin} - ${'$'} ${salarioMax}",
+                    containerColor = Color(0xFFD1FAE5),
+                    contentColor = Color(0xFF059669),
                 )
-                AspirantePlainPrimaryButton(
-                    text = if (applying) "Enviando..." else "Postularme",
-                    onClick = { postularse() },
-                    enabled = !applying
+
+                // Meta (experiencia)
+                if (experiencia.isNotBlank()) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Cambiar chip azul transparente por un gris neutro para que no se vea "vacío" entre precio y Detalle
+                        OfferChip(
+                            text = experiencia,
+                            containerColor = Color(0xFFE5E7EB),
+                            contentColor = Color(0xFF111827),
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(999.dp))
+                        )
+                    }
+                }
+
+                // Actions
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = { verDetalle() },
+                        modifier = Modifier.height(36.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF1D4ED8)),
+                        colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFF1D4ED8)
+                        ),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 0.dp)
+                    ) {
+                        Text("Detalle", color = Color(0xFF1D4ED8))
+                    }
+
+                    if (yaPostulado) {
+                        ActionPill36(
+                            text = "Ya postulado",
+                            containerColor = Color(0xFF1D4ED8),
+                            contentColor = Color.White,
+                            modifier = Modifier.height(36.dp)
+                        )
+                    } else {
+                        androidx.compose.material3.Button(
+                            onClick = { postularse() },
+                            enabled = !applying,
+                            modifier = Modifier
+                                .height(36.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp,
+                                disabledElevation = 0.dp
+                            ),
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = com.workable.mobile.ui.theme.WorkablePrimary,
+                                contentColor = Color.White
+                            ),
+                        ) {
+                            Text(text = if (applying) "Enviando..." else "Postularme")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AspiranteOfertaCompletaScreen(
+    navController: NavController,
+    ofertaId: Long,
+) {
+    val context = LocalContext.current
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    var oferta by remember { mutableStateOf<Map<String, Any?>?>(null) }
+    var postulaciones by remember { mutableStateOf<List<Map<String, Any?>>>(emptyList()) }
+    var yaPostulado by remember { mutableStateOf(false) }
+
+    var aplicando by remember { mutableStateOf(false) }
+    var notice by remember { mutableStateOf<String?>(null) }
+
+    val role = SessionManager.getRole(context) ?: "ASPIRANTE"
+
+    fun normalizeString(value: Any?): String =
+        (value as? String)?.takeIf { it.isNotBlank() }.orEmpty()
+
+    fun normalizeLong(value: Any?): Long? =
+        when (value) {
+            is Number -> value.toLong()
+            is String -> value.toLongOrNull()
+            else -> null
+        }
+
+    fun formatDateRaw(value: Any?): String {
+        val raw = normalizeString(value)
+        if (raw.isBlank()) return "-"
+        return raw
+    }
+
+    fun getSalarioChip(ofertaMap: Map<String, Any?>?): String {
+        if (ofertaMap == null) return "$ 0"
+        val salario = normalizeLong(ofertaMap["salario"])
+        if (salario != null) return "${'$'} ${salario}"
+
+        // fallback por si el backend entrega salarioMin/salarioMax
+        val min = normalizeLong(ofertaMap["salarioMin"]) ?: 0L
+        val max = normalizeLong(ofertaMap["salarioMax"]) ?: 0L
+        return if (min == max) "${'$'} ${min}" else "${'$'} ${min} - ${'$'} ${max}"
+    }
+
+    fun computeYaPostulado(posts: List<Map<String, Any?>>): Boolean {
+        posts.forEach { post ->
+            val ofertaMap = post["oferta"] as? Map<String, Any?> ?: return@forEach
+            val id = normalizeLong(ofertaMap["id"]) ?: return@forEach
+            if (id == ofertaId) return true
+        }
+        return false
+    }
+
+    fun postularse() {
+        if (aplicando) return
+        val userId = SessionManager.getUserId(context)
+        if (userId == -1L) {
+            notice = "Debes iniciar sesión para postularte."
+            return
+        }
+
+        aplicando = true
+        notice = null
+
+        // POST /api/postulacion (ya lo usas en OfertaCard)
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            try {
+                ApiClient.postulacionService.create(
+                    PostulacionRequest(IdRef(userId), IdRef(ofertaId))
                 )
+                postulaciones = postulaciones // se mantiene (o puedes recargar)
+                yaPostulado = true
+                notice = "Postulación enviada correctamente."
+            } catch (e: Exception) {
+                notice = e.message ?: "No se pudo enviar la postulación."
+            } finally {
+                aplicando = false
+            }
+        }
+    }
+
+    LaunchedEffect(ofertaId) {
+        try {
+            loading = true
+            error = null
+            notice = null
+
+            ApiClient.setToken(SessionManager.getToken(context))
+
+            // GET /api/oferta/{id}
+            oferta = ApiClient.ofertaService.getById(ofertaId)
+
+            // Verificar si ya postuló (para aspirante)
+            if (role.uppercase() == "ASPIRANTE") {
+                val userId = SessionManager.getUserId(context)
+                if (userId != -1L) {
+                    postulaciones = ApiClient.postulacionService.getByAspiranteId(userId)
+                    yaPostulado = computeYaPostulado(postulaciones)
+                }
+            }
+        } catch (e: Exception) {
+            error = e.message ?: "Error al cargar la oferta."
+        } finally {
+            loading = false
+        }
+    }
+
+    WorkableAppScaffold(
+        navController = navController,
+        title = "Detalle de oferta",
+        role = role,
+        menuItems = aspiranteMenu
+    ) {
+        AspirantePageBackground {
+            WorkableScrollableColumn(verticalSpacing = 10.dp) {
+                if (loading) {
+                    Text("Cargando...", modifier = Modifier.padding(16.dp))
+                    return@WorkableScrollableColumn
+                }
+
+                if (error != null || oferta == null) {
+                    Text(
+                        text = error ?: "Oferta no encontrada",
+                        color = Color(0xFFDC2626),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    return@WorkableScrollableColumn
+                }
+
+                val ofertaMap = oferta!!
+
+                val titulo = normalizeString(ofertaMap["titulo"])
+                    .ifBlank { normalizeString(ofertaMap["cargo"]) }
+                    .ifBlank { "Sin título" }
+
+                val empresaMap = ofertaMap["empresa"] as? Map<String, Any?>
+                val empresaNombre = normalizeString(empresaMap?.get("nombre")).ifBlank { "Empresa" }
+
+                val estado = normalizeString(ofertaMap["estado"]).ifBlank { "Estado" }
+
+                val descripcion = normalizeString(ofertaMap["descripcion"])
+                    .ifBlank { "Sin descripción disponible." }
+
+                val requisitos = normalizeString(ofertaMap["requisitos"])
+                    .ifBlank { "" }
+
+                val experiencia =
+                    normalizeString(ofertaMap["experiencia"])
+                        .ifBlank { normalizeString(ofertaMap["nivelExperiencia"]) }
+                        .ifBlank { "-" }
+
+                val municipioNombre =
+                    (ofertaMap["municipio"] as? Map<String, Any?>)?.get("nombre")
+                        .let { normalizeString(it) }
+                        .ifBlank { normalizeString(ofertaMap["ubicacion"]) }
+                        .ifBlank { "-" }
+
+                val modalidad = normalizeString(ofertaMap["modalidad"]).ifBlank { "-" }
+                val fechaLimite = ofertaMap["fechaLimite"] ?: ofertaMap["fechaPublicacion"]
+                val tipoContrato = normalizeString(ofertaMap["tipoContrato"]).ifBlank { "-" }
+
+                if (notice != null) {
+                    Text(
+                        text = notice!!,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .background(Color(0xFFD1FAE5), RoundedCornerShape(8.dp))
+                            .padding(12.dp),
+                        color = Color(0xFF059669)
+                    )
+                }
+
+                WorkableSurfaceCard(contentPadding = 16.dp) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            text = titulo,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = empresaNombre,
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Color.Gray
+                            )
+                            WorkablePill(
+                                text = estado,
+                                containerColor = Color(0xFFF1F5F9),
+                                contentColor = Color(0xFF0F172A),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(999.dp))
+                            )
+                        }
+
+                        Text(
+                            text = descripcion,
+                            color = Color(0xFF475467),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        if (requisitos.isNotBlank()) {
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(
+                                    text = "Requisitos",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = requisitos,
+                                    color = Color(0xFF475467),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+
+                        // Resumen (simple tipo web)
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            WorkableSectionHeader(
+                                title = "Información principal",
+                                subtitle = "Detalles relevantes de la oferta."
+                            )
+                            WorkableSectionDivider()
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                OfferChip(text = empresaNombre, containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                            }
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                OfferChip(text = experiencia, containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                                OfferChip(text = municipioNombre, containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                            }
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                OfferChip(text = getSalarioChip(ofertaMap), containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                                OfferChip(text = modalidad, containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                            }
+
+                            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                OfferChip(text = formatDateRaw(fechaLimite), containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                                OfferChip(text = tipoContrato, containerColor = Color(0xFFE5E7EB), contentColor = Color(0xFF111827))
+                            }
+                        }
+                    }
+                }
+
+                // Acciones
+                WorkableSurfaceCard(contentPadding = 16.dp) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        WorkableSectionHeader("Acciones", subtitle = "Aplicar a la oferta.")
+                        WorkableSectionDivider()
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (yaPostulado) {
+                                ActionPill36(
+                                    text = "Ya te has postulado",
+                                    containerColor = Color(0xFF1D4ED8),
+                                    contentColor = Color.White,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            } else {
+                                androidx.compose.material3.Button(
+                                    onClick = { postularse() },
+                                    enabled = !aplicando,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(40.dp),
+                                    shape = RoundedCornerShape(14.dp),
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                        containerColor = com.workable.mobile.ui.theme.WorkablePrimary,
+                                        contentColor = Color.White
+                                    )
+                                ) {
+                                    Text(text = if (aplicando) "Postulando..." else "Postularme")
+                                }
+                            }
+
+                            androidx.compose.material3.OutlinedButton(
+                                onClick = { navController.popBackStack() },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(40.dp),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = androidx.compose.material3.ButtonDefaults.outlinedButtonColors(
+                                    contentColor = com.workable.mobile.ui.theme.WorkablePrimary
+                                ),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, com.workable.mobile.ui.theme.WorkablePrimary)
+                            ) {
+                                Text("Volver")
+                            }
+                        }
+                    }
+                }
             }
         }
     }

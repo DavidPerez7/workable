@@ -57,6 +57,8 @@ fun LoginScreen(navController: NavController) {
                 SessionManager.saveLogin(context, response)
                 ApiClient.setToken(response.token)
 
+                // Token guardado correctamente (se eliminó el toast de depuración)
+
                 val role = response.rol?.uppercase() ?: "ASPIRANTE"
                 navController.navigate("dashboard/$role") {
                     popUpTo("login") { inclusive = true }

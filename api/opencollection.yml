@@ -17,6 +17,6 @@ config:
 request:
   variables:
     - name: baseUrl
-      value: "http://localhost:8080"
+      value: "http://3.218.5.56:8080"
 bundled: false
 extensions: {}

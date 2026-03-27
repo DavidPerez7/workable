@@ -27,6 +27,7 @@ import com.workable.mobile.ui.theme.WorkableTheme
 
 import com.workable.mobile.ui.pages.aspirante.AspiranteHojaVidaScreen
 import com.workable.mobile.ui.pages.aspirante.AspiranteOfertasScreen
+import com.workable.mobile.ui.pages.aspirante.AspiranteOfertaCompletaScreen
 import com.workable.mobile.ui.pages.aspirante.AspirantePostulacionesScreen
 
 import com.workable.mobile.ui.pages.reclutador.ReclutadorEmpresaScreen
@@ -36,7 +37,7 @@ import com.workable.mobile.ui.pages.reclutador.ReclutadorPostulacionesOfertaScre
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         ApiClient.setToken(SessionManager.getToken(this))
 
         val startDestination = when (SessionManager.getRole(this)) {
@@ -67,9 +68,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("aspirante") { DashboardScreen(navController, "ASPIRANTE") }
                         composable("aspirante/ofertas") { AspiranteOfertasScreen(navController) }
+                        composable("aspirante/oferta/{id}") { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0L
+                            AspiranteOfertaCompletaScreen(navController = navController, ofertaId = id)
+                        }
                         composable("aspirante/postulaciones") { AspirantePostulacionesScreen(navController) }
                         composable("aspirante/hoja-vida") { AspiranteHojaVidaScreen(navController) }
-                        
+
                         composable("reclutador/empresa") { ReclutadorEmpresaScreen(navController) }
                         composable("reclutador/ofertas") { ReclutadorOfertasScreen(navController) }
                         composable("reclutador/oferta/{id}/postulaciones") { backStackEntry ->

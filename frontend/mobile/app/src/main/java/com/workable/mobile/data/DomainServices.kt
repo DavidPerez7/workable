@@ -5,15 +5,22 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import java.math.BigDecimal
 
 // --- DTOs ---
 
 data class OfertaSearchDto(
-    val cargo: String? = null,
+    // Align con backend y yml: /api/oferta/search
+    val nombre: String? = null,
+    val municipioId: Long? = null,
+    val salarioMin: BigDecimal? = null,
+    val salarioMax: BigDecimal? = null,
+    val experiencia: String? = null,
     val modalidad: String? = null,
-    val ubicacion: String? = null,
-    val salarioMin: Double? = null,
-    val salarioMax: Double? = null,
+    val categoria: String? = null,
+    val empresaId: Long? = null,
+    // Backend usa ACTIVA por defecto, pero la yml también la envía
+    val estado: String? = "ACTIVA",
 )
 
 // Simplified models using Maps for flexibility, or we could define data classes
@@ -38,7 +45,7 @@ interface OfertaService {
 
     @POST("api/oferta/search")
     suspend fun search(@Body criteria: OfertaSearchDto): List<Map<String, Any?>>
-    
+
     @GET("api/oferta/empresa/{id}")
     suspend fun getByEmpresaId(@Path("id") id: Long): List<Map<String, Any?>>
 }
@@ -71,9 +78,9 @@ interface EmpresaService {
 
     @GET("api/empresa/{id}")
     suspend fun getById(@Path("id") id: Long): Map<String, Any?>
-    
-    @GET("api/empresa/usuario/{id}") // Assuming there's a way to get empresa by reclutador or user? 
-    // Wait, Reclutador is linked to Empresa. 
+
+    @GET("api/empresa/usuario/{id}") // Assuming there's a way to get empresa by reclutador or user?
+    // Wait, Reclutador is linked to Empresa.
     // Reclutador entity has "empresa" field.
     // So getting Reclutador info gives Empresa info.
     suspend fun getEmpresaByReclutadorDummy(): Map<String, Any?> // placeholder
